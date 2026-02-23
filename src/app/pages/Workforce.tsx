@@ -1,0 +1,780 @@
+import { useState, useEffect } from "react";
+import {
+    Users,
+    CalendarDays,
+    CreditCard,
+    Plus,
+    Search,
+    Filter,
+    Edit2,
+    Trash2,
+    Eye,
+    CheckCircle,
+    Save,
+    Send,
+    Smartphone,
+    Wifi,
+    Building2,
+    Download,
+    AlertCircle,
+    RotateCcw,
+    RefreshCw,
+} from "lucide-react";
+import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { Modal } from "@/app/components/Modal";
+import { fetchApi } from '../api/client';
+import { useAuth } from "@/app/context/AuthContext";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { toast } from "sonner";
+import { AddEmployeeModal } from "@/app/components/AddEmployeeModal";
+
+// Types
+interface Employee {
+    id: string;
+    employeeId: string;
+    name: string;
+    email: string;
+    phone: string;
+    department: string;
+    position: string;
+    salaryType: string;
+    baseSalary: number;
+    status: string;
+    hireDate: string;
+}
+
+interface AttendanceRecord {
+    id?: string;
+    employeeId: string;
+    date: string;
+    status: 'Present' | 'Absent' | 'Late' | 'Leave';
+    checkIn: string;
+    checkOut: string;
+    workingHours: number;
+    reason: string;
+}
+
+interface PayrollItem {
+    employee: Employee;
+    daysAttended: number;
+    totalHours: number;
+    calculatedSalary: number;
+    currency: string;
+    isPaid: boolean;
+    paymentId: string | null;
+}
+
+type PaymentChannel = 'airtel_money' | 'mobile_money' | 'bank_transfer';
+
+const PAYMENT_CHANNELS: { id: PaymentChannel; name: string; icon: any; color: string; bgColor: string; borderColor: string; description: string }[] = [
+    {
+        id: 'airtel_money',
+        name: 'Airtel Money',
+        icon: Smartphone,
+        color: 'text-red-600',
+        bgColor: 'bg-red-50 dark:bg-red-900/20',
+        borderColor: 'border-red-200 dark:border-red-800',
+        description: 'Pay via Airtel Money mobile wallet',
+    },
+    {
+        id: 'mobile_money',
+        name: 'MTN Mobile Money',
+        icon: Wifi,
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+        borderColor: 'border-yellow-200 dark:border-yellow-800',
+        description: 'Pay via MTN MoMo mobile wallet',
+    },
+    {
+        id: 'bank_transfer',
+        name: 'Bank Transfer',
+        icon: Building2,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+        borderColor: 'border-blue-200 dark:border-blue-800',
+        description: 'Pay via bank wire transfer',
+    },
+];
+
+const MONTHS = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+export function Workforce() {
+    const { user } = useAuth();
+    const { currency } = useCurrency();
+    const [activeTab, setActiveTab] = useState<'directory' | 'attendance' | 'payroll'>('directory');
+
+    // Auth & Permissions
+    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
+    const isAdminOrManager = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
+
+    // Shared State
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+    // 1. Directory State
+    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+
+    // 2. Attendance State
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [attendanceRecords, setAttendanceRecords] = useState<Record<string, Partial<AttendanceRecord>>>({});
+    const [personalAttendance, setPersonalAttendance] = useState<AttendanceRecord[]>([]);
+    const [isSavingAttendance, setIsSavingAttendance] = useState(false);
+
+    // 3. Payroll State
+    const [payrollData, setPayrollData] = useState<PayrollItem[]>([]);
+    const [customAmounts, setCustomAmounts] = useState<Record<string, number>>({});
+    const [selectedEmployees, setSelectedEmployees] = useState<Set<string>>(new Set());
+    const [showBatchModal, setShowBatchModal] = useState(false);
+    const [batchChannel, setBatchChannel] = useState<PaymentChannel>('mobile_money');
+    const [isBatchPaying, setIsBatchPaying] = useState(false);
+
+    // Initial Load
+    useEffect(() => {
+        loadEmployees();
+    }, []);
+
+    useEffect(() => {
+        if (activeTab === 'attendance') {
+            loadAttendanceData();
+        } else if (activeTab === 'payroll' && isAdminOrManager) {
+            loadPayrollData();
+        }
+    }, [activeTab, selectedDate, selectedMonth, selectedYear, employees]);
+
+    // Data Loaders
+    const loadEmployees = async () => {
+        try {
+            const res = await fetchApi<any>('/employees?limit=100');
+            setEmployees(res.data || []);
+        } catch (err) {
+            toast.error("Failed to load employees");
+        }
+    };
+
+    const loadAttendanceData = async () => {
+        try {
+            if (isAdminOrManager) {
+                const attRes = await fetchApi<AttendanceRecord[]>(`/employees/attendance/all?date=${selectedDate}`);
+                const attMap: Record<string, Partial<AttendanceRecord>> = {};
+
+                employees.forEach(emp => {
+                    const record = attRes.find(r => r.employeeId === emp.id);
+                    attMap[emp.id] = record || {
+                        employeeId: emp.id,
+                        date: selectedDate,
+                        status: 'Present',
+                        checkIn: '08:00',
+                        checkOut: '17:00',
+                        workingHours: 8,
+                        reason: ''
+                    };
+                });
+                setAttendanceRecords(attMap);
+            } else if (user?.email) {
+                const res = await fetchApi<AttendanceRecord[]>(`/employees/attendance/me?email=${user.email}`);
+                setPersonalAttendance(res);
+            }
+        } catch (err) {
+            toast.error("Failed to load attendance");
+        }
+    };
+
+    const loadPayrollData = async () => {
+        try {
+            const data = await fetchApi<PayrollItem[]>(`/employees/payroll/calculate?month=${selectedMonth}&year=${selectedYear}`);
+            setPayrollData(data);
+            const amounts: Record<string, number> = {};
+            data.forEach(item => {
+                amounts[item.employee.id] = item.calculatedSalary;
+            });
+            setCustomAmounts(amounts);
+        } catch (err) {
+            toast.error("Failed to load payroll data");
+        }
+    };
+
+    // Actions
+    const saveAttendance = async () => {
+        setIsSavingAttendance(true);
+        try {
+            const records = Object.values(attendanceRecords);
+            await fetchApi('/employees/attendance/batch', {
+                method: 'POST',
+                body: JSON.stringify({ records })
+            });
+            toast.success("All attendance records saved successfully!");
+            loadAttendanceData();
+        } catch (err) {
+            toast.error("Failed to save attendance");
+        } finally {
+            setIsSavingAttendance(false);
+        }
+    };
+
+    const toggleEmployeeSelection = (empId: string) => {
+        const newSet = new Set(selectedEmployees);
+        if (newSet.has(empId)) {
+            newSet.delete(empId);
+        } else {
+            newSet.add(empId);
+        }
+        setSelectedEmployees(newSet);
+    };
+
+    const handleBatchPay = async () => {
+        setIsBatchPaying(true);
+        try {
+            const selectedPayroll = payrollData.filter(p => selectedEmployees.has(p.employee.id));
+            const employeesToPay = selectedPayroll.map(p => ({
+                employeeId: p.employee.id,
+                amount: customAmounts[p.employee.id] || p.calculatedSalary,
+                baseSalary: p.employee.baseSalary,
+                daysAttended: p.daysAttended,
+                totalHours: p.totalHours,
+                recipientAccount: p.employee.phone || '',
+            }));
+
+            await fetchApi<any>('/employees/salary/disburse-batch', {
+                method: 'POST',
+                body: JSON.stringify({
+                    employees: employeesToPay,
+                    paymentMethod: batchChannel,
+                    salaryMonth: selectedMonth,
+                    salaryYear: selectedYear,
+                    initiatedBy: user?.fullName || user?.name || 'Admin',
+                    currency: 'RWF',
+                }),
+            });
+            toast.success(`Disbursement complete!`);
+            loadPayrollData();
+            setSelectedEmployees(new Set());
+        } catch (err: any) {
+            toast.error(err.message || "Batch payment failed");
+        } finally {
+            setIsBatchPaying(false);
+        }
+    };
+
+    const formatCurrency = (amount: number) => {
+        let finalAmount = amount;
+        let label = 'RWF';
+        if (currency === 'USD') {
+            finalAmount = amount / 1300;
+            label = 'USD';
+        }
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: label }).format(finalAmount);
+    };
+
+    const filteredEmployees = (activeTab === 'directory' ? employees : (activeTab === 'payroll' ? payrollData.map(p => p.employee) : employees))
+        .filter(emp =>
+            emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.department.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+    const selectedTotal = Array.from(selectedEmployees).reduce((sum, id) => {
+        const item = payrollData.find(p => p.employee.id === id);
+        return sum + (item ? (customAmounts[id] || item.calculatedSalary) : 0);
+    }, 0);
+
+    return (
+        <div className="container-fluid p-4">
+            {/* Header */}
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 mb-4">
+                <div>
+                    <h1 className="h3 fw-bold text-dark">Workforce Center</h1>
+                    <p className="text-muted mt-1">Manage employees, attendance, and payroll in one place</p>
+                </div>
+                <div className="d-flex gap-2">
+                    {activeTab === 'directory' && isAdminOrManager && (
+                        <button
+                            onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
+                            className="btn px-3 py-2 text-white border-0 d-flex align-items-center gap-2"
+                            style={{ background: '#16a085', borderRadius: '10px', fontWeight: '600', fontSize: '13px' }}
+                        >
+                            <Plus size={15} /> Add Staff
+                        </button>
+                    )}
+                    {activeTab === 'attendance' && isAdminOrManager && (
+                        <button
+                            onClick={saveAttendance}
+                            disabled={isSavingAttendance}
+                            className={`btn px-3 py-2 text-white border-0 d-flex align-items-center gap-2 ${isSavingAttendance ? 'opacity-75' : ''}`}
+                            style={{ background: '#16a085', borderRadius: '10px', fontWeight: '600', fontSize: '13px' }}
+                        >
+                            {isSavingAttendance ? <RefreshCw size={15} className="spinning" /> : <Save size={15} />}
+                            {isSavingAttendance ? 'Saving...' : 'Save Attendance'}
+                        </button>
+                    )}
+                    <button className="btn btn-outline-secondary px-3" style={{ borderRadius: '12px' }}>
+                        <Download size={18} />
+                    </button>
+                </div>
+            </ScrollReveal>
+
+            {/* Hub Tabs */}
+            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '16px', overflow: 'hidden' }}>
+                <div className="card-header bg-white border-0 p-0">
+                    <div className="nav nav-pills p-2 gap-2">
+                        <button
+                            onClick={() => setActiveTab('directory')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'directory' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'directory' ? { backgroundColor: '#16a085' } : {}}
+                            style={{ borderRadius: '12px', border: 'none' }}
+                        >
+                            <Users size={20} /> Staff Directory
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('attendance')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'attendance' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'attendance' ? { backgroundColor: '#16a085' } : {}}
+                            style={{ borderRadius: '12px', border: 'none' }}
+                        >
+                            <CalendarDays size={20} /> {isAdminOrManager ? 'Daily Attendance' : 'My Attendance'}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('payroll')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'payroll' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'payroll' ? { backgroundColor: '#16a085' } : {}}
+                            style={{ borderRadius: '12px', border: 'none' }}
+                        >
+                            <CreditCard size={20} /> Payroll Center
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Filter Bar */}
+            <ScrollReveal className="mb-4">
+                <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                    <div className="card-body py-3">
+                        <div className="row g-3 align-items-center">
+                            <div className="col-md-5">
+                                <div className="position-relative">
+                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
+                                    <input
+                                        type="text"
+                                        className="form-control form-control-sm ps-5 bg-light border-0 py-2"
+                                        placeholder="Search by name, ID or department..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        style={{ borderRadius: '10px' }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-md-7 d-flex justify-content-md-end gap-3 align-items-center">
+                                {activeTab === 'attendance' ? (
+                                    <input
+                                        type="date"
+                                        className="form-control form-control-sm border-0 bg-light"
+                                        value={selectedDate}
+                                        onChange={(e) => setSelectedDate(e.target.value)}
+                                        style={{ width: '180px', borderRadius: '10px' }}
+                                    />
+                                ) : (
+                                    <>
+                                        <select
+                                            className="form-select form-select-sm border-0 bg-light"
+                                            value={selectedMonth}
+                                            onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                                            style={{ width: '130px', borderRadius: '10px' }}
+                                        >
+                                            {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                        </select>
+                                        <select
+                                            className="form-select form-select-sm border-0 bg-light"
+                                            value={selectedYear}
+                                            onChange={(e) => setSelectedYear(Number(e.target.value))}
+                                            style={{ width: '100px', borderRadius: '10px' }}
+                                        >
+                                            {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
+                                        </select>
+                                    </>
+                                )}
+                                <button className="btn btn-light btn-sm p-2" style={{ borderRadius: '10px' }}>
+                                    <Filter size={18} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ScrollReveal>
+
+            {/* Content Area */}
+            <div className="tab-content mt-4">
+                {/* 1. DIRECTORY TAB */}
+                {activeTab === 'directory' && (
+                    <ScrollReveal>
+                        <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                            <div className="table-responsive">
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead className="bg-light">
+                                        <tr className="text-muted small text-uppercase">
+                                            <th className="ps-4">Employee Info</th>
+                                            <th>Department</th>
+                                            <th>Position</th>
+                                            <th>Salary Type</th>
+                                            <th>Status</th>
+                                            <th className="pe-4 text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredEmployees.map(emp => (
+                                            <tr key={emp.id} className="transition-all" style={{ '&:hover': { backgroundColor: 'rgba(22, 160, 133, 0.05)' } }}>
+                                                <td className="ps-4 py-3">
+                                                    <div className="d-flex align-items-center gap-3">
+                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, backgroundColor: '#d4efea', color: '#16a085' }}>
+                                                            {emp.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <div className="fw-bold text-dark">{emp.name}</div>
+                                                            <div className="text-muted small">ID: {emp.employeeId}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span className="badge bg-blue-50 text-blue-600 px-2 py-1">{emp.department}</span></td>
+                                                <td className="text-dark small">{emp.position}</td>
+                                                <td className="text-capitalize small text-muted">{emp.salaryType}</td>
+                                                <td>
+                                                    <span className={`badge px-2 py-1 ${emp.status === 'active' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}>
+                                                        {emp.status}
+                                                    </span>
+                                                </td>
+                                                <td className="pe-4 text-end">
+                                                    <button className="btn btn-icon text-muted hover:text-blue-600 p-1"><Eye size={16} /></button>
+                                                    <button className="btn btn-icon text-muted hover:opacity-75 p-1" onClick={() => { setEditingEmployee(emp); setIsAddModalOpen(true); }} style={{ '--hover-color': '#16a085' }}><Edit2 size={16} /></button>
+                                                    <button className="btn btn-icon text-muted hover:text-red-600 p-1"><Trash2 size={16} /></button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+                )}
+
+                {/* 2. ATTENDANCE TAB */}
+                {activeTab === 'attendance' && (
+                    <ScrollReveal>
+                        <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                            <div className="table-responsive">
+                                {isAdminOrManager ? (
+                                    <table className="table align-middle table-hover mb-0">
+                                        <thead className="bg-light">
+                                            <tr className="text-muted small text-uppercase">
+                                                <th className="ps-4">Employee</th>
+                                                <th>Status</th>
+                                                <th>Check In</th>
+                                                <th>Check Out</th>
+                                                <th className="text-center">Hours</th>
+                                                <th className="pe-4">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredEmployees.map(emp => {
+                                                const record = attendanceRecords[emp.id] || {};
+                                                return (
+                                                    <tr key={emp.id}>
+                                                        <td className="ps-4">
+                                                            <div className="fw-medium text-dark small">{emp.name}</div>
+                                                            <div className="text-muted smaller" style={{ fontSize: 11 }}>{emp.employeeId}</div>
+                                                        </td>
+                                                        <td>
+                                                            <select
+                                                                className={`form-select form-select-sm border-0 fw-bold ${record.status === 'Present' ? 'text-success' : record.status === 'Absent' ? 'text-danger' : 'text-warning'}`}
+                                                                value={record.status}
+                                                                onChange={(e) => setAttendanceRecords(prev => ({ ...prev, [emp.id]: { ...prev[emp.id], status: e.target.value as any } }))}
+                                                                style={{ width: 110, background: 'transparent' }}
+                                                            >
+                                                                <option value="Present">Present</option>
+                                                                <option value="Absent">Absent</option>
+                                                                <option value="Late">Late</option>
+                                                                <option value="Leave">Leave</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                type="time"
+                                                                className="form-control form-control-sm border-0 bg-light"
+                                                                value={record.checkIn || ''}
+                                                                onChange={(e) => {
+                                                                    const val = e.target.value;
+                                                                    setAttendanceRecords(prev => {
+                                                                        const updated = { ...prev[emp.id], checkIn: val };
+                                                                        const [h1, m1] = (val || '00:00').split(':').map(Number);
+                                                                        const [h2, m2] = (updated.checkOut || '00:00').split(':').map(Number);
+                                                                        updated.workingHours = Math.max(0, Number(((h2 + m2 / 60) - (h1 + m1 / 60)).toFixed(2)));
+                                                                        return { ...prev, [emp.id]: updated };
+                                                                    });
+                                                                }}
+                                                                style={{ borderRadius: '8px' }}
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                type="time"
+                                                                className="form-control form-control-sm border-0 bg-light"
+                                                                value={record.checkOut || ''}
+                                                                onChange={(e) => {
+                                                                    const val = e.target.value;
+                                                                    setAttendanceRecords(prev => {
+                                                                        const updated = { ...prev[emp.id], checkOut: val };
+                                                                        const [h1, m1] = (updated.checkIn || '00:00').split(':').map(Number);
+                                                                        const [h2, m2] = (val || '00:00').split(':').map(Number);
+                                                                        updated.workingHours = Math.max(0, Number(((h2 + m2 / 60) - (h1 + m1 / 60)).toFixed(2)));
+                                                                        return { ...prev, [emp.id]: updated };
+                                                                    });
+                                                                }}
+                                                                style={{ borderRadius: '8px' }}
+                                                            />
+                                                        </td>
+                                                        <td className="text-center fw-bold" style={{ color: '#16a085' }}>{record.workingHours || 0}h</td>
+                                                        <td className="pe-4">
+                                                            <input
+                                                                type="text"
+                                                                className="form-control form-control-sm border-0 border-bottom rounded-0 bg-transparent"
+                                                                placeholder="Notes..."
+                                                                value={record.reason || ''}
+                                                                onChange={(e) => setAttendanceRecords(prev => ({ ...prev, [emp.id]: { ...prev[emp.id], reason: e.target.value } }))}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <table className="table align-middle table-hover mb-0">
+                                        <thead className="bg-light">
+                                            <tr className="text-muted small text-uppercase">
+                                                <th className="ps-4">Date</th>
+                                                <th>Status</th>
+                                                <th>Check In</th>
+                                                <th>Check Out</th>
+                                                <th className="text-center">Hours</th>
+                                                <th className="pe-4">Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {personalAttendance.length > 0 ? (
+                                                personalAttendance.map(record => (
+                                                    <tr key={record.id}>
+                                                        <td className="ps-4 fw-medium text-dark">{new Date(record.date).toLocaleDateString()}</td>
+                                                        <td>
+                                                            <span className={`badge px-2 py-1 ${record.status === 'Present' ? 'bg-success-subtle text-success' : record.status === 'Absent' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning'}`}>
+                                                                {record.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="small">{record.checkIn}</td>
+                                                        <td className="small">{record.checkOut}</td>
+                                                        <td className="text-center fw-bold small" style={{ color: '#16a085' }}>{record.workingHours}h</td>
+                                                        <td className="pe-4 text-muted small">{record.reason || '-'}</td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={6} className="text-center py-4 text-muted">No attendance history found.</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
+                        </div>
+                    </ScrollReveal>
+                )}
+
+                {/* 3. PAYROLL TAB */}
+                {activeTab === 'payroll' && (
+                    <>
+                        <ScrollReveal className="mb-4">
+                            <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                                <div className="card-body py-3">
+                                    <div className="d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center gap-3">
+                                            <button
+                                                onClick={() => setSelectedEmployees(new Set(payrollData.filter(p => !p.isPaid).map(p => p.employee.id)))}
+                                                className="btn btn-sm px-3"
+                                                style={{ borderRadius: '10px', background: '#e8f8f5', color: '#16a085', border: '1px solid #16a085', fontWeight: 600, fontSize: '12px' }}
+                                            >
+                                                Select All Unpaid
+                                            </button>
+                                            <button
+                                                onClick={() => setSelectedEmployees(new Set())}
+                                                className="btn btn-sm btn-outline-secondary px-3"
+                                                style={{ borderRadius: '10px', fontSize: '12px' }}
+                                            >
+                                                Clear
+                                            </button>
+                                            <div className="vr mx-2"></div>
+                                            <span className="text-muted small">
+                                                {selectedEmployees.size} staff selected
+                                                {selectedEmployees.size > 0 && <span className="fw-bold text-success ms-2">(Total: {formatCurrency(selectedTotal)})</span>}
+                                            </span>
+                                        </div>
+                                        <button
+                                            disabled={selectedEmployees.size === 0}
+                                            onClick={() => setShowBatchModal(true)}
+                                            className="btn btn-sm text-white px-3 d-flex align-items-center gap-2"
+                                            style={{ background: '#16a085', borderRadius: '10px', border: 'none', fontWeight: 600, fontSize: '13px', opacity: selectedEmployees.size === 0 ? 0.5 : 1 }}
+                                        >
+                                            <Send size={14} /> Pay Selected
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </ScrollReveal>
+
+                        <div className="row g-3">
+                            {payrollData.filter(item =>
+                                item.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                item.employee.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
+                            ).map(item => {
+                                const isSelected = selectedEmployees.has(item.employee.id);
+                                return (
+                                    <div key={item.employee.id} className="col-md-6 col-lg-4">
+                                        <div
+                                            className={`card h-100 transition-all cursor-pointer ${isSelected ? 'shadow-lg' : 'shadow-sm hover:shadow-md'}`}
+                                            onClick={() => toggleEmployeeSelection(item.employee.id)}
+                                            style={{ borderRadius: '16px', border: isSelected ? '2px solid #16a085' : '2px solid transparent', background: isSelected ? '#f0faf8' : '#fff' }}
+                                        >
+                                            <div className="card-body p-3">
+                                                <div className="d-flex justify-content-between align-items-start mb-3">
+                                                    <div className="d-flex align-items-center gap-3">
+                                                        <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold`} style={{ width: 44, height: 44, background: isSelected ? '#16a085' : '#f0f0f0', color: isSelected ? '#fff' : '#888' }}>
+                                                            {isSelected ? <Check size={24} color="white" /> : item.employee.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <div className="fw-bold text-dark">{item.employee.name}</div>
+                                                            <div className="badge bg-light text-muted small">{item.employee.department}</div>
+                                                        </div>
+                                                    </div>
+                                                    {item.isPaid && <div className="badge bg-success text-white px-2 py-1"><Check size={12} /> Paid</div>}
+                                                </div>
+
+                                                <div className="row g-2 mb-3">
+                                                    <div className="col-6">
+                                                        <div className="bg-light p-2 rounded-3 text-center">
+                                                            <div className="smaller text-muted">Attendance</div>
+                                                            <div className="fw-bold text-dark">{item.daysAttended} Days</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <div className="bg-light p-2 rounded-3 text-center">
+                                                            <div className="smaller text-muted">Total Hours</div>
+                                                            <div className="fw-bold text-dark">{item.totalHours}h</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="p-2 rounded-3 mb-2" style={{ background: '#f0faf8' }}>
+                                                    <div className="d-flex justify-content-between align-items-center mb-1 px-1">
+                                                        <span className="smaller text-muted fw-bold">SALARY AMOUNT</span>
+                                                        {customAmounts[item.employee.id] !== item.calculatedSalary && (
+                                                            <span className="badge smaller" style={{ background: '#d4efea', color: '#16a085' }}>MODIFIED</span>
+                                                        )}
+                                                    </div>
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control form-control-sm border-0 bg-white fw-bold p-2"
+                                                            value={customAmounts[item.employee.id] || 0}
+                                                            onChange={(e) => setCustomAmounts(prev => ({ ...prev, [item.employee.id]: Number(e.target.value) }))}
+                                                            onClick={e => e.stopPropagation()}
+                                                            disabled={item.isPaid}
+                                                            style={{ borderRadius: '8px', color: '#16a085' }}
+                                                        />
+                                                        {!item.isPaid && customAmounts[item.employee.id] !== item.calculatedSalary && (
+                                                            <button
+                                                                className="btn btn-sm p-1 text-muted hover:text-teal-500"
+                                                                onClick={(e) => { e.stopPropagation(); setCustomAmounts(prev => ({ ...prev, [item.employee.id]: item.calculatedSalary })); }}
+                                                            >
+                                                                <RotateCcw size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </>
+                )}
+            </div>
+
+            {/* Modals */}
+            <AddEmployeeModal
+                isOpen={isAddModalOpen}
+                initialData={editingEmployee}
+                onClose={() => { setIsAddModalOpen(false); setEditingEmployee(null); }}
+                onSuccess={() => loadEmployees()}
+            />
+
+            {/* Batch Payment Modal */}
+            <Modal isOpen={showBatchModal} onClose={() => setShowBatchModal(false)} title="Batch Salary Disbursement" size="md" draggable={true}>
+                <div className="p-2">
+                    <div className="alert alert-info border-0 shadow-sm d-flex align-items-center gap-3 mb-4" style={{ borderRadius: '12px' }}>
+                        <div className="bg-info text-white p-2 rounded-circle"><AlertCircle size={20} /></div>
+                        <div>
+                            <div className="fw-bold">Ready to pay {selectedEmployees.size} staff</div>
+                            <div className="small">Total Disbursement: <span className="fw-bold">{formatCurrency(selectedTotal)}</span></div>
+                        </div>
+                    </div>
+
+                    <label className="fw-bold text-muted small mb-2 d-block">CHOOSE PAYMENT METHOD</label>
+                    <div className="row g-3 mb-4">
+                        {PAYMENT_CHANNELS.map(ch => (
+                            <div key={ch.id} className="col-12">
+                                <div
+                                    className={`p-3 border-2 cursor-pointer transition-all d-flex align-items-center justify-content-between ${batchChannel === ch.id ? '' : 'hover:bg-light'}`}
+                                    onClick={() => setBatchChannel(ch.id)}
+                                    style={{ borderRadius: '12px', border: batchChannel === ch.id ? '2px solid #16a085' : '2px solid #e9ecef', background: batchChannel === ch.id ? '#f0faf8' : '' }}
+                                >
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className={`p-2 rounded-3 ${ch.bgColor} ${ch.color}`}><ch.icon size={20} /></div>
+                                        <div>
+                                            <div className="fw-bold text-dark">{ch.name}</div>
+                                            <div className="smaller text-muted">{ch.description}</div>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: batchChannel === ch.id ? '#16a085' : 'transparent', border: batchChannel === ch.id ? 'none' : '2px solid #ccc' }}>
+                                        {batchChannel === ch.id && <Check size={14} color="white" />}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        onClick={handleBatchPay}
+                        disabled={isBatchPaying}
+                        className="btn w-100 py-2 fw-bold text-white"
+                        style={{ borderRadius: '10px', background: '#16a085', border: 'none', fontSize: '14px' }}
+                    >
+                        {isBatchPaying ? <><RotateCcw className="spinning me-2" size={16} /> Processing...</> : <><Send size={16} className="me-2" /> Disburse {formatCurrency(selectedTotal)}</>}
+                    </button>
+                </div>
+            </Modal>
+            <style>{`
+                .bg-orange-600 { background-color: #ea580c !important; }
+                .text-white { color: #ffffff !important; }
+                .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; }
+                .hover\:bg-light:hover { background-color: #f8f9fa !important; }
+                .scale-102 { transform: scale(1.02); }
+                .smaller { font-size: 0.75rem; }
+                .spinning { animation: spin 1s linear infinite; }
+                @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+            `}</style>
+        </div>
+    );
+}
+
+function Check({ size, color }: { size?: number, color?: string }) {
+    return <svg width={size || 16} height={size || 16} viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+}
