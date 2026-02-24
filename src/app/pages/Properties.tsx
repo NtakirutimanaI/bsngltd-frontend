@@ -4,14 +4,7 @@ import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { useLanguage } from "@/app/context/LanguageContext";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/app/components/ui/pagination";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { Modal } from '@/app/components/Modal';
 import { useDebounce } from "@/app/hooks/useDebounce";
 
@@ -52,6 +45,8 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
@@ -61,7 +56,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
     setIsLoading(true);
     const query = new URLSearchParams({
       page: currentPage.toString(),
-      limit: '6',
+      limit: pageSize.toString(),
       search: debouncedSearchTerm,
       type: filterType,
       status: filterStatus,
@@ -72,13 +67,14 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
       .then(res => {
         setProperties(res.data || []);
         setTotalPages(res.lastPage || 1);
+        setTotalItems(res.total || 0);
         setIsLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch properties", err);
         setIsLoading(false);
       });
-  }, [currentPage, debouncedSearchTerm, filterType, filterStatus, refreshKey]);
+  }, [currentPage, pageSize, debouncedSearchTerm, filterType, filterStatus, refreshKey]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -312,35 +308,17 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
       {/* Pagination */}
       {totalPages > 1 && (
         <ScrollReveal delay={0.3} className="py-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className={currentPage === 1 ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={currentPage === page}
-                    onClick={() => setCurrentPage(page)}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className={currentPage === totalPages ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationSelector
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1); // Reset to first page when changing page size
+            }}
+          />
         </ScrollReveal>
       )}
 

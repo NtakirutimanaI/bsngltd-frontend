@@ -17,14 +17,7 @@ import {
 import { AddProjectModal } from "@/app/components/AddProjectModal";
 import { fetchApi } from '../api/client';
 import { ScrollReveal } from "@/app/components/ScrollReveal";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/app/components/ui/pagination";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { Modal } from '@/app/components/Modal';
 import { useAuth } from "@/app/context/AuthContext";
 import { useDebounce } from "@/app/hooks/useDebounce";
@@ -91,6 +84,8 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -112,7 +107,7 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
     setIsLoading(true);
     const query = new URLSearchParams({
       page: currentPage.toString(),
-      limit: '6',
+      limit: pageSize.toString(),
       search: debouncedSearchTerm,
       status: filterStatus
     }).toString();
@@ -121,13 +116,14 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
       .then(res => {
         setProjects(res.data || []);
         setTotalPages(res.lastPage || 1);
+        setTotalItems(res.total || 0);
         setIsLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch projects", err);
         setIsLoading(false);
       });
-  }, [currentPage, debouncedSearchTerm, filterStatus, refreshKey]);
+  }, [currentPage, pageSize, debouncedSearchTerm, filterStatus, refreshKey]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -286,7 +282,25 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                 <div className="d-flex gap-2">
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="btn btn-outline-secondary btn-sm flex-fill d-flex align-items-center justify-content-center gap-2"
+                    className="btn btn-sm flex-fill d-flex align-items-center justify-content-center gap-2"
+                    style={{ 
+                      background: 'transparent',
+                      border: '2px solid #16a085',
+                      color: '#16a085',
+                      fontWeight: 600,
+                      fontSize: '11px',
+                      height: '30px',
+                      borderRadius: '8px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#16a085';
+                      e.currentTarget.style.color = '#fff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = '#16a085';
+                    }}
                   >
                     <Eye className="w-4 h-4" />
                     View Details
@@ -295,8 +309,25 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                     <>
                       <button
                         onClick={() => setEditingProject(project)}
-                        className="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
+                        className="btn btn-sm d-flex align-items-center justify-content-center"
                         title="Edit Project"
+                        style={{ 
+                          background: '#16a085',
+                          border: 'none',
+                          color: '#fff',
+                          fontWeight: 600,
+                          fontSize: '11px',
+                          height: '30px',
+                          borderRadius: '8px',
+                          transition: 'all 0.2s ease',
+                          padding: '0 12px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#1a9b7d';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#16a085';
+                        }}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -312,8 +343,27 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                             }
                           }
                         }}
-                        className="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
+                        className="btn btn-sm d-flex align-items-center justify-content-center"
                         title="Delete Project"
+                        style={{ 
+                          background: 'transparent',
+                          border: '2px solid #dc3545',
+                          color: '#dc3545',
+                          fontWeight: 600,
+                          fontSize: '11px',
+                          height: '30px',
+                          borderRadius: '8px',
+                          transition: 'all 0.2s ease',
+                          padding: '0 12px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#dc3545';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = '#dc3545';
+                        }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -336,35 +386,17 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
       {/* Pagination */}
       {totalPages > 1 && (
         <ScrollReveal delay={0.3} className="py-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className={currentPage === 1 ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={currentPage === page}
-                    onClick={() => setCurrentPage(page)}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className={currentPage === totalPages ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationSelector
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1); // Reset to first page when changing page size
+            }}
+          />
         </ScrollReveal>
       )}
 
@@ -477,10 +509,58 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
               </div>
             </div>
 
-            <div className="d-flex justify-content-end gap-1.5 pt-2.5 border-top border-gray-100 dark:border-gray-800">
-              <button type="button" className="btn btn-light text-xs h-6 px-2" onClick={() => setSelectedProject(null)}>Close</button>
+            <div className="d-flex justify-content-end gap-2 pt-3 border-top border-gray-100 dark:border-gray-800">
+              <button 
+                type="button" 
+                className="btn d-flex align-items-center gap-2" 
+                onClick={() => setSelectedProject(null)}
+                style={{ 
+                  background: 'transparent',
+                  border: '2px solid #6c757d',
+                  color: '#6c757d',
+                  fontWeight: 600,
+                  fontSize: '12px',
+                  height: '32px',
+                  borderRadius: '8px',
+                  transition: 'all 0.2s ease',
+                  padding: '0 16px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#6c757d';
+                  e.currentTarget.style.color = '#fff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = '#6c757d';
+                }}
+              >
+                Close
+              </button>
               {isAdminOrManager && (
-                <button onClick={() => { setEditingProject(selectedProject); setSelectedProject(null); }} className="btn btn-primary text-xs h-6 px-2">Edit</button>
+                <button 
+                  onClick={() => { setEditingProject(selectedProject); setSelectedProject(null); }} 
+                  className="btn d-flex align-items-center gap-2"
+                  style={{ 
+                    background: '#16a085',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    transition: 'all 0.2s ease',
+                    padding: '0 16px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1a9b7d';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#16a085';
+                  }}
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Project
+                </button>
               )}
             </div>
           </div>

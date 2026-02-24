@@ -155,174 +155,190 @@ export function Calendar() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
       {/* Header */}
-      <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Schedule & Calendar</h1>
-          <p className="text-gray-600 mt-1">Manage project timelines and important dates</p>
+          <h1 className="h5 fw-bold text-dark mb-0">Schedule & Calendar</h1>
+          <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage project timelines and important dates</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
-          <Plus className="h-5 w-5" />
-          Add Event
+        <button className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1" style={{
+          background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
+        }}>
+          <Plus size={13} /> Add Event
         </button>
       </ScrollReveal>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="row g-2 mx-2 mx-md-4">
         {/* Calendar */}
-        <ScrollReveal delay={0.1} className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          {/* Calendar Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-            </h2>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={previousMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronLeft className="h-5 w-5 text-gray-600" />
-              </button>
-              <button
-                onClick={() => setCurrentDate(new Date())}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Today
-              </button>
-              <button
-                onClick={nextMonth}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ChevronRight className="h-5 w-5 text-gray-600" />
-              </button>
-            </div>
-          </div>
-
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-2">
-            {/* Day headers */}
-            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div
-                key={day}
-                className="text-center text-sm font-semibold text-gray-600 py-2"
-              >
-                {day}
+        <ScrollReveal delay={0.1} className="col-lg-8">
+          <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
+            <div className="card-body p-3">
+              {/* Calendar Header */}
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <h2 className="h6 fw-semibold text-dark mb-0" style={{ fontSize: '14px' }}>
+                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                </h2>
+                <div className="d-flex align-items-center gap-2">
+                  <button
+                    onClick={previousMonth}
+                    className="btn btn-sm btn-light p-1" style={{ borderRadius: '6px' }}
+                  >
+                    <ChevronLeft size={12} className="text-muted" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentDate(new Date())}
+                    className="btn btn-sm btn-light px-2 py-1" style={{ fontSize: '11px', borderRadius: '6px' }}
+                  >
+                    Today
+                  </button>
+                  <button
+                    onClick={nextMonth}
+                    className="btn btn-sm btn-light p-1" style={{ borderRadius: '6px' }}
+                  >
+                    <ChevronRight size={12} className="text-muted" />
+                  </button>
+                </div>
               </div>
-            ))}
 
-            {/* Empty cells for days before month starts */}
-            {Array.from({ length: startingDayOfWeek }).map((_, index) => (
-              <div key={`empty-${index}`} className="aspect-square" />
-            ))}
-
-            {/* Calendar days */}
-            {Array.from({ length: daysInMonth }).map((_, index) => {
-              const day = index + 1;
-              const dayEvents = getEventsForDate(day);
-              const isToday =
-                day === new Date().getDate() &&
-                currentDate.getMonth() === new Date().getMonth() &&
-                currentDate.getFullYear() === new Date().getFullYear();
-
-              return (
-                <div
-                  key={day}
-                  className={`aspect-square border border-gray-200 rounded-lg p-2 cursor-pointer hover:bg-gray-50 transition-colors ${isToday ? "bg-orange-50 border-orange-300" : ""
-                    }`}
-                >
+              {/* Calendar Grid */}
+              <div className="row g-1">
+                {/* Day headers */}
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                   <div
-                    className={`text-sm font-medium mb-1 ${isToday ? "text-orange-600" : "text-gray-900"
-                      }`}
+                    key={day}
+                    className="col text-center text-muted fw-semibold py-1" style={{ fontSize: '10px' }}
                   >
                     {day}
                   </div>
-                  <div className="space-y-1">
-                    {dayEvents.slice(0, 2).map((event) => (
+                ))}
+
+                {/* Empty cells for days before month starts */}
+                {Array.from({ length: startingDayOfWeek }).map((_, index) => (
+                  <div key={`empty-${index}`} className="col" />
+                ))}
+
+                {/* Calendar days */}
+                {Array.from({ length: daysInMonth }).map((_, index) => {
+                  const day = index + 1;
+                  const dayEvents = getEventsForDate(day);
+                  const isToday =
+                    day === new Date().getDate() &&
+                    currentDate.getMonth() === new Date().getMonth() &&
+                    currentDate.getFullYear() === new Date().getFullYear();
+
+                  return (
+                    <div
+                      key={day}
+                      className={`col border border-secondary-subtle rounded p-1 cursor-pointer hover:bg-light ${isToday ? "bg-warning-subtle border-warning" : ""
+                        }`}
+                      style={{ minHeight: '60px' }}
+                    >
                       <div
-                        key={event.id}
-                        className={`${getTypeColor(
-                          event.type
-                        )} h-1 rounded-full`}
-                      />
-                    ))}
-                    {dayEvents.length > 2 && (
-                      <div className="text-xs text-gray-600">+{dayEvents.length - 2}</div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                        className={`small fw-medium mb-1 ${isToday ? "text-warning" : "text-dark"
+                          }`}
+                        style={{ fontSize: '11px' }}
+                      >
+                        {day}
+                      </div>
+                      <div className="d-flex flex-column gap-1">
+                        {dayEvents.slice(0, 2).map((event) => (
+                          <div
+                            key={event.id}
+                            className={`${getTypeColor(
+                              event.type
+                            )} rounded`}
+                            style={{ height: '2px' }}
+                          />
+                        ))}
+                        {dayEvents.length > 2 && (
+                          <div className="text-muted" style={{ fontSize: '8px' }}>+{dayEvents.length - 2}</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </ScrollReveal>
 
         {/* Upcoming Events */}
-        <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Events</h3>
-          <div className="space-y-4">
-            {events
-              .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-              .slice(0, 5)
-              .map((event, index) => (
-                <ScrollReveal
-                  key={event.id}
-                  delay={0.3 + index * 0.1}
-                  className="p-4 border border-gray-200 rounded-lg hover:border-orange-300 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="text-2xl">{getTypeIcon(event.type)}</div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-gray-900 text-sm mb-1">
-                        {event.title}
-                      </h4>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <CalendarIcon className="h-3 w-3" />
-                          <span>{event.date}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <Clock className="h-3 w-3" />
-                          <span>{event.time}</span>
-                        </div>
-                        {event.location && (
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <MapPin className="h-3 w-3" />
-                            <span className="truncate">{event.location}</span>
+        <ScrollReveal delay={0.2} className="col-lg-4">
+          <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
+            <div className="card-body p-3">
+              <h3 className="h6 fw-semibold text-dark mb-3" style={{ fontSize: '14px' }}>Upcoming Events</h3>
+              <div className="d-flex flex-column gap-2">
+                {events
+                  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                  .slice(0, 5)
+                  .map((event, index) => (
+                    <ScrollReveal
+                      key={event.id}
+                      delay={0.3 + index * 0.1}
+                      className="p-2 border border-secondary-subtle rounded hover:border-warning transition-all cursor-pointer small"
+                    >
+                      <div className="d-flex align-items-start gap-2">
+                        <div className="fs-6">{getTypeIcon(event.type)}</div>
+                        <div className="flex-fill">
+                          <h4 className="fw-medium text-dark mb-1" style={{ fontSize: '12px' }}>
+                            {event.title}
+                          </h4>
+                          <div className="d-flex flex-column gap-1">
+                            <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '10px' }}>
+                              <CalendarIcon size={10} />
+                              <span>{event.date}</span>
+                            </div>
+                            <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '10px' }}>
+                              <Clock size={10} />
+                              <span>{event.time}</span>
+                            </div>
+                            {event.location && (
+                              <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '10px' }}>
+                                <MapPin size={10} />
+                                <span className="text-truncate">{event.location}</span>
+                              </div>
+                            )}
+                            {event.project && (
+                              <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '10px' }}>
+                                <Building2 size={10} />
+                                <span className="text-truncate">{event.project}</span>
+                              </div>
+                            )}
                           </div>
-                        )}
-                        {event.project && (
-                          <div className="flex items-center gap-2 text-xs text-gray-600">
-                            <Building2 className="h-3 w-3" />
-                            <span className="truncate">{event.project}</span>
-                          </div>
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              ))}
+                    </ScrollReveal>
+                  ))}
+              </div>
+            </div>
           </div>
         </ScrollReveal>
       </div>
 
       {/* Event Legend */}
-      <ScrollReveal delay={0.3} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Event Types</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-blue-500 rounded"></div>
-            <span className="text-sm text-gray-700">Meetings</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-red-500 rounded"></div>
-            <span className="text-sm text-gray-700">Deadlines</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-orange-500 rounded"></div>
-            <span className="text-sm text-gray-700">Inspections</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-4 w-4 bg-green-500 rounded"></div>
-            <span className="text-sm text-gray-700">Deliveries</span>
+      <ScrollReveal delay={0.3} className="mx-2 mx-md-4">
+        <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
+          <div className="card-body p-3">
+            <h3 className="h6 fw-semibold text-dark mb-3" style={{ fontSize: '14px' }}>Event Types</h3>
+            <div className="row g-2">
+              <div className="col-6 col-md-3 d-flex align-items-center gap-2">
+                <div className="bg-primary rounded" style={{ width: '12px', height: '12px' }}></div>
+                <span className="text-muted" style={{ fontSize: '11px' }}>Meetings</span>
+              </div>
+              <div className="col-6 col-md-3 d-flex align-items-center gap-2">
+                <div className="bg-danger rounded" style={{ width: '12px', height: '12px' }}></div>
+                <span className="text-muted" style={{ fontSize: '11px' }}>Deadlines</span>
+              </div>
+              <div className="col-6 col-md-3 d-flex align-items-center gap-2">
+                <div className="bg-warning rounded" style={{ width: '12px', height: '12px' }}></div>
+                <span className="text-muted" style={{ fontSize: '11px' }}>Inspections</span>
+              </div>
+              <div className="col-6 col-md-3 d-flex align-items-center gap-2">
+                <div className="bg-success rounded" style={{ width: '12px', height: '12px' }}></div>
+                <span className="text-muted" style={{ fontSize: '11px' }}>Deliveries</span>
+              </div>
+            </div>
           </div>
         </div>
       </ScrollReveal>

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { AddPaymentModal } from "@/app/components/AddPaymentModal";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { fetchApi } from '../api/client';
 import { useAuth } from "@/app/context/AuthContext";
 import { useCurrency } from "@/app/context/CurrencyContext";
@@ -66,6 +67,10 @@ export function Finance() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     // Ledger State
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -81,7 +86,7 @@ export function Finance() {
         } else {
             loadSalaryHistory();
         }
-    }, [activeTab, filterStatus, selectedMonth, selectedYear]);
+    }, [activeTab, filterStatus, selectedMonth, selectedYear, currentPage, pageSize]);
 
     const loadTransactions = async () => {
         setIsLoading(true);
@@ -89,10 +94,13 @@ export function Finance() {
             const query = new URLSearchParams({
                 search: searchTerm,
                 status: filterStatus,
-                limit: '100'
+                page: currentPage.toString(),
+                limit: pageSize.toString()
             }).toString();
             const res = await fetchApi<any>(`/payments?${query}`);
             setTransactions(res.data || []);
+            setTotalPages(res.lastPage || 1);
+            setTotalItems(res.total || 0);
         } catch (err) {
             toast.error("Failed to load transactions");
         } finally {
@@ -146,7 +154,7 @@ export function Finance() {
         .reduce((sum, t) => sum + t.amount, 0);
 
     return (
-        <div className="container-fluid p-4">
+        <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
             {/* Loading Overlay */}
             {isLoading && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white/50 z-50">
@@ -157,37 +165,39 @@ export function Finance() {
             )}
 
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 mb-4">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
                 <div>
-                    <h1 className="h3 fw-bold text-dark">Finance Hub</h1>
-                    <p className="text-muted mt-1">Unified view of all company transactions and payroll history</p>
+                    <h1 className="h5 fw-bold text-dark mb-0">Finance Hub</h1>
+                    <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Unified view of all company transactions and payroll history</p>
                 </div>
                 <div className="d-flex gap-2">
                     {activeTab === 'ledger' && isAdminOrManager && (
                         <button
                             onClick={() => setIsAddModalOpen(true)}
-                            className="btn px-4 py-2 text-white border-0 shadow-lg d-flex align-items-center gap-2"
-                            style={{ background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)', borderRadius: '12px', fontWeight: '600' }}
+                            className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
+                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
                         >
-                            <Plus size={18} /> New Transaction
+                            <Plus size={13} /> New Transaction
                         </button>
                     )}
-                    <button className="btn btn-outline-secondary px-3" style={{ borderRadius: '12px' }}>
-                        <Download size={18} /> Export
+                    <button className="btn px-3 py-1 d-flex align-items-center gap-1" style={{
+                        background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px'
+                    }}>
+                        <Download size={13} /> Export
                     </button>
                 </div>
             </ScrollReveal>
 
             {/* Quick Stats */}
-            <div className="row g-4 mb-4">
+            <div className="row g-2 mb-2 mx-2 mx-md-4">
                 <div className="col-md-4">
                     <ScrollReveal delay={0.1}>
-                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '16px' }}>
-                            <div className="card-body position-relative">
-                                <div className="text-muted small fw-bold text-uppercase mb-1">Total Cash In</div>
-                                <h3 className="fw-bold text-success mb-0">{formatAmount(totalIncome)}</h3>
-                                <div className="position-absolute end-0 top-50 translate-middle-y me-3 opacity-10">
-                                    <TrendingUp size={48} className="text-success" />
+                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
+                            <div className="card-body position-relative py-2">
+                                <div className="text-muted small fw-bold text-uppercase mb-1" style={{ fontSize: '10px' }}>Total Cash In</div>
+                                <h4 className="fw-bold text-success mb-0" style={{ fontSize: '16px' }}>{formatAmount(totalIncome)}</h4>
+                                <div className="position-absolute end-0 top-50 translate-middle-y me-2 opacity-10">
+                                    <TrendingUp size={32} className="text-success" />
                                 </div>
                             </div>
                         </div>
@@ -195,12 +205,12 @@ export function Finance() {
                 </div>
                 <div className="col-md-4">
                     <ScrollReveal delay={0.2}>
-                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '16px' }}>
-                            <div className="card-body position-relative">
-                                <div className="text-muted small fw-bold text-uppercase mb-1">Total Cash Out</div>
-                                <h3 className="fw-bold text-danger mb-0">{formatAmount(totalExpenses)}</h3>
-                                <div className="position-absolute end-0 top-50 translate-middle-y me-3 opacity-10">
-                                    <TrendingDown size={48} className="text-danger" />
+                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
+                            <div className="card-body position-relative py-2">
+                                <div className="text-muted small fw-bold text-uppercase mb-1" style={{ fontSize: '10px' }}>Total Cash Out</div>
+                                <h4 className="fw-bold text-danger mb-0" style={{ fontSize: '16px' }}>{formatAmount(totalExpenses)}</h4>
+                                <div className="position-absolute end-0 top-50 translate-middle-y me-2 opacity-10">
+                                    <TrendingDown size={32} className="text-danger" />
                                 </div>
                             </div>
                         </div>
@@ -208,14 +218,14 @@ export function Finance() {
                 </div>
                 <div className="col-md-4">
                     <ScrollReveal delay={0.3}>
-                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '16px' }}>
-                            <div className="card-body position-relative">
-                                <div className="text-muted small fw-bold text-uppercase mb-1">Net Balance</div>
-                                <h3 className={`fw-bold mb-0 ${totalIncome - totalExpenses >= 0 ? 'text-primary' : 'text-danger'}`}>
+                        <div className="card border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
+                            <div className="card-body position-relative py-2">
+                                <div className="text-muted small fw-bold text-uppercase mb-1" style={{ fontSize: '10px' }}>Net Balance</div>
+                                <h4 className={`fw-bold mb-0 ${totalIncome - totalExpenses >= 0 ? 'text-primary' : 'text-danger'}`} style={{ fontSize: '16px' }}>
                                     {formatAmount(totalIncome - totalExpenses)}
-                                </h3>
-                                <div className="position-absolute end-0 top-50 translate-middle-y me-3 opacity-10">
-                                    <DollarSign size={48} className="text-primary" />
+                                </h4>
+                                <div className="position-absolute end-0 top-50 translate-middle-y me-2 opacity-10">
+                                    <DollarSign size={32} className="text-primary" />
                                 </div>
                             </div>
                         </div>
@@ -224,63 +234,63 @@ export function Finance() {
             </div>
 
             {/* Hub Tabs */}
-            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '16px', overflow: 'hidden' }}>
+            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
                 <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-2 gap-2">
+                    <div className="nav nav-pills p-1 gap-2">
                         <button
                             onClick={() => setActiveTab('ledger')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'ledger' ? 'bg-emerald-600 text-white shadow-md' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '12px', border: 'none' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'ledger' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'ledger' ? '#16a085' : 'transparent', color: activeTab === 'ledger' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
                         >
-                            <Receipt size={20} /> General Ledger
+                            <Receipt size={14} /> General Ledger
                         </button>
                         <button
                             onClick={() => setActiveTab('payroll_history')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'payroll_history' ? 'bg-emerald-600 text-white shadow-md' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '12px', border: 'none' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'payroll_history' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'payroll_history' ? '#16a085' : 'transparent', color: activeTab === 'payroll_history' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
                         >
-                            <History size={20} /> Payroll History
+                            <History size={14} /> Payroll History
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <ScrollReveal className="mb-4">
-                <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
-                    <div className="card-body py-3">
-                        <div className="row g-3 align-items-center">
+            <ScrollReveal className="mb-2">
+                <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
+                    <div className="card-body py-2">
+                        <div className="row g-2 align-items-center">
                             <div className="col-md-4">
                                 <div className="position-relative">
-                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
+                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />
                                     <input
                                         type="text"
-                                        className="form-control form-control-sm ps-5 bg-light border-0 py-2"
+                                        className="form-control form-control-sm ps-5 bg-light border-0"
                                         placeholder="Search transactions..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{ borderRadius: '10px' }}
+                                        style={{ borderRadius: '8px', fontSize: '12px' }}
                                     />
                                 </div>
                             </div>
                             <div className="col-md-8 d-flex justify-content-md-end gap-2">
                                 {activeTab === 'payroll_history' && (
                                     <>
-                                        <select className="form-select form-select-sm border-0 bg-light w-auto" value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} style={{ borderRadius: '10px' }}>
+                                        <select className="form-select form-select-sm border-0 bg-light w-auto" value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} style={{ borderRadius: '8px', fontSize: '12px' }}>
                                             {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                                         </select>
-                                        <select className="form-select form-select-sm border-0 bg-light w-auto" value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} style={{ borderRadius: '10px' }}>
+                                        <select className="form-select form-select-sm border-0 bg-light w-auto" value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} style={{ borderRadius: '8px', fontSize: '12px' }}>
                                             {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
                                         </select>
                                     </>
                                 )}
-                                <select className="form-select form-select-sm border-0 bg-light w-auto" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ borderRadius: '10px' }}>
+                                <select className="form-select form-select-sm border-0 bg-light w-auto" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ borderRadius: '8px', fontSize: '12px' }}>
                                     <option value="all">All Status</option>
                                     <option value="completed">Completed</option>
                                     <option value="pending">Pending</option>
                                 </select>
-                                <button className="btn btn-light btn-sm p-2" style={{ borderRadius: '10px' }}>
-                                    <Filter size={18} />
+                                <button className="btn btn-light btn-sm p-1" style={{ borderRadius: '6px' }}>
+                                    <Filter size={14} />
                                 </button>
                             </div>
                         </div>
@@ -290,38 +300,38 @@ export function Finance() {
 
             {/* Content Table */}
             <ScrollReveal delay={0.4}>
-                <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
                     <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0">
+                        <table className="table table-hover align-middle mb-0" style={{ fontSize: '12px' }}>
                             <thead className="bg-light">
                                 <tr className="text-muted small text-uppercase">
-                                    <th className="ps-4">Reference</th>
-                                    <th>{activeTab === 'ledger' ? 'Description' : 'Employee'}</th>
-                                    <th>Type / Period</th>
-                                    <th>Amount</th>
-                                    <th>Method</th>
-                                    <th className="pe-4 text-end">Status</th>
+                                    <th className="ps-4" style={{ fontSize: '11px', padding: '8px 16px' }}>Reference</th>
+                                    <th style={{ fontSize: '11px', padding: '8px 16px' }}>{activeTab === 'ledger' ? 'Description' : 'Employee'}</th>
+                                    <th style={{ fontSize: '11px', padding: '8px 16px' }}>Type / Period</th>
+                                    <th style={{ fontSize: '11px', padding: '8px 16px' }}>Amount</th>
+                                    <th style={{ fontSize: '11px', padding: '8px 16px' }}>Method</th>
+                                    <th className="pe-4 text-end" style={{ fontSize: '11px', padding: '8px 16px' }}>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {activeTab === 'ledger' ? (
                                     transactions.map(t => (
                                         <tr key={t.id}>
-                                            <td className="ps-4 py-3">
+                                            <td className="ps-4 py-2">
                                                 <div className="d-flex align-items-center gap-2">
-                                                    {t.type === 'client_payment' ? <ArrowDownLeft className="text-success" size={16} /> : <ArrowUpRight className="text-danger" size={16} />}
-                                                    <span className="fw-bold text-dark">{t.code}</span>
+                                                    {t.type === 'client_payment' ? <ArrowDownLeft className="text-success" size={12} /> : <ArrowUpRight className="text-danger" size={12} />}
+                                                    <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>{t.code}</span>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div className="text-dark small fw-medium">{t.description}</div>
-                                                <div className="smaller text-muted">{t.payer} → {t.payee}</div>
+                                            <td className="py-2">
+                                                <div className="text-dark small fw-medium" style={{ fontSize: '11px' }}>{t.description}</div>
+                                                <div className="smaller text-muted" style={{ fontSize: '10px' }}>{t.payer} → {t.payee}</div>
                                             </td>
-                                            <td><span className={`badge px-2 py-1 ${getTypeColor(t.type)}`}>{t.type.replace('_', ' ').toUpperCase()}</span></td>
-                                            <td className="fw-bold">{formatAmount(t.amount)}</td>
-                                            <td className="text-muted small text-capitalize">{t.method.replace('_', ' ')}</td>
-                                            <td className="pe-4 text-end">
-                                                <span className={`badge rounded-pill px-3 py-1 ${t.status === 'completed' ? 'bg-success text-white' : 'bg-warning text-dark'}`}>
+                                            <td className="py-2"><span className={`badge px-2 py-1 ${getTypeColor(t.type)}`} style={{ fontSize: '10px' }}>{t.type.replace('_', ' ').toUpperCase()}</span></td>
+                                            <td className="fw-bold py-2" style={{ fontSize: '12px' }}>{formatAmount(t.amount)}</td>
+                                            <td className="text-muted small text-capitalize py-2" style={{ fontSize: '10px' }}>{t.method.replace('_', ' ')}</td>
+                                            <td className="pe-4 text-end py-2">
+                                                <span className={`badge rounded-pill px-2 py-1 ${t.status === 'completed' ? 'bg-success text-white' : 'bg-warning text-dark'}`} style={{ fontSize: '10px' }}>
                                                     {t.status}
                                                 </span>
                                             </td>
@@ -330,30 +340,30 @@ export function Finance() {
                                 ) : (
                                     salaryHistory.map(h => (
                                         <tr key={h.id}>
-                                            <td className="ps-4 py-3">
+                                            <td className="ps-4 py-2">
                                                 <div className="d-flex align-items-center gap-2">
-                                                    <CreditCard className="text-primary" size={16} />
-                                                    <span className="fw-bold text-dark">{h.transactionId || 'SAL-REF'}</span>
+                                                    <CreditCard className="text-primary" size={12} />
+                                                    <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>{h.transactionId || 'SAL-REF'}</span>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div className="text-dark small fw-bold">{h.employee?.name}</div>
-                                                <div className="smaller text-muted">ID: {h.employee?.employeeId}</div>
+                                            <td className="py-2">
+                                                <div className="text-dark small fw-bold" style={{ fontSize: '11px' }}>{h.employee?.name}</div>
+                                                <div className="smaller text-muted" style={{ fontSize: '10px' }}>ID: {h.employee?.employeeId}</div>
                                             </td>
-                                            <td><span className="badge bg-light text-dark">{MONTHS[h.salaryMonth - 1]} {h.salaryYear}</span></td>
-                                            <td className="fw-bold text-primary">{formatAmount(h.amount)}</td>
-                                            <td className="text-muted small text-capitalize">{h.paymentMethod?.replace('_', ' ')}</td>
-                                            <td className="pe-4 text-end">
-                                                <span className="badge bg-success-subtle text-success px-3 py-1 rounded-pill">Paid</span>
+                                            <td className="py-2"><span className="badge bg-light text-dark" style={{ fontSize: '10px' }}>{MONTHS[h.salaryMonth - 1]} {h.salaryYear}</span></td>
+                                            <td className="fw-bold text-primary py-2" style={{ fontSize: '12px' }}>{formatAmount(h.amount)}</td>
+                                            <td className="text-muted small text-capitalize py-2" style={{ fontSize: '10px' }}>{h.paymentMethod?.replace('_', ' ')}</td>
+                                            <td className="pe-4 text-end py-2">
+                                                <span className="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style={{ fontSize: '10px' }}>Paid</span>
                                             </td>
                                         </tr>
                                     ))
                                 )}
                                 {(activeTab === 'ledger' ? transactions.length : salaryHistory.length) === 0 && (
                                     <tr>
-                                        <td colSpan={6} className="text-center py-5 text-muted">
-                                            <Receipt size={40} className="mb-3 opacity-25" />
-                                            <div>No records found for the selected criteria</div>
+                                        <td colSpan={6} className="text-center py-4 text-muted">
+                                            <Receipt size={32} className="mb-2 opacity-25" />
+                                            <div style={{ fontSize: '12px' }}>No records found for selected criteria</div>
                                         </td>
                                     </tr>
                                 )}
@@ -362,6 +372,23 @@ export function Finance() {
                     </div>
                 </div>
             </ScrollReveal>
+
+            {/* Pagination for Transactions */}
+            {activeTab === 'ledger' && totalPages > 1 && (
+                <div className="px-2 px-md-4 py-3">
+                    <PaginationSelector
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        pageSize={pageSize}
+                        totalItems={totalItems}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={(newSize) => {
+                            setPageSize(newSize);
+                            setCurrentPage(1); // Reset to first page when changing page size
+                        }}
+                    />
+                </div>
+            )}
 
             {/* Modals */}
             <AddPaymentModal

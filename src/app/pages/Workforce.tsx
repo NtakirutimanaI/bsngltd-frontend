@@ -9,7 +9,6 @@ import {
     Edit2,
     Trash2,
     Eye,
-    CheckCircle,
     Save,
     Send,
     Smartphone,
@@ -21,6 +20,7 @@ import {
     RefreshCw,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { Modal } from "@/app/components/Modal";
 import { fetchApi } from '../api/client';
 import { useAuth } from "@/app/context/AuthContext";
@@ -114,6 +114,10 @@ export function Workforce() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     // 1. Directory State
     const [employees, setEmployees] = useState<Employee[]>([]);
@@ -145,13 +149,20 @@ export function Workforce() {
         } else if (activeTab === 'payroll' && isAdminOrManager) {
             loadPayrollData();
         }
-    }, [activeTab, selectedDate, selectedMonth, selectedYear, employees]);
+    }, [activeTab, selectedDate, selectedMonth, selectedYear, employees, currentPage, pageSize]);
 
     // Data Loaders
     const loadEmployees = async () => {
         try {
-            const res = await fetchApi<any>('/employees?limit=100');
+            const query = new URLSearchParams({
+                page: currentPage.toString(),
+                limit: pageSize.toString(),
+                search: searchTerm
+            }).toString();
+            const res = await fetchApi<any>(`/employees?${query}`);
             setEmployees(res.data || []);
+            setTotalPages(res.lastPage || 1);
+            setTotalItems(res.total || 0);
         } catch (err) {
             toast.error("Failed to load employees");
         }
@@ -275,8 +286,10 @@ export function Workforce() {
         .filter(emp =>
             emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             emp.employeeId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            emp.department.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+            emp.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.department?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const selectedTotal = Array.from(selectedEmployees).reduce((sum, id) => {
         const item = payrollData.find(p => p.employee.id === id);
@@ -284,95 +297,119 @@ export function Workforce() {
     }, 0);
 
     return (
-        <div className="container-fluid p-4">
+        <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 mb-4">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
                 <div>
-                    <h1 className="h3 fw-bold text-dark">Workforce Center</h1>
-                    <p className="text-muted mt-1">Manage employees, attendance, and payroll in one place</p>
+                    <h1 className="h5 fw-bold text-dark mb-0">Workforce Center</h1>
+                    <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage employees, attendance, and payroll in one place</p>
                 </div>
                 <div className="d-flex gap-2">
                     {activeTab === 'directory' && isAdminOrManager && (
                         <button
                             onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
-                            className="btn px-3 py-2 text-white border-0 d-flex align-items-center gap-2"
-                            style={{ background: '#16a085', borderRadius: '10px', fontWeight: '600', fontSize: '13px' }}
+                            className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
+                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
                         >
-                            <Plus size={15} /> Add Staff
+                            <Plus size={13} /> Add Staff
                         </button>
                     )}
                     {activeTab === 'attendance' && isAdminOrManager && (
                         <button
                             onClick={saveAttendance}
                             disabled={isSavingAttendance}
-                            className={`btn px-3 py-2 text-white border-0 d-flex align-items-center gap-2 ${isSavingAttendance ? 'opacity-75' : ''}`}
-                            style={{ background: '#16a085', borderRadius: '10px', fontWeight: '600', fontSize: '13px' }}
+                            className={`btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1 ${isSavingAttendance ? 'opacity-75' : ''}`}
+                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
                         >
-                            {isSavingAttendance ? <RefreshCw size={15} className="spinning" /> : <Save size={15} />}
+                            {isSavingAttendance ? <RefreshCw size={13} className="spinning" /> : <Save size={13} />}
                             {isSavingAttendance ? 'Saving...' : 'Save Attendance'}
                         </button>
                     )}
-                    <button className="btn btn-outline-secondary px-3" style={{ borderRadius: '12px' }}>
-                        <Download size={18} />
+                    <button 
+                        className="btn px-3 py-1 d-flex align-items-center gap-1"
+                        style={{ background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px' }}
+                    >
+                        <Download size={13} />
                     </button>
                 </div>
             </ScrollReveal>
 
             {/* Hub Tabs */}
-            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '16px', overflow: 'hidden' }}>
+            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
                 <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-2 gap-2">
+                    <div className="nav nav-pills p-1 gap-2">
                         <button
                             onClick={() => setActiveTab('directory')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'directory' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'directory' ? { backgroundColor: '#16a085' } : {}}
-                            style={{ borderRadius: '12px', border: 'none' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'directory' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            style={{ 
+                                borderRadius: '8px', 
+                                border: 'none',
+                                background: activeTab === 'directory' ? '#16a085' : 'transparent',
+                                color: activeTab === 'directory' ? '#fff' : '#6c757d',
+                                fontWeight: 600,
+                                fontSize: '12px'
+                            }}
                         >
-                            <Users size={20} /> Staff Directory
+                            <Users size={14} /> Staff Directory
                         </button>
                         <button
                             onClick={() => setActiveTab('attendance')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'attendance' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'attendance' ? { backgroundColor: '#16a085' } : {}}
-                            style={{ borderRadius: '12px', border: 'none' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'attendance' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            style={{ 
+                                borderRadius: '8px', 
+                                border: 'none',
+                                background: activeTab === 'attendance' ? '#16a085' : 'transparent',
+                                color: activeTab === 'attendance' ? '#fff' : '#6c757d',
+                                fontWeight: 600,
+                                fontSize: '12px'
+                            }}
                         >
-                            <CalendarDays size={20} /> {isAdminOrManager ? 'Daily Attendance' : 'My Attendance'}
+                            <CalendarDays size={14} /> {isAdminOrManager ? 'Daily Attendance' : 'My Attendance'}
                         </button>
                         <button
                             onClick={() => setActiveTab('payroll')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-3 transition-all ${activeTab === 'payroll' ? 'text-white shadow-md' : 'text-muted hover:bg-light'}`} style={activeTab === 'payroll' ? { backgroundColor: '#16a085' } : {}}
-                            style={{ borderRadius: '12px', border: 'none' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'payroll' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            style={{ 
+                                borderRadius: '8px', 
+                                border: 'none',
+                                background: activeTab === 'payroll' ? '#16a085' : 'transparent',
+                                color: activeTab === 'payroll' ? '#fff' : '#6c757d',
+                                fontWeight: 600,
+                                fontSize: '12px'
+                            }}
                         >
-                            <CreditCard size={20} /> Payroll Center
+                            <CreditCard size={14} /> Payroll Center
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <ScrollReveal className="mb-4">
-                <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+            <ScrollReveal className="mb-2">
+                <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
                     <div className="card-body py-3">
-                        <div className="row g-3 align-items-center">
+                        <div className="row g-2 align-items-center">
                             <div className="col-md-5">
                                 <div className="position-relative">
-                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
+                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />
                                     <input
                                         type="text"
-                                        className="form-control form-control-sm ps-5 bg-light border-0 py-2"
+                                        className="form-control form-control-sm ps-5 bg-light border-0 py-1"
                                         placeholder="Search by name, ID or department..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{ borderRadius: '10px' }}
+                                        style={{ borderRadius: '8px' }}
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-7 d-flex justify-content-md-end gap-3 align-items-center">
+                            <div className="col-md-7 d-flex justify-content-md-end gap-2 align-items-center">
                                 {activeTab === 'attendance' ? (
                                     <input
                                         type="date"
                                         className="form-control form-control-sm border-0 bg-light"
                                         value={selectedDate}
                                         onChange={(e) => setSelectedDate(e.target.value)}
-                                        style={{ width: '180px', borderRadius: '10px' }}
+                                        style={{ width: '160px', borderRadius: '8px' }}
                                     />
                                 ) : (
                                     <>
@@ -380,7 +417,7 @@ export function Workforce() {
                                             className="form-select form-select-sm border-0 bg-light"
                                             value={selectedMonth}
                                             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                                            style={{ width: '130px', borderRadius: '10px' }}
+                                            style={{ width: '120px', borderRadius: '8px' }}
                                         >
                                             {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                                         </select>
@@ -388,14 +425,14 @@ export function Workforce() {
                                             className="form-select form-select-sm border-0 bg-light"
                                             value={selectedYear}
                                             onChange={(e) => setSelectedYear(Number(e.target.value))}
-                                            style={{ width: '100px', borderRadius: '10px' }}
+                                            style={{ width: '90px', borderRadius: '8px' }}
                                         >
                                             {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
                                         </select>
                                     </>
                                 )}
-                                <button className="btn btn-light btn-sm p-2" style={{ borderRadius: '10px' }}>
-                                    <Filter size={18} />
+                                <button className="btn btn-light btn-sm p-1" style={{ borderRadius: '8px' }}>
+                                    <Filter size={14} />
                                 </button>
                             </div>
                         </div>
@@ -404,11 +441,11 @@ export function Workforce() {
             </ScrollReveal>
 
             {/* Content Area */}
-            <div className="tab-content mt-4">
+            <div className="tab-content mt-2 px-2 px-md-4">
                 {/* 1. DIRECTORY TAB */}
                 {activeTab === 'directory' && (
                     <ScrollReveal>
-                        <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                        <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
                             <div className="table-responsive">
                                 <table className="table table-hover align-middle mb-0">
                                     <thead className="bg-light">
@@ -423,10 +460,10 @@ export function Workforce() {
                                     </thead>
                                     <tbody>
                                         {filteredEmployees.map(emp => (
-                                            <tr key={emp.id} className="transition-all" style={{ '&:hover': { backgroundColor: 'rgba(22, 160, 133, 0.05)' } }}>
-                                                <td className="ps-4 py-3">
-                                                    <div className="d-flex align-items-center gap-3">
-                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, backgroundColor: '#d4efea', color: '#16a085' }}>
+                                            <tr key={emp.id} className="transition-all">
+                                                <td className="ps-4 py-2">
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, backgroundColor: '#d4efea', color: '#16a085', fontSize: '12px' }}>
                                                             {emp.name.charAt(0)}
                                                         </div>
                                                         <div>
@@ -444,15 +481,31 @@ export function Workforce() {
                                                     </span>
                                                 </td>
                                                 <td className="pe-4 text-end">
-                                                    <button className="btn btn-icon text-muted hover:text-blue-600 p-1"><Eye size={16} /></button>
-                                                    <button className="btn btn-icon text-muted hover:opacity-75 p-1" onClick={() => { setEditingEmployee(emp); setIsAddModalOpen(true); }} style={{ '--hover-color': '#16a085' }}><Edit2 size={16} /></button>
-                                                    <button className="btn btn-icon text-muted hover:text-red-600 p-1"><Trash2 size={16} /></button>
+                                                    <button className="btn btn-icon text-muted hover:text-blue-600 p-0" style={{ color: 'inherit' }}><Eye size={14} /></button>
+                                                    <button className="btn btn-icon text-muted hover:opacity-75 p-0" onClick={() => { setEditingEmployee(emp); setIsAddModalOpen(true); }}><Edit2 size={14} /></button>
+                                                    <button className="btn btn-icon text-muted hover:text-red-600 p-0" style={{ color: 'inherit' }}><Trash2 size={14} /></button>
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+                            {/* Pagination for Directory */}
+                            {activeTab === 'directory' && totalPages > 1 && (
+                                <div className="px-4 py-3">
+                                    <PaginationSelector
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        pageSize={pageSize}
+                                        totalItems={totalItems}
+                                        onPageChange={setCurrentPage}
+                                        onPageSizeChange={(newSize) => {
+                                            setPageSize(newSize);
+                                            setCurrentPage(1); // Reset to first page when changing page size
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </ScrollReveal>
                 )}
@@ -460,7 +513,7 @@ export function Workforce() {
                 {/* 2. ATTENDANCE TAB */}
                 {activeTab === 'attendance' && (
                     <ScrollReveal>
-                        <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
+                        <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
                             <div className="table-responsive">
                                 {isAdminOrManager ? (
                                     <table className="table align-middle table-hover mb-0">
@@ -481,14 +534,14 @@ export function Workforce() {
                                                     <tr key={emp.id}>
                                                         <td className="ps-4">
                                                             <div className="fw-medium text-dark small">{emp.name}</div>
-                                                            <div className="text-muted smaller" style={{ fontSize: 11 }}>{emp.employeeId}</div>
+                                                            <div className="text-muted smaller" style={{ fontSize: '10px' }}>{emp.employeeId}</div>
                                                         </td>
                                                         <td>
                                                             <select
                                                                 className={`form-select form-select-sm border-0 fw-bold ${record.status === 'Present' ? 'text-success' : record.status === 'Absent' ? 'text-danger' : 'text-warning'}`}
                                                                 value={record.status}
                                                                 onChange={(e) => setAttendanceRecords(prev => ({ ...prev, [emp.id]: { ...prev[emp.id], status: e.target.value as any } }))}
-                                                                style={{ width: 110, background: 'transparent' }}
+                                                                style={{ width: 100, background: 'transparent' }}
                                                             >
                                                                 <option value="Present">Present</option>
                                                                 <option value="Absent">Absent</option>
@@ -511,7 +564,7 @@ export function Workforce() {
                                                                         return { ...prev, [emp.id]: updated };
                                                                     });
                                                                 }}
-                                                                style={{ borderRadius: '8px' }}
+                                                                style={{ borderRadius: '6px' }}
                                                             />
                                                         </td>
                                                         <td>
@@ -529,7 +582,7 @@ export function Workforce() {
                                                                         return { ...prev, [emp.id]: updated };
                                                                     });
                                                                 }}
-                                                                style={{ borderRadius: '8px' }}
+                                                                style={{ borderRadius: '6px' }}
                                                             />
                                                         </td>
                                                         <td className="text-center fw-bold" style={{ color: '#16a085' }}>{record.workingHours || 0}h</td>
@@ -591,22 +644,22 @@ export function Workforce() {
                 {/* 3. PAYROLL TAB */}
                 {activeTab === 'payroll' && (
                     <>
-                        <ScrollReveal className="mb-4">
-                            <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
-                                <div className="card-body py-3">
+                        <ScrollReveal className="mb-2">
+                            <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
+                                <div className="card-body py-2">
                                     <div className="d-flex align-items-center justify-content-between">
                                         <div className="d-flex align-items-center gap-3">
                                             <button
                                                 onClick={() => setSelectedEmployees(new Set(payrollData.filter(p => !p.isPaid).map(p => p.employee.id)))}
                                                 className="btn btn-sm px-3"
-                                                style={{ borderRadius: '10px', background: '#e8f8f5', color: '#16a085', border: '1px solid #16a085', fontWeight: 600, fontSize: '12px' }}
+                                                style={{ borderRadius: '8px', background: '#e8f8f5', color: '#16a085', border: '1px solid #16a085', fontWeight: 600, fontSize: '12px' }}
                                             >
                                                 Select All Unpaid
                                             </button>
                                             <button
                                                 onClick={() => setSelectedEmployees(new Set())}
                                                 className="btn btn-sm btn-outline-secondary px-3"
-                                                style={{ borderRadius: '10px', fontSize: '12px' }}
+                                                style={{ borderRadius: '8px', fontSize: '12px' }}
                                             >
                                                 Clear
                                             </button>
@@ -620,7 +673,7 @@ export function Workforce() {
                                             disabled={selectedEmployees.size === 0}
                                             onClick={() => setShowBatchModal(true)}
                                             className="btn btn-sm text-white px-3 d-flex align-items-center gap-2"
-                                            style={{ background: '#16a085', borderRadius: '10px', border: 'none', fontWeight: 600, fontSize: '13px', opacity: selectedEmployees.size === 0 ? 0.5 : 1 }}
+                                            style={{ background: '#16a085', borderRadius: '8px', border: 'none', fontWeight: 600, fontSize: '12px', opacity: selectedEmployees.size === 0 ? 0.5 : 1 }}
                                         >
                                             <Send size={14} /> Pay Selected
                                         </button>
@@ -629,7 +682,7 @@ export function Workforce() {
                             </div>
                         </ScrollReveal>
 
-                        <div className="row g-3">
+                        <div className="row g-2">
                             {payrollData.filter(item =>
                                 item.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 item.employee.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
@@ -640,9 +693,9 @@ export function Workforce() {
                                         <div
                                             className={`card h-100 transition-all cursor-pointer ${isSelected ? 'shadow-lg' : 'shadow-sm hover:shadow-md'}`}
                                             onClick={() => toggleEmployeeSelection(item.employee.id)}
-                                            style={{ borderRadius: '16px', border: isSelected ? '2px solid #16a085' : '2px solid transparent', background: isSelected ? '#f0faf8' : '#fff' }}
+                                            style={{ borderRadius: '12px', border: isSelected ? '2px solid #16a085' : '2px solid transparent', background: isSelected ? '#f0faf8' : '#fff' }}
                                         >
-                                            <div className="card-body p-3">
+                                            <div className="card-body p-2">
                                                 <div className="d-flex justify-content-between align-items-start mb-3">
                                                     <div className="d-flex align-items-center gap-3">
                                                         <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold`} style={{ width: 44, height: 44, background: isSelected ? '#16a085' : '#f0f0f0', color: isSelected ? '#fff' : '#888' }}>
