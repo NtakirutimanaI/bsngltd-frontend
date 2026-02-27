@@ -5,7 +5,13 @@ import { fetchApi } from '../api/client';
 
 export function useTracker() {
     const location = useLocation();
-    const { user } = useAuth();
+    let auth: { user: any | null } | null = null;
+    try {
+        auth = useAuth();
+    } catch {
+        // useAuth might throw if not inside AuthProvider, which is fine for tracking
+    }
+    const user = auth?.user;
 
     useEffect(() => {
         // Only track in production or if needed.

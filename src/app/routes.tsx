@@ -26,9 +26,10 @@ import { Notifications } from "@/app/pages/Notifications";
 import { Workforce } from "@/app/pages/Workforce";
 import { Finance } from "@/app/pages/Finance";
 import { Administration } from "@/app/pages/Administration";
+import { Attendance } from "@/app/pages/Attendance";
+import { ContentManagement } from "@/app/pages/ContentManagement";
 import { Portfolio } from "@/app/pages/Portfolio";
 import { Insights } from "@/app/pages/Insights";
-import { ManageUsers } from "@/app/pages/ManageUsers";
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -65,7 +66,8 @@ export const router = createBrowserRouter([
           { path: "workforce", Component: Workforce },
           { path: "finance", Component: Finance },
           { path: "admin", Component: Administration },
-          { path: "users", Component: ManageUsers },
+          { path: "attendance", Component: Attendance },
+          { path: "content", Component: ContentManagement },
           { path: "insights", Component: Insights },
           { path: "calendar", Component: Calendar },
           { path: "messages", Component: Messages },

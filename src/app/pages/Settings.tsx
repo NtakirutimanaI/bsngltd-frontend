@@ -192,7 +192,7 @@ export function Settings() {
     <div className="space-y-6">
       {/* Header */}
       <ScrollReveal>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        <h1 className="h3 fw-bold text-gray-900 mb-1">Settings</h1>
         <p className="text-gray-600 mt-1">Manage your account and application preferences</p>
       </ScrollReveal>
 
@@ -245,7 +245,7 @@ export function Settings() {
                       type="text"
                       value={profileData.fullName}
                       onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
 
@@ -259,7 +259,7 @@ export function Settings() {
                         type="email"
                         value={profileData.email}
                         onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export function Settings() {
                         type="tel"
                         value={profileData.phone}
                         onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                   </div>
@@ -288,7 +288,7 @@ export function Settings() {
                       <select
                         value={profileData.language}
                         onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none"
                       >
                         <option value="en">English</option>
                         <option value="fr">French</option>
@@ -301,7 +301,7 @@ export function Settings() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                 >
                   {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                   Save Changes
@@ -323,7 +323,7 @@ export function Settings() {
                       type="text"
                       value={companyData.name}
                       onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
 
@@ -335,7 +335,7 @@ export function Settings() {
                       type="email"
                       value={companyData.email}
                       onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
 
@@ -347,7 +347,7 @@ export function Settings() {
                       type="text"
                       value={companyData.phone}
                       onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
 
@@ -359,7 +359,7 @@ export function Settings() {
                       type="text"
                       value={companyData.address}
                       onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
                 </div>
@@ -372,7 +372,7 @@ export function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                    className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                   >
                     {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                     Save Company Info
@@ -397,7 +397,7 @@ export function Settings() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
 
@@ -411,7 +411,7 @@ export function Settings() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
 
@@ -425,7 +425,7 @@ export function Settings() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
 
@@ -439,7 +439,7 @@ export function Settings() {
                     <input
                       type="checkbox"
                       defaultChecked
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
 
@@ -450,7 +450,7 @@ export function Settings() {
                     </div>
                     <input
                       type="checkbox"
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
 
@@ -461,14 +461,14 @@ export function Settings() {
                     </div>
                     <input
                       type="checkbox"
-                      className="h-5 w-5 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                      className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                 >
                   <Save className="h-5 w-5" />
                   Save Preferences
@@ -495,7 +495,7 @@ export function Settings() {
                             type="password"
                             value={passwordData.currentPassword}
                             onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
                       </div>
@@ -510,7 +510,7 @@ export function Settings() {
                             type="password"
                             value={passwordData.newPassword}
                             onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
                       </div>
@@ -525,7 +525,7 @@ export function Settings() {
                             type="password"
                             value={passwordData.confirmPassword}
                             onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                           />
                         </div>
                       </div>
@@ -550,7 +550,7 @@ export function Settings() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex items-center gap-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                    className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                   >
                     {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                     Update Password
@@ -616,7 +616,7 @@ export function Settings() {
                             <span className="text-xs text-gray-500 mt-1">{api.desc}</span>
                           </div>
                           <div className="flex gap-2">
-                            <button onClick={() => { navigator.clipboard.writeText(api.endpoint); toast.success("Endpoint copied") }} className="text-gray-400 hover:text-orange-600">
+                            <button onClick={() => { navigator.clipboard.writeText(api.endpoint); toast.success("Endpoint copied") }} className="text-gray-400 hover:text-emerald-600">
                               <Copy size={14} />
                             </button>
                             <a href="#" className="text-gray-400 hover:text-blue-600">

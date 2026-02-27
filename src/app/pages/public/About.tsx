@@ -51,41 +51,41 @@ export function About() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid" src="/img/about-1.jpg" alt="About" />
+                  <img className="img-fluid" src={settings.about_image_1?.startsWith('http') || settings.about_image_1?.startsWith('/') ? settings.about_image_1 : settings.about_image_1 ? `/uploads/settings/${settings.about_image_1}` : '/img/about-1.jpg'} alt="About 1" />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75" src="/img/about-2.jpg" alt="About" />
-                  <div className="h-25 d-flex align-items-center text-center bg-primary px-4">
-                    <h4 className="text-white lh-base mb-0">Building Excellence Since 2010</h4>
+                  <img className="img-fluid h-75" src={settings.about_image_2?.startsWith('http') || settings.about_image_2?.startsWith('/') ? settings.about_image_2 : settings.about_image_2 ? `/uploads/settings/${settings.about_image_2}` : '/img/about-2.jpg'} alt="About 2" />
+                  <div className="h-25 d-flex align-items-center text-center bg-primary px-4" style={{ background: '#16a085' }}>
+                    <h4 className="text-white lh-base mb-0">{t('buildingExcellenceSince2010')}</h4>
                   </div>
                 </div>
               </div>
             </div>
             <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
               <h1 className="mb-5">
-                <span className="text-uppercase text-primary bg-light px-2">{aboutTitle.split(' ')[0]}</span> {aboutTitle.split(' ').slice(1).join(' ')}
+                <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{aboutTitle.split(' ')[0]}</span> {aboutTitle.split(' ').slice(1).join(' ')}
               </h1>
               <div className="mb-4 text-muted " style={{ whiteSpace: 'pre-wrap' }}>
                 {dt(settings.about_company_history) || t('aboutDesc')}
               </div>
-              <p className="mb-5 fw-bold text-primary italic">
+              <p className="mb-5 fw-bold text-primary italic" style={{ color: '#16a085' }}>
                 {dt(settings.about_vision)}
               </p>
               <div className="row g-3">
                 <div className="col-sm-6">
-                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" />Award Winning</h6>
-                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" />Professional Staff</h6>
+                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('awardWinning')}</h6>
+                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('professionalStaff')}</h6>
                 </div>
                 <div className="col-sm-6">
-                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" />24/7 Support</h6>
-                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" />Fair Prices</h6>
+                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('support24_7')}</h6>
+                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('fairPrices')}</h6>
                 </div>
               </div>
               <div className="d-flex align-items-center mt-5">
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!"><Facebook className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!"><Twitter className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!"><Instagram className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2" href="#!"><Linkedin className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Facebook className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Twitter className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Instagram className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Linkedin className="w-5 h-5" /></a>
               </div>
             </div>
           </div>
@@ -97,23 +97,23 @@ export function About() {
       <div className="container-fluid py-5">
         <div className="container">
           <div className="text-center wow fadeIn" data-wow-delay="0.1s">
-            <h1 className="mb-5">Why People <span className="text-uppercase text-primary bg-light px-2">Choose Us</span></h1>
+            <h1 className="mb-5">{t('whyPeople')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{t('chooseUs')}</span></h1>
           </div>
           <div className="row g-5 align-items-center text-center">
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.1s">
-              <Calendar className="text-primary w-25 h-25 mb-4 mx-auto" strokeWidth={1} />
-              <h4>15+ Years Experience</h4>
-              <p className="mb-0 text-muted">Extensive experience in various construction projects across Rwanda and the region.</p>
+              <Calendar className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <h4>{t('yearsExperience15')}</h4>
+              <p className="mb-0 text-muted">{t('yearsExperienceDesc')}</p>
             </div>
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.3s">
-              <HardHat className="text-primary w-25 h-25 mb-4 mx-auto" strokeWidth={1} />
-              <h4>Professional Construction</h4>
-              <p className="mb-0 text-muted">Using the latest technologies and best practices to ensure structural integrity and beauty.</p>
+              <HardHat className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <h4>{t('professionalConstruction')}</h4>
+              <p className="mb-0 text-muted">{t('professionalConstructionDesc2')}</p>
             </div>
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.5s">
-              <ShieldCheck className="text-primary w-25 h-25 mb-4 mx-auto" strokeWidth={1} />
-              <h4>Guaranteed Quality</h4>
-              <p className="mb-0 text-muted">We stand by our work and guarantee quality in every detail of the construction process.</p>
+              <ShieldCheck className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <h4>{t('guaranteedQuality')}</h4>
+              <p className="mb-0 text-muted">{t('guaranteedQualityDesc')}</p>
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ export function About() {
         <div className="container-fluid bg-light py-5">
           <div className="container py-5">
             <h1 className="mb-5 text-center wow fadeIn" data-wow-delay="0.1s">
-              Our Professional <span className="text-uppercase text-primary bg-light px-2">Team</span>
+              {t('ourProfessional')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{t('team')}</span>
             </h1>
             <div className="row g-4">
               {[
@@ -138,12 +138,12 @@ export function About() {
                   <div className="team-item position-relative overflow-hidden rounded shadow-sm">
                     <img className="img-fluid w-100" src={member.img} alt={member.name} />
                     <div className="team-overlay">
-                      <small className="mb-2 text-uppercase fw-bold text-white" style={{ letterSpacing: '2px' }}>{member.role}</small>
-                      <h4 className="lh-base text-white mb-3">{member.name}</h4>
+                      <small className="mb-2 text-uppercase fw-bold text-white" style={{ letterSpacing: '2px', color: '#16a085' }}>{member.role}</small>
+                      <h4 className="lh-base text-white mb-3" style={{ color: '#16a085' }}>{member.name}</h4>
                       <div className="d-flex justify-content-center">
-                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!"><Facebook className="w-4 h-4" /></a>
-                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!"><Twitter className="w-4 h-4" /></a>
-                        <a className="btn btn-outline-light btn-sm-square border-2" href="#!"><Instagram className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Facebook className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Twitter className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Instagram className="w-4 h-4" /></a>
                       </div>
                     </div>
                   </div>

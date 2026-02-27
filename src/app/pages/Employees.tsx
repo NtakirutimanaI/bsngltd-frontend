@@ -231,7 +231,7 @@ export function Employees() {
                   <h5 className="card-title fw-bold text-dark mb-0">Leave Requests</h5>
                   <button
                     onClick={() => toast.info("Leave request system is being updated. Please contact HR.")}
-                    className="btn btn-link text-orange-600 text-decoration-none fw-medium btn-sm"
+                    className="btn btn-link text-emerald-600 text-decoration-none fw-medium btn-sm"
                   >
                     Request Leave
                   </button>
@@ -318,18 +318,9 @@ export function Employees() {
         {isAdminOrManager && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="btn px-4 py-2 text-white border-0 shadow-lg hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300 d-flex align-items-center gap-2"
-            style={{
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-              borderRadius: '12px',
-              fontWeight: '600',
-              letterSpacing: '0.3px',
-              boxShadow: '0 10px 15px -3px rgba(234, 88, 12, 0.3)'
-            }}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
           >
-            <div className="bg-white/20 rounded-md p-1 d-flex align-items-center justify-content-center">
-              <Plus className="w-4 h-4" strokeWidth={3} />
-            </div>
+            <Plus className="h-4 w-4" />
             <span>{isSiteManager ? 'Add Site Staff' : 'Add Employee'}</span>
           </button>
         )}
@@ -345,8 +336,8 @@ export function Employees() {
                   <small className="text-muted text-uppercase fw-bold">Total Employees</small>
                   <h4 className="fw-bold text-dark my-1">{employees.length}</h4>
                 </div>
-                <div className="bg-primary-subtle p-2 rounded">
-                  <Users className="text-primary w-5 h-5" />
+                <div className="bg-emerald-100 dark:bg-emerald-950/40 p-2 rounded">
+                  <Users className="text-emerald-600 w-5 h-5" />
                 </div>
               </div>
             </div>
@@ -377,8 +368,8 @@ export function Employees() {
                   <small className="text-muted text-uppercase fw-bold">Departments</small>
                   <h4 className="fw-bold text-dark my-1">{departments.length}</h4>
                 </div>
-                <div className="bg-info-subtle p-2 rounded">
-                  <Briefcase className="text-info w-5 h-5" />
+                <div className="bg-emerald-100 dark:bg-emerald-950/40 p-2 rounded">
+                  <Briefcase className="text-emerald-600 w-5 h-5" />
                 </div>
               </div>
             </div>
@@ -486,7 +477,7 @@ export function Employees() {
                     <tr key={employee.id}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center gap-2">
-                          <div className="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center fw-bold small" style={{ width: '32px', height: '32px' }}>
+                          <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold small" style={{ width: '32px', height: '32px' }}>
                             {employee.name.split(" ").map((n) => n[0]).join("")}
                           </div>
                           <div>
@@ -546,10 +537,10 @@ export function Employees() {
                         </span>
                       </td>
                       <td className="pe-4 text-end text-nowrap">
-                        <div className="d-flex align-items-center justify-content-end gap-1">
+                        <div className="d-flex align-items-center justify-content-end gap-2">
                           <button
                             onClick={() => setSelectedEmployee(employee)}
-                            className="btn btn-link text-primary p-1"
+                            className="p-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
                             title="View Details"
                           >
                             <Eye size={16} />
@@ -558,7 +549,7 @@ export function Employees() {
                             <>
                               <button
                                 onClick={() => setEditingEmployee(employee)}
-                                className="btn btn-link text-warning p-1"
+                                className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all hover:scale-110 active:scale-95 border-0 shadow-sm"
                                 title="Edit Employee"
                               >
                                 <Edit size={16} />
@@ -575,7 +566,7 @@ export function Employees() {
                                     }
                                   }
                                 }}
-                                className="btn btn-link text-danger p-1"
+                                className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-all hover:scale-110 active:scale-95 border-0"
                                 title="Delete Employee"
                               >
                                 <Trash2 size={16} />
@@ -651,7 +642,7 @@ export function Employees() {
         {selectedEmployee && (
           <div className="row g-4">
             <div className="col-md-4 text-center border-end">
-              <div className="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center fw-bold mx-auto mb-3" style={{ width: '120px', height: '120px', fontSize: '40px' }}>
+              <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold mx-auto mb-3" style={{ width: '120px', height: '120px', fontSize: '40px' }}>
                 {selectedEmployee.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <h4 className="fw-bold mb-1 text-dark">{selectedEmployee.name}</h4>
@@ -704,10 +695,21 @@ export function Employees() {
                 </div>
               </div>
             </div>
-            <div className="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
-              <button type="button" className="btn btn-light btn-sm" onClick={() => setSelectedEmployee(null)}>Close</button>
+            <div className="col-12 d-flex justify-content-end gap-3 pt-3 border-top mt-2">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
+                onClick={() => setSelectedEmployee(null)}
+              >
+                Close
+              </button>
               {isAdminOrManager && (
-                <button onClick={() => { setEditingEmployee(selectedEmployee); setSelectedEmployee(null); }} className="btn btn-warning btn-sm">Edit Profile</button>
+                <button
+                  onClick={() => { setEditingEmployee(selectedEmployee); setSelectedEmployee(null); }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                >
+                  <Edit size={16} /> Edit Profile
+                </button>
               )}
             </div>
           </div>

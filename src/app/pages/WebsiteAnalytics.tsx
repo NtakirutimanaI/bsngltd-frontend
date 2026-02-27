@@ -57,7 +57,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
             </div>
         );
     }
@@ -79,11 +79,11 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                 <ScrollReveal>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Website Analytics</h1>
+                            <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Website Analytics</h1>
                             <p className="text-gray-500 dark:text-gray-400 mt-1">Track your visitors, locations, and monetization status.</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="px-4 py-2 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-lg text-sm font-bold flex items-center gap-2">
+                            <div className="px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg text-sm font-bold flex items-center gap-2">
                                 <Activity className="h-4 w-4" />
                                 Live Tracking Active
                             </div>
@@ -96,7 +96,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                     { label: "Daily Visitors", value: data?.overview.daily, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-orange-600", bg: "bg-orange-50" },
+                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
                     { label: "Monthly Visitors", value: data?.overview.monthly, icon: Globe, color: "text-green-600", bg: "bg-green-50" },
                     { label: "Ad Revenue (Est.)", value: "$124.50", icon: DollarSign, color: "text-purple-600", bg: "bg-purple-50" },
                 ].map((stat, i) => (
@@ -123,7 +123,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                 <ScrollReveal delay={0.4} className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
-                            <BarChart3 className="h-5 w-5 text-orange-500" />
+                            <BarChart3 className="h-5 w-5 text-emerald-500" />
                             Visitor Statistics
                         </h3>
                     </div>
@@ -200,7 +200,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                             data.topMembers.map((member, i) => (
                                 <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-full flex items-center justify-center font-bold">
+                                        <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-full flex items-center justify-center font-bold">
                                             {member.name.charAt(0)}
                                         </div>
                                         <div>
@@ -209,7 +209,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-sm font-bold text-orange-600">{member.visits}</div>
+                                        <div className="text-sm font-bold text-emerald-600">{member.visits}</div>
                                         <div className="text-[10px] text-gray-400 uppercase font-bold">Visits</div>
                                     </div>
                                 </div>

@@ -7,6 +7,7 @@ import {
     CheckCircle,
     XCircle,
     Layout,
+    RefreshCcw,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from '../api/client';
@@ -113,14 +114,14 @@ export function ManageServices() {
             {/* Header */}
             <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Manage Services</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Manage Services</h1>
+                    <p className="text-muted small">
                         Configure public services and their order of appearance
                     </p>
                 </div>
                 <button
                     onClick={() => { setEditingService(null); setIsModalOpen(true); }}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-md"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                 >
                     <Plus className="h-5 w-5" />
                     Add New Service
@@ -137,13 +138,14 @@ export function ManageServices() {
                             placeholder="Search services..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none dark:text-white"
+                            className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none dark:text-white"
                         />
                     </div>
                     <button
                         onClick={() => fetchApi('/services/seed', { method: 'POST' }).then(fetchServices)}
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium border border-gray-300 dark:border-gray-600"
+                        className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
                     >
+                        <RefreshCcw size={16} />
                         Reset/Seed Defaults
                     </button>
                 </div>
@@ -176,7 +178,7 @@ export function ManageServices() {
                                     <tr key={service.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-lg ${service.isDark ? 'bg-orange-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                                                <div className={`p-2 rounded-lg ${service.isDark ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
                                                     <Layout className="h-5 w-5" />
                                                 </div>
                                                 <div>
@@ -203,14 +205,14 @@ export function ManageServices() {
                                             <div className="flex justify-end gap-2">
                                                 <button
                                                     onClick={() => { setEditingService(service); setIsModalOpen(true); }}
-                                                    className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors hover:scale-110 active:scale-95"
                                                     title="Edit"
                                                 >
                                                     <Edit className="h-4 w-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(service.id)}
-                                                    className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors hover:scale-110 active:scale-95"
                                                     title="Delete"
                                                 >
                                                     <Trash2 className="h-4 w-4" />
@@ -236,7 +238,7 @@ export function ManageServices() {
                                 defaultValue={editingService?.name}
                                 required
                                 placeholder="e.g. brokerage"
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
                             />
                         </div>
                         <div className="space-y-1">
@@ -246,7 +248,7 @@ export function ManageServices() {
                                 defaultValue={editingService?.title}
                                 required
                                 placeholder="Brokerage Services"
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
                             />
                         </div>
                     </div>
@@ -258,7 +260,7 @@ export function ManageServices() {
                             defaultValue={editingService?.description}
                             required
                             rows={3}
-                            className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
+                            className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
                         />
                     </div>
 
@@ -270,7 +272,7 @@ export function ManageServices() {
                                 name="order"
                                 defaultValue={editingService?.order || 0}
                                 required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
                             />
                         </div>
                         <div className="space-y-1">
@@ -279,7 +281,7 @@ export function ManageServices() {
                                 name="delay"
                                 defaultValue={editingService?.delay || '0.1s'}
                                 required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-orange-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
                             />
                         </div>
                     </div>
@@ -290,34 +292,35 @@ export function ManageServices() {
                                 type="checkbox"
                                 name="isActive"
                                 defaultChecked={editingService ? editingService.isActive : true}
-                                className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500"
+                                className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
                             />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 transition-colors">Active Service</span>
+                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 transition-colors">Active Service</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer group">
                             <input
                                 type="checkbox"
                                 name="isDark"
                                 defaultChecked={editingService?.isDark}
-                                className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500"
+                                className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
                             />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-orange-600 transition-colors">Dark Theme</span>
+                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 transition-colors">Dark Theme</span>
                         </label>
                     </div>
 
-                    <div className="pt-4 flex gap-3">
+                    <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800 mt-4">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-300 font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors shadow-lg shadow-orange-200"
+                            className="flex-1 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
                         >
-                            {editingService ? 'Update Service' : 'Create Service'}
+                            {editingService ? <RefreshCcw className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                            <span>{editingService ? "Update Service" : "Create Service"}</span>
                         </button>
                     </div>
                 </form>

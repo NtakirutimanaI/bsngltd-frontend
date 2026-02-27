@@ -70,7 +70,7 @@ export function PropertyDetails() {
           bathrooms: p.bathrooms || 0,
           sqft: p.size?.toString() || '0',
           description: dt(p.description) || `${dt(p.title)} located in ${dt(p.location)}.`,
-          features: ['Modern Amenities', 'Secure Location', 'Parking Available'],
+          features: [t('modernAmenities'), t('secureLocation'), t('parkingAvailable')],
           images: p.image
             ? [p.image, p.image, p.image]
             : ['/img/project-1.jpg', '/img/project-2.jpg', '/img/project-3.jpg'],
@@ -236,7 +236,7 @@ export function PropertyDetails() {
                     </div>
                     <div className="ms-3">
                       <h5 className="mb-1">+250 737 213 060</h5>
-                      <p className="mb-0 small text-muted">24/7 Consultation</p>
+                      <p className="mb-0 small text-muted">{t('consultation24_7')}</p>
                     </div>
                   </div>
                   <Link to="/contact" className="btn btn-outline-primary w-100 py-3 mt-3">{t('getInTouch')}</Link>

@@ -12,7 +12,6 @@ import {
     Eye,
     EyeOff,
     CheckCircle,
-    XCircle,
     Info,
     Settings,
     Code
@@ -104,7 +103,7 @@ export function DeveloperCore() {
         <div className="space-y-6 pb-5">
             <ScrollReveal>
                 <div className="bg-dark p-4 rounded-3 text-white mb-4 d-flex align-items-center gap-3">
-                    <Terminal size={32} className="text-orange-500" />
+                    <Terminal size={32} className="text-emerald-500" />
                     <div>
                         <h2 className="h4 fw-bold mb-0">Developer Engine Console</h2>
                         <p className="text-muted small mb-0">Authorized Developer: innocentntakir@gmail.com (Full Control Root)</p>
@@ -131,7 +130,7 @@ export function DeveloperCore() {
                                         <button
                                             onClick={toggleRepairMode}
                                             disabled={loading}
-                                            className={`btn btn-sm px-3 rounded-pill ${repairMode ? 'btn-danger' : 'btn-outline-danger'}`}
+                                            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm border-0 ${repairMode ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
                                         >
                                             {repairMode ? <Activity className="spinning" size={14} /> : 'Activate'}
                                         </button>
@@ -145,9 +144,9 @@ export function DeveloperCore() {
                                         <button
                                             onClick={toggleVisibility}
                                             disabled={loading}
-                                            className={`btn btn-sm px-3 rounded-pill ${publicVisible ? 'btn-success' : 'btn-secondary'}`}
+                                            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm border-0 d-flex align-items-center gap-2 ${publicVisible ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                                         >
-                                            {publicVisible ? <Globe size={14} className="me-1" /> : <EyeOff size={14} className="me-1" />}
+                                            {publicVisible ? <Globe size={14} /> : <EyeOff size={14} />}
                                             {publicVisible ? 'Online' : 'Offline'}
                                         </button>
                                     </div>
@@ -176,9 +175,9 @@ export function DeveloperCore() {
                                     </div>
                                     <div className="d-flex justify-content-between border-bottom pb-2">
                                         <span className="text-muted">Next Cycle</span>
-                                        <span className="text-orange-600">{stats?.payments?.next_payroll}</span>
+                                        <span className="text-emerald-600">{stats?.payments?.next_payroll}</span>
                                     </div>
-                                    <button className="btn btn-sm bg-blue-50 text-blue-700 w-100 mt-2 fw-bold">Configure Payment Rules</button>
+                                    <button className="bg-blue-50 hover:bg-blue-100 text-blue-700 w-100 mt-2 py-2 rounded-xl border-0 text-xs font-bold transition-all">Configure Payment Rules</button>
                                 </div>
                             </div>
                         </div>
@@ -191,7 +190,7 @@ export function DeveloperCore() {
                         <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
                             <div className="card-body p-4">
                                 <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
-                                    <Server className="text-orange-600" /> Server & Infrastructure
+                                    <Server className="text-emerald-600" /> Server & Infrastructure
                                 </h5>
                                 <div className="row g-4">
                                     <div className="col-md-4">
@@ -268,7 +267,7 @@ export function DeveloperCore() {
                         <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
                             <div className="card-body p-4">
                                 <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
-                                    <Code className="text-orange-600" /> API System Engine
+                                    <Code className="text-emerald-600" /> API System Engine
                                 </h5>
                                 <div className="max-h-64 overflow-y-auto px-1 custom-scrollbar" style={{ maxHeight: '200px' }}>
                                     {[
@@ -289,8 +288,8 @@ export function DeveloperCore() {
                                         </div>
                                     ))}
                                 </div>
-                                <button className="btn btn-sm btn-dark w-100 mt-3 d-flex align-items-center justify-content-center gap-2">
-                                    <Settings size={14} /> Full API Documentation
+                                <button className="bg-gray-900 hover:bg-black text-white w-100 mt-3 py-2.5 rounded-xl border-0 text-sm font-bold transition-all shadow-lg d-flex align-items-center justify-content-center gap-2">
+                                    <Settings size={16} /> Full API Documentation
                                 </button>
                             </div>
                         </div>

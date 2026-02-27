@@ -239,7 +239,7 @@ export default function AdminDashboard() {
               <div className="p-2">
                 <div className="row g-2">
                   <div className="col-4">
-                    <Link to="/dashboard/admin">
+                    <Link to="/dashboard/content">
                       <Button
                         variant="outline-brand"
                         className="w-auto h-auto fw-semibold rounded"
@@ -250,7 +250,7 @@ export default function AdminDashboard() {
                     </Link>
                   </div>
                   <div className="col-4">
-                    <Link to="/dashboard/admin">
+                    <Link to="/dashboard/content">
                       <Button
                         variant="outline-brand"
                         className="w-auto h-auto fw-semibold rounded"

@@ -33,20 +33,18 @@ export function Portfolio() {
                     <h1 className="h5 fw-bold text-dark mb-0">Portfolio Hub</h1>
                     <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage real estate assets, construction projects, and inventory</p>
                 </div>
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-3">
                     {canAdd && (
                         <button
-                            className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
-                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                         >
-                            <Plus size={13} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
+                            <Plus size={14} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
                         </button>
                     )}
-                    <button 
-                        className="btn px-3 py-1 d-flex align-items-center gap-1"
-                        style={{ background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px' }}
+                    <button
+                        className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
                     >
-                        <Download size={13} /> Export
+                        <Download size={14} /> Export
                     </button>
                 </div>
             </ScrollReveal>
@@ -57,31 +55,15 @@ export function Portfolio() {
                     <div className="nav nav-pills p-1 gap-2">
                         <button
                             onClick={() => setActiveTab('projects')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'projects' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ 
-                                borderRadius: '8px', 
-                                border: 'none',
-                                background: activeTab === 'projects' ? '#16a085' : 'transparent',
-                                color: activeTab === 'projects' ? '#fff' : '#6c757d',
-                                fontWeight: 600,
-                                fontSize: '12px'
-                            }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-none' : 'text-gray-500 hover:bg-emerald-50 hover:text-emerald-600'}`}
                         >
-                            <Building2 size={14} /> Active Projects
+                            <Building2 size={16} /> Active Projects
                         </button>
                         <button
                             onClick={() => setActiveTab('properties')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'properties' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ 
-                                borderRadius: '8px', 
-                                border: 'none',
-                                background: activeTab === 'properties' ? '#16a085' : 'transparent',
-                                color: activeTab === 'properties' ? '#fff' : '#6c757d',
-                                fontWeight: 600,
-                                fontSize: '12px'
-                            }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold rounded-xl border-0 ${activeTab === 'properties' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-none' : 'text-gray-500 hover:bg-emerald-50 hover:text-emerald-600'}`}
                         >
-                            <Home size={14} /> Property Inventory
+                            <Home size={16} /> Property Inventory
                         </button>
                     </div>
                 </div>

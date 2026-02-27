@@ -158,9 +158,9 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
           {isAdminOrManager && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="btn btn-sm bg-orange-600 border-orange-600 text-white d-flex align-items-center gap-2 hover:bg-orange-700 transition-all"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="h-4 w-4" />
               New Project
             </button>
           )}
@@ -231,7 +231,7 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                     >
                       {project.status.replace("_", " ").toUpperCase()}
                     </span>
-                    <button className="btn btn-link text-muted p-0 ms-2">
+                    <button className="bg-transparent border-0 text-muted p-2 hover:text-emerald-600 transition-colors">
                       <MoreVertical className="w-5 h-5" />
                     </button>
                   </div>
@@ -282,25 +282,7 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                 <div className="d-flex gap-2">
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="btn btn-sm flex-fill d-flex align-items-center justify-content-center gap-2"
-                    style={{ 
-                      background: 'transparent',
-                      border: '2px solid #16a085',
-                      color: '#16a085',
-                      fontWeight: 600,
-                      fontSize: '11px',
-                      height: '30px',
-                      borderRadius: '8px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#16a085';
-                      e.currentTarget.style.color = '#fff';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent';
-                      e.currentTarget.style.color = '#16a085';
-                    }}
+                    className="flex-fill bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-[1.02] active:scale-95 d-flex align-items-center justify-content-center gap-2"
                   >
                     <Eye className="w-4 h-4" />
                     View Details
@@ -309,25 +291,8 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                     <>
                       <button
                         onClick={() => setEditingProject(project)}
-                        className="btn btn-sm d-flex align-items-center justify-content-center"
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-xl transition-all hover:scale-110 active:scale-90 border-0 shadow-sm"
                         title="Edit Project"
-                        style={{ 
-                          background: '#16a085',
-                          border: 'none',
-                          color: '#fff',
-                          fontWeight: 600,
-                          fontSize: '11px',
-                          height: '30px',
-                          borderRadius: '8px',
-                          transition: 'all 0.2s ease',
-                          padding: '0 12px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#1a9b7d';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = '#16a085';
-                        }}
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -343,27 +308,8 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                             }
                           }
                         }}
-                        className="btn btn-sm d-flex align-items-center justify-content-center"
+                        className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-xl transition-all hover:scale-110 active:scale-90 border-0"
                         title="Delete Project"
-                        style={{ 
-                          background: 'transparent',
-                          border: '2px solid #dc3545',
-                          color: '#dc3545',
-                          fontWeight: 600,
-                          fontSize: '11px',
-                          height: '30px',
-                          borderRadius: '8px',
-                          transition: 'all 0.2s ease',
-                          padding: '0 12px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#dc3545';
-                          e.currentTarget.style.color = '#fff';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = 'transparent';
-                          e.currentTarget.style.color = '#dc3545';
-                        }}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -509,57 +455,20 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
               </div>
             </div>
 
-            <div className="d-flex justify-content-end gap-2 pt-3 border-top border-gray-100 dark:border-gray-800">
-              <button 
-                type="button" 
-                className="btn d-flex align-items-center gap-2" 
+            <div className="d-flex justify-content-end gap-3 pt-3 border-top border-gray-100 dark:border-gray-800">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
                 onClick={() => setSelectedProject(null)}
-                style={{ 
-                  background: 'transparent',
-                  border: '2px solid #6c757d',
-                  color: '#6c757d',
-                  fontWeight: 600,
-                  fontSize: '12px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  transition: 'all 0.2s ease',
-                  padding: '0 16px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#6c757d';
-                  e.currentTarget.style.color = '#fff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#6c757d';
-                }}
               >
                 Close
               </button>
               {isAdminOrManager && (
-                <button 
-                  onClick={() => { setEditingProject(selectedProject); setSelectedProject(null); }} 
-                  className="btn d-flex align-items-center gap-2"
-                  style={{ 
-                    background: '#16a085',
-                    border: 'none',
-                    color: '#fff',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                    height: '32px',
-                    borderRadius: '8px',
-                    transition: 'all 0.2s ease',
-                    padding: '0 16px'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#1a9b7d';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#16a085';
-                  }}
+                <button
+                  onClick={() => { setEditingProject(selectedProject); setSelectedProject(null); }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                 >
-                  <Edit className="w-4 h-4" />
-                  Edit Project
+                  <Edit size={16} /> Edit Project
                 </button>
               )}
             </div>

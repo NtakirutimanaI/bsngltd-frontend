@@ -23,12 +23,13 @@ interface Property {
 }
 
 export function Home() {
-  const heroImages = [
+  const defaultHeroImages = [
     { src: '/img/hero-slider-1.jpg', alt: 'Modern Kitchen' },
     { src: '/img/hero-slider-2.jpg', alt: 'Luxury Living Room' },
     { src: '/img/hero-slider-3.jpg', alt: 'Elegant Bedroom' },
   ];
 
+  const [heroImages, setHeroImages] = useState(defaultHeroImages);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -46,9 +47,10 @@ export function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [propRes, settingsRes] = await Promise.all([
+        const [propRes, settingsRes, contentRes] = await Promise.all([
           fetchApi<any>(`/properties?limit=6`),
-          fetchApi<any[]>('/settings/public')
+          fetchApi<any[]>('/settings/public'),
+          fetchApi<any[]>('/content/public?section=hero')
         ]);
 
         setAllProperties(propRes.data || []);
@@ -56,6 +58,20 @@ export function Home() {
         const s: any = {};
         settingsRes.forEach(item => { s[item.key] = item.value; });
         setSettings(s);
+
+        // Set hero images from content management
+        if (contentRes && contentRes.length > 0) {
+          const heroContent = contentRes.find(item => item.section === 'hero');
+          if (heroContent && heroContent.images && heroContent.images.length > 0) {
+            // Convert content images to hero images format
+            const heroImagesFromContent = heroContent.images.map((img: string, index: number) => ({
+              src: img,
+              alt: heroContent.title || `Hero Image ${index + 1}`
+            }));
+            // Use content images if available, otherwise fallback to default
+            setHeroImages(heroImagesFromContent.length > 0 ? heroImagesFromContent : heroImages);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch home data", error);
       } finally {
@@ -72,15 +88,17 @@ export function Home() {
     return new Intl.NumberFormat(locale, { style: 'currency', currency: 'RWF', maximumFractionDigits: 0 }).format(price);
   };
 
-  const heroTitle = dt(settings.home_hero_title) || 'Building Your Future With Excellence';
-  const heroSubtitle = dt(settings.home_hero_subtitle) || 'Build Strong For The Next Generations';
-  const homeAboutTitle = dt(settings.home_about_title) || 'Building Strong Generations';
+  // Get hero content from settings or use defaults
+  const heroContent = settings.hero_content ? JSON.parse(settings.hero_content) : null;
+  const heroTitle = heroContent?.title || dt(settings.home_hero_title) || 'Building Your Future With Excellence';
+  const heroSubtitle = heroContent?.subtitle || dt(settings.home_hero_subtitle) || 'Build Strong For The Next Generations';
+  const homeAboutTitle = dt(settings.home_about_title) || 'Building Strong For The Next Generations';
 
   return (
     <div className="container-fluid bg-white p-0">
       {/* Hero Start */}
       <div className="container-fluid hero-header ps-0 pe-0 mb-5" style={{
-        backgroundImage: 'url(/img/hero-bg.jpg)',
+        backgroundImage: `url(${settings.home_hero_bg?.startsWith('http') || settings.home_hero_bg?.startsWith('/') ? settings.home_hero_bg : settings.home_hero_bg ? `/uploads/settings/${settings.home_hero_bg}` : '/img/hero-bg.jpg'})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: '75vh',
@@ -91,7 +109,7 @@ export function Home() {
             <div className="col-lg-6 animated fadeIn" style={{ zIndex: 1 }}>
               <h1 className="display-1 mb-4 animated slideInRight">
                 {heroTitle.split(' ').slice(0, 3).join(' ')} <br />
-                <span className="text-primary">{heroTitle.split(' ').slice(3).join(' ')}</span>
+                <span className="text-primary" style={{ color: '#16a085' }}>{heroTitle.split(' ').slice(3).join(' ')}</span>
               </h1>
               <h5 className="d-inline-block border border-2 border-white py-3 px-5 mb-5 animated slideInRight uppercase">
                 {heroSubtitle}
@@ -108,7 +126,8 @@ export function Home() {
                     right: '-30px',
                     top: '-40px', // Shifted up 40px to appear at the top of the image
                     zIndex: 0,
-                    borderRadius: '2px'
+                    borderRadius: '2px',
+                    background: '#16a085'
                   }}
                 />
 
@@ -201,12 +220,12 @@ export function Home() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid rounded shadow" src="/img/about-1.jpg" alt="About 1" />
+                  <img className="img-fluid rounded shadow" src={settings.about_image_1?.startsWith('http') || settings.about_image_1?.startsWith('/') ? settings.about_image_1 : settings.about_image_1 ? `/uploads/settings/${settings.about_image_1}` : '/img/about-1.jpg'} alt="About 1" />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75 rounded shadow mb-3" src="/img/about-2.jpg" alt="About 2" />
+                  <img className="img-fluid h-75 rounded shadow mb-3" src={settings.about_image_2?.startsWith('http') || settings.about_image_2?.startsWith('/') ? settings.about_image_2 : settings.about_image_2 ? `/uploads/settings/${settings.about_image_2}` : '/img/about-2.jpg'} alt="About 2" />
                   <div className="h-25 d-flex align-items-center text-center bg-primary px-4 rounded shadow">
-                    <h4 className="text-white lh-base mb-0 fw-bold">Building Excellence Since 2010</h4>
+                    <h4 className="text-white lh-base mb-0 fw-bold">{t('buildingExcellenceSince2010')}</h4>
                   </div>
                 </div>
               </div>
@@ -245,7 +264,7 @@ export function Home() {
           <div className="row g-4 align-items-center">
             <div className="col-lg-8">
               <h2 className="display-5 text-white mb-2 fw-bold">{t('contactUsMessage')}</h2>
-              <p className="text-white opacity-75 mb-0 fs-5">Expert solutions tailored to your specific construction and real estate needs.</p>
+              <p className="text-white opacity-75 mb-0 fs-5">{t('expertSolutionsTailored')}</p>
             </div>
             <div className="col-lg-4 text-center text-lg-end">
               <Link to="/contact" className="btn btn-light py-3 px-5 rounded-pill shadow-lg fw-bold text-uppercase me-3 mb-3">{t('getInTouch')}</Link>
@@ -342,7 +361,7 @@ export function Home() {
                   <div className="col-md-6 wow fadeIn" data-wow-delay="0.2s">
                     <div className="service-item h-100 d-flex flex-column justify-content-center bg-primary p-4 rounded shadow">
                       <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src="/img/service-1.jpg" alt="Service 1" />
+                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={settings.service_image_1?.startsWith('http') || settings.service_image_1?.startsWith('/') ? settings.service_image_1 : settings.service_image_1 ? `/uploads/settings/${settings.service_image_1}` : '/img/service-1.jpg'} alt="Service 1" />
                         <div className="position-absolute bottom-0 start-0 p-3 bg-primary bg-opacity-75">
                           <h4 className="text-white mb-0">{t('residentialConstruction')}</h4>
                         </div>
@@ -353,7 +372,7 @@ export function Home() {
                   <div className="col-md-6 wow fadeIn" data-wow-delay="0.4s">
                     <div className="service-item h-100 d-flex flex-column justify-content-center bg-light p-4 rounded shadow-sm border">
                       <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src="/img/service-2.jpg" alt="Service 2" />
+                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={settings.service_image_2?.startsWith('http') || settings.service_image_2?.startsWith('/') ? settings.service_image_2 : settings.service_image_2 ? `/uploads/settings/${settings.service_image_2}` : '/img/service-2.jpg'} alt="Service 2" />
                         <div className="position-absolute bottom-0 start-0 p-3 bg-light bg-opacity-75 border">
                           <h4 className="text-dark mb-0">{t('commercialConstruction')}</h4>
                         </div>
@@ -374,7 +393,7 @@ export function Home() {
         <div className="container p-0">
           <div className="row g-0 align-items-center">
             <div className="col-md-5 ps-lg-0 text-start wow fadeIn" data-wow-delay="0.2s">
-              <img className="img-fluid w-100" src="/img/newsletter.jpg" alt="Newsletter" />
+              <img className="img-fluid w-100" src={settings.global_newsletter_bg?.startsWith('http') || settings.global_newsletter_bg?.startsWith('/') ? settings.global_newsletter_bg : settings.global_newsletter_bg ? `/uploads/settings/${settings.global_newsletter_bg}` : '/img/newsletter.jpg'} alt="Newsletter" />
             </div>
             <div className="col-md-7 py-5 newsletter-text wow fadeIn" data-wow-delay="0.5s">
               <div className="p-5">

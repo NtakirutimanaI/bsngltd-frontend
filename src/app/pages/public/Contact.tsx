@@ -86,7 +86,7 @@ export function Contact() {
       <div className="container-fluid pt-3 pb-5">
         <div className="container">
           <div className="text-center wow fadeIn" data-wow-delay="0.1s">
-            <h1 className="mb-5">Have Any Query? <span className="text-uppercase text-primary bg-light px-2">Contact Us</span></h1>
+            <h1 className="mb-5">{t('haveAnyQuery')} <span className="text-uppercase text-primary bg-light px-2">{t('contactUs')}</span></h1>
           </div>
           <div className="row g-5">
             <div className="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
@@ -103,7 +103,7 @@ export function Contact() {
                 </div>
               </div>
               <div className="d-flex align-items-center mb-4 p-4 bg-light rounded wow fadeIn" data-wow-delay="0.3s">
-                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px' }}>
+                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#16a085' }}>
                   <Mail className="text-white w-6 h-6" />
                 </div>
                 <div className="ms-4">
@@ -121,7 +121,7 @@ export function Contact() {
                 </div>
               </div>
               <div className="d-flex align-items-center p-4 bg-light rounded wow fadeIn" data-wow-delay="0.5s">
-                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px' }}>
+                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#16a085' }}>
                   <Clock className="text-white w-6 h-6" />
                 </div>
                 <div className="ms-4">
@@ -145,13 +145,13 @@ export function Contact() {
                     <div className="col-md-6">
                       <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '11px' }}>{t('fullName')}</label>
                       <div className="input-group">
-                        <span className="input-group-text bg-light border-end-0"><Users size={16} className="text-primary" /></span>
+                        <span className="input-group-text bg-light border-end-0"><Users size={16} className="text-primary" style={{ color: '#16a085' }} /></span>
                         <input
                           type="text"
                           className="form-control border-start-0 ps-0"
                           id="name"
                           name="name"
-                          placeholder="Your Name"
+                          placeholder={t('yourName')}
                           value={formData.name}
                           onChange={handleChange}
                           required
@@ -167,7 +167,7 @@ export function Contact() {
                           className="form-control border-start-0 ps-0"
                           id="email"
                           name="email"
-                          placeholder="Your Email"
+                          placeholder={t('yourEmail')}
                           value={formData.email}
                           onChange={handleChange}
                           required
@@ -183,7 +183,7 @@ export function Contact() {
                           className="form-control border-start-0 ps-0"
                           id="subject"
                           name="subject"
-                          placeholder="What is this about?"
+                          placeholder={t('whatIsThisAbout')}
                           value={formData.subject}
                           onChange={handleChange}
                           required
@@ -194,7 +194,7 @@ export function Contact() {
                       <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '11px' }}>{t('message')}</label>
                       <textarea
                         className="form-control"
-                        placeholder="Detail your inquiry here..."
+                        placeholder={t('detailYourInquiry')}
                         id="message"
                         name="message"
                         style={{ height: '150px' }}

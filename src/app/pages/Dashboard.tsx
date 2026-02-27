@@ -1,4 +1,5 @@
-import { Building2, Users, Home, DollarSign, AlertCircle, CheckCircle, Clock, MessageSquare, Plus, Eye, Edit, Trash2, MoreVertical, ChevronDown, Settings, UserCog } from "lucide-react";
+import { Building2, Users, Home, DollarSign, AlertCircle, CheckCircle, Clock, MessageSquare, Plus, Eye, Edit, Trash2, MoreVertical, ChevronDown, Settings, UserCog, ArrowRight, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react";
+
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 
@@ -11,6 +12,8 @@ import { useNavigate } from 'react-router';
 import { AddProjectModal } from '@/app/components/AddProjectModal';
 import { AddEmployeeModal } from '@/app/components/AddEmployeeModal';
 import { Button } from "@/app/components/ui/button";
+import "@/styles/dashboard-premium.css";
+
 
 // Define interfaces for the API response
 interface DashboardStats {
@@ -230,21 +233,20 @@ export function Dashboard() {
           </div>
           <div className="d-flex align-items-center gap-2">
             <div className="text-end d-none d-lg-block">
-              <div style={{ fontSize: '11px' }} className="text-muted mb-0">{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</div>
-              <div className="fw-bold text-dark" style={{ fontSize: '12px' }}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+              <div style={{ fontSize: '11px' }} className="text-muted mb-0 uppercase tracking-wider">{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</div>
+              <div className="fw-bold text-dark" style={{ fontSize: '14px' }}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
             </div>
-            <div className="h-8 w-px bg-gray-200 d-none d-lg-block mx-1"></div>
+            <div className="h-10 w-px bg-gray-200 dark:bg-gray-800 d-none d-lg-block mx-2"></div>
             {isAdminLike && (
               <div className="position-relative">
                 <Button
                   onClick={() => setShowQuickActions(!showQuickActions)}
-                  size="sm"
-                  style={{ background: '#16a085', border: 'none', color: '#fff', fontSize: '12px', height: '30px', padding: '0 10px' }}
-                  className="flex items-center gap-1"
+                  className="action-button-premium rounded-xl px-4 py-2"
+                  style={{ height: '38px', fontSize: '13px' }}
                 >
-                  <Plus size={13} />
-                  <span>Quick Actions</span>
-                  <ChevronDown size={11} />
+                  <Plus size={16} strokeWidth={2.5} className="me-1" />
+                  <span className="fw-bold">Actions</span>
+                  <ChevronDown size={14} className={`ms-1 transition-transform ${showQuickActions ? 'rotate-180' : ''}`} />
                 </Button>
                 {showQuickActions && (
                   <div className="position-absolute end-0 mt-1 bg-white rounded-3 shadow-lg border border-gray-200 py-1 z-3" style={{ minWidth: '190px' }}>
@@ -280,10 +282,10 @@ export function Dashboard() {
 
       {/* Quick Actions for everyone */}
       <ScrollReveal delay={0.1}>
-        <div className="row g-3 mb-3">
+        <div className="row g-3 mb-4">
           <div className="col-12">
-            <div className="card border-0 shadow-sm bg-gray-900 text-white overflow-hidden" style={{ borderRadius: '12px' }}>
-              <div className="card-body p-3 position-relative">
+            <div className="quick-action-card border-0 shadow-lg text-white" style={{ borderRadius: '20px' }}>
+              <div className="card-body p-4 position-relative z-1">
                 <div className="row align-items-center">
                   <div className="col-lg-8">
                     <h6 className="fw-bold mb-1" style={{ fontSize: '14px' }}>
@@ -412,19 +414,19 @@ export function Dashboard() {
           <div className="row g-2 mb-2">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="col-md-6 col-lg-3">
-                <div className="card border-0 shadow-sm">
-                  <div className="card-body py-2 px-3">
+                <div className="premium-card h-100">
+                  <div className="card-body py-3 px-4">
                     <div className="d-flex align-items-center justify-content-between">
                       <div>
-                        <div className="placeholder-glow mb-1">
-                          <span className="placeholder col-6"></span>
+                        <div className="placeholder-glow mb-2">
+                          <span className="placeholder col-6 rounded"></span>
                         </div>
                         <div className="placeholder-glow">
-                          <span className="placeholder col-4"></span>
+                          <span className="placeholder col-4 rounded h-6 w-full"></span>
                         </div>
                       </div>
                       <div className="placeholder-glow">
-                        <span className="placeholder col-2 rounded" style={{ width: '32px', height: '32px' }}></span>
+                        <span className="placeholder rounded-xl" style={{ width: '42px', height: '42px' }}></span>
                       </div>
                     </div>
                   </div>
@@ -436,19 +438,21 @@ export function Dashboard() {
           <div className="row g-2 mb-2">
             {stats.map((stat: any, index: number) => (
               <div key={stat.name} className="col-md-6 col-lg-3">
-                <ScrollReveal delay={index * 0.1} className="card border-0 shadow-sm h-100">
-                  <div className="card-body py-2 px-3">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div>
-                        <small className="text-muted text-uppercase fw-bold" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>{stat.name}</small>
-                        <h6 className="fw-bold text-dark my-0">{stat.value}</h6>
-                        <div className="d-flex align-items-center gap-1 mt-1">
-                          <span className="badge bg-success-subtle text-success" style={{ fontSize: '10px' }}>{stat.change}</span>
-                          {!isEmployee && <span className="text-muted ms-1" style={{ fontSize: '10px' }}>this month</span>}
+                <ScrollReveal delay={index * 0.1}>
+                  <div className="premium-card h-100">
+                    <div className="card-body py-3 px-4">
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div>
+                          <small className="text-muted text-uppercase fw-bold tracking-widest opacity-75" style={{ fontSize: '10px' }}>{stat.name}</small>
+                          <h4 className="fw-bold text-dark mt-1 mb-0">{stat.value}</h4>
+                          <div className="d-flex align-items-center gap-2 mt-2">
+                            <span className="status-grid-badge" style={{ backgroundColor: 'rgba(22, 160, 133, 0.15)', color: '#16a085' }}>{stat.change}</span>
+                            {!isEmployee && <span className="text-muted" style={{ fontSize: '10px' }}>this month</span>}
+                          </div>
                         </div>
-                      </div>
-                      <div className={`btn-square rounded ${stat.color}`} style={{ width: '34px', height: '34px' }}>
-                        <stat.icon size={15} />
+                        <div className={`stats-icon-container rounded-xl ${stat.color} shadow-sm`} style={{ width: '42px', height: '42px' }}>
+                          <stat.icon size={18} strokeWidth={2.5} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -465,44 +469,73 @@ export function Dashboard() {
           <div className="row g-2 mb-2">
             {/* Revenue Chart */}
             <div className="col-lg-8">
-              <ScrollReveal delay={0.2} className="card border-0 shadow-sm h-100">
-                <div className="card-body py-2 px-3">
-                  <h6 className="fw-bold mb-2" style={{ fontSize: '13px' }}>Revenue & Expenses</h6>
-                  <div style={{ height: '180px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={revenueData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#374151" : "#e9ecef"} />
-                        <XAxis dataKey="month" stroke={theme === 'dark' ? "#9ca3af" : "#6c757d"} tick={{ fontSize: 10 }} />
-                        <YAxis stroke={theme === 'dark' ? "#9ca3af" : "#6c757d"} tick={{ fontSize: 10 }} />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                            border: theme === 'dark' ? "1px solid #374151" : "1px solid #dee2e6",
-                            borderRadius: "0.375rem",
-                            color: theme === 'dark' ? "#fff" : "#000",
-                            fontSize: '11px'
-                          }}
-                          itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
-                        />
-                        <Legend wrapperStyle={{ fontSize: '11px' }} />
-                        <Line
-                          type="monotone"
-                          dataKey="revenue"
-                          stroke="#16a085"
-                          strokeWidth={2}
-                          name="Revenue (M)"
-                          dot={false}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="expenses"
-                          stroke="#e74c3c"
-                          strokeWidth={2}
-                          name="Expenses (M)"
-                          dot={false}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
+              <ScrollReveal delay={0.2}>
+                <div className="premium-card h-100">
+                  <div className="card-body p-4">
+                    <div className="d-flex align-items-center justify-content-between mb-4">
+                      <h6 className="fw-bold mb-0 flex items-center gap-2">
+                        <LineChartIcon size={16} className="text-brand" />
+                        Financial Overview
+                      </h6>
+                      <div className="flex gap-2">
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full" style={{ background: '#16a085' }}></div>
+                          <span className="text-[10px] text-muted-foreground uppercase font-bold">Revenue</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 rounded-full" style={{ background: '#e74c3c' }}></div>
+                          <span className="text-[10px] text-muted-foreground uppercase font-bold">Expenses</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ height: '220px' }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={revenueData}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "#374151" : "#f1f5f9"} />
+                          <XAxis
+                            dataKey="month"
+                            stroke={theme === 'dark' ? "#9ca3af" : "#64748b"}
+                            tick={{ fontSize: 10, fontWeight: 600 }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <YAxis
+                            stroke={theme === 'dark' ? "#9ca3af" : "#64748b"}
+                            tick={{ fontSize: 10, fontWeight: 600 }}
+                            axisLine={false}
+                            tickLine={false}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
+                              border: "none",
+                              borderRadius: "12px",
+                              boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                              fontSize: '11px',
+                              fontWeight: 600
+                            }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="revenue"
+                            stroke="#16a085"
+                            strokeWidth={3}
+                            dot={{ r: 4, fill: '#16a085', strokeWidth: 2, stroke: '#fff' }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            name="Revenue"
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="expenses"
+                            stroke="#e74c3c"
+                            strokeWidth={3}
+                            dot={{ r: 4, fill: '#e74c3c', strokeWidth: 2, stroke: '#fff' }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            name="Expenses"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
               </ScrollReveal>
@@ -510,36 +543,43 @@ export function Dashboard() {
 
             {/* Project Status Pie Chart */}
             <div className="col-lg-4">
-              <ScrollReveal delay={0.3} className="card border-0 shadow-sm h-100">
-                <div className="card-body py-2 px-3">
-                  <h6 className="fw-bold mb-2" style={{ fontSize: '13px' }}>Project Status</h6>
-                  <div style={{ height: '180px' }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={projectStatusData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={60}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {projectStatusData.map((entry: any, index: number) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                            border: theme === 'dark' ? "1px solid #374151" : "1px solid #dee2e6",
-                            color: theme === 'dark' ? "#fff" : "#000",
-                            fontSize: '11px'
-                          }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
+              <ScrollReveal delay={0.3}>
+                <div className="premium-card h-100">
+                  <div className="card-body p-4">
+                    <h6 className="fw-bold mb-4 flex items-center gap-2">
+                      <PieChartIcon size={16} className="text-brand" />
+                      Project Status
+                    </h6>
+                    <div style={{ height: '220px' }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={projectStatusData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={5}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {projectStatusData.map((entry: any, index: number) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
+                              border: "none",
+                              borderRadius: "12px",
+                              boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                              fontSize: '11px',
+                              fontWeight: 600
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
                   </div>
                 </div>
               </ScrollReveal>
@@ -549,143 +589,150 @@ export function Dashboard() {
       }
 
       {/* Recent / My Projects */}
-      <div className="row mt-2">
+      <div className="row mt-3">
         <div className="col-12">
-          <ScrollReveal delay={0.4} className="card border-0 shadow-sm">
-            <div className="card-body py-2 px-3">
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <h6 className="fw-bold mb-0" style={{ fontSize: '13px' }}>
-                  {(isEmployee || isContractor) ? "My Assigned Projects" : isClient ? "My Active Projects" : "Recent Projects"}
-                </h6>
-                <Button
-                  onClick={() => navigate('/dashboard/portfolio')}
-                  size="sm"
-                  style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600 }}
-                  className="flex items-center gap-1"
-                >
-                  View All <ChevronDown size={14} className="rotate-270" />
-                </Button>
-              </div>
-              <div className="table-responsive">
-                <table className="table table-hover align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th className="border-0 text-muted small text-uppercase fw-bold">Project Name</th>
-                      <th className="border-0 text-muted small text-uppercase fw-bold">Status</th>
-                      <th className="border-0 text-muted small text-uppercase fw-bold">Progress</th>
-                      {!isEmployee && <th className="border-0 text-muted small text-uppercase fw-bold">Budget</th>}
-                      <th className="border-0 text-muted small text-uppercase fw-bold text-end pe-4">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentProjects.map((project: any) => (
-                      <tr key={project.name}>
-                        <td className="fw-medium text-dark">{project.name}</td>
-                        <td>
-                          {isAdminLike && statusChanging === project.name ? (
-                            <select
-                              className="form-select form-select-sm" style={{ width: '130px' }}
-                              defaultValue={project.status}
-                              onChange={async (e) => {
-                                try {
-                                  if (project.id) {
-                                    await fetchApi(`/projects/${project.id}`, { method: 'PATCH', body: JSON.stringify({ status: e.target.value }) });
-                                  }
-                                  project.status = e.target.value;
-                                  setStatusChanging(null);
-                                } catch (err) { console.error('Status update failed', err); }
-                              }}
-                              onBlur={() => setStatusChanging(null)}
-                              autoFocus
-                            >
-                              <option value="planning">Planning</option>
-                              <option value="active">Active</option>
-                              <option value="on_hold">On Hold</option>
-                              <option value="completed">Completed</option>
-                              <option value="cancelled">Cancelled</option>
-                            </select>
-                          ) : (
-                            <div
-                              className="d-flex align-items-center gap-2"
-                              style={{ cursor: isAdminLike ? 'pointer' : 'default' }}
-                              onClick={() => isAdminLike && setStatusChanging(project.name)}
-                              title={isAdminLike ? 'Click to change status' : ''}
-                            >
-                              {getStatusIcon(project.status)}
-                              <span className="small text-muted text-capitalize">
-                                {project.status.replace("_", " ")}
-                              </span>
-                            </div>
-                          )}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center gap-2" style={{ maxWidth: '200px' }}>
-                            <div className="progress flex-grow-1" style={{ height: '6px' }}>
+          <ScrollReveal delay={0.4}>
+            <div className="premium-card">
+              <div className="card-body p-4">
+                <div className="d-flex align-items-center justify-content-between mb-4">
+                  <div>
+                    <h6 className="fw-bold mb-1" style={{ fontSize: '15px' }}>
+                      {(isEmployee || isContractor) ? "My Assigned Projects" : isClient ? "My Active Projects" : "Recent Projects Performance"}
+                    </h6>
+                    <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Tracking active construction and development cycles</p>
+                  </div>
+                  <Button
+                    onClick={() => navigate('/dashboard/portfolio')}
+                    className="action-button-premium rounded-xl px-3 py-1.5"
+                    style={{ fontSize: '12px' }}
+                  >
+                    View Pipeline <ArrowRight size={14} className="ms-1" />
+                  </Button>
+                </div>
+                <div className="table-responsive glass-table-container">
+                  <table className="table table-hover align-middle mb-0">
+                    <thead className="bg-light/50">
+                      <tr>
+                        <th className="border-0 text-muted small text-uppercase fw-bold ps-4 py-3">Project</th>
+                        <th className="border-0 text-muted small text-uppercase fw-bold py-3">Status</th>
+                        <th className="border-0 text-muted small text-uppercase fw-bold py-3">Health & Progress</th>
+                        {!isEmployee && <th className="border-0 text-muted small text-uppercase fw-bold py-3">Budget Allocation</th>}
+                        <th className="border-0 text-muted small text-uppercase fw-bold text-end pe-4 py-3">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="border-0">
+                      {recentProjects.map((project: any) => (
+                        <tr key={project.name} className="border-bottom border-light/10">
+                          <td className="ps-4 py-3">
+                            <span className="fw-bold text-dark d-block">{project.name}</span>
+                            <span className="text-muted text-[10px] uppercase font-bold tracking-tighter">ID: #{project.id?.slice(-6) || 'N/A'}</span>
+                          </td>
+                          <td>
+                            {isAdminLike && statusChanging === project.name ? (
+                              <select
+                                className="form-select form-select-sm" style={{ width: '130px' }}
+                                defaultValue={project.status}
+                                onChange={async (e) => {
+                                  try {
+                                    if (project.id) {
+                                      await fetchApi(`/projects/${project.id}`, { method: 'PATCH', body: JSON.stringify({ status: e.target.value }) });
+                                    }
+                                    project.status = e.target.value;
+                                    setStatusChanging(null);
+                                  } catch (err) { console.error('Status update failed', err); }
+                                }}
+                                onBlur={() => setStatusChanging(null)}
+                                autoFocus
+                              >
+                                <option value="planning">Planning</option>
+                                <option value="active">Active</option>
+                                <option value="on_hold">On Hold</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                              </select>
+                            ) : (
                               <div
-                                className="progress-bar"
-                                style={{ backgroundColor: '#16a085', width: `${project.progress}%` }}
-                                role="progressbar"
-                                aria-valuenow={project.progress}
-                                aria-valuemin={0}
-                                aria-valuemax={100}
-                              />
-                            </div>
-                            <span className="small text-muted">{project.progress}%</span>
-                          </div>
-                        </td>
-                        {!isEmployee && (
-                          <td className="fw-medium text-dark small">{project.budget}</td>
-                        )}
-                        <td className="text-end pe-4">
-                          <div className="position-relative d-inline-block">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setOpenProjectMenu(openProjectMenu === project.name ? null : project.name)}
-                              className="text-slate-400 hover:text-slate-600"
-                            >
-                              <MoreVertical size={16} />
-                            </Button>
-                            {openProjectMenu === project.name && (
-                              <div className="position-absolute end-0 mt-1 bg-white rounded-3 shadow-lg border py-1 z-3" style={{ minWidth: '150px' }}>
-                                <button
-                                  onClick={() => { navigate(`/dashboard/portfolio?id=${project.id}`); setOpenProjectMenu(null); }}
-                                  className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-dark small hover-bg-light"
-                                >
-                                  <Eye size={14} className="text-orange-600" /> View Details
-                                </button>
-                                {isAdminLike && (
-                                  <>
-                                    <button
-                                      onClick={() => { setEditingProject(project); setOpenProjectMenu(null); }}
-                                      className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-dark small"
-                                    >
-                                      <Edit size={14} className="text-warning" /> Edit Project
-                                    </button>
-                                    <button
-                                      onClick={async () => {
-                                        if (project.id && confirm(`Delete project "${project.name}"?`)) {
-                                          try {
-                                            await fetchApi(`/projects/${project.id}`, { method: 'DELETE' });
-                                            setRefreshKey(prev => prev + 1);
-                                          } catch (err) { console.error('Delete failed', err); }
-                                        }
-                                        setOpenProjectMenu(null);
-                                      }}
-                                      className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-danger small"
-                                    >
-                                      <Trash2 size={14} /> Delete
-                                    </button>
-                                  </>
-                                )}
+                                className="d-flex align-items-center gap-2"
+                                style={{ cursor: isAdminLike ? 'pointer' : 'default' }}
+                                onClick={() => isAdminLike && setStatusChanging(project.name)}
+                                title={isAdminLike ? 'Click to change status' : ''}
+                              >
+                                {getStatusIcon(project.status)}
+                                <span className="small text-muted text-capitalize">
+                                  {project.status.replace("_", " ")}
+                                </span>
                               </div>
                             )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </td>
+                          <td>
+                            <div className="d-flex align-items-center gap-2" style={{ maxWidth: '200px' }}>
+                              <div className="progress flex-grow-1" style={{ height: '6px' }}>
+                                <div
+                                  className="progress-bar"
+                                  style={{ backgroundColor: '#16a085', width: `${project.progress}%` }}
+                                  role="progressbar"
+                                  aria-valuenow={project.progress}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                />
+                              </div>
+                              <span className="small text-muted">{project.progress}%</span>
+                            </div>
+                          </td>
+                          {!isEmployee && (
+                            <td className="fw-medium text-dark small">{project.budget}</td>
+                          )}
+                          <td className="text-end pe-4">
+                            <div className="position-relative d-inline-block">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setOpenProjectMenu(openProjectMenu === project.name ? null : project.name)}
+                                className="text-slate-400 hover:text-slate-600"
+                              >
+                                <MoreVertical size={16} />
+                              </Button>
+                              {openProjectMenu === project.name && (
+                                <div className="position-absolute end-0 mt-1 bg-white rounded-3 shadow-lg border py-1 z-3" style={{ minWidth: '150px' }}>
+                                  <button
+                                    onClick={() => { navigate(`/dashboard/portfolio?id=${project.id}`); setOpenProjectMenu(null); }}
+                                    className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-dark small hover-bg-light"
+                                  >
+                                    <Eye size={14} className="text-emerald-600" /> View Details
+                                  </button>
+                                  {isAdminLike && (
+                                    <>
+                                      <button
+                                        onClick={() => { setEditingProject(project); setOpenProjectMenu(null); }}
+                                        className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-dark small"
+                                      >
+                                        <Edit size={14} className="text-warning" /> Edit Project
+                                      </button>
+                                      <button
+                                        onClick={async () => {
+                                          if (project.id && confirm(`Delete project "${project.name}"?`)) {
+                                            try {
+                                              await fetchApi(`/projects/${project.id}`, { method: 'DELETE' });
+                                              setRefreshKey(prev => prev + 1);
+                                            } catch (err) { console.error('Delete failed', err); }
+                                          }
+                                          setOpenProjectMenu(null);
+                                        }}
+                                        className="d-flex align-items-center gap-2 px-3 py-2 w-100 border-0 bg-transparent text-danger small"
+                                      >
+                                        <Trash2 size={14} /> Delete
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </ScrollReveal>

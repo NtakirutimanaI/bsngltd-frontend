@@ -149,7 +149,7 @@ export function WebsiteCMS() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <RefreshCcw className="animate-spin text-orange-600" size={32} />
+                <RefreshCcw className="animate-spin text-emerald-600" size={32} />
             </div>
         );
     }
@@ -159,8 +159,8 @@ export function WebsiteCMS() {
             <ScrollReveal>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Website CMS</h1>
-                        <p className="text-gray-600 dark:text-gray-400 mt-1">Manage public website content and section visibility</p>
+                        <h1 className="h3 fw-bold text-gray-900 dark:text-white">Website CMS</h1>
+                        <p className="text-muted small mt-1">Manage public website content and section visibility</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="bg-white dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 flex mr-4">
@@ -168,7 +168,7 @@ export function WebsiteCMS() {
                                 <button
                                     key={lang.id}
                                     onClick={() => setActiveLang(lang.id)}
-                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeLang === lang.id ? 'bg-orange-600 text-white' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeLang === lang.id ? 'bg-emerald-600 text-white' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                                 >
                                     {lang.id.toUpperCase()}
                                 </button>
@@ -177,9 +177,9 @@ export function WebsiteCMS() {
                         <Button
                             onClick={saveSettings}
                             disabled={isSaving}
-                            className="bg-orange-600 hover:bg-orange-700 text-white gap-2 px-8 py-6 rounded-xl shadow-lg shadow-orange-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-4 py-2 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 text-sm h-10"
                         >
-                            {isSaving ? <RefreshCcw className="animate-spin h-5 w-5" /> : <Save className="h-5 w-5" />}
+                            {isSaving ? <RefreshCcw className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
                             Publish Changes
                         </Button>
                     </div>
@@ -204,7 +204,7 @@ export function WebsiteCMS() {
                                 key={page.id}
                                 onClick={() => setActivePage(page.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === page.id
-                                    ? "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400"
+                                    ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
                                     : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
                                     }`}
                             >
@@ -219,31 +219,31 @@ export function WebsiteCMS() {
                 <div className="lg:col-span-3 space-y-6">
                     <ScrollReveal delay={0.2}>
                         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                            <div className="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                            <div className="bg-gray-50 dark:bg-gray-900/50 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                                 <div className="flex items-center gap-4">
-                                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
+                                    <h3 className="text-md font-semibold text-gray-900 dark:text-white capitalize">
                                         {activePage.replace('_', ' ')} Content
                                     </h3>
-                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-600 rounded-full border border-orange-100 dark:border-orange-900/30">
-                                        <Globe size={14} />
-                                        <span className="text-xs font-bold uppercase tracking-wider">{languages.find(l => l.id === activeLang)?.name}</span>
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                                        <Globe size={12} />
+                                        <span className="text-[10px] font-bold uppercase tracking-wider">{languages.find(l => l.id === activeLang)?.name}</span>
                                     </div>
                                 </div>
-                                <span className="text-xs font-medium px-2 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 rounded">
-                                    {currentPageSettings.length} Manageable Items
+                                <span className="text-[10px] font-medium px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded">
+                                    {currentPageSettings.length} Items
                                 </span>
                             </div>
 
-                            <div className="p-6 space-y-8">
+                            <div className="p-4 space-y-6">
                                 {currentPageSettings.map((setting) => (
                                     <div key={setting.key} className="space-y-3 group">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-orange-600" /> :
+                                                {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-emerald-600" /> :
                                                     setting.key.includes('phone') ? <Phone size={16} className="text-blue-600" /> :
                                                         setting.key.includes('email') ? <Mail size={16} className="text-red-600" /> :
                                                             setting.key.includes('address') ? <MapPin size={16} className="text-green-600" /> :
-                                                                setting.key.includes('image') ? <ImageIcon size={16} className="text-purple-600" /> :
+                                                                setting.key.includes('image') || setting.key.includes('bg') || setting.key.includes('img') || setting.key.includes('logo') || setting.key.includes('favicon') ? <ImageIcon size={16} className="text-purple-600" /> :
                                                                     setting.key.includes('facebook') ? <FacebookIcon size={16} className="text-blue-700" /> :
                                                                         setting.key.includes('twitter') ? <TwitterIcon size={16} className="text-sky-500" /> :
                                                                             setting.key.includes('instagram') ? <InstagramIcon size={16} className="text-pink-600" /> :
@@ -272,19 +272,67 @@ export function WebsiteCMS() {
                                         </div>
 
                                         {!setting.key.includes('visible') && (
-                                            setting.value.length > 100 || setting.key.includes('history') || setting.key.includes('desc') || setting.key.includes('vision') ? (
+                                            setting.key.includes('image') || setting.key.includes('bg') || setting.key.includes('img') || setting.key.includes('logo') || setting.key.includes('favicon') ? (
+                                                <div className="flex flex-col gap-3">
+                                                    {setting.value && (
+                                                        <div className="relative w-fit">
+                                                            <img
+                                                                src={setting.value.startsWith('http') || setting.value.startsWith('/') ? setting.value : `/uploads/settings/${setting.value}`}
+                                                                alt={setting.description}
+                                                                className="h-24 w-auto object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                                                                onError={(e) => {
+                                                                    // Fallback if image fails to load
+                                                                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150';
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-3">
+                                                        <Input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={async (e) => {
+                                                                if (e.target.files && e.target.files[0]) {
+                                                                    const file = e.target.files[0];
+                                                                    const formData = new FormData();
+                                                                    formData.append('image', file);
+                                                                    formData.append('key', setting.key);
+
+                                                                    try {
+                                                                        // @ts-ignore
+                                                                        const res = await fetchApi<{ url: string, key: string }>('/settings/upload-image', {
+                                                                            method: 'POST',
+                                                                            body: formData,
+                                                                        });
+                                                                        if (res && res.url) {
+                                                                            handleUpdateSetting(setting.key, res.url);
+                                                                            setMessage({ type: 'success', text: 'Image uploaded locally! Remember to Publish Changes.' });
+                                                                            setTimeout(() => setMessage(null), 4000);
+                                                                        }
+                                                                    } catch (err) {
+                                                                        console.error('Failed to upload', err);
+                                                                        setMessage({ type: 'error', text: 'Image upload failed' });
+                                                                        setTimeout(() => setMessage(null), 4000);
+                                                                    }
+                                                                }
+                                                            }}
+                                                            className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-emerald-500 rounded-lg h-auto py-1.5 text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-emerald-900/30 dark:file:text-emerald-400"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ) : setting.value.length > 100 || setting.key.includes('history') || setting.key.includes('desc') || setting.key.includes('vision') ? (
                                                 <Textarea
                                                     value={getLocalizedValue(setting.value, activeLang)}
                                                     onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                    rows={4}
-                                                    className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-orange-500 rounded-xl resize-none"
+                                                    rows={3}
+                                                    className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-emerald-500 rounded-lg resize-none text-sm p-2"
                                                     placeholder={`${setting.description} (${activeLang})`}
                                                 />
                                             ) : (
                                                 <Input
                                                     value={getLocalizedValue(setting.value, activeLang)}
                                                     onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                    className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-orange-500 rounded-xl h-12"
+                                                    className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-emerald-500 rounded-lg h-9 text-sm px-3"
                                                     placeholder={`${setting.description} (${activeLang})`}
                                                 />
                                             )
@@ -305,10 +353,10 @@ export function WebsiteCMS() {
                         </div>
                     </ScrollReveal>
 
-                    <ScrollReveal delay={0.3} className="bg-orange-50 dark:bg-orange-900/10 border border-orange-100 dark:border-orange-900/30 rounded-xl p-6">
+                    <ScrollReveal delay={0.3} className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-xl p-6">
                         <div className="flex gap-4">
-                            <div className="h-10 w-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center shrink-0">
-                                <SettingsIcon className="text-orange-600" size={20} />
+                            <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center shrink-0">
+                                <SettingsIcon className="text-emerald-600" size={20} />
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-sm uppercase">Multi-Language Support</h4>

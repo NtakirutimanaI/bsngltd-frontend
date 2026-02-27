@@ -138,9 +138,9 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
               setEditingProperty(null);
               setIsAddModalOpen(true);
             }}
-            className="btn btn-sm bg-orange-600 border-orange-600 text-white d-flex align-items-center gap-2 hover:bg-orange-700 transition-all"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             Add Property
           </button>
         </ScrollReveal>
@@ -273,10 +273,10 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                   )}
                 </div>
 
-                <div className="d-flex gap-2 mt-3">
+                <div className="d-flex gap-2">
                   <button
                     onClick={() => setSelectedProperty(property)}
-                    className="btn btn-outline-primary flex-grow-1 btn-sm d-flex align-items-center justify-content-center gap-2"
+                    className="flex-fill bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-[1.02] active:scale-95 d-flex align-items-center justify-content-center gap-2"
                   >
                     <Eye className="w-4 h-4" />
                     Details
@@ -286,7 +286,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                       setEditingProperty(property);
                       setIsAddModalOpen(true);
                     }}
-                    className="btn btn-primary btn-sm d-flex align-items-center justify-content-center px-3"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-xl transition-all hover:scale-110 active:scale-90 border-0 shadow-sm"
                     title="Edit Property"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -401,9 +401,19 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                 </div>
               </div>
             </div>
-            <div className="d-flex justify-content-end gap-1.5 pt-2.5 border-top border-gray-100 dark:border-gray-800">
-              <button type="button" className="btn btn-light text-xs h-7 px-2" onClick={() => setSelectedProperty(null)}>Close</button>
-              <button className="btn btn-primary text-xs h-7 px-2">Contact</button>
+            <div className="d-flex justify-content-end gap-3 pt-3 border-top border-gray-100 dark:border-gray-800">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
+                onClick={() => setSelectedProperty(null)}
+              >
+                Close
+              </button>
+              <button
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+              >
+                Contact
+              </button>
             </div>
           </div>
         )}

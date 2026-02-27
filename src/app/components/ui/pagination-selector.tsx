@@ -17,77 +17,98 @@ export function PaginationSelector({
   onPageSizeChange,
   totalItems
 }: PaginationSelectorProps) {
-  const pageSizes = [5, 10, 15];
-  
+  const pageSizes = [5, 10, 15, 20, 50];
+
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems || 0);
 
+  // Generate page numbers to show
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) pages.push(i);
+      }
+
+      if (currentPage < totalPages - 2) pages.push('...');
+      if (!pages.includes(totalPages)) pages.push(totalPages);
+    }
+    return pages;
+  };
+
   return (
-    <div className="d-flex align-items-center justify-content-between gap-3 flex-wrap">
-      <div className="d-flex align-items-center gap-2">
-        <span className="text-muted small">Items per page:</span>
-        <select
-          value={pageSize}
-          onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          className="form-select form-select-sm"
-          style={{ 
-            fontSize: '12px', 
-            height: '30px', 
-            borderRadius: '6px',
-            border: '1px solid #dee2e6',
-            minWidth: '60px'
-          }}
-        >
-          {pageSizes.map(size => (
-            <option key={size} value={size}>{size}</option>
-          ))}
-        </select>
-        {totalItems && (
-          <span className="text-muted small">
-            {startItem}-{endItem} of {totalItems}
-          </span>
+    <div className="premium-pagination">
+      <div className="d-flex align-items-center gap-3">
+        <div className="d-flex align-items-center gap-2">
+          <span className="text-muted small fw-bold text-uppercase" style={{ letterSpacing: '0.5px', fontSize: '10px' }}>Show:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              const newSize = Number(e.target.value);
+              onPageSizeChange(newSize);
+            }}
+            className="page-size-select"
+          >
+            {pageSizes.map(size => (
+              <option key={size} value={size}>{size}</option>
+            ))}
+          </select>
+        </div>
+        {totalItems !== undefined && (
+          <div className="text-muted small fw-medium d-none d-sm-block">
+            Showing <span className="text-dark fw-bold">{startItem}</span> to <span className="text-dark fw-bold">{endItem}</span> of <span className="text-dark fw-bold">{totalItems}</span>
+          </div>
         )}
       </div>
-      
+
       <div className="d-flex align-items-center gap-1">
         <button
-          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="btn btn-sm d-flex align-items-center gap-1"
-          style={{
-            background: currentPage === 1 ? '#f8f9fa' : '#16a085',
-            border: '1px solid #dee2e6',
-            color: currentPage === 1 ? '#6c757d' : '#fff',
-            fontSize: '12px',
-            height: '30px',
-            borderRadius: '6px',
-            padding: '0 8px'
-          }}
+          className="pagination-btn"
+          title="Previous Page"
         >
-          <ChevronLeft size={12} />
-          Previous
+          <ChevronLeft size={16} />
         </button>
-        
-        <span className="text-muted small px-2">
-          Page {currentPage} of {totalPages}
-        </span>
-        
+
+        <div className="d-none d-md-flex align-items-center gap-1 mx-1">
+          {getPageNumbers().map((p, i) => (
+            typeof p === 'number' ? (
+              <button
+                key={i}
+                onClick={() => onPageChange(p)}
+                className={`pagination-btn ${currentPage === p ? 'active' : ''}`}
+                style={{ minWidth: '36px', justifyContent: 'center' }}
+              >
+                {p}
+              </button>
+            ) : (
+              <span key={i} className="text-muted px-1">...</span>
+            )
+          ))}
+        </div>
+
+        <div className="d-md-none text-muted small fw-bold px-2">
+          {currentPage} / {totalPages}
+        </div>
+
         <button
-          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="btn btn-sm d-flex align-items-center gap-1"
-          style={{
-            background: currentPage === totalPages ? '#f8f9fa' : '#16a085',
-            border: '1px solid #dee2e6',
-            color: currentPage === totalPages ? '#6c757d' : '#fff',
-            fontSize: '12px',
-            height: '30px',
-            borderRadius: '6px',
-            padding: '0 8px'
-          }}
+          className="pagination-btn"
+          title="Next Page"
         >
-          Next
-          <ChevronRight size={12} />
+          <ChevronRight size={16} />
         </button>
       </div>
     </div>

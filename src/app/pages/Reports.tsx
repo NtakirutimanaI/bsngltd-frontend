@@ -73,22 +73,22 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
       {!hideHeader && (
         <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
+            <h1 className="h3 fw-bold text-gray-900 mb-1">Reports & Analytics</h1>
             <p className="text-gray-600 mt-1">Comprehensive business insights and performance metrics</p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => exportReport("PDF")}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95"
             >
-              <Download className="h-5 w-5" />
+              <Download className="h-4 w-4" />
               Export PDF
             </button>
             <button
               onClick={() => exportReport("Excel")}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="flex items-center gap-2 px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
             >
-              <FileText className="h-5 w-5" />
+              <FileText className="h-4 w-4" />
               Export Excel
             </button>
           </div>
@@ -97,14 +97,14 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ScrollReveal delay={0.1} className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-sm p-4 text-white">
+        <ScrollReveal delay={0.1} className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-sm p-4 text-white">
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="h-6 w-6" />
             <TrendingUp className="h-4 w-4" />
           </div>
-          <p className="text-orange-100 text-xs mb-0.5">Total Revenue (2024)</p>
+          <p className="text-emerald-100 text-xs mb-0.5">Total Revenue (2024)</p>
           <p className="text-2xl font-bold">RWF 445M</p>
-          <p className="text-orange-100 text-xs mt-1">+28% from last year</p>
+          <p className="text-emerald-100 text-xs mt-1">+28% from last year</p>
         </ScrollReveal>
 
         <ScrollReveal delay={0.2} className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-4 text-white">
@@ -146,7 +146,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             <p className="text-xs text-gray-600 mt-0.5">Revenue, expenses, and profit trends</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-2 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-medium">
+            <button className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">
               6 Months
             </button>
             <button className="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-xs font-medium">
@@ -326,8 +326,8 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
 
         <ScrollReveal delay={1.1} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-orange-600" />
+            <div className="h-10 w-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
               <p className="text-xs text-gray-600">Budget Adherence</p>

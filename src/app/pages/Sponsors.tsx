@@ -10,18 +10,13 @@ import {
   Calendar,
   TrendingUp,
   Users,
+  Eye,
+  MessageCircle,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from '../api/client';
 import { Modal } from '@/app/components/Modal';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/app/components/ui/pagination";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { useDebounce } from "@/app/hooks/useDebounce";
 
 interface PaginatedResponse<T> {
@@ -52,6 +47,8 @@ export function Sponsors() {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+  const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSponsor, setSelectedSponsor] = useState<Sponsor | null>(null);
 
@@ -59,7 +56,7 @@ export function Sponsors() {
     setIsLoading(true);
     const query = new URLSearchParams({
       page: currentPage.toString(),
-      limit: '6',
+      limit: pageSize.toString(),
       search: debouncedSearchTerm,
       type: filterType
     }).toString();
@@ -68,13 +65,14 @@ export function Sponsors() {
       .then(res => {
         setSponsors(res.data || []);
         setTotalPages(res.lastPage || 1);
+        setTotalItems(res.total || 0);
         setIsLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch sponsors", err);
         setIsLoading(false);
       });
-  }, [currentPage, debouncedSearchTerm, filterType]);
+  }, [currentPage, pageSize, debouncedSearchTerm, filterType]);
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -115,12 +113,12 @@ export function Sponsors() {
       {/* Header */}
       <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sponsors & Investors</h1>
+          <h1 className="h3 fw-bold text-gray-900 mb-1">Sponsors & Investors</h1>
           <p className="text-gray-600 mt-1">
             Manage relationships with project sponsors and investors
           </p>
         </div>
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium shadow-sm">
+        <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
           <Plus className="h-4 w-4" />
           Add Sponsor
         </button>
@@ -174,8 +172,8 @@ export function Sponsors() {
                 {formatAmount(totalInvestment / (sponsors.length || 1))}
               </p>
             </div>
-            <div className="bg-orange-100 p-3 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-orange-600" />
+            <div className="bg-emerald-100 p-3 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-emerald-600" />
             </div>
           </div>
         </ScrollReveal>
@@ -191,14 +189,14 @@ export function Sponsors() {
               placeholder="Search sponsors..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:outline-none focus:ring-0 focus:border-orange-500 transition-colors"
+              className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:outline-none focus:ring-0 focus:border-emerald-500 transition-colors"
             />
           </div>
           <div className="flex items-center gap-2">
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             >
               <option value="all">All Types</option>
               <option value="government">Government</option>
@@ -261,7 +259,7 @@ export function Sponsors() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Sponsored Projects:</span>
-                <span className="text-base font-semibold text-orange-600">
+                <span className="text-base font-semibold text-emerald-600">
                   {sponsor.projects}
                 </span>
               </div>
@@ -269,8 +267,9 @@ export function Sponsors() {
 
             <button
               onClick={() => setSelectedSponsor(sponsor)}
-              className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-100 mt-4 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-[1.02] active:scale-95 d-flex align-items-center justify-content-center gap-2"
             >
+              <Eye className="h-4 w-4" />
               View Details
             </button>
           </ScrollReveal>
@@ -287,49 +286,31 @@ export function Sponsors() {
       {/* Pagination */}
       {totalPages > 1 && (
         <ScrollReveal delay={0.6} className="pt-4 pb-8">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={currentPage === page}
-                    onClick={() => setCurrentPage(page)}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationSelector
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1); // Reset to first page when changing page size
+            }}
+          />
         </ScrollReveal>
       )}
       {/* Sponsor Details Modal */}
       <Modal isOpen={!!selectedSponsor} onClose={() => setSelectedSponsor(null)} title="Sponsor Details" size="sm" draggable={true}>
         {selectedSponsor && (
           <div className="flex flex-col gap-4">
-            <div className="bg-orange-600 p-4 rounded-xl text-white flex justify-between items-center shrink-0">
+            <div className="bg-emerald-600 p-4 rounded-xl text-white flex justify-between items-center shrink-0">
               <div className="flex items-center gap-3">
                 <div className="text-2xl bg-white/20 p-2 rounded-xl">
                   {getTypeIcon(selectedSponsor.type)}
                 </div>
                 <div>
                   <h2 className="text-lg font-bold mb-0 text-white">{selectedSponsor.name}</h2>
-                  <p className="text-orange-100 uppercase text-[10px] font-bold tracking-wider mb-0 text-white">
+                  <p className="text-emerald-100 uppercase text-[10px] font-bold tracking-wider mb-0 text-white">
                     {selectedSponsor.type} Investor
                   </p>
                 </div>
@@ -380,24 +361,25 @@ export function Sponsors() {
                     <p className="font-bold text-blue-700 dark:text-blue-400 mb-0">{selectedSponsor.projects}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 bg-orange-50 dark:bg-orange-900/20 p-3 rounded-xl border border-orange-100 dark:border-orange-900/30">
-                  <Calendar className="h-4 w-4 text-orange-600" />
+                <div className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
+                  <Calendar className="h-4 w-4 text-emerald-600" />
                   <div>
-                    <p className="text-[10px] text-orange-500 mb-0">Sponsor Since</p>
+                    <p className="text-[10px] text-emerald-500 mb-0">Sponsor Since</p>
                     <p className="font-semibold text-sm mb-0 dark:text-gray-200">{selectedSponsor.investmentDate}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-gray-800 mt-4">
               <button
                 onClick={() => setSelectedSponsor(null)}
-                className="px-4 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="px-5 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
               >
                 Close
               </button>
-              <button className="px-4 py-1.5 bg-gray-900 dark:bg-orange-600 text-white rounded-lg text-sm font-semibold hover:bg-black dark:hover:bg-orange-700 transition-colors">
+              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
+                <MessageCircle className="h-4 w-4" />
                 Send Message
               </button>
             </div>

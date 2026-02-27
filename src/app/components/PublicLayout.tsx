@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import { PublicHeader } from '@/app/components/PublicHeader';
 import { Footer } from '@/app/components/Footer';
 import { ScrollToTop } from '@/app/components/ScrollToTop';
+import { ScrollToTopOnNavigate } from '@/app/components/ScrollToTopOnNavigate';
 import { Chatbot } from '@/app/components/Chatbot';
 
 import { useEffect } from 'react';
@@ -18,6 +19,7 @@ export function PublicLayout() {
 
   return (
     <>
+      <ScrollToTopOnNavigate />
       <PublicHeader />
       <Outlet />
       <Footer />

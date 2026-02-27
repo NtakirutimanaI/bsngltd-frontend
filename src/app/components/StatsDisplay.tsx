@@ -45,7 +45,7 @@ export function StatsDisplay() {
                 { label: t('yearsExperience'), value: stats.yearsExperience },
             ].map((stat, index) => (
                 <ScrollReveal key={index} className="text-center" delay={index * 0.1}>
-                    <div className="text-4xl font-bold text-orange-600 mb-2">{stat.value}</div>
+                    <div className="text-4xl font-bold text-emerald-600 mb-2">{stat.value}</div>
                     <div className="text-muted-foreground">{stat.label}</div>
                 </ScrollReveal>
             ))}

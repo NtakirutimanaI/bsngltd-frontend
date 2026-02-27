@@ -16,14 +16,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { AddPaymentModal } from "@/app/components/AddPaymentModal";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from '../api/client';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/app/components/ui/pagination";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { useAuth } from "@/app/context/AuthContext";
 import { useDebounce } from "@/app/hooks/useDebounce";
 
@@ -58,6 +51,8 @@ export function Payments() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
@@ -72,7 +67,7 @@ export function Payments() {
     setLoading(true);
     const query = new URLSearchParams({
       page: currentPage.toString(),
-      limit: '10',
+      limit: pageSize.toString(),
       search: debouncedSearchTerm,
       type: filterType,
       status: filterStatus
@@ -82,13 +77,14 @@ export function Payments() {
       .then(res => {
         setPayments(res.data || []);
         setTotalPages(res.lastPage || 1);
+        setTotalItems(res.total || 0);
         setLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch payments", err);
         setLoading(false);
       });
-  }, [currentPage, debouncedSearchTerm, filterType, filterStatus, refreshKey]);
+  }, [currentPage, pageSize, debouncedSearchTerm, filterType, filterStatus, refreshKey]);
 
   useEffect(() => {
     if (isEmployee) {
@@ -178,7 +174,7 @@ export function Payments() {
         {isAdminOrManager && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="btn btn-primary d-flex align-items-center gap-2"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
           >
             <Plus className="w-5 h-5" />
             New Payment
@@ -451,35 +447,17 @@ export function Payments() {
       {/* Pagination */}
       {totalPages > 1 && (
         <ScrollReveal delay={0.9} className="py-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  className={currentPage === 1 ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={currentPage === page}
-                    onClick={() => setCurrentPage(page)}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  className={currentPage === totalPages ? "disabled opacity-50" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationSelector
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1); // Reset to first page when changing page size
+            }}
+          />
         </ScrollReveal>
       )}
 

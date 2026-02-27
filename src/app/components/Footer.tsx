@@ -84,7 +84,7 @@ export function Footer() {
                 onClick={() => setIsMISModalOpen(true)}
                 className="text-white-50 p-0 bg-transparent border-0 hover:text-primary transition-colors text-xs d-flex align-items-center gap-1"
               >
-                This website powered by <span className="text-secondary fw-bold ms-1">MIS</span>
+                {t('websitePoweredBy')} <span className="text-secondary fw-bold ms-1">MIS</span>
                 <ExternalLink size={10} className="ms-1" />
               </button>
             </div>

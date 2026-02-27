@@ -127,7 +127,7 @@ export function UpdateDetails() {
                             {update.tags && update.tags.length > 0 && (
                                 <div className="d-flex align-items-center gap-2 mt-5 pt-4 border-top">
                                     <Tag className="w-4 h-4 text-primary" />
-                                    <span className="fw-bold me-2">Tags:</span>
+                                    <span className="fw-bold me-2">{t('tags')}</span>
                                     {update.tags.map(tag => (
                                         <span key={tag} className="badge bg-light text-dark border px-3 py-2">
                                             {tag}

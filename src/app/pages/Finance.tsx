@@ -174,16 +174,13 @@ export function Finance() {
                     {activeTab === 'ledger' && isAdminOrManager && (
                         <button
                             onClick={() => setIsAddModalOpen(true)}
-                            className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
-                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                         >
-                            <Plus size={13} /> New Transaction
+                            <Plus size={14} /> <span>New Transaction</span>
                         </button>
                     )}
-                    <button className="btn px-3 py-1 d-flex align-items-center gap-1" style={{
-                        background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px'
-                    }}>
-                        <Download size={13} /> Export
+                    <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800">
+                        <Download size={16} />
                     </button>
                 </div>
             </ScrollReveal>
@@ -236,20 +233,34 @@ export function Finance() {
             {/* Hub Tabs */}
             <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
                 <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1 gap-2">
+                    <div className="nav nav-pills p-1.5 gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-2xl mx-1 my-1">
                         <button
                             onClick={() => setActiveTab('ledger')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'ledger' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'ledger' ? '#16a085' : 'transparent', color: activeTab === 'ledger' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'ledger' ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
+                            style={{
+                                borderRadius: '14px',
+                                border: 'none',
+                                background: activeTab === 'ledger' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                letterSpacing: '0.5px'
+                            }}
                         >
-                            <Receipt size={14} /> General Ledger
+                            <Receipt size={16} /> General Ledger
                         </button>
                         <button
                             onClick={() => setActiveTab('payroll_history')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'payroll_history' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'payroll_history' ? '#16a085' : 'transparent', color: activeTab === 'payroll_history' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'payroll_history' ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
+                            style={{
+                                borderRadius: '14px',
+                                border: 'none',
+                                background: activeTab === 'payroll_history' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                letterSpacing: '0.5px'
+                            }}
                         >
-                            <History size={14} /> Payroll History
+                            <History size={16} /> Payroll History
                         </button>
                     </div>
                 </div>

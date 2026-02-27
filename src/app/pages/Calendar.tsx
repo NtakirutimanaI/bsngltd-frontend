@@ -131,7 +131,7 @@ export function Calendar() {
       case "deadline":
         return "bg-red-500";
       case "inspection":
-        return "bg-orange-500";
+        return "bg-emerald-500";
       case "delivery":
         return "bg-green-500";
       default:

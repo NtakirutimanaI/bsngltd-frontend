@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, RefreshCcw } from 'lucide-react';
 import { Modal } from '@/app/components/Modal';
 import { ScrollReveal } from '@/app/components/ScrollReveal';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/app/components/ui/pagination";
+import { PaginationSelector } from "@/app/components/ui/pagination-selector";
 import { useLanguage } from '@/app/context/LanguageContext';
 import { fetchApi } from '../api/client';
 import { useDebounce } from "@/app/hooks/useDebounce";
@@ -40,6 +33,8 @@ export function ManageUpdates() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -47,7 +42,7 @@ export function ManageUpdates() {
     setIsLoading(true);
     const query = new URLSearchParams({
       page: currentPage.toString(),
-      limit: '10',
+      limit: pageSize.toString(),
       search: debouncedSearchTerm,
       t: refreshKey.toString()
     }).toString();
@@ -56,13 +51,14 @@ export function ManageUpdates() {
       .then(res => {
         setUpdates(res.data);
         setTotalPages(res.lastPage);
+        setTotalItems(res.total || 0);
         setIsLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch updates", err);
         setIsLoading(false);
       });
-  }, [currentPage, debouncedSearchTerm, refreshKey]);
+  }, [currentPage, pageSize, debouncedSearchTerm, refreshKey]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUpdate, setSelectedUpdate] = useState<Update | null>(null);
@@ -239,7 +235,7 @@ export function ManageUpdates() {
             type="button"
             onClick={() => setActiveLang(lang.id)}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md transition-all text-xs font-semibold ${activeLang === lang.id
-              ? 'bg-white shadow-sm text-orange-600'
+              ? 'bg-white shadow-sm text-emerald-600'
               : 'text-gray-500 hover:text-gray-700'
               }`}
           >
@@ -248,39 +244,39 @@ export function ManageUpdates() {
         ))}
       </div>
 
-      <div className="space-y-3 p-3 border border-orange-100 rounded-lg bg-orange-50/20">
+      <div className="space-y-3 p-3 border border-emerald-100 rounded-lg bg-emerald-50/20">
         <div>
-          <label className="block text-xs font-semibold text-orange-900 mb-1 uppercase">Title ({activeLang.toUpperCase()}) *</label>
+          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Title ({activeLang.toUpperCase()}) *</label>
           <input
             type="text"
             value={localizedData.title[activeLang]}
             onChange={(e) => handleLocalizedChange('title', e.target.value)}
             required={activeLang === 'en'}
-            className="w-full px-3 py-2 text-sm border border-orange-200 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
             placeholder={`Title in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-orange-900 mb-1 uppercase">Excerpt ({activeLang.toUpperCase()}) *</label>
+          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Excerpt ({activeLang.toUpperCase()}) *</label>
           <textarea
             value={localizedData.excerpt[activeLang]}
             onChange={(e) => handleLocalizedChange('excerpt', e.target.value)}
             required={activeLang === 'en'}
             rows={2}
-            className="w-full px-3 py-2 text-sm border border-orange-200 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none bg-white"
             placeholder={`Brief summary in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-orange-900 mb-1 uppercase">Content ({activeLang.toUpperCase()}) *</label>
+          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Content ({activeLang.toUpperCase()}) *</label>
           <textarea
             value={localizedData.content[activeLang]}
             onChange={(e) => handleLocalizedChange('content', e.target.value)}
             required={activeLang === 'en'}
             rows={3}
-            className="w-full px-3 py-2 text-sm border border-orange-200 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none bg-white"
             placeholder={`Full article body in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
@@ -293,7 +289,7 @@ export function ManageUpdates() {
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -310,7 +306,7 @@ export function ManageUpdates() {
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
           />
         </div>
 
@@ -321,7 +317,7 @@ export function ManageUpdates() {
             value={formData.author}
             onChange={(e) => setFormData({ ...formData, author: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
             placeholder="Author name"
           />
         </div>
@@ -334,7 +330,7 @@ export function ManageUpdates() {
           value={formData.image}
           onChange={(e) => setFormData({ ...formData, image: e.target.value })}
           required
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
           placeholder="https://example.com/image.jpg"
         />
       </div>
@@ -347,7 +343,7 @@ export function ManageUpdates() {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-orange-500 focus:border-orange-500 outline-none bg-white"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
             placeholder="Add a tag"
           />
           <button
@@ -362,13 +358,13 @@ export function ManageUpdates() {
           {formData.tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full text-xs"
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => removeTag(tag)}
-                className="hover:text-orange-900 font-bold"
+                className="hover:text-emerald-900 font-bold"
               >
                 ×
               </button>
@@ -377,22 +373,23 @@ export function ManageUpdates() {
         </div>
       </div>
 
-      <div className="flex gap-2 pt-3 border-t">
+      <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800 mt-4">
         <button
           type="button"
           onClick={() => {
             isEdit ? setIsEditModalOpen(false) : setIsAddModalOpen(false);
             resetForm();
           }}
-          className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-50 transition"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="flex-1 px-4 py-2 text-sm bg-orange-600 hover:bg-orange-700 text-white rounded-md font-medium transition"
+          className="flex-1 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
         >
-          {isEdit ? 'Update' : 'Create'} Update
+          {isEdit ? <RefreshCcw className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          <span>{isEdit ? 'Update' : 'Create'} Update</span>
         </button>
       </div>
     </form>
@@ -401,9 +398,9 @@ export function ManageUpdates() {
   return (
     <div className="p-6">
       {/* Header */}
-      <ScrollReveal className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Updates</h1>
-        <p className="text-gray-600">Create and manage company updates, news, and announcements</p>
+      <ScrollReveal className="mb-4">
+        <h1 className="h3 fw-bold text-gray-900 mb-1">Manage Updates</h1>
+        <p className="text-muted small">Create and manage company updates, news, and announcements</p>
       </ScrollReveal>
 
       {/* Actions Bar */}
@@ -415,12 +412,12 @@ export function ManageUpdates() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search updates..."
-            className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:ring-0 focus:border-orange-500 outline-none transition-colors"
+            className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:ring-0 focus:border-emerald-500 outline-none transition-colors"
           />
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
         >
           <Plus className="w-5 h-5" />
           Add Update
@@ -465,7 +462,7 @@ export function ManageUpdates() {
                     <div className="text-sm text-gray-500 line-clamp-1">{dt(update.excerpt)}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-block px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
+                    <span className="inline-block px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                       {update.category}
                     </span>
                   </td>
@@ -489,14 +486,14 @@ export function ManageUpdates() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => openEditModal(update)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-all hover:scale-110 active:scale-95"
                         title="Edit"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteUpdate(update.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        className="p-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition-all hover:scale-110 active:scale-95"
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -521,57 +518,43 @@ export function ManageUpdates() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="px-6 py-4 border-t border-gray-200">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        isActive={currentPage === page}
-                        onClick={() => setCurrentPage(page)}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+              <PaginationSelector
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                totalItems={totalItems}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setCurrentPage(1); // Reset to first page when changing page size
+                }}
+              />
             </div>
           )}
         </div>
-      </ScrollReveal>
+      </ScrollReveal >
 
       {/* Add Modal */}
-      {isAddModalOpen && (
-        <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Create New Update" size="md" draggable={true}>
-          <div className="p-4">
-            <UpdateForm onSubmit={handleAddUpdate} />
-          </div>
-        </Modal>
-      )}
+      {
+        isAddModalOpen && (
+          <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Create New Update" size="md" draggable={true}>
+            <div className="p-4">
+              <UpdateForm onSubmit={handleAddUpdate} />
+            </div>
+          </Modal>
+        )
+      }
 
       {/* Edit Modal */}
-      {isEditModalOpen && (
-        <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Update" size="md" draggable={true}>
-          <div className="p-4">
-            <UpdateForm onSubmit={handleEditUpdate} isEdit={true} />
-          </div>
-        </Modal>
-      )}
-    </div>
+      {
+        isEditModalOpen && (
+          <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Update" size="md" draggable={true}>
+            <div className="p-4">
+              <UpdateForm onSubmit={handleEditUpdate} isEdit={true} />
+            </div>
+          </Modal>
+        )
+      }
+    </div >
   );
 }

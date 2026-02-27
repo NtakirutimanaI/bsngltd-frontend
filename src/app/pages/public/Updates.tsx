@@ -154,12 +154,12 @@ export function Updates() {
                   <Search className="text-muted" size={48} />
                 </div>
                 <h4>{t('noUpdatesFound')}</h4>
-                <p className="text-muted">Try adjusting your filters or search terms.</p>
+                <p className="text-muted">{t('adjustFiltersOrSearch')}</p>
                 <button
                   className="btn btn-primary px-4 mt-3 rounded-pill"
                   onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }}
                 >
-                  Clear All Filters
+                  {t('clearAllFilters')}
                 </button>
               </div>
             )}
@@ -172,7 +172,7 @@ export function Updates() {
                 <nav aria-label="Page navigation">
                   <ul className="pagination justify-content-center">
                     <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}>Previous</button>
+                      <button className="page-link" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}>{t('previous')}</button>
                     </li>
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                       <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
@@ -180,7 +180,7 @@ export function Updates() {
                       </li>
                     ))}
                     <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                      <button className="page-link" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}>Next</button>
+                      <button className="page-link" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}>{t('next')}</button>
                     </li>
                   </ul>
                 </nav>

@@ -5,11 +5,17 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
     const url = `${BASE_URL}${endpoint}`;
 
     const token = localStorage.getItem('bsng_token');
-    const headers = {
-        'Content-Type': 'application/json',
+    const isFormData = options.body instanceof FormData;
+
+    const headers: Record<string, string> = {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        ...options.headers,
+        ...(options.headers as Record<string, string>),
     };
+
+    // Only set Content-Type to application/json if we are NOT sending FormData
+    if (!isFormData && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json';
+    }
 
     const response = await fetch(url, {
         ...options,

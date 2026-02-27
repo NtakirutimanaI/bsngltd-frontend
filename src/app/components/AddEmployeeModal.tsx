@@ -284,18 +284,55 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
           )}
         </div>
 
-        <div className="d-flex align-items-center justify-content-end gap-2 pt-2 border-top">
+        <div className="d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-2">
           <button
             type="button"
             onClick={onClose}
-            className="btn btn-outline-secondary text-xs h-6 px-2"
+            className="btn d-flex align-items-center justify-content-center"
+            style={{
+              background: 'transparent',
+              border: '2px solid #6c757d',
+              color: '#6c757d',
+              fontWeight: 600,
+              fontSize: '12px',
+              height: '32px',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
+              padding: '0 20px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#6c757d';
+              e.currentTarget.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#6c757d';
+            }}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-primary text-xs h-6 px-2"
+            className="btn d-flex align-items-center justify-content-center"
+            style={{
+              background: '#16a085',
+              border: 'none',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '12px',
+              height: '32px',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
+              padding: '0 20px',
+              opacity: isSubmitting ? 0.7 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (!isSubmitting) e.currentTarget.style.background = '#1a9b7d';
+            }}
+            onMouseLeave={(e) => {
+              if (!isSubmitting) e.currentTarget.style.background = '#16a085';
+            }}
           >
             {isSubmitting ? (initialData ? "Updating..." : "Adding...") : (initialData ? "Update Employee" : "Add Employee")}
           </button>

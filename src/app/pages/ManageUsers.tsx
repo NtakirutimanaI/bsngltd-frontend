@@ -5,7 +5,7 @@ import { Modal } from '@/app/components/Modal';
 import { PaginationSelector } from '@/app/components/ui/pagination-selector';
 import {
     Users, UserPlus, Search, Edit2, Trash2, X, Eye, EyeOff,
-    Shield, UserCog, Briefcase, Heart, Globe, ChevronLeft, ChevronRight,
+    Shield, UserCog, Briefcase, Heart, Globe,
     RefreshCw, CheckCircle, XCircle
 } from 'lucide-react';
 
@@ -120,15 +120,15 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
 
     const roleName = ((typeof currentUser?.role === 'object' && currentUser.role !== null)
         ? currentUser.role.name : currentUser?.role || 'guest').toLowerCase();
-    const isAdmin = ['super_admin', 'admin'].includes(roleName);
+    const canManageUsers = ['super_admin', 'admin', 'manager', 'hr'].includes(roleName);
 
     useEffect(() => {
-        if (isAdmin) { fetchRoles(); }
-    }, [isAdmin]);
+        if (canManageUsers) { fetchRoles(); }
+    }, [canManageUsers]);
 
     useEffect(() => {
-        if (isAdmin) { fetchUsers(); }
-    }, [isAdmin, currentPage, activeCategory, searchQuery]);
+        if (canManageUsers) { fetchUsers(); }
+    }, [canManageUsers, currentPage, pageSize, activeCategory, searchQuery]);
 
     useEffect(() => {
         if (statusMsg) {
@@ -247,7 +247,7 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
 
     const totalPages = Math.ceil(totalUsers / pageSize);
 
-    if (!isAdmin) {
+    if (!canManageUsers) {
         return (
             <div style={{ padding: 40, textAlign: 'center' }}>
                 <Shield size={48} style={{ color: '#ef4444', marginBottom: 16 }} />
@@ -257,9 +257,9 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
         );
     }
 
-    
+
     return (
-        <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+        <div className={`container-fluid ${hideHeader ? 'p-0' : 'px-2 px-md-4 pt-1 pb-2'}`}>
             {/* Status Toast */}
             {statusMsg && (
                 <div style={{
@@ -287,23 +287,25 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                             Manage all system users, roles, and permissions
                         </p>
                     </div>
-                    <div className="d-flex gap-2">
-                        <button onClick={() => fetchUsers()} className="btn px-3 py-1 d-flex align-items-center gap-1" style={{
-                            background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px'
-                        }}>
-                            <RefreshCw size={13} /> Refresh
+                    <div className="d-flex gap-3">
+                        <button
+                            onClick={() => fetchUsers()}
+                            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
+                        >
+                            <RefreshCw size={14} /> Refresh
                         </button>
-                        <button onClick={() => { resetForm(); setShowModal(true); }} className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1" style={{
-                            background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
-                        }}>
-                            <UserPlus size={13} /> Add New User
+                        <button
+                            onClick={() => { resetForm(); setShowModal(true); }}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                        >
+                            <UserPlus size={14} /> Add New User
                         </button>
                     </div>
                 </div>
             )}
 
             {/* Category Tabs */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+            <div className={`card border-0 shadow-sm mb-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px', overflow: 'hidden' }}>
                 <div className="card-header bg-white border-0 p-0">
                     <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-auto">
                         {USER_CATEGORIES.map(cat => {
@@ -311,8 +313,8 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                             const isActive = activeCategory === cat.key;
                             return (
                                 <button key={cat.key} onClick={() => { setActiveCategory(cat.key); setCurrentPage(1); }}
-                                    className={`nav-link flex-shrink-0 d-flex align-items-center gap-1 py-2 transition-all ${isActive ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                                    style={{ 
+                                    className={`nav-link flex-shrink-0 d-flex align-items-center gap-1.5 py-2 transition-all ${isActive ? 'text-white' : 'text-muted hover:bg-light'}`}
+                                    style={{
                                         borderRadius: '8px', border: 'none',
                                         background: isActive ? '#16a085' : 'transparent',
                                         color: isActive ? '#fff' : '#6c757d',
@@ -329,7 +331,7 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
             </div>
 
             {/* Search Bar */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
+            <div className={`card border-0 shadow-sm mb-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px' }}>
                 <div className="card-body py-2">
                     <div className="position-relative d-flex align-items-center gap-2">
                         <Search className="position-absolute start-0 translate-middle-y ms-3 text-muted" size={14} />
@@ -353,7 +355,7 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
             </div>
 
             {/* Users Table */}
-            <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
+            <div className={`card border-0 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px' }}>
                 {loading ? (
                     <div className="text-center py-4">
                         <RefreshCw size={24} style={{ color: '#16a085', animation: 'spin 1s linear infinite' }} />
@@ -658,16 +660,20 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8, paddingTop: 12, borderTop: '1px solid #f3f4f6' }}>
-                        <button type="button" onClick={() => { setShowModal(false); resetForm(); }} style={{
-                            background: '#f3f4f6', border: 'none', padding: '6px 12px',
-                            borderRadius: 6, cursor: 'pointer', fontWeight: 600, color: '#374151', fontSize: '12px'
-                        }}>Cancel</button>
-                        <button type="submit" style={{
-                            background: '#16a085', border: 'none',
-                            padding: '6px 16px', borderRadius: 6, cursor: 'pointer',
-                            fontWeight: 600, color: 'white', fontSize: '12px'
-                        }}>{editingUser ? 'Update User' : 'Create User'}</button>
+                    <div className="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                        <button
+                            type="button"
+                            onClick={() => { setShowModal(false); resetForm(); }}
+                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                        >
+                            {editingUser ? 'Update User' : 'Create User'}
+                        </button>
                     </div>
                 </form>
             </Modal>

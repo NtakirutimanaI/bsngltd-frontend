@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal } from "@/app/components/Modal";
 import { useCurrency } from "@/app/context/CurrencyContext";
-import { Coins } from "lucide-react";
+import { Coins, Plus, RotateCcw } from "lucide-react";
 import { fetchApi } from '../api/client';
 
 interface AddPaymentModalProps {
@@ -181,20 +181,30 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
           />
         </div>
 
-        <div className="d-flex align-items-center justify-content-end gap-2 pt-2 border-top">
+        <div className="d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-2">
           <button
             type="button"
             onClick={onClose}
-            className="btn btn-outline-secondary text-xs h-6 px-2"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center gap-2"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-primary text-xs h-6 px-2"
+            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
           >
-            {isSubmitting ? "Recording..." : "Record Payment"}
+            {isSubmitting ? (
+              <>
+                <RotateCcw className="h-4 w-4 animate-spin" />
+                <span>Recording...</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span>Record Payment</span>
+              </>
+            )}
           </button>
         </div>
       </form>

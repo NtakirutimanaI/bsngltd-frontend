@@ -225,7 +225,7 @@ export function Messages() {
     return (
         <div className="h-[calc(100vh-120px)] flex flex-col">
             <ScrollReveal className="mb-4">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Messages</h1>
+                <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Messages</h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">Chat and collaborate with your team</p>
             </ScrollReveal>
 
@@ -237,7 +237,7 @@ export function Messages() {
                             <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                             <Input
                                 placeholder="Search users to chat..."
-                                className="pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 dark:border-gray-500 rounded-none w-full focus:ring-0 focus:border-orange-500 transition-colors"
+                                className="pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 dark:border-gray-500 rounded-none w-full focus:ring-0 focus:border-emerald-500 transition-colors"
                                 value={searchTerm}
                                 onChange={(e) => handleSearch(e.target.value)}
                             />
@@ -254,7 +254,7 @@ export function Messages() {
                                             className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
                                         >
                                             <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="bg-orange-100 text-orange-600 text-xs">
+                                                <AvatarFallback className="bg-emerald-100 text-emerald-600 text-xs">
                                                     {res.fullName.charAt(0)}
                                                 </AvatarFallback>
                                             </Avatar>
@@ -275,13 +275,13 @@ export function Messages() {
                             <button
                                 key={chat.id}
                                 onClick={() => setSelectedChat(chat)}
-                                className={`w-full p-4 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 ${selectedChat?.id === chat.id ? "bg-orange-50 dark:bg-orange-900/10" : ""
+                                className={`w-full p-4 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 ${selectedChat?.id === chat.id ? "bg-emerald-50 dark:bg-emerald-900/10" : ""
                                     }`}
                             >
                                 <div className="relative flex-shrink-0">
                                     <Avatar>
                                         <AvatarImage src={chat.avatar} />
-                                        <AvatarFallback className="bg-orange-100 text-orange-600 font-bold">
+                                        <AvatarFallback className="bg-emerald-100 text-emerald-600 font-bold">
                                             {chat.name.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
@@ -297,7 +297,7 @@ export function Messages() {
                                     <p className="text-xs text-gray-500 truncate">{chat.lastMessage}</p>
                                 </div>
                                 {chat.unread > 0 && (
-                                    <div className="w-5 h-5 bg-orange-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                    <div className="w-5 h-5 bg-emerald-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                                         {chat.unread}
                                     </div>
                                 )}
@@ -319,7 +319,7 @@ export function Messages() {
                             <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <Avatar>
-                                        <AvatarFallback className="bg-orange-100 text-orange-600 font-bold">
+                                        <AvatarFallback className="bg-emerald-100 text-emerald-600 font-bold">
                                             {selectedChat.name.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
@@ -356,7 +356,7 @@ export function Messages() {
                                     <div key={msg.id} className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}>
                                         <div className={`max-w-[70%] group`}>
                                             <div className={`p-3 rounded-2xl text-sm shadow-sm ${msg.isMe
-                                                ? "bg-orange-600 text-white rounded-tr-none"
+                                                ? "bg-emerald-600 text-white rounded-tr-none"
                                                 : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-700"
                                                 }`}>
                                                 {msg.content}
@@ -381,7 +381,7 @@ export function Messages() {
                                         className="flex-1 border-none bg-transparent focus-visible:ring-0"
                                     />
                                     <Button variant="ghost" size="icon" type="button"><Smile className="h-5 w-5 text-gray-500" /></Button>
-                                    <Button size="icon" className="bg-orange-600 hover:bg-orange-700 text-white h-10 w-10">
+                                    <Button size="icon" className="bg-emerald-600 hover:bg-emerald-700 text-white h-10 w-10">
                                         <Send className="h-5 w-5" />
                                     </Button>
                                 </div>
@@ -398,7 +398,7 @@ export function Messages() {
                             </p>
                             <Button
                                 variant="outline"
-                                className="mt-6 border-orange-600 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/10"
+                                className="mt-6 border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/10"
                                 onClick={() => document.querySelector<HTMLInputElement>('input[placeholder*="Search users"]')?.focus()}
                             >
                                 <Plus className="h-4 w-4 mr-2" />
