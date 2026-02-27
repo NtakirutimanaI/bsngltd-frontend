@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 import { Link } from 'react-router';
 import { Search, Bed, Bath, Square } from 'lucide-react';
 import { useLanguage } from '@/app/context/LanguageContext';
@@ -73,7 +73,7 @@ export function PublicProperties() {
           sqft: p.size.toString(),
           description: dt(p.description) || `${dt(p.title)} located in ${dt(p.location)}.`,
           features: [t('modernAmenities'), t('secureLocation'), t('parkingAvailable')],
-          image: p.image || '/img/project-1.jpg'
+          image: getImageUrl(p.image) || '/img/project-1.jpg'
         }));
         setProperties(mappedProperties);
         setTotalPages(res.lastPage);

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { Check, Facebook, Twitter, Instagram, Linkedin, Calendar, HardHat, ShieldCheck, RefreshCcw } from 'lucide-react';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 
 export function About() {
   const { t, dt } = useLanguage();
@@ -51,10 +51,10 @@ export function About() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid" src={settings.about_image_1?.startsWith('http') || settings.about_image_1?.startsWith('/') ? settings.about_image_1 : settings.about_image_1 ? `/uploads/settings/${settings.about_image_1}` : '/img/about-1.jpg'} alt="About 1" />
+                  <img className="img-fluid" src={getImageUrl(settings.about_image_1) || '/img/about-1.jpg'} alt="About 1" />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75" src={settings.about_image_2?.startsWith('http') || settings.about_image_2?.startsWith('/') ? settings.about_image_2 : settings.about_image_2 ? `/uploads/settings/${settings.about_image_2}` : '/img/about-2.jpg'} alt="About 2" />
+                  <img className="img-fluid h-75" src={getImageUrl(settings.about_image_2) || '/img/about-2.jpg'} alt="About 2" />
                   <div className="h-25 d-flex align-items-center text-center bg-primary px-4" style={{ background: '#16a085' }}>
                     <h4 className="text-white lh-base mb-0">{t('buildingExcellenceSince2010')}</h4>
                   </div>
@@ -129,10 +129,10 @@ export function About() {
             </h1>
             <div className="row g-4">
               {[
-                { name: 'N. Jean Pierre', role: 'Managing Director', img: '/img/team-1.jpg' },
-                { name: 'M. Claudine', role: 'Senior Architect', img: '/img/team-2.jpg' },
-                { name: 'K. Eric', role: 'Project Manager', img: '/img/team-3.jpg' },
-                { name: 'S. Alice', role: 'Site Engineer', img: '/img/team-4.jpg' }
+                { name: 'N. Jean Pierre', role: 'Managing Director', img: getImageUrl(settings.about_team_1) || '/img/team-1.jpg' },
+                { name: 'M. Claudine', role: 'Senior Architect', img: getImageUrl(settings.about_team_2) || '/img/team-2.jpg' },
+                { name: 'K. Eric', role: 'Project Manager', img: getImageUrl(settings.about_team_3) || '/img/team-3.jpg' },
+                { name: 'S. Alice', role: 'Site Engineer', img: getImageUrl(settings.about_team_4) || '/img/team-4.jpg' }
               ].map((member, idx) => (
                 <div key={idx} className="col-md-6 col-lg-3 wow fadeIn" data-wow-delay={`${0.1 + idx * 0.2}s`}>
                   <div className="team-item position-relative overflow-hidden rounded shadow-sm">

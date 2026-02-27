@@ -21,7 +21,8 @@ import {
   Banknote,
   Shield,
   CalendarCheck,
-  Globe
+  Globe,
+  Eye
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { NotificationBell } from "@/app/components/NotificationBell";
@@ -103,6 +104,7 @@ export function RootLayout() {
     { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
     { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
     { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin'] },
+    { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'hr'] },
   ];
 

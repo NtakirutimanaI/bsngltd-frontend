@@ -27,6 +27,10 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { toast } from "sonner";
 import { AddEmployeeModal } from "@/app/components/AddEmployeeModal";
+import { SitesTab } from "./workforce/SitesTab";
+import { ContractsTab } from "./workforce/ContractsTab";
+import { AssignmentsTab } from "./workforce/AssignmentsTab";
+import { Check } from "lucide-react";
 
 // Types
 interface Employee {
@@ -104,7 +108,7 @@ const MONTHS = [
 export function Workforce() {
     const { user } = useAuth();
     const { currency } = useCurrency();
-    const [activeTab, setActiveTab] = useState<'directory' | 'attendance' | 'payroll'>('directory');
+    const [activeTab, setActiveTab] = useState<'directory' | 'attendance' | 'payroll' | 'sites' | 'contracts' | 'assignments'>('directory');
 
     // Auth & Permissions
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
@@ -376,6 +380,48 @@ export function Workforce() {
                             }}
                         >
                             <CreditCard size={16} /> Payroll Center
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('sites' as any)}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'sites' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
+                            style={{
+                                borderRadius: '14px',
+                                border: 'none',
+                                background: activeTab === 'sites' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                letterSpacing: '0.5px'
+                            }}
+                        >
+                            <Building2 size={16} /> Sites
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('contracts' as any)}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'contracts' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
+                            style={{
+                                borderRadius: '14px',
+                                border: 'none',
+                                background: activeTab === 'contracts' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                letterSpacing: '0.5px'
+                            }}
+                        >
+                            <CalendarDays size={16} /> Contracts
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('assignments' as any)}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'assignments' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
+                            style={{
+                                borderRadius: '14px',
+                                border: 'none',
+                                background: activeTab === 'assignments' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                fontWeight: 700,
+                                fontSize: '12px',
+                                letterSpacing: '0.5px'
+                            }}
+                        >
+                            <Users size={16} /> Assignments
                         </button>
                     </div>
                 </div>
@@ -755,6 +801,21 @@ export function Workforce() {
                         </div>
                     </>
                 )}
+
+                {/* 4. SITES TAB */}
+                {activeTab === 'sites' && (
+                    <SitesTab />
+                )}
+
+                {/* 5. CONTRACTS TAB */}
+                {activeTab === 'contracts' && (
+                    <ContractsTab />
+                )}
+
+                {/* 6. ASSIGNMENTS TAB */}
+                {activeTab === 'assignments' && (
+                    <AssignmentsTab />
+                )}
             </div>
 
             {/* Modals */}
@@ -824,6 +885,4 @@ export function Workforce() {
     );
 }
 
-function Check({ size, color }: { size?: number, color?: string }) {
-    return <svg width={size || 16} height={size || 16} viewBox="0 0 24 24" fill="none" stroke={color || "currentColor"} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-}
+

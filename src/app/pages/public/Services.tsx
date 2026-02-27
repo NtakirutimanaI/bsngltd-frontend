@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Phone, ArrowRight, RefreshCcw } from 'lucide-react';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { Link } from 'react-router';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 
 export function Services() {
   const { t, dt } = useLanguage();
@@ -42,28 +42,28 @@ export function Services() {
     {
       title: t('residentialConstruction'),
       description: t('residentialConstructionDesc'),
-      img: settings.service_image_1?.startsWith('http') || settings.service_image_1?.startsWith('/') ? settings.service_image_1 : settings.service_image_1 ? `/uploads/settings/${settings.service_image_1}` : '/img/service-1.jpg',
+      img: getImageUrl(settings.service_image_1) || '/img/service-1.jpg',
       delay: '0.1s',
       dark: true
     },
     {
       title: t('commercialConstruction'),
       description: t('commercialConstructionDesc'),
-      img: settings.service_image_2?.startsWith('http') || settings.service_image_2?.startsWith('/') ? settings.service_image_2 : settings.service_image_2 ? `/uploads/settings/${settings.service_image_2}` : '/img/service-2.jpg',
+      img: getImageUrl(settings.service_image_2) || '/img/service-2.jpg',
       delay: '0.2s',
       dark: false
     },
     {
       title: t('propertyDevelopment'),
       description: t('propertyDevelopmentDesc'),
-      img: '/img/service-3.jpg',
+      img: getImageUrl(settings.service_image_3) || '/img/service-3.jpg',
       delay: '0.3s',
       dark: false
     },
     {
       title: t('renovationRemodeling'),
       description: t('renovationRemodelingDesc'),
-      img: '/img/service-4.jpg',
+      img: getImageUrl(settings.service_image_4) || '/img/service-4.jpg',
       delay: '0.4s',
       dark: true
     }
@@ -152,7 +152,7 @@ export function Services() {
         <div className="container p-0">
           <div className="row g-0 align-items-center">
             <div className="col-md-5 ps-lg-0 text-start">
-              <img className="img-fluid w-100" src={settings.global_newsletter_bg?.startsWith('http') || settings.global_newsletter_bg?.startsWith('/') ? settings.global_newsletter_bg : settings.global_newsletter_bg ? `/uploads/settings/${settings.global_newsletter_bg}` : '/img/newsletter.jpg'} alt="Newsletter" style={{ maxHeight: '400px', objectFit: 'cover' }} />
+              <img className="img-fluid w-100" src={getImageUrl(settings.global_newsletter_bg) || '/img/newsletter.jpg'} alt="Newsletter" style={{ maxHeight: '400px', objectFit: 'cover' }} />
             </div>
             <div className="col-md-7 py-5 newsletter-text">
               <div className="p-5">

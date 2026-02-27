@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 import { useParams, useNavigate, Link } from 'react-router';
-import { MapPin, Bed, Bath, Square, Calendar, Check, ArrowLeft, CreditCard, Coins, Phone } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, Calendar, Check, ArrowLeft, CreditCard, Coins, Phone, Eye } from 'lucide-react';
 import { PaymentFloatingForm } from '@/app/components/PaymentFloatingForm';
+import { BookingFloatingForm } from '@/app/components/BookingFloatingForm';
 import { useAuth } from '@/app/context/AuthContext';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { useCurrency } from '@/app/context/CurrencyContext';
@@ -34,6 +35,7 @@ export function PropertyDetails() {
 
   const [property, setProperty] = useState<Property | null>(null);
   const [isPaymentFloatingOpen, setIsPaymentFloatingOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // State handles
 
@@ -54,6 +56,8 @@ export function PropertyDetails() {
       bedrooms?: number;
       bathrooms?: number;
       image: string;
+      image2?: string;
+      image3?: string;
       description?: string;
     }
 
@@ -71,9 +75,11 @@ export function PropertyDetails() {
           sqft: p.size?.toString() || '0',
           description: dt(p.description) || `${dt(p.title)} located in ${dt(p.location)}.`,
           features: [t('modernAmenities'), t('secureLocation'), t('parkingAvailable')],
-          images: p.image
-            ? [p.image, p.image, p.image]
-            : ['/img/project-1.jpg', '/img/project-2.jpg', '/img/project-3.jpg'],
+          images: [
+            getImageUrl(p.image) || '/img/project-1.jpg',
+            getImageUrl(p.image2) || getImageUrl(p.image) || '/img/project-2.jpg',
+            getImageUrl(p.image3) || getImageUrl(p.image) || '/img/project-3.jpg'
+          ],
           yearBuilt: 2024,
           parking: 'Available'
         };
@@ -240,6 +246,10 @@ export function PropertyDetails() {
                     </div>
                   </div>
                   <Link to="/contact" className="btn btn-outline-primary w-100 py-3 mt-3">{t('getInTouch')}</Link>
+                  <button onClick={() => setIsBookingOpen(true)} className="btn btn-outline-success w-100 py-3 mt-2 d-flex align-items-center justify-content-center gap-2">
+                    <Eye size={18} />
+                    {t('bookViewing') || 'Book Viewing'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -255,6 +265,15 @@ export function PropertyDetails() {
           propertyType={property.type}
           amount={property.priceValue}
           onClose={() => setIsPaymentFloatingOpen(false)}
+        />
+      )}
+
+      {/* Booking Floating Form */}
+      {isBookingOpen && property && (
+        <BookingFloatingForm
+          propertyId={property.id}
+          propertyTitle={property.title}
+          onClose={() => setIsBookingOpen(false)}
         />
       )}
     </div>

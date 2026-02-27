@@ -30,6 +30,7 @@ import { Attendance } from "@/app/pages/Attendance";
 import { ContentManagement } from "@/app/pages/ContentManagement";
 import { Portfolio } from "@/app/pages/Portfolio";
 import { Insights } from "@/app/pages/Insights";
+import { Bookings } from "@/app/pages/Bookings";
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -72,6 +73,7 @@ export const router = createBrowserRouter([
           { path: "calendar", Component: Calendar },
           { path: "messages", Component: Messages },
           { path: "notifications", Component: Notifications },
+          { path: "bookings", Component: Bookings },
         ],
       },
     ],

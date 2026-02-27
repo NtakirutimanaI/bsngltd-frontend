@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { MapPin, Building2, HardHat, Wallet, Check, Phone, Facebook, Twitter, Instagram } from 'lucide-react';
 
@@ -98,7 +98,7 @@ export function Home() {
     <div className="container-fluid bg-white p-0">
       {/* Hero Start */}
       <div className="container-fluid hero-header ps-0 pe-0 mb-5" style={{
-        backgroundImage: `url(${settings.home_hero_bg?.startsWith('http') || settings.home_hero_bg?.startsWith('/') ? settings.home_hero_bg : settings.home_hero_bg ? `/uploads/settings/${settings.home_hero_bg}` : '/img/hero-bg.jpg'})`,
+        backgroundImage: `url(${getImageUrl(settings.home_hero_bg) || '/img/hero-bg.jpg'})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: '75vh',
@@ -220,10 +220,10 @@ export function Home() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid rounded shadow" src={settings.about_image_1?.startsWith('http') || settings.about_image_1?.startsWith('/') ? settings.about_image_1 : settings.about_image_1 ? `/uploads/settings/${settings.about_image_1}` : '/img/about-1.jpg'} alt="About 1" />
+                  <img className="img-fluid rounded shadow" src={getImageUrl(settings.about_image_1) || '/img/about-1.jpg'} alt="About 1" />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75 rounded shadow mb-3" src={settings.about_image_2?.startsWith('http') || settings.about_image_2?.startsWith('/') ? settings.about_image_2 : settings.about_image_2 ? `/uploads/settings/${settings.about_image_2}` : '/img/about-2.jpg'} alt="About 2" />
+                  <img className="img-fluid h-75 rounded shadow mb-3" src={getImageUrl(settings.about_image_2) || '/img/about-2.jpg'} alt="About 2" />
                   <div className="h-25 d-flex align-items-center text-center bg-primary px-4 rounded shadow">
                     <h4 className="text-white lh-base mb-0 fw-bold">{t('buildingExcellenceSince2010')}</h4>
                   </div>
@@ -296,12 +296,12 @@ export function Home() {
                 {!isLoading && allProperties.length === 0 && (
                   // Fallback items with translations
                   [
-                    { name: 'constructionProjects', count: '72 Projects', img: '/img/project-1.jpg' },
-                    { name: 'propertyDevelopment', count: '67 Projects', img: '/img/project-2.jpg' },
-                    { name: 'realEstateSales', count: '53 Projects', img: '/img/project-3.jpg' },
-                    { name: 'propertyRentals', count: '33 Projects', img: '/img/project-4.jpg' },
-                    { name: 'consultationServices', count: '87 Projects', img: '/img/project-5.jpg' },
-                    { name: 'projectManagement', count: '69 Projects', img: '/img/project-6.jpg' }
+                    { name: 'constructionProjects', count: '72 Projects', img: getImageUrl(settings.home_project_card_1) || '/img/project-1.jpg' },
+                    { name: 'propertyDevelopment', count: '67 Projects', img: getImageUrl(settings.home_project_card_2) || '/img/project-2.jpg' },
+                    { name: 'realEstateSales', count: '53 Projects', img: getImageUrl(settings.home_project_card_3) || '/img/project-3.jpg' },
+                    { name: 'propertyRentals', count: '33 Projects', img: getImageUrl(settings.home_project_card_4) || '/img/project-4.jpg' },
+                    { name: 'consultationServices', count: '87 Projects', img: getImageUrl(settings.home_project_card_5) || '/img/project-5.jpg' },
+                    { name: 'projectManagement', count: '69 Projects', img: getImageUrl(settings.home_project_card_6) || '/img/project-6.jpg' }
                   ].map((item, index) => (
                     <div key={index} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.1 * index}s`}>
                       <div className="project-item position-relative overflow-hidden" style={{ height: '300px' }}>
@@ -317,7 +317,7 @@ export function Home() {
                 {allProperties.map((property, index) => (
                   <div key={property.id} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.2 + index * 0.1}s`}>
                     <div className="project-item position-relative overflow-hidden" style={{ height: '300px' }}>
-                      <img className="img-fluid w-100 h-100" src={property.image || `/img/project-${(index % 6) + 1}.jpg`} alt={dt(property.title)} style={{ objectFit: 'cover' }} />
+                      <img className="img-fluid w-100 h-100" src={getImageUrl(property.image) || `/img/project-${(index % 6) + 1}.jpg`} alt={dt(property.title)} style={{ objectFit: 'cover' }} />
                       <Link className="project-overlay d-flex flex-column justify-content-end p-4 text-decoration-none" to={`/properties/${property.id}`} style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
                         <h4 className="text-white mb-1 fw-bold">{dt(property.title)}</h4>
                         <small className="text-white-50 d-flex align-items-center gap-1">
@@ -361,7 +361,7 @@ export function Home() {
                   <div className="col-md-6 wow fadeIn" data-wow-delay="0.2s">
                     <div className="service-item h-100 d-flex flex-column justify-content-center bg-primary p-4 rounded shadow">
                       <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={settings.service_image_1?.startsWith('http') || settings.service_image_1?.startsWith('/') ? settings.service_image_1 : settings.service_image_1 ? `/uploads/settings/${settings.service_image_1}` : '/img/service-1.jpg'} alt="Service 1" />
+                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={getImageUrl(settings.service_image_1) || '/img/service-1.jpg'} alt="Service 1" />
                         <div className="position-absolute bottom-0 start-0 p-3 bg-primary bg-opacity-75">
                           <h4 className="text-white mb-0">{t('residentialConstruction')}</h4>
                         </div>
@@ -372,7 +372,7 @@ export function Home() {
                   <div className="col-md-6 wow fadeIn" data-wow-delay="0.4s">
                     <div className="service-item h-100 d-flex flex-column justify-content-center bg-light p-4 rounded shadow-sm border">
                       <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={settings.service_image_2?.startsWith('http') || settings.service_image_2?.startsWith('/') ? settings.service_image_2 : settings.service_image_2 ? `/uploads/settings/${settings.service_image_2}` : '/img/service-2.jpg'} alt="Service 2" />
+                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={getImageUrl(settings.service_image_2) || '/img/service-2.jpg'} alt="Service 2" />
                         <div className="position-absolute bottom-0 start-0 p-3 bg-light bg-opacity-75 border">
                           <h4 className="text-dark mb-0">{t('commercialConstruction')}</h4>
                         </div>
@@ -393,7 +393,7 @@ export function Home() {
         <div className="container p-0">
           <div className="row g-0 align-items-center">
             <div className="col-md-5 ps-lg-0 text-start wow fadeIn" data-wow-delay="0.2s">
-              <img className="img-fluid w-100" src={settings.global_newsletter_bg?.startsWith('http') || settings.global_newsletter_bg?.startsWith('/') ? settings.global_newsletter_bg : settings.global_newsletter_bg ? `/uploads/settings/${settings.global_newsletter_bg}` : '/img/newsletter.jpg'} alt="Newsletter" />
+              <img className="img-fluid w-100" src={getImageUrl(settings.global_newsletter_bg) || '/img/newsletter.jpg'} alt="Newsletter" />
             </div>
             <div className="col-md-7 py-5 newsletter-text wow fadeIn" data-wow-delay="0.5s">
               <div className="p-5">
