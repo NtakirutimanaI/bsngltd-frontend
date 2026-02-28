@@ -52,6 +52,7 @@ export function RootLayout() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
+  const [unreadContactMessages, setUnreadContactMessages] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -78,6 +79,13 @@ export function RootLayout() {
         time: formatDistanceToNow(new Date(m.time), { addSuffix: true }),
         unread: m.unread
       })));
+
+      try {
+        const contactData = await fetchApi<any>('/messages/contact?limit=1&status=new');
+        setUnreadContactMessages(contactData.unreadCount || 0);
+      } catch (err) {
+        console.error("Failed to fetch contact messages count", err);
+      }
     } catch (error) {
       console.error("Failed to load header messages:", error);
     }
@@ -103,6 +111,7 @@ export function RootLayout() {
     { name: "Insights", path: "/dashboard/insights", icon: BarChart3, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'auditor'] },
     { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
     { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr'] },
     { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin'] },
     { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'hr'] },
@@ -118,7 +127,7 @@ export function RootLayout() {
     navigate('/');
   };
 
-  const unreadCount = messages.reduce((sum, m) => sum + (m.unread || 0), 0);
+  const unreadCount = messages.reduce((sum, m) => sum + (m.unread || 0), 0) + unreadContactMessages;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -168,7 +177,7 @@ export function RootLayout() {
               >
                 <item.icon className={`h-4.5 w-4.5 shrink-0 ${window.location.pathname === item.path ? 'text-[#16a085]' : ''}`} style={{ width: '18px', height: '18px' }} />
                 <span className="font-medium text-[13px]">{item.name}</span>
-                {item.name === "Messages" && unreadCount > 0 && (
+                {item.name === "Communications" && unreadCount > 0 && (
                   <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
                     {unreadCount}
                   </span>
@@ -276,7 +285,7 @@ export function RootLayout() {
                           key={msg.id}
                           className="cursor-pointer flex flex-col items-start gap-1 p-3"
                           style={{ border: 'none' }}
-                          onClick={() => navigate('/dashboard/admin')}
+                          onClick={() => navigate('/dashboard/communications')}
                         >
                           <div className="flex justify-between w-full">
                             <span className="font-medium text-sm">{msg.sender}</span>
@@ -291,7 +300,7 @@ export function RootLayout() {
                   <DropdownMenuItem
                     className="cursor-pointer justify-center font-semibold"
                     style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
-                    onClick={() => navigate('/dashboard/admin')}
+                    onClick={() => navigate('/dashboard/communications')}
                   >
                     View all messages
                   </DropdownMenuItem>

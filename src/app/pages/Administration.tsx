@@ -18,10 +18,11 @@ import { Settings } from "./Settings";
 import { Messages } from "./Messages";
 import { Sponsors } from "./Sponsors";
 import { DeveloperCore } from "./DeveloperCore";
+import { ContactMessages } from "./ContactMessages";
 
 export function Administration() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'users' | 'settings' | 'messages' | 'sponsors' | 'developer'>('users');
+    const [activeTab, setActiveTab] = useState<'users' | 'settings' | 'messages' | 'contact_messages' | 'sponsors' | 'developer'>('users');
 
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const isAdmin = ['super_admin', 'admin', 'manager', 'hr'].includes(roleName);
@@ -62,13 +63,14 @@ export function Administration() {
             <div className="bg-white border mb-3 overflow-hidden" style={{ borderRadius: '12px', borderColor: '#e5e7eb' }}>
                 <div className="card-body p-0">
                     <div className="d-flex flex-wrap bg-light/30">
-                        {(['users', 'settings', 'messages', 'sponsors', 'developer'] as const).map((tab) => {
+                        {(['users', 'settings', 'messages', 'contact_messages', 'sponsors', 'developer'] as const).map((tab) => {
                             if (tab === 'developer' && !isDeveloper) return null;
                             if (roleName === 'hr' && tab !== 'users') return null; // HR only manages users/employees
                             const config = {
                                 users: { name: "Identity & Access", icon: Users, color: '#16a085' },
                                 settings: { name: "System Config", icon: SettingsIcon, color: '#16a085' },
-                                messages: { name: "Communications", icon: Mail, color: '#16a085' },
+                                messages: { name: "Internal Chats", icon: Mail, color: '#16a085' },
+                                contact_messages: { name: "Website Enquiries", icon: Mail, color: '#16a085' },
                                 sponsors: { name: "Partners & Sponsors", icon: Heart, color: '#16a085' },
                                 developer: { name: "Developer Engine", icon: Terminal, color: '#dc2626' }
                             }[tab];
@@ -105,6 +107,11 @@ export function Administration() {
                 {activeTab === 'messages' && (
                     <div className="fade-in h-100">
                         <Messages />
+                    </div>
+                )}
+                {activeTab === 'contact_messages' && (
+                    <div className="fade-in h-100">
+                        <ContactMessages />
                     </div>
                 )}
                 {activeTab === 'sponsors' && (

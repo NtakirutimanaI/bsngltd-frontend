@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Send, User, MoreVertical, Paperclip, Smile, Plus } from "lucide-react";
+import { Search, Send, User, MoreVertical, Paperclip, Smile, Plus, MessageSquare } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
 import { Button } from "@/app/components/ui/button";
@@ -223,21 +223,30 @@ export function Messages() {
     };
 
     return (
-        <div className="h-[calc(100vh-120px)] flex flex-col">
-            <ScrollReveal className="mb-4">
-                <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Messages</h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1">Chat and collaborate with your team</p>
+        <div className="min-h-[60vh] h-[calc(100vh-120px)] flex flex-col gap-4 relative">
+            <ScrollReveal className="relative z-10 shrink-0">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+                            <MessageSquare size={24} strokeWidth={2} />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-extrabold mb-0 text-gray-900 dark:text-white tracking-tight">Internal Team Chats</h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-0">Secure collaboration workspace</p>
+                        </div>
+                    </div>
+                </div>
             </ScrollReveal>
 
-            <div className="flex-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 flex overflow-hidden">
+            <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden relative z-10">
                 {/* Chat List */}
-                <div className="w-80 border-r border-gray-200 dark:border-gray-800 flex flex-col">
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-800 relative">
+                <div className="w-full md:w-80 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden shrink-0">
+                    <div className="p-3 border-b border-gray-100 dark:border-gray-800 relative bg-gray-50/50 dark:bg-gray-800/50">
                         <div className="relative">
-                            <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                             <Input
-                                placeholder="Search users to chat..."
-                                className="pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 dark:border-gray-500 rounded-none w-full focus:ring-0 focus:border-emerald-500 transition-colors"
+                                placeholder="Find team members..."
+                                className="pl-9 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm dark:text-white placeholder:text-gray-400 shadow-sm"
                                 value={searchTerm}
                                 onChange={(e) => handleSearch(e.target.value)}
                             />
@@ -245,7 +254,7 @@ export function Messages() {
                         {(searchResults.length > 0 || (isSearching && debouncedSearchTerm.length >= 2)) && (
                             <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto mx-4">
                                 {isSearching ? (
-                                    <div className="p-4 text-center text-sm text-gray-500">Searching...</div>
+                                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">Searching...</div>
                                 ) : searchResults.length > 0 ? (
                                     searchResults.map((res) => (
                                         <button
@@ -259,13 +268,13 @@ export function Messages() {
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div>
-                                                <div className="text-sm font-semibold dark:text-white">{res.fullName}</div>
-                                                <div className="text-[10px] text-gray-500">{res.email}</div>
+                                                <div className="text-xs font-semibold dark:text-white">{res.fullName}</div>
+                                                <div className="text-[9px] text-gray-500">{res.email}</div>
                                             </div>
                                         </button>
                                     ))
                                 ) : (
-                                    <div className="p-4 text-center text-sm text-gray-500">No users found</div>
+                                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">No users found</div>
                                 )}
                             </div>
                         )}
@@ -275,35 +284,35 @@ export function Messages() {
                             <button
                                 key={chat.id}
                                 onClick={() => setSelectedChat(chat)}
-                                className={`w-full p-4 flex items-start gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 ${selectedChat?.id === chat.id ? "bg-emerald-50 dark:bg-emerald-900/10" : ""
+                                className={`w-[calc(100%-16px)] mx-2 my-1 p-3 flex items-center gap-3 transition-all duration-200 rounded-xl ${selectedChat?.id === chat.id ? "bg-indigo-50 dark:bg-indigo-900/20 shadow-sm border border-indigo-100 dark:border-indigo-800" : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent"
                                     }`}
                             >
                                 <div className="relative flex-shrink-0">
-                                    <Avatar>
+                                    <Avatar className="h-10 w-10 border border-gray-100 dark:border-gray-700 shadow-sm">
                                         <AvatarImage src={chat.avatar} />
-                                        <AvatarFallback className="bg-emerald-100 text-emerald-600 font-bold">
+                                        <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold">
                                             {chat.name.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
                                     {chat.status === "online" && (
-                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
+                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-gray-900 rounded-full shadow-sm" />
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0 text-left">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="font-semibold text-sm dark:text-white truncate">{chat.name}</span>
-                                        <span className="text-[10px] text-gray-400">{chat.time}</span>
+                                        <span className={`font-bold text-sm truncate ${selectedChat?.id === chat.id ? "text-indigo-900 dark:text-indigo-100" : "text-gray-900 dark:text-white"}`}>{chat.name}</span>
+                                        <span className="text-[10px] text-gray-400 font-medium">{chat.time}</span>
                                     </div>
-                                    <p className="text-xs text-gray-500 truncate">{chat.lastMessage}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{chat.lastMessage}</p>
                                 </div>
                                 {chat.unread > 0 && (
-                                    <div className="w-5 h-5 bg-emerald-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                    <div className="w-5 h-5 bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">
                                         {chat.unread}
                                     </div>
                                 )}
                             </button>
                         )) : (
-                            <div className="p-8 text-center text-gray-400">
+                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                                 <p className="text-sm">No conversations yet.</p>
                                 <p className="text-xs mt-1">Search for a user to start chatting.</p>
                             </div>
@@ -312,31 +321,34 @@ export function Messages() {
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
                     {selectedChat ? (
                         <>
                             {/* Header */}
-                            <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarFallback className="bg-emerald-100 text-emerald-600 font-bold">
+                            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-20 shadow-sm">
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="h-10 w-10 shadow-sm border border-gray-100 dark:border-gray-700">
+                                        <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold">
                                             {selectedChat.name.charAt(0)}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <h3 className="font-semibold dark:text-white">{selectedChat.name}</h3>
-                                        <span className="text-xs text-green-500">Online</span>
+                                        <h3 className="font-bold text-gray-900 dark:text-white leading-none mb-1.5">{selectedChat.name}</h3>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm"></span>
+                                            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Active Now</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Button variant="ghost" size="icon"><User className="h-5 w-5 text-gray-500" /></Button>
-                                    <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5 text-gray-500" /></Button>
+                                <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner">
+                                    <Button variant="ghost" size="sm" className="rounded-lg text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"><User className="h-4 w-4" /></Button>
+                                    <Button variant="ghost" size="sm" className="rounded-lg text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"><MoreVertical className="h-4 w-4" /></Button>
                                 </div>
                             </div>
 
                             {/* Messages Area */}
                             <div
-                                className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 dark:bg-gray-950/50"
+                                className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 dark:bg-slate-900/50"
                                 ref={scrollContainerRef}
                             >
                                 {hasMore && (
@@ -346,7 +358,7 @@ export function Messages() {
                                             size="sm"
                                             onClick={loadMoreMessages}
                                             disabled={isLoadingMore}
-                                            className="text-xs text-gray-400 hover:text-gray-600"
+                                            className="text-xs font-semibold text-gray-500 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700"
                                         >
                                             {isLoadingMore ? "Loading..." : "Load Previous Messages"}
                                         </Button>
@@ -354,14 +366,14 @@ export function Messages() {
                                 )}
                                 {messages.map((msg) => (
                                     <div key={msg.id} className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}>
-                                        <div className={`max-w-[70%] group`}>
-                                            <div className={`p-3 rounded-2xl text-sm shadow-sm ${msg.isMe
-                                                ? "bg-emerald-600 text-white rounded-tr-none"
-                                                : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-700"
+                                        <div className={`max-w-[75%] group flex flex-col ${msg.isMe ? "items-end" : "items-start"}`}>
+                                            <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm leading-relaxed ${msg.isMe
+                                                ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-tr-sm"
+                                                : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-sm border border-gray-100 dark:border-gray-700"
                                                 }`}>
                                                 {msg.content}
                                             </div>
-                                            <span className={`text-[10px] text-gray-400 mt-1 block ${msg.isMe ? "text-right mr-1" : "ml-1"}`}>
+                                            <span className={`text-[10px] font-medium text-gray-400 mt-1.5 block mx-1`}>
                                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         </div>
@@ -371,38 +383,39 @@ export function Messages() {
                             </div>
 
                             {/* Input Area */}
-                            <form onSubmit={handleSendMessage} className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-                                <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-xl p-2">
-                                    <Button variant="ghost" size="icon" type="button"><Paperclip className="h-5 w-5 text-gray-500" /></Button>
+                            <form onSubmit={handleSendMessage} className="p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 z-20">
+                                <div className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
+                                    <Button variant="ghost" size="icon" type="button" className="h-10 w-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Paperclip className="h-5 w-5 text-gray-400" /></Button>
                                     <Input
                                         value={messageText}
                                         onChange={(e) => setMessageText(e.target.value)}
-                                        placeholder="Type your message..."
-                                        className="flex-1 border-none bg-transparent focus-visible:ring-0"
+                                        placeholder="Write a message..."
+                                        className="flex-1 h-10 border-none bg-transparent focus-visible:ring-0 dark:text-white placeholder:text-gray-400 text-sm px-2"
                                     />
-                                    <Button variant="ghost" size="icon" type="button"><Smile className="h-5 w-5 text-gray-500" /></Button>
-                                    <Button size="icon" className="bg-emerald-600 hover:bg-emerald-700 text-white h-10 w-10">
-                                        <Send className="h-5 w-5" />
+                                    <Button variant="ghost" size="icon" type="button" className="h-10 w-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Smile className="h-5 w-5 text-gray-400" /></Button>
+                                    <Button size="icon" className="shrink-0 bg-gradient-to-br from-indigo-500 to-purple-600 hover:opacity-90 transition-opacity text-white h-10 w-10 rounded-full shadow-md">
+                                        <Send className="h-4 w-4 ml-0.5" />
                                     </Button>
                                 </div>
                             </form>
                         </>
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8">
-                            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                                <Send className="h-8 w-8 text-gray-300" />
+                        <div className="flex-1 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-8 bg-gray-50/50 dark:bg-gray-900/50 border-t border-transparent relative overflow-hidden">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-md border border-gray-100 dark:border-gray-700 relative z-10">
+                                <MessageSquare className="h-10 w-10 text-indigo-500" strokeWidth={1.5} />
                             </div>
-                            <h3 className="text-lg font-semibold dark:text-white mb-2">Your Messages</h3>
-                            <p className="text-sm text-center max-w-xs">
-                                Choose a conversation from the left or search for a user to start chatting.
+                            <h3 className="text-2xl font-extrabold dark:text-white mb-2 text-gray-900 relative z-10">Your Workspace</h3>
+                            <p className="text-sm text-center max-w-sm mb-8 text-gray-500 dark:text-gray-400 relative z-10">
+                                Select a team member from the sidebar to start collaborating securely.
                             </p>
                             <Button
-                                variant="outline"
-                                className="mt-6 border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/10"
-                                onClick={() => document.querySelector<HTMLInputElement>('input[placeholder*="Search users"]')?.focus()}
+                                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 transition-all text-white rounded-full shadow-lg shadow-indigo-500/30 px-8 py-5 h-auto text-base font-bold relative z-10 hover:scale-105 active:scale-95 border-0"
+                                onClick={() => document.querySelector<HTMLInputElement>('input[placeholder*="Find team"]')?.focus()}
                             >
-                                <Plus className="h-4 w-4 mr-2" />
-                                New Message
+                                <Plus className="h-5 w-5 mr-2" />
+                                Start New Chat
                             </Button>
                         </div>
                     )}
