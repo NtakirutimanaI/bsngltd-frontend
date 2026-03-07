@@ -147,7 +147,7 @@ export function RootLayout() {
 
         {/* Nav Items */}
         <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
-          <nav className="flex flex-col gap-1.5 mt-2">
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
             {navigation.map((item) => {
               const isActive = window.location.pathname === item.path || (item.path === '/dashboard' && window.location.pathname === '/dashboard/');
               return (
@@ -157,15 +157,15 @@ export function RootLayout() {
                   end={item.path === '/dashboard'}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 group relative w-full ${isActive
-                      ? "text-white font-bold bg-[#16a085] shadow-lg shadow-[#16a085]/20"
-                      : "text-gray-100 font-semibold hover:text-white hover:bg-white/5"
+                    `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
+                      ? "text-white font-bold bg-[#16a085] shadow-lg"
+                      : "text-gray-100 font-semibold hover:bg-white/5"
                     }`
                   }
-                  style={{ border: 'none', display: 'flex', textDecoration: 'none' }}
+                  style={{ border: 'none', display: 'flex', width: '100%', textDecoration: 'none' }}
                 >
                   <item.icon className="h-5 w-5 shrink-0" style={{ minWidth: '20px' }} />
-                  <span className="text-[14px] tracking-tight whitespace-nowrap">{item.name}</span>
+                  <span style={{ fontSize: '13.5px', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>{item.name}</span>
                   {item.name === "Communications" && unreadCount > 0 && (
                     <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
                       {unreadCount}
@@ -181,7 +181,8 @@ export function RootLayout() {
         <div className="px-4 pb-8 mt-auto shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center gap-3 px-5 py-3.5 w-full text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
+            className="group flex items-center justify-center gap-3 px-5 py-3.5 w-full text-white rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
+            style={{ backgroundColor: '#dc2626', border: 'none', cursor: 'pointer', display: 'flex' }}
           >
             <LogOut className="h-5 w-5" />
             <span>Sign Out</span>
@@ -196,8 +197,8 @@ export function RootLayout() {
           className="fixed top-0 right-0 left-0 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-50 px-3 md:px-6 transition-all duration-300"
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
-          <div className="h-full flex items-center justify-between flex-nowrap gap-2">
-            <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="h-full" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
               <button
                 id="sidebarToggle"
                 type="button"
@@ -205,38 +206,43 @@ export function RootLayout() {
                   e.stopPropagation();
                   setSidebarOpen(!sidebarOpen);
                 }}
-                className="lg:hidden p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center justify-center"
-                style={{ border: 'none', background: 'transparent' }}
+                className="lg:hidden"
+                style={{
+                  border: 'none', background: 'transparent', padding: '6px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: theme === 'dark' ? '#e5e7eb' : '#374151'
+                }}
               >
                 <Menu className="h-6 w-6" />
               </button>
 
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <div className="flex-shrink-0 flex items-center justify-center p-1 bg-[#16a085] rounded-md h-8 w-8">
-                  <img src={logo} alt="BSNG Logo" className="h-full w-full object-contain" />
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ width: '30px', height: '30px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <span className="hidden sm:inline-block text-[15px] font-black tracking-tight text-gray-900 dark:text-white">BSNG</span>
+                <span className="hidden sm:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
               </div>
             </div>
 
-            <div className="hidden lg:flex flex-1 max-w-sm relative mx-4">
+            <div className="hidden lg:flex" style={{ flex: 1, maxWidth: '320px', position: 'relative', margin: '0 12px' }}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <Input
                 placeholder="Find anything..."
-                className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-[10px] w-full focus:ring-2 focus:ring-[#16a085]/30 transition-all text-[13px]"
+                className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearch}
               />
             </div>
 
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white rounded-lg h-9 w-9 flex items-center justify-center bg-[#16a085] hover:bg-emerald-700 border-none shadow-sm"
+                    className="text-white rounded-lg h-9 w-9"
+                    style={{ background: '#16a085', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     <Plus className="h-5 w-5" />
                   </Button>
