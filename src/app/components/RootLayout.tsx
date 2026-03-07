@@ -38,7 +38,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
 import { Input } from "@/app/components/ui/input";
 import { Button } from "@/app/components/ui/button";
-import { fetchApi } from "../api/client";
+import { fetchApi, getImageUrl } from "../api/client";
 import { formatDistanceToNow } from 'date-fns';
 import logo from '@/assets/logo.png';
 import { useTracker } from "../hooks/useTracker";
@@ -277,7 +277,7 @@ export function RootLayout() {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors border-0 bg-transparent flex-shrink-0">
                   <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-                    <AvatarImage src="" />
+                    <AvatarImage src={user?.avatar ? getImageUrl(user.avatar) : ""} style={{ objectFit: 'cover' }} />
                     <AvatarFallback className="font-bold text-white" style={{ background: '#16a085' }}>
                       {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
                     </AvatarFallback>
@@ -291,10 +291,10 @@ export function RootLayout() {
                   <div className="text-xs font-normal opacity-70 capitalize">{roleName}</div>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/settings?tab=profile')} style={{ border: 'none' }}>
                   <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/settings')} style={{ border: 'none' }}>
                   <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

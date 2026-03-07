@@ -23,6 +23,7 @@ import { Dashboard } from "@/app/pages/Dashboard";
 import { Calendar } from "@/app/pages/Calendar";
 import { Messages } from "@/app/pages/Messages";
 import { Notifications } from "@/app/pages/Notifications";
+import { Settings } from "@/app/pages/Settings";
 import { Workforce } from "@/app/pages/Workforce";
 import { Finance } from "@/app/pages/Finance";
 import { Administration } from "@/app/pages/Administration";
@@ -68,6 +69,7 @@ export const router = createBrowserRouter([
           { path: "workforce", Component: Workforce },
           { path: "finance", Component: Finance },
           { path: "admin", Component: Administration },
+          { path: "settings", Component: Settings },
           { path: "attendance", Component: Attendance },
           { path: "content", Component: ContentManagement },
           { path: "insights", Component: Insights },
