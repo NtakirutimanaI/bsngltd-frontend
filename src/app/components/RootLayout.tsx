@@ -222,13 +222,13 @@ export function RootLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }} className="d-none d-sm-inline-flex">
+            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }}>
               {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Messages" className="relative d-none d-sm-inline-flex" style={{ border: 'none' }}>
+                <Button variant="ghost" size="icon" title="Messages" className="relative" style={{ border: 'none' }}>
                   <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                   {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
@@ -271,7 +271,7 @@ export function RootLayout() {
 
             <NotificationBell />
 
-            <div className="d-none d-sm-block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
+            <div className="h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
