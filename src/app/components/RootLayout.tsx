@@ -131,13 +131,17 @@ export function RootLayout() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <ScrollToTopOnNavigate />
-      {/* Sidebar — brand color: #16a085 teal, matching public website */}
+      {/* Sidebar — starts exactly under header (64px) */}
       <aside
-        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-56 transition-transform lg:translate-x-0 z-40 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed left-0 w-64 transition-transform duration-300 lg:translate-x-0 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         style={{
-          background: 'linear-gradient(180deg, #18181b 0%, #27272a 100%)',
-          borderRight: '1px solid rgba(22,160,133,0.15)',
-          boxShadow: sidebarOpen ? '10px 0 25px rgba(0,0,0,0.2)' : 'none'
+          top: '64px',
+          height: 'calc(100vh - 64px)',
+          background: '#18181b',
+          zIndex: 40,
+          borderRight: '1px solid rgba(22,160,133,0.2)',
+          boxShadow: sidebarOpen ? '10px 0 30px rgba(0,0,0,0.5)' : 'none',
+          position: 'fixed'
         }}
       >
         {/* Nav label */}
@@ -191,13 +195,19 @@ export function RootLayout() {
       </aside>
 
       {/* Main Content */}
-      <div className="lg:ml-52 flex flex-col min-h-screen">
+      <div className="lg:ml-64 flex flex-col min-h-screen">
         {/* Header */}
         <header
-          className="fixed top-0 right-0 left-0 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-50 px-3 md:px-6 transition-all duration-300"
-          style={{ border: 'none', borderBottom: '2px solid #16a085' }}
+          className="fixed top-0 right-0 left-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md transition-all duration-300"
+          style={{
+            height: '64px',
+            zIndex: 60,
+            borderBottom: '2px solid #16a085',
+            display: 'flex',
+            alignItems: 'center'
+          }}
         >
-          <div className="h-full" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
+          <div className="w-full h-full px-3 md:px-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
               <button
                 id="sidebarToggle"
@@ -360,7 +370,8 @@ export function RootLayout() {
 
       {sidebarOpen && (
         <div
-          className="fixed inset-x-0 bottom-0 top-16 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[35] lg:hidden"
+          style={{ top: '64px' }}
           onClick={() => setSidebarOpen(false)}
         />
       )}
