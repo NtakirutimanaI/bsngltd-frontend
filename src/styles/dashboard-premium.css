@@ -88,8 +88,11 @@
 
 .glass-table-container {
     border-radius: 16px;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    scrollbar-width: thin;
+    scrollbar-color: #16a085 transparent;
 }
 
 .status-grid-badge {

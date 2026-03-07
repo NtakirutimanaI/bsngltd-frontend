@@ -352,8 +352,8 @@ export function RootLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-3 md:p-6 overflow-y-auto mt-16 bg-gray-50/50 dark:bg-gray-950/50">
-          <div className="w-full max-w-[1600px] mx-auto">
+        <main className="flex-1 p-3 md:p-6 mt-16 bg-gray-50/50 dark:bg-gray-950/50 overflow-x-auto max-w-full custom-scrollbar">
+          <div className="w-full max-w-[1600px] mx-auto min-w-[320px]">
             <Outlet />
           </div>
         </main>
