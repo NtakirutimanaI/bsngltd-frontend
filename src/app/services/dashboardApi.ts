@@ -185,6 +185,16 @@ export const dashboardService = {
       return { success: false, message: 'Failed to fetch stats' };
     }
   },
+
+  async getRecentActivity(): Promise<ApiResponse<any>> {
+    try {
+      const data = await fetchApi<any>('/dashboard/recent-activity');
+      return { success: true, data: data.data || [], message: 'Activities retrieved' };
+    } catch (error) {
+      console.error('Error fetching recent activities:', error);
+      return { success: false, message: 'Failed to fetch activities' };
+    }
+  }
 };
 
 // ==================== PROJECTS SERVICES ====================

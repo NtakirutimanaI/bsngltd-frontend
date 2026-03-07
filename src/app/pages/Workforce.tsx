@@ -515,7 +515,18 @@ export function Workforce() {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td><span className="badge bg-blue-50 text-blue-600 px-2 py-1">{emp.department}</span></td>
+                                                <td>
+                                                    <span
+                                                        className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider"
+                                                        style={{
+                                                            backgroundColor: 'rgba(22, 160, 133, 0.12)',
+                                                            color: '#16a085',
+                                                            border: '1px solid rgba(22, 160, 133, 0.3)'
+                                                        }}
+                                                    >
+                                                        {emp.department}
+                                                    </span>
+                                                </td>
                                                 <td className="text-dark small">{emp.position}</td>
                                                 <td className="text-capitalize small text-muted">{emp.salaryType}</td>
                                                 <td>

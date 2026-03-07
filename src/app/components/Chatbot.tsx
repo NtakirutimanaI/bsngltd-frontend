@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, User, Bot, Phone, MapPin, Info, GripHorizontal, Trash2, History } from 'lucide-react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { useLanguage } from '@/app/context/LanguageContext';
+import Fuse from 'fuse.js';
 
 interface Message {
     id: number;
@@ -14,6 +15,46 @@ export function Chatbot() {
     const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const dragControls = useDragControls();
+
+    // --- Training Data / Knowledge Base ---
+    const trainingData = [
+        { keys: ['hi', 'hello', 'hey', 'greetings', 'morning', 'evening', 'howdy'], response: 'chatbotGreetingResponse' },
+        { keys: ['location', 'where', 'address', 'place', 'office', 'kibagabaga', 'kigali', 'direction', 'visit'], response: 'chatbotLocResponse' },
+        { keys: ['service', 'what do you do', 'help', 'capability', 'offer', 'list'], response: 'chatbotServiceResponse' },
+        { keys: ['build', 'construction', 'contractor', 'engineer', 'structure', 'architecture', 'building'], response: 'chatbotConstResponse' },
+        { keys: ['rent', 'apartment', 'villa', 'house for rent', 'living', 'stay', 'accommodation'], response: 'chatbotRentResponse' },
+        { keys: ['sell', 'buy', 'plot', 'house for sale', 'purchase', 'investment', 'land', 'buying'], response: 'chatbotSellResponse' },
+        { keys: ['renovation', 'remodel', 'fix', 'update', 'repair', 'modernize', 'painting'], response: 'chatbotRenovResponse' },
+        { keys: ['contact', 'phone', 'call', 'email', 'reach', 'talk', 'whatsapp', 'mobile', 'support'], response: 'chatbotContactResponse' },
+        { keys: ['price', 'cost', 'quote', 'how much', 'expensive', 'cheap', 'budget', 'payment', 'money', 'fee'], response: 'chatbotPricingResponse' },
+        { keys: ['history', 'founded', 'since', 'background', 'start', 'old', 'about', 'story'], response: 'chatbotHistoryResponse' },
+        { keys: ['vision', 'mission', 'goal', 'aim', 'believe', 'values', 'why'], response: 'chatbotVisionResponse' },
+        { keys: ['project', 'done', 'works', 'experience', 'portfolio', 'example', 'past'], response: 'chatbotProjectsResponse' },
+        { keys: ['team', 'staff', 'employee', 'who works', 'architect', 'engineer', 'hiring', 'job', 'careers'], response: 'chatbotTeamResponse' }
+    ];
+
+    const fuse = new Fuse(trainingData, {
+        keys: ['keys'],
+        threshold: 0.3, // Tightened from 0.4 for better accuracy
+        minMatchCharLength: 2,
+    });
+
+    const getBotResponse = (input: string): string => {
+        const text = input.trim().toLowerCase();
+
+        // Handle Very Short Greetings Directly (Real AI feel)
+        const commonGreetings = ['hi', 'hello', 'hey', 'yo', 'muraho'];
+        if (commonGreetings.includes(text)) {
+            return t('chatbotGreetingResponse');
+        }
+
+        const result = fuse.search(text);
+        if (result.length > 0) {
+            return t(result[0].item.response as any);
+        }
+        return t('chatbotDefaultResponse');
+    };
+    // --------------------------------------
 
     // History Persistence
     const [messages, setMessages] = useState<Message[]>(() => {
@@ -92,47 +133,10 @@ export function Chatbot() {
         }
     };
 
-    const getBotResponse = (input: string): string => {
-        const text = input.toLowerCase();
-
-        if (text.includes('location') || text.includes('where') || text.includes('address') || text.includes('place')) {
-            return t('chatbotLocResponse');
-        }
-
-        if (text.includes('service') || text.includes('what do you do') || text.includes('help')) {
-            return t('chatbotServiceResponse');
-        }
-
-        if (text.includes('build') || text.includes('construction')) {
-            return t('chatbotConstResponse');
-        }
-
-        if (text.includes('rent') || text.includes('house for rent')) {
-            return t('chatbotRentResponse');
-        }
-
-        if (text.includes('sell') || text.includes('buy') || text.includes('plot') || text.includes('house for sale')) {
-            return t('chatbotSellResponse');
-        }
-
-        if (text.includes('renovation') || text.includes('remodel') || text.includes('fix')) {
-            return t('chatbotRenovResponse');
-        }
-
-        if (text.includes('contact') || text.includes('phone') || text.includes('call') || text.includes('email')) {
-            return t('chatbotContactResponse');
-        }
-
-        if (text.includes('price') || text.includes('cost') || text.includes('quote')) {
-            return t('contactUsMessage');
-        }
-
-        return t('chatbotDefaultResponse');
-    };
-
     const quickActions = [
         { label: t('ourLocationChat'), icon: MapPin },
-        { label: t('services'), icon: Info },
+        { label: t('viewProjectsChat'), icon: GripHorizontal },
+        { label: t('ourHistoryChat'), icon: Info },
         { label: t('contact'), icon: Phone },
     ];
 

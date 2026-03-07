@@ -1,4 +1,4 @@
-import { Building2, Users, Home, DollarSign, AlertCircle, CheckCircle, Clock, MessageSquare, Plus, Eye, Edit, Trash2, MoreVertical, ChevronDown, Settings, UserCog, ArrowRight, LineChart as LineChartIcon, PieChart as PieChartIcon } from "lucide-react";
+import { Building2, Users, Home, DollarSign, AlertCircle, CheckCircle, Clock, MessageSquare, Plus, Eye, Edit, Trash2, MoreVertical, ChevronDown, Settings, UserCog, ArrowRight, LineChart as LineChartIcon, PieChart as PieChartIcon, History, CalendarCheck } from "lucide-react";
 
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
@@ -22,6 +22,15 @@ interface DashboardStats {
   latestProjects: any[];
 }
 
+interface Activity {
+  id: string;
+  userName: string;
+  action: string;
+  target: string;
+  description: string;
+  createdAt: string;
+}
+
 export function Dashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
@@ -43,6 +52,7 @@ export function Dashboard() {
   const isAdminLike = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
   const [statsData, setStatsData] = useState<DashboardStats | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,10 +69,20 @@ export function Dashboard() {
 
     if (isAdminLike || isAuditor || isEditor) {
       fetchStats();
+      fetchActivities();
     } else {
       setLoading(false);
     }
   }, [isAdminLike, isAuditor, isEditor, refreshKey]);
+
+  const fetchActivities = async () => {
+    try {
+      const res = await fetchApi<any>('/dashboard/recent-activity');
+      setActivities(res.data || []);
+    } catch (err) {
+      console.error("Failed to fetch activities", err);
+    }
+  };
 
   const adminStats = [
     {
@@ -336,10 +356,10 @@ export function Dashboard() {
                       {roleName === 'site_manager' && (
                         <>
                           <Button
-                            onClick={() => navigate('/dashboard/insights')}
+                            onClick={() => navigate('/dashboard/workforce')}
                             size="sm"
                             style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: '120px' }}
-                          >Daily Report</Button>
+                          >Workforce</Button>
                           <Button
                             onClick={() => navigate('/dashboard/portfolio')}
                             size="sm"
@@ -588,11 +608,11 @@ export function Dashboard() {
         )
       }
 
-      {/* Recent / My Projects */}
-      <div className="row mt-3">
-        <div className="col-12">
+      {/* Recent / My Projects Row */}
+      <div className="row mt-3 g-3">
+        <div className="col-lg-8">
           <ScrollReveal delay={0.4}>
-            <div className="premium-card">
+            <div className="premium-card h-100">
               <div className="card-body p-4">
                 <div className="d-flex align-items-center justify-content-between mb-4">
                   <div>
@@ -732,6 +752,53 @@ export function Dashboard() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+
+        {/* RECENT ACTIVITY LOG SIDEBAR */}
+        <div className="col-lg-4">
+          <ScrollReveal delay={0.5}>
+            <div className="premium-card h-100">
+              <div className="card-body p-4">
+                <div className="d-flex align-items-center justify-content-between mb-4">
+                  <h6 className="fw-bold mb-0 flex items-center gap-2">
+                    <History size={16} className="text-[#16a085]" />
+                    Activity Log
+                  </h6>
+                  <span className="badge rounded-pill bg-light text-muted uppercase font-bold" style={{ fontSize: '9px' }}>Real-time</span>
+                </div>
+
+                <div className="activity-timeline space-y-4">
+                  {activities.length === 0 ? (
+                    <div className="text-center py-5 text-muted small">No recent activity found</div>
+                  ) : (
+                    activities.map((act) => (
+                      <div key={act.id} className="d-flex gap-3 position-relative pb-2">
+                        <div className="flex-shrink-0 mt-1">
+                          <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '28px', height: '28px', backgroundColor: 'rgba(22, 160, 133, 0.1)', color: '#16a085' }}>
+                            {act.action.includes('Attendance') ? <CalendarCheck size={14} /> : (act.action.includes('Salary') ? <DollarSign size={14} /> : <Eye size={14} />)}
+                          </div>
+                        </div>
+                        <div className="flex-grow-1 border-bottom border-light/50 pb-2">
+                          <div className="d-flex justify-content-between align-items-start">
+                            <span className="fw-bold text-dark small" style={{ fontSize: '11px' }}>{act.action}</span>
+                            <span className="text-muted smaller" style={{ fontSize: '9px' }}>{new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          <p className="text-muted mb-0 mt-1" style={{ fontSize: '10px' }}>
+                            <span className="fw-semibold" style={{ color: '#1abc9c' }}>{act.userName}</span>: {act.description}
+                          </p>
+                          {act.target && (
+                            <div className="mt-1 d-flex align-items-center gap-1">
+                              <span className="badge rounded-pill bg-light text-dark font-medium" style={{ fontSize: '9px', border: '1px solid rgba(0,0,0,0.05)' }}>Target: {act.target}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

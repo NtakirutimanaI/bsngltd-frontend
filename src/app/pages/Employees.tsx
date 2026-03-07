@@ -109,13 +109,13 @@ export function Employees() {
 
   const getDepartmentColor = (department: string) => {
     switch (department) {
-      case "Engineering": return "bg-primary-subtle text-primary";
-      case "Management": return "bg-info-subtle text-info";
-      case "Operations": return "bg-success-subtle text-success";
-      case "Finance": return "bg-warning-subtle text-warning";
-      case "Human Resources": return "bg-danger-subtle text-danger";
-      case "Procurement": return "bg-secondary-subtle text-secondary";
-      default: return "bg-light text-dark";
+      case "Engineering": return "bg-primary text-white px-3 py-1.5 fw-bold";
+      case "Management": return "bg-info text-white px-3 py-1.5 fw-bold";
+      case "Operations": return "bg-success text-white px-3 py-1.5 fw-bold";
+      case "Finance": return "bg-warning text-dark px-3 py-1.5 fw-bold";
+      case "Human Resources": return "bg-danger text-white px-3 py-1.5 fw-bold";
+      case "Procurement": return "bg-secondary text-white px-3 py-1.5 fw-bold";
+      default: return "bg-dark text-white px-3 py-1.5 fw-bold";
     }
   };
 
@@ -444,28 +444,28 @@ export function Employees() {
             <table className="table table-hover align-middle mb-0">
               <thead className="table-light">
                 <tr>
-                  <th className="border-0 text-muted small text-uppercase fw-bold ps-4">
+                  <th className="border-0 text-dark small text-uppercase fw-bold ps-4">
                     Employee
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Contact
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Department
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Position
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Salary
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Attendance
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold">
+                  <th className="border-0 text-dark small text-uppercase fw-bold">
                     Status
                   </th>
-                  <th className="border-0 text-muted small text-uppercase fw-bold pe-4 text-end">
+                  <th className="border-0 text-dark small text-uppercase fw-bold pe-4 text-end">
                     Actions
                   </th>
                 </tr>
