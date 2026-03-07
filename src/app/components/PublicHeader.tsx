@@ -82,13 +82,13 @@ export function PublicHeader() {
       {/* Navbar */}
       <div className="container-fluid px-3 px-lg-5">
         <nav className="navbar navbar-expand-md navbar-light" style={{ padding: '20px 0' }}>
-          <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
-            <div className="bg-black rounded-circle d-flex align-items-center justify-content-center p-0 overflow-hidden" style={{ width: '45px', height: '45px' }}>
+          <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-0">
+            <div className="bg-black rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0 overflow-hidden" style={{ width: '40px', height: '40px' }}>
               <img src={logo} alt="BSNG Logo" className="img-fluid" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', transform: 'scale(1.35)', transformOrigin: 'center', marginTop: '4px' }} />
             </div>
-            <h1 className="m-0 text-primary">
+            <span className="m-0 text-primary fw-bold fs-6 fs-sm-5 fs-lg-4 text-nowrap">
               {t('bsngCompany')}
-            </h1>
+            </span>
           </Link>
           <button
             type="button"
@@ -98,8 +98,16 @@ export function PublicHeader() {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className={`collapse navbar-collapse ${isMenuOpen ? 'show' : ''}`} id="navbarCollapse">
-            <div className="navbar-nav ms-auto py-3 py-lg-0 align-items-center">
+          <div
+            className={`collapse navbar-collapse ${isMenuOpen ? 'show d-block' : ''}`}
+            id="navbarCollapse"
+            style={{
+              maxHeight: isMenuOpen ? '80vh' : '0',
+              overflowY: 'auto',
+              transition: 'max-height 0.4s ease-in-out'
+            }}
+          >
+            <div className="navbar-nav ms-auto py-3 py-lg-0 align-items-center bg-white rounded-bottom px-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
