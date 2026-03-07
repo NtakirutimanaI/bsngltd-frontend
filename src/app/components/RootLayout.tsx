@@ -196,7 +196,7 @@ export function RootLayout() {
           className="fixed top-0 right-0 left-0 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-50 px-3 md:px-6 transition-all duration-300"
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
-          <div className="h-full flex items-center justify-between gap-4">
+          <div className="h-full flex items-center justify-between gap-2 md:gap-4">
             <div className="flex items-center gap-3">
               <button
                 id="sidebarToggle"
@@ -212,8 +212,10 @@ export function RootLayout() {
               </button>
 
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <div className="h-9 w-9 rounded-lg flex items-center justify-center p-1 overflow-hidden shrink-0" style={{ background: '#16a085' }}>
-                  <img src={logo} alt="BSNG Logo" className="w-full h-full object-contain" />
+                <div className="flex-shrink-0 flex items-center justify-center overflow-hidden"
+                  style={{ width: '32px', height: '32px', backgroundColor: '#16a085', borderRadius: '8px', padding: '4px' }}>
+                  <img src={logo} alt="BSNG Logo"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
                 </div>
                 <div className="hidden sm:block">
                   <div className="text-base font-bold text-[#16a085] leading-tight">BSNG</div>
@@ -233,18 +235,18 @@ export function RootLayout() {
               />
             </div>
 
-            <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white rounded-full h-8 w-8 flex items-center justify-center"
+                    className="text-white rounded-full h-8 w-8 flex items-center justify-center scale-90 sm:scale-100"
                     style={{ background: '#16a085', border: 'none' }}
                     onMouseEnter={e => (e.currentTarget.style.background = '#0f766e')}
                     onMouseLeave={e => (e.currentTarget.style.background = '#16a085')}
                   >
-                    <Plus className="h-5 w-5" />
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
@@ -265,14 +267,14 @@ export function RootLayout() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }}>
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }} className="d-none d-sm-inline-flex">
+                {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" title="Messages" className="relative" style={{ border: 'none' }}>
-                    <MessageSquare className="h-5 w-5" />
+                  <Button variant="ghost" size="icon" title="Messages" className="relative d-none d-sm-inline-flex" style={{ border: 'none' }}>
+                    <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                     {unreadCount > 0 && (
                       <span className="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
                     )}
@@ -314,7 +316,7 @@ export function RootLayout() {
 
               <NotificationBell />
 
-              <div className="h-8 w-px bg-gray-200 dark:bg-gray-800 mx-2" />
+              <div className="d-none d-sm-block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
