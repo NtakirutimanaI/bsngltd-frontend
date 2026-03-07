@@ -196,7 +196,7 @@ export function Dashboard() {
     switch (status) {
       case "active": return "#10b981";
       case "planning": return "#6366f1";
-      case "on_hold": return "#f59e0b";
+      case "on_hold": return "#1abc9c";
       case "completed": return "#3b82f6";
       default: return "#9ca3af";
     }
