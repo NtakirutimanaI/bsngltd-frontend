@@ -173,3 +173,43 @@
 .page-size-select:focus {
     border-color: #16a085;
 }
+
+/* Mobile Optimizations */
+@media (max-width: 576px) {
+    .premium-card .card-body {
+        padding: 1rem !important;
+    }
+
+    .quick-action-card .card-body {
+        padding: 1.25rem !important;
+    }
+
+    .h5 {
+        font-size: 1.1rem !important;
+    }
+
+    .status-grid-badge {
+        font-size: 9px;
+        padding: 2px 8px;
+    }
+
+    .table-responsive {
+        font-size: 12px;
+    }
+
+    .stats-icon-container {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .stats-icon-container svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    .btn-sm {
+        padding: 0.35rem 0.75rem !important;
+        font-size: 11px !important;
+        min-width: 100px !important;
+    }
+}

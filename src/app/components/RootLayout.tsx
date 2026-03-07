@@ -17,7 +17,6 @@ import {
   MessageSquare,
   Settings,
   User,
-  UserCog,
   Banknote,
   Shield,
   CalendarCheck,
@@ -204,7 +203,7 @@ export function RootLayout() {
       <div className="lg:ml-52 flex flex-col min-h-screen">
         {/* Header */}
         <header
-          className="fixed top-0 right-0 left-0 lg:left-52 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-40 px-6 transition-all duration-300"
+          className="fixed top-0 right-0 left-0 lg:left-52 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-40 px-3 md:px-6 transition-all duration-300"
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
           <div className="h-full flex items-center justify-between gap-4">
@@ -228,7 +227,7 @@ export function RootLayout() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
