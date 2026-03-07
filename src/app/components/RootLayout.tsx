@@ -192,16 +192,16 @@ export function RootLayout() {
             />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white rounded-lg h-9 w-9"
-                  style={{ background: '#16a085', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  className="text-white rounded-lg h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center p-0"
+                  style={{ background: '#16a085', border: 'none' }}
                 >
-                  <Plus className="h-5 w-5" />
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
@@ -222,16 +222,16 @@ export function RootLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }}>
+            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
               {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Messages" className="relative" style={{ border: 'none' }}>
+                <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
                   <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
                   )}
                 </Button>
               </DropdownMenuTrigger>
@@ -275,8 +275,8 @@ export function RootLayout() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors" style={{ border: 'none' }}>
-                  <Avatar className="h-8 w-8">
+                <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors border-0 bg-transparent flex-shrink-0">
+                  <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
                     <AvatarImage src="" />
                     <AvatarFallback className="font-bold text-white" style={{ background: '#16a085' }}>
                       {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
