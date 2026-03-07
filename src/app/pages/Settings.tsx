@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import {
   User,
@@ -17,7 +17,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
-import { fetchApi } from "../api/client";
+import { fetchApi, getImageUrl } from "../api/client";
 import { useAuth } from "@/app/context/AuthContext";
 import { toast } from "sonner";
 
@@ -39,8 +39,10 @@ export function Settings() {
     fullName: user?.fullName || "",
     email: user?.email || "",
     phone: "",
-    language: "en"
+    language: "en",
+    avatar: user?.avatar || ""
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Password State
   const [passwordData, setPasswordData] = useState({
@@ -67,7 +69,8 @@ export function Settings() {
         fullName: user.fullName || user.name || "",
         email: user.email || "",
         phone: user.phone || "+250 788 000 000",
-        language: "en"
+        language: "en",
+        avatar: user.avatar || ""
       });
     }
     loadSettings();
@@ -110,13 +113,41 @@ export function Settings() {
         body: JSON.stringify({
           fullName: profileData.fullName,
           email: profileData.email,
-          phone: profileData.phone
+          phone: profileData.phone,
+          avatar: profileData.avatar
         })
       });
       setUser(updatedUser);
       toast.success("Profile updated successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+    if (file.size > 800 * 1024) {
+      toast.error("Maximum file size is 800KB");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('contentId', user.id);
+
+      const res = await fetchApi<{ url: string }>('/content/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+      setProfileData(prev => ({ ...prev, avatar: res.url }));
+      toast.success("Avatar uploaded! Save changes to apply.");
+    } catch (error) {
+      toast.error("Failed to upload avatar");
     } finally {
       setLoading(false);
     }
@@ -223,11 +254,16 @@ export function Settings() {
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
               <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="flex items-center gap-6">
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-3xl font-bold" style={{ backgroundImage: 'linear-gradient(to right bottom, #14b8a6, #16a085)' }}>
-                    {profileData.fullName.charAt(0) || "A"}
+                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden" style={{ backgroundImage: 'linear-gradient(to right bottom, #14b8a6, #16a085)' }}>
+                    {profileData.avatar ? (
+                      <img src={getImageUrl(profileData.avatar)} alt="Avatar" className="h-full w-full object-cover" />
+                    ) : (
+                      profileData.fullName.charAt(0) || "A"
+                    )}
                   </div>
                   <div>
-                    <button type="button" className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors" style={{ backgroundColor: '#16a085' }}>
+                    <input type="file" ref={fileInputRef} className="hidden" accept="image/jpeg,image/png,image/gif" onChange={handleAvatarUpload} />
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors" style={{ backgroundColor: '#16a085' }}>
                       Change Avatar
                     </button>
                     <p className="text-sm text-gray-600 mt-2">
