@@ -1,5 +1,6 @@
-import { Outlet, NavLink, useNavigate } from "react-router";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import { ScrollToTopOnNavigate } from "@/app/components/ScrollToTopOnNavigate";
+import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import {
   Building2,
   LayoutDashboard,
@@ -52,6 +53,12 @@ export function RootLayout() {
   const [searchTerm, setSearchTerm] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [unreadContactMessages, setUnreadContactMessages] = useState(0);
+  const location = useLocation();
+
+  // Close sidebar on route change - this allows the user to see the link selection before the sidebar closes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (user) {
@@ -106,19 +113,20 @@ export function RootLayout() {
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, roles: ['all'] },
     { name: "Portfolio", path: "/dashboard/portfolio", icon: Building2, roles: ['all'] },
     { name: "Workforce", path: "/dashboard/workforce", icon: Users, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
-    { name: "Finance Hub", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'accountant', 'auditor', 'employee', 'contractor'] },
+    { name: "Finance Hub", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'accountant', 'auditor', 'employee', 'contractor'] },
     { name: "Insights", path: "/dashboard/insights", icon: BarChart3, roles: ['super_admin', 'admin', 'auditor'] },
     { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
     { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
     { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr'] },
     { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin'] },
     { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'hr'] },
+    { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
   ];
 
   const navigation = allNavItems.filter(item => {
     if (item.roles.includes('all')) return true;
-    return item.roles.includes(roleName.toLowerCase().replace(' ', '_'));
+    const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
+    return item.roles.includes(normalizedRole);
   });
 
   const handleLogout = () => {
@@ -137,10 +145,14 @@ export function RootLayout() {
         className="fixed top-0 right-0 left-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md transition-all duration-300"
         style={{
           height: '64px',
-          zIndex: 60,
+          zIndex: 100,
           borderBottom: '2px solid #16a085',
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0
         }}
       >
         <div className="w-full h-full px-3 md:px-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
@@ -258,6 +270,10 @@ export function RootLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <div className="flex mt-0.5" style={{ marginLeft: '20px' }}>
+              <LanguageSwitcher />
+            </div>
+
             <NotificationBell />
 
             <div className="d-none d-sm-block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
@@ -301,7 +317,8 @@ export function RootLayout() {
         className={`fixed left-0 w-64 transition-transform duration-300 lg:translate-x-0 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         style={{
           top: '64px',
-          height: 'calc(100vh - 64px)',
+          bottom: 0,
+          height: 'auto',
           background: '#18181b',
           zIndex: 40,
           borderRight: '1px solid rgba(22,160,133,0.2)',
@@ -324,7 +341,6 @@ export function RootLayout() {
                   key={item.path}
                   to={item.path}
                   end={item.path === '/dashboard'}
-                  onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
                       ? "text-white font-bold bg-[#16a085] shadow-lg"

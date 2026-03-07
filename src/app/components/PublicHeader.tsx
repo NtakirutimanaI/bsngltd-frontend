@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Globe, LogIn, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, ChevronDown } from 'lucide-react';
-import { useLanguage, type Language } from '@/app/context/LanguageContext';
+import { LogIn, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { useLanguage } from '@/app/context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
+import { LanguageSwitcher } from '@/app/components/LanguageSwitcher';
 import logo from '@/assets/logo.png';
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
 
   const location = useLocation();
-  const { language, setLanguage, t, dt } = useLanguage();
+  const { t, dt } = useLanguage();
   const { getSetting } = useSettings();
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,13 +22,6 @@ export function PublicHeader() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const languages: { code: Language; name: string; flag: string }[] = [
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
-    { code: 'sw', name: 'Swahili', flag: '🇰🇪' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  ];
 
   const navLinks = [
     { name: t('home'), path: '/' },
@@ -82,6 +75,11 @@ export function PublicHeader() {
       {/* Navbar */}
       <div className="container-fluid px-3 px-lg-5">
         <nav className="navbar navbar-expand-md navbar-light" style={{ padding: '20px 0' }}>
+          {/* Mobile Language Switcher - Far Left (Opposite side of Hamburger) */}
+          <div className="d-md-none me-2 translate-y-1">
+            <LanguageSwitcher />
+          </div>
+
           <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-0">
             <div className="bg-black rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0 overflow-hidden" style={{ width: '40px', height: '40px' }}>
               <img src={logo} alt="BSNG Logo" className="img-fluid" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', transform: 'scale(1.35)', transformOrigin: 'center', marginTop: '4px' }} />
@@ -90,9 +88,11 @@ export function PublicHeader() {
               {t('bsngCompany')}
             </span>
           </Link>
+
           <button
             type="button"
-            className="navbar-toggler ms-auto border-0 shadow-none"
+            className="navbar-toggler ms-auto border-0 shadow-none d-flex d-md-none align-items-center"
+            style={{ padding: '8px' }}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <span className="navbar-toggler-icon"></span>
@@ -127,35 +127,9 @@ export function PublicHeader() {
                 </Link>
               ))}
 
-              {/* Language Dropdown */}
-              <div className="nav-item dropdown px-lg-3 position-relative">
-                <button
-                  className="nav-link dropdown-toggle d-flex align-items-center gap-2 fw-medium text-dark border-0 bg-transparent"
-                  onClick={() => {
-                    setIsLangOpen(!isLangOpen);
-                  }}
-                  style={{ fontSize: '17px' }}
-                >
-                  <Globe style={{ width: '18px', height: '18px' }} className="text-primary" />
-                  {languages.find((l) => l.code === language)?.flag}
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${isLangOpen ? 'rotate-180' : ''}`} />
-                </button>
-                <div className={`dropdown-menu dropdown-menu-end bg-white border-0 shadow-lg border-top border-primary border-3 transition-all ${isLangOpen ? 'show d-block' : 'd-none'}`} style={{ position: 'absolute', top: '100%', right: 0, minWidth: '180px' }}>
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => {
-                        setLanguage(lang.code);
-                        setIsLangOpen(false);
-                        setIsMenuOpen(false);
-                      }}
-                      className={`dropdown-item py-2 px-4 ${lang.code === language ? 'active bg-primary text-white' : ''}`}
-                    >
-                      <span className="me-2">{lang.flag}</span>
-                      <span>{lang.name}</span>
-                    </button>
-                  ))}
-                </div>
+              {/* Desktop Language Dropdown */}
+              <div className="nav-item px-lg-3 d-none d-md-block">
+                <LanguageSwitcher />
               </div>
 
               <Link
