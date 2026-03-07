@@ -157,17 +157,17 @@ export function RootLayout() {
                   end={item.path === '/dashboard'}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
-                      ? "text-white font-bold bg-[#16a085] shadow-[0_4px_12px_rgba(22,160,133,0.3)] mb-1.5"
-                      : "text-gray-400 hover:text-white hover:bg-white/5 mb-1.5"
+                    `flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${isActive
+                      ? "text-white font-extrabold bg-[#16a085] shadow-[0_8px_16px_rgba(22,160,133,0.4)]"
+                      : "text-gray-100 font-semibold hover:text-white hover:bg-white/10"
                     }`
                   }
-                  style={{ border: 'none' }}
+                  style={{ border: 'none', marginBottom: '8px' }}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  <span className="font-semibold text-[13px] tracking-tight">{item.name}</span>
+                  <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} style={{ opacity: isActive ? 1 : 0.85 }} />
+                  <span className="text-[14.5px] tracking-tight">{item.name}</span>
                   {item.name === "Communications" && unreadCount > 0 && (
-                    <span className="ml-auto text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
+                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full ring-2 ring-black/20" style={{ background: '#e74c3c' }}>
                       {unreadCount}
                     </span>
                   )}
@@ -178,13 +178,13 @@ export function RootLayout() {
         </div>
 
         {/* Logout Section */}
-        <div className="px-3 pb-6 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
+        <div className="px-3 pb-8 shrink-0" style={{ borderTop: '2px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 w-full text-red-400/90 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-300 font-bold text-[14px]"
+            className="flex items-center gap-3.5 px-5 py-4 w-full text-white bg-red-600/90 hover:bg-red-600 rounded-2xl transition-all duration-300 font-black text-[15px] shadow-lg shadow-red-900/20"
             style={{ border: 'none' }}
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-5.5 w-5.5" strokeWidth={3} />
             <span>Sign Out</span>
           </button>
         </div>
