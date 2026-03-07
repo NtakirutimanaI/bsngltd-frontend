@@ -131,6 +131,171 @@ export function RootLayout() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <ScrollToTopOnNavigate />
+
+      {/* Header — Fixed at the top */}
+      <header
+        className="fixed top-0 right-0 left-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md transition-all duration-300"
+        style={{
+          height: '64px',
+          zIndex: 60,
+          borderBottom: '2px solid #16a085',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <div className="w-full h-full px-3 md:px-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <button
+              id="sidebarToggle"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSidebarOpen(!sidebarOpen);
+              }}
+              className="lg:hidden"
+              style={{
+                border: 'none', background: 'transparent', padding: '6px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: theme === 'dark' ? '#e5e7eb' : '#374151'
+              }}
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '30px', height: '30px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              </div>
+              <span className="hidden sm:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
+            </div>
+          </div>
+
+          <div className="hidden lg:flex" style={{ flex: 1, maxWidth: '320px', position: 'relative', margin: '0 12px' }}>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <Input
+              placeholder="Find anything..."
+              className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearch}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white rounded-lg h-9 w-9"
+                  style={{ background: '#16a085', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Plus className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                <DropdownMenuLabel>Add New</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
+                  <Building2 className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Project
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
+                  <Home className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Property
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/workforce')}>
+                  <Users className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Employee
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')}>
+                  <Newspaper className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Update
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }} className="d-none d-sm-inline-flex">
+              {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="Messages" className="relative d-none d-sm-inline-flex" style={{ border: 'none' }}>
+                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                <DropdownMenuLabel>Messages</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-80 overflow-y-auto">
+                  {messages.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
+                  ) : (
+                    messages.map((msg) => (
+                      <DropdownMenuItem
+                        key={msg.id}
+                        className="cursor-pointer flex flex-col items-start gap-1 p-3"
+                        style={{ border: 'none' }}
+                        onClick={() => navigate('/dashboard/communications')}
+                      >
+                        <div className="flex justify-between w-full">
+                          <span className="font-medium text-sm">{msg.sender}</span>
+                          <span className="text-xs text-gray-400">{msg.time}</span>
+                        </div>
+                        <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer justify-center font-semibold"
+                  style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
+                  onClick={() => navigate('/dashboard/communications')}
+                >
+                  View all messages
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <NotificationBell />
+
+            <div className="d-none d-sm-block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors" style={{ border: 'none' }}>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="font-bold text-white" style={{ background: '#16a085' }}>
+                      {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <div className="px-2 py-1.5 text-sm text-gray-500">
+                  {user?.fullName || user?.name}
+                  <div className="text-xs font-normal opacity-70 capitalize">{roleName}</div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
+                  <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
+                  <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600" style={{ border: 'none' }}>
+                  <LogOut className="mr-2 h-4 w-4" /> Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
       {/* Sidebar — starts exactly under header (64px) */}
       <aside
         className={`fixed left-0 w-64 transition-transform duration-300 lg:translate-x-0 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -194,174 +359,9 @@ export function RootLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="lg:ml-64 flex flex-col min-h-screen">
-        {/* Header */}
-        <header
-          className="fixed top-0 right-0 left-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md transition-all duration-300"
-          style={{
-            height: '64px',
-            zIndex: 60,
-            borderBottom: '2px solid #16a085',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-        >
-          <div className="w-full h-full px-3 md:px-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-              <button
-                id="sidebarToggle"
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSidebarOpen(!sidebarOpen);
-                }}
-                className="lg:hidden"
-                style={{
-                  border: 'none', background: 'transparent', padding: '6px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: theme === 'dark' ? '#e5e7eb' : '#374151'
-                }}
-              >
-                <Menu className="h-6 w-6" />
-              </button>
-
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ width: '30px', height: '30px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </div>
-                <span className="hidden sm:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
-              </div>
-            </div>
-
-            <div className="hidden lg:flex" style={{ flex: 1, maxWidth: '320px', position: 'relative', margin: '0 12px' }}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-              <Input
-                placeholder="Find anything..."
-                className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearch}
-              />
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-white rounded-lg h-9 w-9"
-                    style={{ background: '#16a085', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    <Plus className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                  <DropdownMenuLabel>Add New</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                    <Building2 className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Project
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                    <Home className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Property
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/workforce')}>
-                    <Users className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Employee
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/admin')}>
-                    <Newspaper className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Update
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" style={{ border: 'none' }} className="d-none d-sm-inline-flex">
-                {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" title="Messages" className="relative d-none d-sm-inline-flex" style={{ border: 'none' }}>
-                    <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full border-2 border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                  <DropdownMenuLabel>Messages</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <div className="max-h-80 overflow-y-auto">
-                    {messages.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
-                    ) : (
-                      messages.map((msg) => (
-                        <DropdownMenuItem
-                          key={msg.id}
-                          className="cursor-pointer flex flex-col items-start gap-1 p-3"
-                          style={{ border: 'none' }}
-                          onClick={() => navigate('/dashboard/communications')}
-                        >
-                          <div className="flex justify-between w-full">
-                            <span className="font-medium text-sm">{msg.sender}</span>
-                            <span className="text-xs text-gray-400">{msg.time}</span>
-                          </div>
-                          <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
-                        </DropdownMenuItem>
-                      ))
-                    )}
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer justify-center font-semibold"
-                    style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
-                    onClick={() => navigate('/dashboard/communications')}
-                  >
-                    View all messages
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <NotificationBell />
-
-              <div className="d-none d-sm-block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors" style={{ border: 'none' }}>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="" />
-                      <AvatarFallback className="font-bold text-white" style={{ background: '#16a085' }}>
-                        {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <div className="px-2 py-1.5 text-sm text-gray-500">
-                    {user?.fullName || user?.name}
-                    <div className="text-xs font-normal opacity-70 capitalize">{roleName}</div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
-                    <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/admin')} style={{ border: 'none' }}>
-                    <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600" style={{ border: 'none' }}>
-                    <LogOut className="mr-2 h-4 w-4" /> Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <main className="flex-1 p-3 md:p-6 mt-16 bg-gray-50/50 dark:bg-gray-950/50 overflow-x-auto max-w-full custom-scrollbar">
+      {/* Main Container */}
+      <div className="lg:ml-64 flex flex-col min-h-screen pt-16">
+        <main className="flex-1 p-3 md:p-6 bg-gray-50/50 dark:bg-gray-950/50 overflow-x-auto max-w-full custom-scrollbar">
           <div className="w-full max-w-[1600px] mx-auto min-w-[320px]">
             <Outlet />
           </div>
