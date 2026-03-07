@@ -305,7 +305,7 @@ export function Dashboard() {
         <div className="row g-3 mb-4">
           <div className="col-12">
             <div className="quick-action-card border-0 shadow-lg text-white" style={{ borderRadius: '20px' }}>
-              <div className="card-body p-4 position-relative z-1">
+              <div className="card-body p-3 p-md-4 position-relative z-1">
                 <div className="row align-items-center">
                   <div className="col-lg-8">
                     <h6 className="fw-bold mb-1" style={{ fontSize: '14px' }}>
