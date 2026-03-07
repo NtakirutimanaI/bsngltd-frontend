@@ -1,17 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { LogIn, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
-import { useLanguage } from '@/app/context/LanguageContext';
+import { Globe, LogIn, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, ChevronDown } from 'lucide-react';
+import { useLanguage, type Language } from '@/app/context/LanguageContext';
 import { useSettings } from '../context/SettingsContext';
-import { LanguageSwitcher } from '@/app/components/LanguageSwitcher';
 import logo from '@/assets/logo.png';
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const [isLangOpen, setIsLangOpen] = useState(false);
   const location = useLocation();
-  const { t, dt } = useLanguage();
+  const { language, setLanguage, t, dt } = useLanguage();
   const { getSetting } = useSettings();
+
+  const languages: { code: Language; name: string; flag: string }[] = [
+    { code: 'en', name: 'English', flag: '🇬🇧' },
+    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
+    { code: 'sw', name: 'Swahili', flag: '🇰🇪' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  ];
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -75,12 +81,8 @@ export function PublicHeader() {
       {/* Navbar */}
       <div className="container-fluid px-3 px-lg-5">
         <nav className="navbar navbar-expand-md navbar-light" style={{ padding: '20px 0' }}>
-          {/* Mobile Language Switcher - Appears on Far Left ONLY when menu is open (Opposite side of Hamburger) */}
-          <div className={`d-md-none transition-all duration-300 ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 pointer-events-none'}`} style={{ marginRight: '10px' }}>
-            <LanguageSwitcher />
-          </div>
-
-          <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-0">
+          {/* Brand - Strictly Left */}
+          <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-auto">
             <div className="bg-black rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0 overflow-hidden" style={{ width: '40px', height: '40px' }}>
               <img src={logo} alt="BSNG Logo" className="img-fluid" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', transform: 'scale(1.35)', transformOrigin: 'center', marginTop: '4px' }} />
             </div>
@@ -89,15 +91,16 @@ export function PublicHeader() {
             </span>
           </Link>
 
+          {/* Hamburger Toggler */}
           <button
             type="button"
-            className="navbar-toggler ms-auto border-0 shadow-none d-flex d-md-none align-items-center"
-            style={{ padding: '8px' }}
+            className="navbar-toggler border-0 shadow-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
+          {/* Menu Drawer */}
           <div
             className={`collapse navbar-collapse ${isMenuOpen ? 'show d-block' : ''}`}
             id="navbarCollapse"
@@ -109,7 +112,9 @@ export function PublicHeader() {
               visibility: isMenuOpen ? 'visible' : 'hidden'
             }}
           >
-            <div className="navbar-nav ms-auto py-3 py-lg-0 align-items-start align-items-lg-center px-2">
+            <div className="navbar-nav ms-auto py-2 py-lg-0 align-items-start align-items-lg-center px-2">
+
+              {/* Navigation Links */}
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -127,20 +132,97 @@ export function PublicHeader() {
                 </Link>
               ))}
 
-              {/* Desktop Language Dropdown */}
-              <div className="nav-item px-lg-3 d-none d-md-block">
-                <LanguageSwitcher />
+              {/* MOBILE ONLY ACTIONS: Join Us followed by Language (Visible after clicking hamburger) */}
+              <div className="d-flex d-md-none flex-column align-items-start gap-4 px-3 py-4 w-100 border-top mt-2">
+                <Link
+                  to="/login"
+                  className="text-primary fw-bold d-flex align-items-center gap-2 p-0 w-100"
+                  onClick={() => setIsMenuOpen(false)}
+                  style={{ fontSize: '18px', color: '#16a085', textDecoration: 'none' }}
+                >
+                  <LogIn style={{ width: '22px', height: '22px' }} />
+                  {t('joinUs')}
+                </Link>
+
+                <div className="dropdown position-relative w-100">
+                  <button
+                    className="dropdown-toggle d-flex align-items-center gap-2 fw-bold text-dark border-0 bg-transparent p-0 w-100 justify-content-start"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsLangOpen(!isLangOpen);
+                    }}
+                    style={{ fontSize: '18px' }}
+                  >
+                    <Globe style={{ width: '22px', height: '22px' }} className="text-primary" />
+                    {languages.find((l) => l.code === language)?.flag}
+                    <ChevronDown size={14} className={`transition-transform duration-300 ms-auto ${isLangOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div className={`dropdown-menu bg-white border-0 shadow-lg border-top border-primary border-3 transition-all ${isLangOpen ? 'show d-block' : 'd-none'}`}
+                    style={{
+                      position: 'relative',
+                      minWidth: '200px',
+                      width: '100%',
+                      boxShadow: 'none',
+                      marginTop: '15px',
+                      zIndex: 2500
+                    }}>
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code);
+                          setIsLangOpen(false);
+                          setIsMenuOpen(false);
+                        }}
+                        className={`dropdown-item py-3 px-4 d-flex align-items-center gap-3 ${lang.code === language ? 'active bg-primary text-white font-bold' : ''}`}
+                        style={{ border: 'none' }}
+                      >
+                        <span className="fs-4">{lang.flag}</span>
+                        <span className="fw-bold">{lang.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
+              {/* DESKTOP ONLY: Join Us Button */}
               <Link
                 to="/login"
-                className="nav-item nav-link text-primary fw-bold d-flex align-items-center gap-2 px-3 py-3 w-100"
-                onClick={() => setIsMenuOpen(false)}
+                className="nav-item nav-link text-primary fw-bold d-none d-md-flex align-items-center gap-2 px-3 py-3"
                 style={{ fontSize: '17px', color: '#16a085' }}
               >
                 <LogIn style={{ width: '18px', height: '18px' }} />
                 {t('joinUs')}
               </Link>
+
+              {/* DESKTOP ONLY: Language Dropdown */}
+              <div className="nav-item dropdown px-lg-3 position-relative d-none d-md-block">
+                <button
+                  className="nav-link dropdown-toggle d-flex align-items-center gap-2 fw-medium text-dark border-0 bg-transparent h-100"
+                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  style={{ fontSize: '17px' }}
+                >
+                  <Globe style={{ width: '18px', height: '18px' }} className="text-primary" />
+                  {languages.find((l) => l.code === language)?.flag}
+                  <ChevronDown size={14} className={`transition-transform duration-300 ${isLangOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`dropdown-menu dropdown-menu-end bg-white border-0 shadow-lg border-top border-primary border-3 transition-all ${isLangOpen ? 'show d-block' : 'd-none'}`}
+                  style={{ position: 'absolute', top: '100%', right: 0, minWidth: '180px' }}>
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setIsLangOpen(false);
+                      }}
+                      className={`dropdown-item py-2 px-4 d-flex align-items-center gap-3 ${lang.code === language ? 'active bg-primary text-white' : ''}`}
+                    >
+                      <span className="fs-5">{lang.flag}</span>
+                      <span className="fw-medium">{lang.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </nav>

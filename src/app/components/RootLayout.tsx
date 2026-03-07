@@ -1,6 +1,5 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import { ScrollToTopOnNavigate } from "@/app/components/ScrollToTopOnNavigate";
-import { LanguageSwitcher } from "@/app/components/LanguageSwitcher";
 import {
   Building2,
   LayoutDashboard,
@@ -269,10 +268,6 @@ export function RootLayout() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <div className="flex mt-0.5" style={{ marginLeft: '20px' }}>
-              <LanguageSwitcher />
-            </div>
 
             <NotificationBell />
 
