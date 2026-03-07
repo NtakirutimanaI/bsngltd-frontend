@@ -92,7 +92,7 @@ export function RootLayout() {
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      navigate(`/dashboard/projects?search=${searchTerm}`);
+      navigate(`/dashboard/portfolio?search=${searchTerm}`);
     }
   };
 
@@ -208,9 +208,14 @@ export function RootLayout() {
         >
           <div className="h-full flex items-center justify-between gap-4">
             <button
-              onClick={() => setSidebarOpen(true)}
+              id="sidebarToggle"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSidebarOpen(true);
+              }}
               className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-              style={{ border: 'none' }}
+              style={{ border: 'none', background: 'transparent' }}
             >
               <Menu className="h-6 w-6" />
             </button>
