@@ -120,7 +120,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             {/* Image preview */}
-            <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
+            <div className="relative w-full h-32 sm:h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
                 <img
                     src={displaySrc}
                     alt={imgDef.label}
@@ -239,7 +239,7 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
+            <div className="relative w-full h-32 sm:h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
                 <img
                     src={displaySrc}
                     alt={displayTitle}
