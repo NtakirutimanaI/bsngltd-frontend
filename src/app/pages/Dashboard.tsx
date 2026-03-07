@@ -1,6 +1,6 @@
 import { Building2, Users, Home, DollarSign, AlertCircle, CheckCircle, Clock, MessageSquare, Plus, Eye, Edit, Trash2, MoreVertical, ChevronDown, Settings, UserCog, ArrowRight, LineChart as LineChartIcon, PieChart as PieChartIcon, History, CalendarCheck } from "lucide-react";
 
-import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 
 import { useAuth } from "@/app/context/AuthContext";
@@ -457,21 +457,23 @@ export function Dashboard() {
         ) : (
           <div className="row g-2 mb-2">
             {stats.map((stat: any, index: number) => (
-              <div key={stat.name} className="col-md-6 col-lg-3">
+              <div key={stat.name} className="col-6 col-lg-3">
                 <ScrollReveal delay={index * 0.1}>
                   <div className="premium-card h-100">
                     <div className="card-body py-3 px-4">
                       <div className="d-flex align-items-center justify-content-between">
                         <div>
-                          <small className="text-muted text-uppercase fw-bold tracking-widest opacity-75" style={{ fontSize: '10px' }}>{stat.name}</small>
-                          <h4 className="fw-bold text-dark mt-1 mb-0">{stat.value}</h4>
-                          <div className="d-flex align-items-center gap-2 mt-2">
-                            <span className="status-grid-badge" style={{ backgroundColor: 'rgba(22, 160, 133, 0.15)', color: '#16a085' }}>{stat.change}</span>
-                            {!isEmployee && <span className="text-muted" style={{ fontSize: '10px' }}>this month</span>}
+                          <small className="text-muted text-uppercase fw-bold tracking-widest opacity-75 d-block text-truncate" style={{ fontSize: '9px' }}>{stat.name}</small>
+                          <h4 className="fw-bold text-dark mt-1 mb-0 fs-6 fs-md-4">{stat.value}</h4>
+                          <div className="d-flex align-items-center gap-1 mt-1">
+                            <span className="status-grid-badge" style={{ backgroundColor: 'rgba(22, 160, 133, 0.15)', color: '#16a085', fontSize: '8px', padding: '1px 5px' }}>{stat.change}</span>
                           </div>
                         </div>
-                        <div className={`stats-icon-container rounded-xl ${stat.color} shadow-sm`} style={{ width: '42px', height: '42px' }}>
-                          <stat.icon size={18} strokeWidth={2.5} />
+                        <div className={`stats-icon-container rounded-lg ${stat.color} shadow-sm d-none d-sm-flex`} style={{ width: '38px', height: '38px' }}>
+                          <stat.icon size={16} strokeWidth={2.5} />
+                        </div>
+                        <div className={`stats-icon-container rounded-lg ${stat.color} shadow-sm d-flex d-sm-none`} style={{ width: '28px', height: '28px' }}>
+                          <stat.icon size={12} strokeWidth={2.5} />
                         </div>
                       </div>
                     </div>
@@ -508,7 +510,7 @@ export function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <div style={{ height: '220px' }}>
+                    <div style={{ height: window.innerWidth < 576 ? '180px' : '220px' }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={revenueData}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? "#374151" : "#f1f5f9"} />
@@ -570,7 +572,7 @@ export function Dashboard() {
                       <PieChartIcon size={16} className="text-brand" />
                       Project Status
                     </h6>
-                    <div style={{ height: '220px' }}>
+                    <div style={{ height: window.innerWidth < 576 ? '180px' : '220px' }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -633,9 +635,9 @@ export function Dashboard() {
                   <table className="table table-hover align-middle mb-0">
                     <thead className="bg-light/50">
                       <tr>
-                        <th className="border-0 text-muted small text-uppercase fw-bold ps-4 py-3">Project</th>
-                        <th className="border-0 text-muted small text-uppercase fw-bold py-3">Status</th>
-                        <th className="border-0 text-muted small text-uppercase fw-bold py-3">Health & Progress</th>
+                        <th className="border-0 text-muted small text-uppercase fw-bold ps-4 py-3 text-nowrap">Project</th>
+                        <th className="border-0 text-muted small text-uppercase fw-bold py-3 text-nowrap">Status</th>
+                        <th className="border-0 text-muted small text-uppercase fw-bold py-3 text-nowrap">Health & Progress</th>
                         {!isEmployee && <th className="border-0 text-muted small text-uppercase fw-bold py-3">Budget Allocation</th>}
                         <th className="border-0 text-muted small text-uppercase fw-bold text-end pe-4 py-3">Action</th>
                       </tr>
