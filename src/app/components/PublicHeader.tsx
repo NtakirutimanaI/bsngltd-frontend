@@ -75,8 +75,8 @@ export function PublicHeader() {
       {/* Navbar */}
       <div className="container-fluid px-3 px-lg-5">
         <nav className="navbar navbar-expand-md navbar-light" style={{ padding: '20px 0' }}>
-          {/* Mobile Language Switcher - Far Left (Opposite side of Hamburger) */}
-          <div className="d-md-none me-2 translate-y-1">
+          {/* Mobile Language Switcher - Appears on Far Left ONLY when menu is open (Opposite side of Hamburger) */}
+          <div className={`d-md-none transition-all duration-300 ${isMenuOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 pointer-events-none'}`} style={{ marginRight: '10px' }}>
             <LanguageSwitcher />
           </div>
 
