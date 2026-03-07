@@ -133,12 +133,16 @@ export function RootLayout() {
       <ScrollToTopOnNavigate />
       {/* Sidebar — brand color: #16a085 teal, matching public website */}
       <aside
-        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-52 transition-transform lg:translate-x-0 z-40 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-        style={{ background: 'linear-gradient(180deg, #1c1917 0%, #292524 40%, #1c1917 100%)', border: 'none' }}
+        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-56 transition-transform lg:translate-x-0 z-40 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        style={{
+          background: 'linear-gradient(180deg, #18181b 0%, #27272a 100%)',
+          borderRight: '1px solid rgba(22,160,133,0.15)',
+          boxShadow: sidebarOpen ? '10px 0 25px rgba(0,0,0,0.2)' : 'none'
+        }}
       >
         {/* Nav label */}
-        <div className="px-5 pt-4 pb-1 shrink-0">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Navigation</span>
+        <div className="px-5 pt-6 pb-2 shrink-0">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500/80">Menu Explorer</span>
         </div>
 
         {/* Nav Items */}
@@ -153,20 +157,17 @@ export function RootLayout() {
                   end={item.path === '/dashboard'}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${isActive
-                      ? "text-[#16a085] font-bold bg-[#16a085]/10"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
+                      ? "text-white font-bold bg-[#16a085] shadow-[0_4px_12px_rgba(22,160,133,0.3)] mb-1.5"
+                      : "text-gray-400 hover:text-white hover:bg-white/5 mb-1.5"
                     }`
                   }
                   style={{ border: 'none' }}
                 >
-                  {isActive && (
-                    <span className="absolute left-0 top-2.5 bottom-2.5 w-1 bg-[#16a085] rounded-r-full" />
-                  )}
-                  <item.icon className="h-4.5 w-4.5 shrink-0" style={{ width: '18px', height: '18px' }} />
-                  <span className="font-medium text-[13px]">{item.name}</span>
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  <span className="font-semibold text-[13px] tracking-tight">{item.name}</span>
                   {item.name === "Communications" && unreadCount > 0 && (
-                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
+                    <span className="ml-auto text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
                       {unreadCount}
                     </span>
                   )}
@@ -176,15 +177,15 @@ export function RootLayout() {
           </nav>
         </div>
 
-        {/* Logout */}
-        <div className="px-3 pb-4 shrink-0" style={{ borderTop: '2px solid rgba(22,160,133,0.25)', paddingTop: '12px' }}>
+        {/* Logout Section */}
+        <div className="px-3 pb-6 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2.5 px-3 py-2 w-full text-gray-400 hover:text-red-400 rounded-lg transition-all duration-200 group"
-            style={{ border: 'none', background: 'transparent' }}
+            className="flex items-center gap-3 px-4 py-3 w-full text-red-400/90 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-300 font-bold text-[14px]"
+            style={{ border: 'none' }}
           >
-            <LogOut style={{ width: '18px', height: '18px' }} />
-            <span className="font-medium text-[13px]">Logout</span>
+            <LogOut className="h-5 w-5" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
@@ -197,7 +198,7 @@ export function RootLayout() {
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
           <div className="h-full flex items-center justify-between gap-2 md:gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               <button
                 id="sidebarToggle"
                 type="button"
@@ -205,48 +206,46 @@ export function RootLayout() {
                   e.stopPropagation();
                   setSidebarOpen(!sidebarOpen);
                 }}
-                className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                className="lg:hidden p-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                 style={{ border: 'none', background: 'transparent' }}
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-5.5 w-5.5" />
               </button>
 
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <div className="flex-shrink-0 flex items-center justify-center overflow-hidden"
-                  style={{ width: '32px', height: '32px', backgroundColor: '#16a085', borderRadius: '8px', padding: '4px' }}>
+                <div className="flex-shrink-0 flex items-center justify-center"
+                  style={{ width: '28px', height: '28px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px' }}>
                   <img src={logo} alt="BSNG Logo"
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <div className="hidden sm:block">
-                  <div className="text-base font-bold text-[#16a085] leading-tight">BSNG</div>
-                  <div className="text-[8px] text-gray-500 font-bold uppercase tracking-wider leading-tight">Construction Co.</div>
+                <div className="hidden min-[360px]:block">
+                  <span className="text-[14px] font-black tracking-tight text-gray-900 dark:text-white line-clamp-1">BSNG</span>
                 </div>
               </div>
             </div>
 
-            <div className="hidden md:flex flex-1 max-w-md relative">
+            <div className="hidden lg:flex flex-1 max-w-sm relative mx-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <Input
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border-none rounded-xl w-full focus:ring-2 focus:ring-[#16a085]/20 focus:bg-white dark:focus:bg-gray-700 transition-all text-sm"
+                placeholder="Find anything..."
+                className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-[10px] w-full focus:ring-2 focus:ring-[#16a085]/30 transition-all text-[13px]"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearch}
               />
             </div>
 
-            <div className="flex items-center gap-0.5 sm:gap-1 md:gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white rounded-full h-8 w-8 flex items-center justify-center scale-90 sm:scale-100"
-                    style={{ background: '#16a085', border: 'none' }}
+                    className="text-white rounded-lg h-8 w-8 flex items-center justify-center bg-[#16a085] border-none shadow-sm"
                     onMouseEnter={e => (e.currentTarget.style.background = '#0f766e')}
                     onMouseLeave={e => (e.currentTarget.style.background = '#16a085')}
                   >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
