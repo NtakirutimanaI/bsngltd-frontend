@@ -283,7 +283,7 @@ export function Dashboard() {
                       <DollarSign size={12} style={{ color: '#16a085' }} /> Record Payment
                     </button>
                     <hr className="my-1 opacity-10" />
-                    <button onClick={() => { navigate('/dashboard/users'); setShowQuickActions(false); }} className="d-flex align-items-center gap-2 px-3 py-1 w-100 border-0 bg-transparent text-dark hover:bg-light" style={{ fontSize: '12px' }}>
+                    <button onClick={() => { navigate('/dashboard/admin'); setShowQuickActions(false); }} className="d-flex align-items-center gap-2 px-3 py-1 w-100 border-0 bg-transparent text-dark hover:bg-light" style={{ fontSize: '12px' }}>
                       <UserCog size={12} style={{ color: '#16a085' }} /> Manage Users
                     </button>
                     <button onClick={() => { navigate('/dashboard/admin'); setShowQuickActions(false); }} className="d-flex align-items-center gap-2 px-3 py-1 w-100 border-0 bg-transparent text-dark hover:bg-light" style={{ fontSize: '12px' }}>
@@ -398,7 +398,7 @@ export function Dashboard() {
                       {isAdminLike && !['manager', 'site_manager'].includes(roleName) && (
                         <>
                           <Button
-                            onClick={() => navigate('/dashboard/users')}
+                            onClick={() => navigate('/dashboard/admin')}
                             size="sm"
                             style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 700, minWidth: '130px', fontSize: '13px' }}
                           >Manage Users</Button>
