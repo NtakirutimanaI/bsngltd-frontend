@@ -41,19 +41,19 @@ export function Administration() {
     return (
         <div className="container-fluid p-0">
             {/* Header */}
-            <ScrollReveal className="mb-3 px-2 pt-3">
-                <div className="d-flex align-items-center justify-content-between">
-                    <div>
-                        <h1 className="h3 fw-bold text-dark d-flex align-items-center gap-2 mb-1">
-                            <Shield className="text-emerald-600" strokeWidth={2.5} size={28} />
+            <ScrollReveal className="mb-4 px-2 pt-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex-1">
+                        <h1 className="h4 fw-bold text-dark d-flex align-items-center gap-2 mb-1">
+                            <Shield className="text-emerald-600" strokeWidth={2.5} size={24} />
                             Admin Control Center
                         </h1>
-                        <p className="text-muted small">Manage system security, users, global configurations and website content</p>
+                        <p className="text-muted small mb-0">Security, users, and global configurations</p>
                     </div>
-                    <Link to="/dashboard">
-                        <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2">
-                            <LayoutDashboard size={18} />
-                            <span>Back to Overview</span>
+                    <Link to="/dashboard" className="w-full sm:w-auto">
+                        <button className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-xl text-sm font-bold shadow-sm flex items-center justify-center gap-2 transition-all hover:bg-gray-50 active:scale-95">
+                            <LayoutDashboard size={16} />
+                            <span className="whitespace-nowrap">Dashboard</span>
                         </button>
                     </Link>
                 </div>
