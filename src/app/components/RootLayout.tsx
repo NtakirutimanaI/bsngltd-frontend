@@ -147,7 +147,7 @@ export function RootLayout() {
 
         {/* Nav Items */}
         <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
-          <nav className="space-y-1">
+          <nav className="flex flex-col gap-1.5 mt-2">
             {navigation.map((item) => {
               const isActive = window.location.pathname === item.path || (item.path === '/dashboard' && window.location.pathname === '/dashboard/');
               return (
@@ -157,17 +157,17 @@ export function RootLayout() {
                   end={item.path === '/dashboard'}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${isActive
-                      ? "text-white font-extrabold bg-[#16a085] shadow-[0_8px_16px_rgba(22,160,133,0.4)]"
-                      : "text-gray-100 font-semibold hover:text-white hover:bg-white/10"
+                    `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 group relative w-full ${isActive
+                      ? "text-white font-bold bg-[#16a085] shadow-lg shadow-[#16a085]/20"
+                      : "text-gray-100 font-semibold hover:text-white hover:bg-white/5"
                     }`
                   }
-                  style={{ border: 'none', marginBottom: '8px' }}
+                  style={{ border: 'none', display: 'flex', textDecoration: 'none' }}
                 >
-                  <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} style={{ opacity: isActive ? 1 : 0.85 }} />
-                  <span className="text-[14.5px] tracking-tight">{item.name}</span>
+                  <item.icon className="h-5 w-5 shrink-0" style={{ minWidth: '20px' }} />
+                  <span className="text-[14px] tracking-tight whitespace-nowrap">{item.name}</span>
                   {item.name === "Communications" && unreadCount > 0 && (
-                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full ring-2 ring-black/20" style={{ background: '#e74c3c' }}>
+                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
                       {unreadCount}
                     </span>
                   )}
@@ -178,13 +178,12 @@ export function RootLayout() {
         </div>
 
         {/* Logout Section */}
-        <div className="px-3 pb-8 shrink-0" style={{ borderTop: '2px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
+        <div className="px-4 pb-8 mt-auto shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3.5 px-5 py-4 w-full text-white bg-red-600/90 hover:bg-red-600 rounded-2xl transition-all duration-300 font-black text-[15px] shadow-lg shadow-red-900/20"
-            style={{ border: 'none' }}
+            className="flex items-center justify-center gap-3 px-5 py-3.5 w-full text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
           >
-            <LogOut className="h-5.5 w-5.5" strokeWidth={3} />
+            <LogOut className="h-5 w-5" />
             <span>Sign Out</span>
           </button>
         </div>
@@ -197,8 +196,8 @@ export function RootLayout() {
           className="fixed top-0 right-0 left-0 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-50 px-3 md:px-6 transition-all duration-300"
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
-          <div className="h-full flex items-center justify-between gap-2 md:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          <div className="h-full flex items-center justify-between flex-nowrap gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 id="sidebarToggle"
                 type="button"
@@ -206,21 +205,17 @@ export function RootLayout() {
                   e.stopPropagation();
                   setSidebarOpen(!sidebarOpen);
                 }}
-                className="lg:hidden p-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                className="lg:hidden p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg flex items-center justify-center"
                 style={{ border: 'none', background: 'transparent' }}
               >
-                <Menu className="h-5.5 w-5.5" />
+                <Menu className="h-6 w-6" />
               </button>
 
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                <div className="flex-shrink-0 flex items-center justify-center"
-                  style={{ width: '28px', height: '28px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px' }}>
-                  <img src={logo} alt="BSNG Logo"
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <div className="flex-shrink-0 flex items-center justify-center p-1 bg-[#16a085] rounded-md h-8 w-8">
+                  <img src={logo} alt="BSNG Logo" className="h-full w-full object-contain" />
                 </div>
-                <div className="hidden min-[360px]:block">
-                  <span className="text-[14px] font-black tracking-tight text-gray-900 dark:text-white line-clamp-1">BSNG</span>
-                </div>
+                <span className="hidden sm:inline-block text-[15px] font-black tracking-tight text-gray-900 dark:text-white">BSNG</span>
               </div>
             </div>
 
@@ -235,17 +230,15 @@ export function RootLayout() {
               />
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white rounded-lg h-8 w-8 flex items-center justify-center bg-[#16a085] border-none shadow-sm"
-                    onMouseEnter={e => (e.currentTarget.style.background = '#0f766e')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#16a085')}
+                    className="text-white rounded-lg h-9 w-9 flex items-center justify-center bg-[#16a085] hover:bg-emerald-700 border-none shadow-sm"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Plus className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
