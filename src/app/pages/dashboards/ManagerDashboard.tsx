@@ -6,15 +6,13 @@ import {
   Calendar,
   Banknote,
   TrendingUp,
-  TrendingDown,
-  ArrowRight,
-  FileText
+  TrendingDown
 } from "lucide-react";
 import DashboardLayout from "../../components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
-import { dashboardService, financialService, employeeService, salaryService } from "../../services/dashboardApi";
+import { dashboardService } from "../../services/dashboardApi";
 
 export default function ManagerDashboard() {
   const [stats, setStats] = useState<any | null>(null);
@@ -138,25 +136,25 @@ export default function ManagerDashboard() {
             </CardHeader>
             <CardContent className="px-3 pb-3">
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/financial">
+                <Link to="/dashboard/finance">
                   <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
                     <DollarSign className="mr-1 size-3" />
                     Finances
                   </Button>
                 </Link>
-                <Link to="/employees">
+                <Link to="/dashboard/workforce">
                   <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
                     <Users className="mr-1 size-3" />
                     Employees
                   </Button>
                 </Link>
-                <Link to="/salary">
+                <Link to="/dashboard/finance">
                   <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
                     <Banknote className="mr-1 size-3" />
                     Salaries
                   </Button>
                 </Link>
-                <Link to="/attendance">
+                <Link to="/dashboard/attendance">
                   <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
                     <Calendar className="mr-1 size-3" />
                     Attendance
@@ -175,15 +173,15 @@ export default function ManagerDashboard() {
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between py-2 border-b">
                   <p className="font-medium" style={{ color: 'var(--primary)' }}>Salary Processed</p>
-                  <Badge className="h-4 py-0 text-xs" variant="success">Done</Badge>
+                  <Badge className="h-4 py-0 text-xs" style={{ backgroundColor: '#10b981', color: 'white' }}>Done</Badge>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b">
                   <p className="font-medium" style={{ color: 'var(--primary)' }}>Employee Added</p>
-                  <Badge className="h-4 py-0 text-xs" style={{ backgroundColor: 'var(--success)', color: 'white' }}>New</Badge>
+                  <Badge className="h-4 py-0 text-xs" style={{ backgroundColor: '#10b981', color: 'white' }}>New</Badge>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <p className="font-medium" style={{ color: 'var(--primary)' }}>Tax Filed</p>
-                  <Badge className="h-4 py-0 text-xs" variant="success">Done</Badge>
+                  <Badge className="h-4 py-0 text-xs" style={{ backgroundColor: '#10b981', color: 'white' }}>Done</Badge>
                 </div>
               </div>
             </CardContent>

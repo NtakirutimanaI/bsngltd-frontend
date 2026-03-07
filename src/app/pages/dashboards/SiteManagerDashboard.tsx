@@ -32,7 +32,7 @@ export default function SiteManagerDashboard() {
   const loadDashboardData = async () => {
     try {
       const [statsRes, projectsRes, propertiesRes] = await Promise.all([
-        dashboardService.getStats(),
+        dashboardService.getStats('site_manager'),
         projectService.getAll(),
         propertyService.getAll(),
       ]);
@@ -143,7 +143,10 @@ export default function SiteManagerDashboard() {
                     <div key={project.id} className="border-b pb-2 last:border-b-0">
                       <div className="flex items-center justify-between mb-1">
                         <p className="text-xs font-medium" style={{ color: 'var(--primary)' }}>{project.name}</p>
-                        <Badge className="h-4 py-0 text-xs" variant="success">
+                        <Badge
+                          className="h-4 py-0 text-xs text-white"
+                          style={{ backgroundColor: '#16a085', border: 'none' }}
+                        >
                           {project.progress}%
                         </Badge>
                       </div>
@@ -232,13 +235,19 @@ export default function SiteManagerDashboard() {
               <div className="space-y-2 text-xs">
                 <div className="flex items-center justify-between py-1.5 border-b">
                   <span style={{ color: 'var(--primary)' }} className="font-medium">Projects in Progress</span>
-                  <Badge className="h-4 py-0" variant="success">
+                  <Badge
+                    className="h-4 py-0 text-white"
+                    style={{ backgroundColor: '#16a085', border: 'none' }}
+                  >
                     {stats.activeProjects}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between py-1.5 border-b">
                   <span style={{ color: 'var(--primary)' }} className="font-medium">Available Properties</span>
-                  <Badge className="h-4 py-0" variant="success">
+                  <Badge
+                    className="h-4 py-0 text-white"
+                    style={{ backgroundColor: '#16a085', border: 'none' }}
+                  >
                     {stats.availableProperties}
                   </Badge>
                 </div>
