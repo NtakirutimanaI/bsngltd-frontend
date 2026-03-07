@@ -59,8 +59,8 @@ export function Finance() {
     const [activeTab, setActiveTab] = useState<'ledger' | 'payroll_history'>('ledger');
 
     // Auth
-    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
-    const isAdminOrManager = ['super_admin', 'admin', 'manager'].includes(roleName);
+    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase().replace(/\s+/g, '_');
+    const isAdminOrManager = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
     // Hub State
     const [isLoading, setIsLoading] = useState(false);
