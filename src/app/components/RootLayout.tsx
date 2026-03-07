@@ -133,23 +133,9 @@ export function RootLayout() {
       <ScrollToTopOnNavigate />
       {/* Sidebar — brand color: #16a085 teal, matching public website */}
       <aside
-        className={`fixed top-0 left-0 h-screen w-52 transition-transform lg:translate-x-0 z-50 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed top-16 left-0 h-[calc(100vh-64px)] w-52 transition-transform lg:translate-x-0 z-40 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         style={{ background: 'linear-gradient(180deg, #1c1917 0%, #292524 40%, #1c1917 100%)', border: 'none' }}
       >
-        {/* Logo / Brand */}
-        <div className="p-5 shrink-0" style={{ border: 'none', borderBottom: '2px solid rgba(22,160,133,0.35)' }}>
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl flex items-center justify-center p-1.5 overflow-hidden" style={{ background: '#16a085' }}>
-              <img src={logo} alt="BSNG Logo" className="w-full h-full object-contain" />
-            </div>
-            <div>
-              <div className="text-lg font-bold text-white leading-tight tracking-wide">BSNG</div>
-              <div className="text-[11px] font-semibold leading-tight" style={{ color: '#16a085' }}>CONSTRUCTION CO.</div>
-              <div className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Building Strong Generations</div>
-            </div>
-          </div>
-        </div>
-
         {/* Nav label */}
         <div className="px-5 pt-4 pb-1 shrink-0">
           <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Navigation</span>
@@ -158,31 +144,35 @@ export function RootLayout() {
         {/* Nav Items */}
         <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
           <nav className="space-y-1">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/dashboard'}
-                onClick={() => setSidebarOpen(false)}
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 group ${isActive
-                    ? "text-[#16a085] font-bold"
-                    : "text-gray-400 hover:text-white"
-                  }`
-                }
-                style={{ border: 'none', background: 'transparent' }}
-                onMouseEnter={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={e => { if (!e.currentTarget.classList.contains('active')) e.currentTarget.style.color = ''; }}
-              >
-                <item.icon className={`h-4.5 w-4.5 shrink-0 ${window.location.pathname === item.path ? 'text-[#16a085]' : ''}`} style={{ width: '18px', height: '18px' }} />
-                <span className="font-medium text-[13px]">{item.name}</span>
-                {item.name === "Communications" && unreadCount > 0 && (
-                  <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
-                    {unreadCount}
-                  </span>
-                )}
-              </NavLink>
-            ))}
+            {navigation.map((item) => {
+              const isActive = window.location.pathname === item.path || (item.path === '/dashboard' && window.location.pathname === '/dashboard/');
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  end={item.path === '/dashboard'}
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${isActive
+                      ? "text-[#16a085] font-bold bg-[#16a085]/10"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                    }`
+                  }
+                  style={{ border: 'none' }}
+                >
+                  {isActive && (
+                    <span className="absolute left-0 top-2.5 bottom-2.5 w-1 bg-[#16a085] rounded-r-full" />
+                  )}
+                  <item.icon className="h-4.5 w-4.5 shrink-0" style={{ width: '18px', height: '18px' }} />
+                  <span className="font-medium text-[13px]">{item.name}</span>
+                  {item.name === "Communications" && unreadCount > 0 && (
+                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
+                      {unreadCount}
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
           </nav>
         </div>
 
@@ -203,29 +193,40 @@ export function RootLayout() {
       <div className="lg:ml-52 flex flex-col min-h-screen">
         {/* Header */}
         <header
-          className="fixed top-0 right-0 left-0 lg:left-52 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-40 px-3 md:px-6 transition-all duration-300"
+          className="fixed top-0 right-0 left-0 h-16 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md z-50 px-3 md:px-6 transition-all duration-300"
           style={{ border: 'none', borderBottom: '2px solid #16a085' }}
         >
           <div className="h-full flex items-center justify-between gap-4">
-            <button
-              id="sidebarToggle"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSidebarOpen(true);
-              }}
-              className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-              style={{ border: 'none', background: 'transparent' }}
-            >
-              <Menu className="h-6 w-6" />
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                id="sidebarToggle"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSidebarOpen(!sidebarOpen);
+                }}
+                className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
+                style={{ border: 'none', background: 'transparent' }}
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+
+              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                <div className="h-9 w-9 rounded-lg flex items-center justify-center p-1 overflow-hidden shrink-0" style={{ background: '#16a085' }}>
+                  <img src={logo} alt="BSNG Logo" className="w-full h-full object-contain" />
+                </div>
+                <div className="hidden sm:block">
+                  <div className="text-base font-bold text-[#16a085] leading-tight">BSNG</div>
+                  <div className="text-[8px] text-gray-500 font-bold uppercase tracking-wider leading-tight">Construction Co.</div>
+                </div>
+              </div>
+            </div>
 
             <div className="hidden md:flex flex-1 max-w-md relative">
-              <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
               <Input
-                placeholder="Search projects by code or name..."
-                className="pl-12 pr-4 py-2 bg-transparent rounded-none w-full focus:ring-0 transition-colors"
-                style={{ border: 'none', borderBottom: '2px solid #16a085' }}
+                placeholder="Search..."
+                className="pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-800 border-none rounded-xl w-full focus:ring-2 focus:ring-[#16a085]/20 focus:bg-white dark:focus:bg-gray-700 transition-all text-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearch}
@@ -350,8 +351,8 @@ export function RootLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-2 md:p-4 overflow-y-auto mt-16">
-          <div className="w-full mx-auto">
+        <main className="flex-1 p-3 md:p-6 overflow-y-auto mt-16 bg-gray-50/50 dark:bg-gray-950/50">
+          <div className="w-full max-w-[1600px] mx-auto">
             <Outlet />
           </div>
         </main>
