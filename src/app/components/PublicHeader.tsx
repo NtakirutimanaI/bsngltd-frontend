@@ -102,19 +102,26 @@ export function PublicHeader() {
             className={`collapse navbar-collapse ${isMenuOpen ? 'show d-block' : ''}`}
             id="navbarCollapse"
             style={{
-              maxHeight: isMenuOpen ? '80vh' : '0',
+              maxHeight: isMenuOpen ? '90vh' : '0',
               overflowY: 'auto',
-              transition: 'max-height 0.4s ease-in-out'
+              transition: 'max-height 0.4s ease-in-out',
+              opacity: isMenuOpen ? 1 : 0,
+              visibility: isMenuOpen ? 'visible' : 'hidden'
             }}
           >
-            <div className="navbar-nav ms-auto py-3 py-lg-0 align-items-center bg-white rounded-bottom px-2">
+            <div className="navbar-nav ms-auto py-3 py-lg-0 align-items-start align-items-lg-center px-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`nav-item nav-link px-3 fw-medium ${isActive(link.path) ? 'active text-primary' : 'text-dark'}`}
-                  style={{ fontSize: '17px' }}
+                  className={`nav-item nav-link px-3 fw-medium w-100 ${isActive(link.path) ? 'active text-primary font-bold' : 'text-dark'}`}
+                  style={{
+                    fontSize: '17px',
+                    paddingTop: '12px',
+                    paddingBottom: '12px',
+                    color: isActive(link.path) ? '#16a085' : '#333333'
+                  }}
                 >
                   {link.name}
                 </Link>
@@ -153,9 +160,9 @@ export function PublicHeader() {
 
               <Link
                 to="/login"
-                className="nav-item nav-link text-primary fw-bold d-flex align-items-center gap-2"
+                className="nav-item nav-link text-primary fw-bold d-flex align-items-center gap-2 px-3 py-3 w-100"
                 onClick={() => setIsMenuOpen(false)}
-                style={{ fontSize: '17px' }}
+                style={{ fontSize: '17px', color: '#16a085' }}
               >
                 <LogIn style={{ width: '18px', height: '18px' }} />
                 {t('joinUs')}
