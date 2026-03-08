@@ -361,7 +361,7 @@ export function RootLayout() {
         <div className="px-4 pb-8 mt-auto shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
           <button
             onClick={handleLogout}
-            className="group flex items-center justify-center gap-3 px-5 py-3.5 w-full text-white rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
+            className="group/logout flex items-center gap-3 px-5 py-3.5 w-full text-white rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
             style={{ backgroundColor: '#dc2626', border: 'none', cursor: 'pointer', display: 'flex', overflow: 'hidden' }}
           >
             <LogOut className="h-5 w-5 shrink-0" />
