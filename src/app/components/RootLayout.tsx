@@ -235,7 +235,7 @@ export function RootLayout() {
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[300px] sm:w-80 max-w-[calc(100vw-16px)] mx-2 sm:mx-0" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+              <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
                 <DropdownMenuLabel>Messages</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <div className="max-h-80 overflow-y-auto">

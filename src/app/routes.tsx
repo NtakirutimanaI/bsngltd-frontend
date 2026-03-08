@@ -25,6 +25,7 @@ import { Messages } from "@/app/pages/Messages";
 import { Notifications } from "@/app/pages/Notifications";
 import { Settings } from "@/app/pages/Settings";
 import { Workforce } from "@/app/pages/Workforce";
+import { Employees } from "@/app/pages/Employees";
 import { Finance } from "@/app/pages/Finance";
 import { Administration } from "@/app/pages/Administration";
 import { Attendance } from "@/app/pages/Attendance";
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
           { index: true, Component: Dashboard },
           { path: "portfolio", Component: Portfolio },
           { path: "workforce", Component: Workforce },
+          { path: "employees", Component: Employees },
           { path: "finance", Component: Finance },
           { path: "admin", Component: Administration },
           { path: "settings", Component: Settings },

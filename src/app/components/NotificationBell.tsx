@@ -58,7 +58,7 @@ export function NotificationBell() {
       {isOpen && (
         <>
           {/* Mobile Overlay to close on click outside if needed, optional but handled by listener */}
-          <div className="fixed sm:absolute top-[70px] sm:top-auto sm:mt-2 left-1/2 sm:left-auto right-auto sm:right-0 -translate-x-1/2 sm:translate-x-0 w-[300px] sm:w-96 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-800 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="fixed sm:absolute top-[70px] sm:top-auto sm:mt-2 left-[50%] sm:left-auto right-auto sm:right-0 translate-x-[-50%] sm:translate-x-0 w-[280px] sm:w-96 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-800 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
               <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Notifications</h3>
               {unreadCount > 0 && (
