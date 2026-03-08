@@ -27,7 +27,7 @@ interface Update {
 }
 
 export function ManageUpdates() {
-  const { dt } = useLanguage();
+  const { dt, t } = useLanguage();
   const [updates, setUpdates] = useState<Update[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -73,6 +73,19 @@ export function ManageUpdates() {
     tags: [],
   });
   const [tagInput, setTagInput] = useState('');
+
+  const handleSeed = async () => {
+    if (!window.confirm("Seed sample updates? This will add demonstration data.")) return;
+    try {
+      setIsLoading(true);
+      await fetchApi('/updates/seed');
+      setRefreshKey(prev => prev + 1);
+    } catch (err) {
+      console.error("Failed to seed updates", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const categories = ['Projects', 'Awards', 'Events', 'News', 'Company'];
 
@@ -293,7 +306,7 @@ export function ManageUpdates() {
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
-                {cat}
+                {cat === 'all' ? t('allUpdates') : (t('category' + cat) !== 'category' + cat ? t('category' + cat) : cat)}
               </option>
             ))}
           </select>
@@ -415,13 +428,22 @@ export function ManageUpdates() {
             className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:ring-0 focus:border-emerald-500 outline-none transition-colors"
           />
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
-        >
-          <Plus className="w-5 h-5" />
-          Add Update
-        </button>
+        <div className="d-flex gap-2">
+          <button
+            onClick={handleSeed}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all d-flex align-items-center gap-2 border-0"
+          >
+            <RefreshCcw className="w-4 h-4" />
+            Seed Data
+          </button>
+          <button
+            onClick={() => { resetForm(); setIsAddModalOpen(true); }}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+          >
+            <Plus className="w-5 h-5" />
+            Add Update
+          </button>
+        </div>
       </ScrollReveal>
 
       {/* Stats */}

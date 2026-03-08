@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import { fetchApi } from '@/app/api/client';
+import { fetchApi, getImageUrl } from '@/app/api/client';
 import { Calendar, User, ArrowLeft, Tag } from 'lucide-react';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { ScrollReveal } from '@/app/components/ScrollReveal';
@@ -99,10 +99,16 @@ export function UpdateDetails() {
                     <div className="col-lg-8">
                         <ScrollReveal>
                             <img
-                                src={update.image || '/img/project-1.jpg'}
+                                src={getImageUrl(update.image) || '/img/project-1.jpg'}
                                 alt={dt(update.title)}
                                 className="img-fluid rounded shadow-sm mb-4 w-100"
                                 style={{ maxHeight: '500px', objectFit: 'cover' }}
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    if (!target.src.includes('/img/project-')) {
+                                        target.src = '/img/project-1.jpg';
+                                    }
+                                }}
                             />
 
                             <div className="d-flex align-items-center mb-4 text-muted small">

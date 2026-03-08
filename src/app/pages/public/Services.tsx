@@ -3,6 +3,7 @@ import { Phone, ArrowRight, RefreshCcw } from 'lucide-react';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { Link, useLocation } from 'react-router';
 import { fetchApi, getImageUrl } from '@/app/api/client';
+import { BookingFloatingForm } from '@/app/components/BookingFloatingForm';
 
 export function Services() {
   const { t, dt } = useLanguage();
@@ -13,10 +14,12 @@ export function Services() {
 
   const [dynamicServices, setDynamicServices] = useState<any[]>([]);
   const [useFallback, setUseFallback] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<any>(null);
 
   useEffect(() => {
     // Fetch settings
-    fetchApi<any[]>('/settings/public')
+    fetchApi<any[]>(`/settings/public?t=${Date.now()}`)
       .then(data => {
         const s: any = {};
         data.forEach(item => { s[item.key] = item.value; });
@@ -25,7 +28,7 @@ export function Services() {
       .catch(err => console.error('Failed to fetch settings', err));
 
     // Fetch services
-    fetchApi<any[]>('/services/public')
+    fetchApi<any[]>(`/services/public?t=${Date.now()}`)
       .then(data => {
         if (data && data.length > 0) {
           setDynamicServices(data);
@@ -72,6 +75,7 @@ export function Services() {
   ];
 
   const displayServices = useFallback ? fallbackServices : dynamicServices.map(s => ({
+    id: s.id,
     title: t(s.name) !== s.name ? t(s.name) : (s.title || s.name),
     description: t(s.name + 'Desc') !== (s.name + 'Desc') ? t(s.name + 'Desc') : s.description,
     img: s.image || '/img/service-1.jpg',
@@ -138,9 +142,18 @@ export function Services() {
                         <h3 className={`p-2 position-absolute top-0 start-0 ${service.dark ? 'bg-primary text-white' : 'bg-light text-dark'}`} style={{ background: service.dark ? '#16a085' : '#f8f9fa' }}>{service.title}</h3>
                       </div>
                       <p className={`mb-4 ${service.dark ? 'text-white' : 'text-muted'}`}>{service.description}</p>
-                      <Link to="/contact" className={`mt-auto text-uppercase fw-bold text-decoration-none d-flex align-items-center gap-2 ${service.dark ? 'text-white' : 'text-primary'}`} style={{ color: service.dark ? '#ffffff' : '#16a085' }}>
-                        {t('learnMore')} <ArrowRight className="w-4 h-4" />
-                      </Link>
+                      <div className="mt-auto d-flex justify-content-between align-items-center">
+                        <Link to="/contact" className={`text-uppercase fw-bold text-decoration-none d-flex align-items-center gap-2 ${service.dark ? 'text-white' : 'text-primary'}`} style={{ color: service.dark ? '#ffffff' : '#16a085', fontSize: '13px' }}>
+                          {t('learnMore')} <ArrowRight className="w-4 h-4" />
+                        </Link>
+                        <button
+                          onClick={() => { setSelectedService(service); setIsBookingOpen(true); }}
+                          className={`btn btn-sm ${service.dark ? 'btn-outline-light' : 'btn-outline-primary'}`}
+                          style={{ fontSize: '12px' }}
+                        >
+                          Book Now
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -174,6 +187,17 @@ export function Services() {
         </div>
       )}
       {/* Newsletter End */}
+
+      {/* Booking Modal */}
+      {isBookingOpen && selectedService && (
+        <BookingFloatingForm
+          serviceId={selectedService.id}
+          title={selectedService.title}
+          type="service"
+          amount={0} // Services might be free or variable consultation
+          onClose={() => setIsBookingOpen(false)}
+        />
+      )}
     </div>
   );
 }

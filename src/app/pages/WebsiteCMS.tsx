@@ -308,7 +308,7 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
 }
 
 export function WebsiteCMS() {
-    const { } = useLanguage();
+    // const { } = useLanguage();
     const [settings, setSettings] = useState<Setting[]>([]);
     const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
@@ -346,17 +346,40 @@ export function WebsiteCMS() {
         }
     };
 
-    // Load records for properties/updates when those pages are selected
-    useEffect(() => {
-        if (activePage === 'properties' || activePage === 'updates') {
-            setRecordsLoading(true);
-            fetchApi<any>(`/${activePage}?limit=100`)
-                .then((res) => {
-                    setRecords(res.data || []);
-                })
-                .catch(err => console.error('Failed to load records', err))
-                .finally(() => setRecordsLoading(false));
+    // Load records for properties/updates/services when those pages are selected
+    const isRecordPage = activePage === 'properties' || activePage === 'updates' || activePage === 'services';
+
+    const loadRecords = async () => {
+        if (!isRecordPage) return;
+
+        setRecordsLoading(true);
+        setRecords([]); // Clear old records
+        try {
+            console.log(`CMS: Fetching records for ${activePage}...`);
+            const res: any = await fetchApi(`/${activePage}?limit=100`);
+            console.log(`CMS: Received response for ${activePage}:`, res);
+
+            // Handle various paginated/array structures
+            let data = [];
+            if (Array.isArray(res)) {
+                data = res;
+            } else if (res.data) {
+                data = Array.isArray(res.data) ? res.data : (res.data.data && Array.isArray(res.data.data) ? res.data.data : []);
+            } else if (res.items) {
+                data = Array.isArray(res.items) ? res.items : [];
+            }
+
+            setRecords(data);
+        } catch (err) {
+            console.error('CMS: Failed to load records', err);
+            setRecords([]);
+        } finally {
+            setRecordsLoading(false);
         }
+    };
+
+    useEffect(() => {
+        loadRecords();
     }, [activePage]);
 
     const getLocalizedValue = (val: string, lang: string) => {
@@ -474,6 +497,18 @@ export function WebsiteCMS() {
                         <p className="text-muted small mt-1">Manage public website content, images, and section visibility</p>
                     </div>
                     <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                if (isRecordPage) loadRecords();
+                                else loadSettings();
+                            }}
+                            className="h-9 px-3 text-xs font-bold gap-2 text-gray-600 border-gray-200"
+                        >
+                            <RefreshCcw size={14} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
+                            Refresh Data
+                        </Button>
                         {activeView === 'text' && (
                             <div className="bg-white dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 flex mr-4">
                                 {languages.map(lang => (
@@ -512,24 +547,36 @@ export function WebsiteCMS() {
                 {/* Page Selector Sidebar */}
                 <ScrollReveal delay={0.1} className="lg:col-span-1">
                     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2 h-fit sticky top-24">
-                        {pages.map((page) => (
-                            <button
-                                key={page.id}
-                                onClick={() => setActivePage(page.id)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === page.id
-                                    ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
-                                    : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
-                                    }`}
-                            >
-                                <page.icon size={20} />
-                                <span className="font-medium">{page.name}</span>
-                                {PAGE_IMAGES[page.id] && (
-                                    <span className="ms-auto bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                                        {PAGE_IMAGES[page.id].length} img
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+                        {pages.map((page) => {
+                            const isRecordPage = page.id === 'properties' || page.id === 'updates';
+                            let countStr = "";
+                            if (isRecordPage) {
+                                // If we're on the page, use records.length, else we don't know yet without a global records state
+                                // For now, if active, show records.length. If not active, maybe show nothing or fetch it.
+                                if (activePage === page.id) countStr = `${records.length} items`;
+                            } else if (PAGE_IMAGES[page.id]) {
+                                countStr = `${PAGE_IMAGES[page.id].length} img`;
+                            }
+
+                            return (
+                                <button
+                                    key={page.id}
+                                    onClick={() => setActivePage(page.id)}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === page.id
+                                        ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                                        : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                                        }`}
+                                >
+                                    <page.icon size={20} />
+                                    <span className="font-medium text-sm">{page.name}</span>
+                                    {countStr && (
+                                        <span className={`ms-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${isRecordPage ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'}`}>
+                                            {countStr}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 </ScrollReveal>
 
@@ -548,7 +595,7 @@ export function WebsiteCMS() {
                                     background: activeView === 'images' ? 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' : 'transparent'
                                 }}
                             >
-                                <ImageIcon size={16} /> Image Management ({currentPageImages.length})
+                                <ImageIcon size={16} /> Image Management ({(activePage === 'properties' || activePage === 'updates') ? records.length : currentPageImages.length})
                             </button>
                             <button
                                 onClick={() => setActiveView('text')}
@@ -560,7 +607,7 @@ export function WebsiteCMS() {
                                     background: activeView === 'text' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent'
                                 }}
                             >
-                                <Type size={16} /> Text Content ({textSettings.length})
+                                <Type size={16} /> Text Content ({(activePage === 'properties' || activePage === 'updates') ? records.length : textSettings.length})
                             </button>
                         </div>
                     </ScrollReveal>
@@ -584,7 +631,7 @@ export function WebsiteCMS() {
                                 </div>
 
                                 <div className="p-4">
-                                    {currentPageImages.length > 0 ? (
+                                    {currentPageImages.length > 0 && !isRecordPage ? (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                                             {currentPageImages.map((imgDef) => (
                                                 <ImageUploadCard
@@ -595,7 +642,7 @@ export function WebsiteCMS() {
                                                 />
                                             ))}
                                         </div>
-                                    ) : (activePage === 'properties' || activePage === 'updates') ? (
+                                    ) : isRecordPage ? (
                                         recordsLoading ? (
                                             <div className="text-center py-12">
                                                 <RefreshCcw className="animate-spin mx-auto text-emerald-600 mb-3" size={28} />
@@ -687,13 +734,217 @@ export function WebsiteCMS() {
                                         </div>
                                     </div>
                                     <span className="text-[10px] font-medium px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded">
-                                        {textSettings.length} Items
+                                        {isRecordPage ? records.length : textSettings.length} Items
                                     </span>
                                 </div>
 
-                                <div className="p-4 space-y-6">
-                                    {textSettings.map((setting) => (
-                                        <div key={setting.key} className="space-y-3 group">
+                                <div className="p-4 space-y-8">
+                                    {/* Handle Records (Properties/Updates/Services) */}
+                                    {isRecordPage && (
+                                        <div className="space-y-8">
+                                            {recordsLoading ? (
+                                                <div className="text-center py-12">
+                                                    <RefreshCcw className="animate-spin mx-auto text-emerald-600 mb-3" size={28} />
+                                                    <p className="text-gray-500">Loading {activePage}...</p>
+                                                </div>
+                                            ) : records.length > 0 ? (
+                                                records.map((record: any) => (
+                                                    <div key={record.id} className="p-4 border border-gray-100 dark:border-gray-700 rounded-xl bg-gray-50/30 dark:bg-gray-900/10 space-y-4 text-left">
+                                                        <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                                                    {activePage === 'properties' ? <Building2 size={14} className="text-emerald-600" /> : <Newspaper size={14} className="text-emerald-600" />}
+                                                                </div>
+                                                                <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
+                                                                    {record.code ? `[${record.code}]` : ''} Editing Entry
+                                                                </span>
+                                                            </div>
+                                                            <Button
+                                                                size="sm"
+                                                                className="h-8 px-3 text-[10px] font-bold uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        const upRecord = records.find(r => r.id === record.id);
+                                                                        const payload = { ...upRecord };
+
+                                                                        // Ensure numeric fields are numbers for properties
+                                                                        if (activePage === 'properties') {
+                                                                            if (payload.price) payload.price = Number(payload.price);
+                                                                            if (payload.size) payload.size = Number(payload.size);
+                                                                            if (payload.bedrooms) payload.bedrooms = Number(payload.bedrooms);
+                                                                            if (payload.bathrooms) payload.bathrooms = Number(payload.bathrooms);
+                                                                        }
+
+                                                                        await fetchApi(`/${activePage}/${record.id}`, {
+                                                                            method: 'PATCH',
+                                                                            body: JSON.stringify(payload)
+                                                                        });
+                                                                        setMessage({ type: 'success', text: 'Entry saved successfully!' });
+                                                                        setTimeout(() => setMessage(null), 3000);
+                                                                    } catch (e) {
+                                                                        setMessage({ type: 'error', text: 'Failed to save entry' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Save This Entry
+                                                            </Button>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
+                                                                <Input
+                                                                    value={getLocalizedValue(record.title || '', activeLang)}
+                                                                    onChange={(e) => {
+                                                                        const newVal = e.target.value;
+                                                                        setRecords(prev => prev.map(r => {
+                                                                            if (r.id !== record.id) return r;
+                                                                            let obj: any = {};
+                                                                            try { if (r.title?.startsWith('{')) obj = JSON.parse(r.title); else obj = { en: r.title }; } catch { obj = { en: r.title }; }
+                                                                            obj[activeLang] = newVal;
+                                                                            return { ...r, title: JSON.stringify(obj) };
+                                                                        }));
+                                                                    }}
+                                                                    className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                    placeholder="Enter title..."
+                                                                />
+                                                            </div>
+
+                                                            {activePage === 'properties' ? (
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Location ({activeLang.toUpperCase()})</label>
+                                                                    <Input
+                                                                        value={getLocalizedValue(record.location || '', activeLang)}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => {
+                                                                                if (r.id !== record.id) return r;
+                                                                                let obj: any = {};
+                                                                                try { if (r.location?.startsWith('{')) obj = JSON.parse(r.location); else obj = { en: r.location }; } catch { obj = { en: r.location }; }
+                                                                                obj[activeLang] = newVal;
+                                                                                return { ...r, location: JSON.stringify(obj) };
+                                                                            }));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="Enter location..."
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Excerpt ({activeLang.toUpperCase()})</label>
+                                                                    <Input
+                                                                        value={getLocalizedValue(record.excerpt || '', activeLang)}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => {
+                                                                                if (r.id !== record.id) return r;
+                                                                                let obj: any = {};
+                                                                                try { if (r.excerpt?.startsWith('{')) obj = JSON.parse(r.excerpt); else obj = { en: r.excerpt }; } catch { obj = { en: r.excerpt }; }
+                                                                                obj[activeLang] = newVal;
+                                                                                return { ...r, excerpt: JSON.stringify(obj) };
+                                                                            }));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="Brief summary..."
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {activePage === 'properties' && (
+                                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Price (RWF)</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.price || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, price: newVal } : r));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="e.g. 85000000"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Size (sqft)</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.size || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, size: newVal } : r));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="e.g. 120"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Beds</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.bedrooms || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bedrooms: newVal } : r));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="3"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1.5">
+                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Baths</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.bathrooms || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bathrooms: newVal } : r));
+                                                                        }}
+                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        placeholder="2"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {isRecordPage && (
+                                                            <div className="space-y-1.5">
+                                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">
+                                                                    {activePage === 'properties' ? 'Description' : 'Content'} ({activeLang.toUpperCase()})
+                                                                </label>
+                                                                <Textarea
+                                                                    value={getLocalizedValue(activePage === 'properties' ? record.description || "" : record.content || "", activeLang)}
+                                                                    onChange={(e) => {
+                                                                        const newVal = e.target.value;
+                                                                        const field = activePage === 'properties' ? 'description' : 'content';
+                                                                        setRecords(prev => prev.map(r => {
+                                                                            if (r.id !== record.id) return r;
+                                                                            let obj: any = {};
+                                                                            const currentVal = r[field];
+                                                                            try { if (currentVal?.startsWith('{')) obj = JSON.parse(currentVal); else obj = { en: currentVal }; } catch { obj = { en: currentVal }; }
+                                                                            obj[activeLang] = newVal;
+                                                                            return { ...r, [field]: JSON.stringify(obj) };
+                                                                        }));
+                                                                    }}
+                                                                    className="bg-white dark:bg-gray-900 text-sm min-h-[100px]"
+                                                                    placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center py-12">
+                                                    <p className="text-gray-500">No {activePage} found to edit text content.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Handle Settings (General) */}
+                                    {!isRecordPage && textSettings.map((setting) => (
+                                        <div key={setting.key} className="space-y-3 group text-left">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
                                                     {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-emerald-600" /> :
@@ -751,16 +1002,21 @@ export function WebsiteCMS() {
                                         </div>
                                     ))}
 
-                                    {textSettings.length === 0 && (
+                                    {/* Empty state for non-record pages */}
+                                    {!isRecordPage && textSettings.length === 0 && !isLoading && (
                                         <div className="text-center py-12">
-                                            <Layout className="mx-auto text-gray-300 mb-4" size={48} />
-                                            <p className="text-gray-500">No manageable text content found for this page.</p>
+                                            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <Layout className="text-gray-400" size={32} />
+                                            </div>
+                                            <p className="text-gray-500 font-medium">No manageable text content found for this page.</p>
+                                            <p className="text-sm text-gray-400 mt-1">Visit Global Settings or other pages to see editable fields.</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         </ScrollReveal>
                     )}
+
 
                     <ScrollReveal delay={0.3} className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-xl p-6">
                         <div className="flex gap-4">
