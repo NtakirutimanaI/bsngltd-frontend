@@ -224,56 +224,60 @@ export function RootLayout() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
+            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" className="hidden sm:flex h-8 w-8 sm:h-9 sm:w-9 rounded-full items-center justify-center p-0" style={{ border: 'none' }}>
               {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
-                  <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                <DropdownMenuLabel>Messages</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="max-h-80 overflow-y-auto">
-                  {messages.length === 0 ? (
-                    <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
-                  ) : (
-                    messages.map((msg) => (
-                      <DropdownMenuItem
-                        key={msg.id}
-                        className="cursor-pointer flex flex-col items-start gap-1 p-3"
-                        style={{ border: 'none' }}
-                        onClick={() => navigate('/dashboard/communications')}
-                      >
-                        <div className="flex justify-between w-full">
-                          <span className="font-medium text-sm">{msg.sender}</span>
-                          <span className="text-xs text-gray-400">{msg.time}</span>
-                        </div>
-                        <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
-                      </DropdownMenuItem>
-                    ))
-                  )}
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer justify-center font-semibold"
-                  style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
-                  onClick={() => navigate('/dashboard/communications')}
-                >
-                  View all messages
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="hidden sm:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
+                    <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                  <DropdownMenuLabel>Messages</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="max-h-80 overflow-y-auto">
+                    {messages.length === 0 ? (
+                      <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
+                    ) : (
+                      messages.map((msg) => (
+                        <DropdownMenuItem
+                          key={msg.id}
+                          className="cursor-pointer flex flex-col items-start gap-1 p-3"
+                          style={{ border: 'none' }}
+                          onClick={() => navigate('/dashboard/communications')}
+                        >
+                          <div className="flex justify-between w-full">
+                            <span className="font-medium text-sm">{msg.sender}</span>
+                            <span className="text-xs text-gray-400">{msg.time}</span>
+                          </div>
+                          <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer justify-center font-semibold"
+                    style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
+                    onClick={() => navigate('/dashboard/communications')}
+                  >
+                    View all messages
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
 
-            <NotificationBell />
+            <div className="hidden sm:block">
+              <NotificationBell />
+            </div>
 
-            <div className="h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
+            <div className="hidden md:block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

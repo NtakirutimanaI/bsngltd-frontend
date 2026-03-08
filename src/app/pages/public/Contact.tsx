@@ -97,7 +97,7 @@ export function Contact() {
               <p className="mb-5 lead">
                 {t('contactUsMessage')}
               </p>
-              <div className="d-flex align-items-center mb-4 p-4 bg-light rounded wow fadeIn" data-wow-delay="0.2s">
+              <div className="d-flex align-items-center mb-4 p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.2s">
                 <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px' }}>
                   <Phone className="text-white w-6 h-6" />
                 </div>
@@ -106,7 +106,7 @@ export function Contact() {
                   <p className="mb-0 fw-bold">{dt(settings.contact_phone) || '+250 737 213 060'}</p>
                 </div>
               </div>
-              <div className="d-flex align-items-center mb-4 p-4 bg-light rounded wow fadeIn" data-wow-delay="0.3s">
+              <div className="d-flex align-items-center mb-4 p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.3s">
                 <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#16a085' }}>
                   <Mail className="text-white w-6 h-6" />
                 </div>
@@ -115,7 +115,7 @@ export function Contact() {
                   <p className="mb-0 fw-bold">{dt(settings.contact_email) || 'info@bsng.rw'}</p>
                 </div>
               </div>
-              <div className="d-flex align-items-center mb-4 p-4 bg-light rounded wow fadeIn" data-wow-delay="0.4s">
+              <div className="d-flex align-items-center mb-4 p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.4s">
                 <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px' }}>
                   <MapPin className="text-white w-6 h-6" />
                 </div>
@@ -124,7 +124,7 @@ export function Contact() {
                   <p className="mb-0 fw-bold">{dt(settings.contact_address) || 'Rwanda / Kigali / Kibagabaga'}</p>
                 </div>
               </div>
-              <div className="d-flex align-items-center p-4 bg-light rounded wow fadeIn" data-wow-delay="0.5s">
+              <div className="d-flex align-items-center p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.5s">
                 <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#25D366' }}>
                   <MessageCircle className="text-white w-6 h-6" />
                 </div>

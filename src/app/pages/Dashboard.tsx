@@ -324,18 +324,20 @@ export function Dashboard() {
                       {roleName === 'manager' && "Financial audits and staff performance reviews are ready for your oversight."}
                       {isAdminLike && !roleName.includes('manager') && "Manage system users, project defaults, and global configurations."}
                     </p>
-                    <div className="d-flex flex-nowrap gap-2">
+                    <div className="d-flex flex-nowrap overflow-x-auto pb-2 custom-scrollbar-hide gap-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       {isEmployee && (
                         <>
                           <Button
                             onClick={() => navigate('/dashboard/workforce')}
                             size="sm"
-                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: '120px' }}
+                            className="flex-fill flex-md-grow-0"
+                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: 'auto', paddingLeft: '12px', paddingRight: '12px' }}
                           >Submit Hours</Button>
                           <Button
                             onClick={() => navigate('/dashboard/portfolio')}
                             size="sm"
-                            style={{ background: 'transparent', border: '2px solid #fff', color: '#fff', fontWeight: 600, minWidth: '120px' }}
+                            className="flex-fill flex-md-grow-0"
+                            style={{ background: 'transparent', border: '2px solid #fff', color: '#fff', fontWeight: 600, minWidth: 'auto', paddingLeft: '12px', paddingRight: '12px' }}
                           >My Tasks</Button>
                         </>
                       )}
@@ -386,12 +388,14 @@ export function Dashboard() {
                           <Button
                             onClick={() => navigate('/dashboard/contact')}
                             size="sm"
-                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: '120px' }}
+                            className="flex-fill flex-md-grow-0"
+                            style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: 'auto', paddingLeft: '12px', paddingRight: '12px' }}
                           >Contact Support</Button>
                           <Button
                             onClick={() => navigate('/dashboard/services')}
                             size="sm"
-                            style={{ background: 'transparent', border: '2px solid #fff', color: '#fff', fontWeight: 600, minWidth: '120px' }}
+                            className="flex-fill flex-md-grow-0"
+                            style={{ background: 'transparent', border: '2px solid #fff', color: '#fff', fontWeight: 600, minWidth: 'auto', paddingLeft: '12px', paddingRight: '12px' }}
                           >View Services</Button>
                         </>
                       )}
@@ -433,7 +437,7 @@ export function Dashboard() {
         loading ? (
           <div className="row g-2 mb-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="col-md-6 col-lg-3">
+              <div key={i} className="col-6 col-lg-3">
                 <div className="premium-card h-100">
                   <div className="card-body py-3 px-4">
                     <div className="d-flex align-items-center justify-content-between">
