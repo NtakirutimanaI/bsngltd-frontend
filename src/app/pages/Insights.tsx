@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import {
     TrendingUp,
     Download,
@@ -18,15 +19,15 @@ export function Insights() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<'business' | 'website'>('business');
 
-    
+
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
+    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const isAdminOrAuditor = ['super_admin', 'admin', 'manager', 'auditor'].includes(roleName);
 
     if (!isAdminOrAuditor) {
         return (
             <div className="text-center py-5 mt-5">
-            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+                <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
                 <Zap size={64} className="text-warning mb-3 opacity-25 mx-auto" />
                 <h2 className="fw-bold">Insights Restricted</h2>

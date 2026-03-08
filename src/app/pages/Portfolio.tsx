@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import {
     Building2,
     Home,
@@ -23,9 +24,9 @@ export function Portfolio() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<'projects' | 'properties'>('projects');
 
-    
+
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
+    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const canAdd = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
     return (
@@ -42,14 +43,15 @@ const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.
                     {canAdd && (
                         <button
                             className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
-                         onClick={() => setIsExportModalOpen(true)}>
+                            onClick={() => setActiveTab(activeTab)}>
                             <Plus size={14} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
                         </button>
                     )}
                     <button
-                        className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
+                        className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+                        onClick={() => setIsExportModalOpen(true)}
                     >
-                        <Download size={14} /> Export
+                        <Download size={16} />
                     </button>
                 </div>
             </ScrollReveal>
@@ -62,7 +64,7 @@ const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.
                             onClick={() => setActiveTab('projects')}
                             className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
                             style={{
-                                backgroundColor: activeTab === 'projects' ? '#059669' : 'transparent',
+                                backgroundColor: activeTab === 'projects' ? '#16a085' : 'transparent',
                                 color: activeTab === 'projects' ? 'white' : '#6b7280'
                             }}
                         >
@@ -72,7 +74,7 @@ const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.
                             onClick={() => setActiveTab('properties')}
                             className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'properties' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
                             style={{
-                                backgroundColor: activeTab === 'properties' ? '#059669' : 'transparent',
+                                backgroundColor: activeTab === 'properties' ? '#16a085' : 'transparent',
                                 color: activeTab === 'properties' ? 'white' : '#6b7280'
                             }}
                         >

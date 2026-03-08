@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   TrendingUp,
   DollarSign,
@@ -29,9 +31,9 @@ import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   const { theme } = useTheme();
-  
-    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-const quarterlyRevenue = [
+
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const quarterlyRevenue = [
     { quarter: "Q1 2023", revenue: 120, expenses: 85, profit: 35 },
     { quarter: "Q2 2023", revenue: 145, expenses: 95, profit: 50 },
     { quarter: "Q3 2023", revenue: 160, expenses: 105, profit: 55 },
@@ -72,7 +74,7 @@ const quarterlyRevenue = [
 
   return (
     <div className="space-y-6">
-            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+      <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
       {/* Header */}
       {!hideHeader && (
@@ -82,6 +84,12 @@ const quarterlyRevenue = [
             <p className="text-gray-600 mt-1">Comprehensive business insights and performance metrics</p>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsExportModalOpen(true)}
+              className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+            >
+              <Download className="h-4 w-4" />
+            </button>
             <button
               onClick={() => exportReport("PDF")}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95"
