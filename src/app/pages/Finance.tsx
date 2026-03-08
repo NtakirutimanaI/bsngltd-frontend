@@ -20,6 +20,7 @@ import { fetchApi } from '../api/client';
 import { useAuth } from "@/app/context/AuthContext";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { toast } from "sonner";
+import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 // Types
 interface Transaction {
@@ -58,7 +59,9 @@ export function Finance() {
     const { currency } = useCurrency();
     const [activeTab, setActiveTab] = useState<'ledger' | 'payroll_history'>('ledger');
 
-    // Auth
+    
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+// Auth
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase().replace(/\s+/g, '_');
     const isAdminOrManager = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
@@ -155,6 +158,8 @@ export function Finance() {
 
     return (
         <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+
             {/* Loading Overlay */}
             {isLoading && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white/50 z-50">
@@ -179,7 +184,7 @@ export function Finance() {
                             <Plus size={14} /> <span>New Transaction</span>
                         </button>
                     )}
-                    <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800">
+                    <button className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800" onClick={() => setIsExportModalOpen(true)}>
                         <Download size={16} />
                     </button>
                 </div>

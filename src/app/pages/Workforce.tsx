@@ -31,6 +31,7 @@ import { SitesTab } from "./workforce/SitesTab";
 import { ContractsTab } from "./workforce/ContractsTab";
 import { AssignmentsTab } from "./workforce/AssignmentsTab";
 import { Check } from "lucide-react";
+import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 // Types
 interface Employee {
@@ -110,7 +111,9 @@ export function Workforce() {
     const { currency } = useCurrency();
     const [activeTab, setActiveTab] = useState<'directory' | 'attendance' | 'payroll' | 'sites' | 'contracts' | 'assignments'>('directory');
 
-    // Auth & Permissions
+    
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+// Auth & Permissions
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const isAdminOrManager = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
@@ -302,6 +305,8 @@ export function Workforce() {
 
     return (
         <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+
             {/* Header */}
             <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
                 <div>
@@ -329,7 +334,7 @@ export function Workforce() {
                     )}
                     <button
                         className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
-                    >
+                     onClick={() => setIsExportModalOpen(true)}>
                         <Download size={16} />
                     </button>
                 </div>
