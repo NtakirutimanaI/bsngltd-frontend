@@ -80,7 +80,7 @@ export function PublicHeader() {
 
       {/* Navbar */}
       <div className="container-fluid px-3 px-lg-5">
-        <nav className="navbar navbar-expand-md navbar-light" style={{ padding: '20px 0' }}>
+        <nav className="navbar navbar-expand-lg navbar-light" style={{ padding: '20px 0' }}>
           {/* Brand - Strictly Left */}
           <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-auto">
             <div className="bg-black rounded-circle d-flex align-items-center justify-content-center p-0 flex-shrink-0 overflow-hidden" style={{ width: '40px', height: '40px' }}>
@@ -181,7 +181,7 @@ export function PublicHeader() {
               {/* DESKTOP ONLY: Join Us Button */}
               <Link
                 to="/login"
-                className="nav-item nav-link text-primary fw-bold d-none d-md-flex align-items-center gap-2 px-3 py-3"
+                className="nav-item nav-link text-primary fw-bold d-none d-lg-flex align-items-center gap-2 px-3 py-3"
                 style={{ fontSize: '17px', color: '#16a085' }}
               >
                 <LogIn style={{ width: '18px', height: '18px' }} />
@@ -189,7 +189,7 @@ export function PublicHeader() {
               </Link>
 
               {/* DESKTOP ONLY: Language Dropdown */}
-              <div className="nav-item dropdown px-lg-3 position-relative d-none d-md-block">
+              <div className="nav-item dropdown px-lg-3 position-relative d-none d-lg-block">
                 <button
                   className="nav-link dropdown-toggle d-flex align-items-center gap-2 fw-medium text-dark border-0 bg-transparent h-100"
                   onClick={() => setIsLangOpen(!isLangOpen)}

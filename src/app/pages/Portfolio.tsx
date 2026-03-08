@@ -59,7 +59,7 @@ export function Portfolio() {
             {/* Hub Tabs */}
             <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
                 <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1 gap-2">
+                    <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-x-auto custom-scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                         <button
                             onClick={() => setActiveTab('projects')}
                             className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
