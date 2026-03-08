@@ -310,21 +310,20 @@ export function RootLayout() {
 
       {/* Sidebar — starts exactly under header (64px) */}
       <aside
-        className={`fixed left-0 w-64 transition-transform duration-300 lg:translate-x-0 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed left-0 w-20 hover:w-64 group/sidebar transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col z-[40] ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
         style={{
           top: '64px',
           bottom: 0,
           height: 'auto',
           background: '#18181b',
-          zIndex: 40,
           borderRight: '1px solid rgba(22,160,133,0.2)',
           boxShadow: sidebarOpen ? '10px 0 30px rgba(0,0,0,0.5)' : 'none',
           position: 'fixed'
         }}
       >
         {/* Nav label */}
-        <div className="px-5 pt-6 pb-2 shrink-0">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500/80">Menu Explorer</span>
+        <div className="px-5 pt-6 pb-2 shrink-0 overflow-hidden">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500/80 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">Menu Explorer</span>
         </div>
 
         {/* Nav Items */}
@@ -345,10 +344,10 @@ export function RootLayout() {
                   }
                   style={{ border: 'none', display: 'flex', width: '100%', textDecoration: 'none' }}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" style={{ minWidth: '20px' }} />
-                  <span style={{ fontSize: '13.5px', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>{item.name}</span>
+                  <item.icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110" style={{ minWidth: '20px' }} />
+                  <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300" style={{ fontSize: '13.5px', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>{item.name}</span>
                   {item.name === "Communications" && unreadCount > 0 && (
-                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: '#e74c3c' }}>
+                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300" style={{ background: '#e74c3c' }}>
                       {unreadCount}
                     </span>
                   )}
@@ -363,16 +362,16 @@ export function RootLayout() {
           <button
             onClick={handleLogout}
             className="group flex items-center justify-center gap-3 px-5 py-3.5 w-full text-white rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
-            style={{ backgroundColor: '#dc2626', border: 'none', cursor: 'pointer', display: 'flex' }}
+            style={{ backgroundColor: '#dc2626', border: 'none', cursor: 'pointer', display: 'flex', overflow: 'hidden' }}
           >
-            <LogOut className="h-5 w-5" />
-            <span>Sign Out</span>
+            <LogOut className="h-5 w-5 shrink-0" />
+            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">Sign Out</span>
           </button>
         </div>
       </aside>
 
       {/* Main Container */}
-      <div className="lg:ml-64 flex flex-col min-h-screen pt-16">
+      <div className="lg:ml-20 flex flex-col min-h-screen pt-16 transition-all duration-300">
         <main className="flex-1 p-3 md:p-6 bg-gray-50/50 dark:bg-gray-950/50 overflow-x-auto max-w-full custom-scrollbar">
           <div className="w-full max-w-[1600px] mx-auto min-w-[320px]">
             <Outlet />
