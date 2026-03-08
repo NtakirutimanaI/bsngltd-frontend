@@ -38,7 +38,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   ];
 
   const projectTypeData = [
-    { name: "Construction", value: 45, color: "#f97316" },
+    { name: "Construction", value: 45, color: "#16a085" },
     { name: "Renovation", value: 25, color: "#3b82f6" },
     { name: "Plot Sale", value: 20, color: "#10b981" },
     { name: "Rental", value: 10, color: "#6366f1" },
@@ -165,8 +165,8 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                <stop offset="5%" stopColor="#16a085" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#16a085" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -197,7 +197,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             <Area
               type="monotone"
               dataKey="expenses"
-              stroke="#f97316"
+              stroke="#16a085"
               fillOpacity={1}
               fill="url(#colorExpenses)"
               name="Expenses (M)"
@@ -263,7 +263,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
                 }}
                 itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
               />
-              <Bar dataKey="amount" fill="#f97316" radius={[8, 8, 0, 0]} name="Amount (M)" />
+              <Bar dataKey="amount" fill="#16a085" radius={[8, 8, 0, 0]} name="Amount (M)" />
             </BarChart>
           </ResponsiveContainer>
         </ScrollReveal>
@@ -290,7 +290,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             />
             <Legend />
             <Bar dataKey="completed" stackId="a" fill="#10b981" name="Completed" radius={[8, 8, 0, 0]} />
-            <Bar dataKey="active" stackId="a" fill="#f97316" name="Active" />
+            <Bar dataKey="active" stackId="a" fill="#16a085" name="Active" />
             <Bar dataKey="planning" stackId="a" fill="#3b82f6" name="Planning" />
           </BarChart>
         </ResponsiveContainer>

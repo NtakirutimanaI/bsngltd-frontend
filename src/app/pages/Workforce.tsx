@@ -345,7 +345,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'directory' ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'directory' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -359,7 +359,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'attendance' ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'attendance' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -373,7 +373,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'payroll' ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'payroll' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -387,7 +387,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'sites' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'sites' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -401,7 +401,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'contracts' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'contracts' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -415,7 +415,7 @@ export function Workforce() {
                             style={{
                                 borderRadius: '14px',
                                 border: 'none',
-                                background: activeTab === 'assignments' as any ? 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' : 'transparent',
+                                background: activeTab === 'assignments' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
                                 fontWeight: 700,
                                 fontSize: '12px',
                                 letterSpacing: '0.5px'
@@ -506,7 +506,7 @@ export function Workforce() {
                                             <tr key={emp.id} className="transition-all">
                                                 <td className="ps-4 py-2">
                                                     <div className="d-flex align-items-center gap-2">
-                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, backgroundColor: '#fff7ed', color: '#f97316', fontSize: '12px' }}>
+                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, backgroundColor: '#e8f8f5', color: '#16a085', fontSize: '12px' }}>
                                                             {emp.name.charAt(0)}
                                                         </div>
                                                         <div>
@@ -639,7 +639,7 @@ export function Workforce() {
                                                                 style={{ borderRadius: '6px' }}
                                                             />
                                                         </td>
-                                                        <td className="text-center fw-bold" style={{ color: '#f97316' }}>{record.workingHours || 0}h</td>
+                                                        <td className="text-center fw-bold" style={{ color: '#16a085' }}>{record.workingHours || 0}h</td>
                                                         <td className="pe-4">
                                                             <input
                                                                 type="text"
@@ -678,7 +678,7 @@ export function Workforce() {
                                                         </td>
                                                         <td className="small">{record.checkIn}</td>
                                                         <td className="small">{record.checkOut}</td>
-                                                        <td className="text-center fw-bold small" style={{ color: '#f97316' }}>{record.workingHours}h</td>
+                                                        <td className="text-center fw-bold small" style={{ color: '#16a085' }}>{record.workingHours}h</td>
                                                         <td className="pe-4 text-muted small">{record.reason || '-'}</td>
                                                     </tr>
                                                 ))
@@ -706,7 +706,7 @@ export function Workforce() {
                                             <button
                                                 onClick={() => setSelectedEmployees(new Set(payrollData.filter(p => !p.isPaid).map(p => p.employee.id)))}
                                                 className="btn btn-sm px-3"
-                                                style={{ borderRadius: '8px', background: '#fff7ed', color: '#f97316', border: '1px solid #f97316', fontWeight: 600, fontSize: '12px' }}
+                                                style={{ borderRadius: '8px', background: '#e8f8f5', color: '#16a085', border: '1px solid #16a085', fontWeight: 600, fontSize: '12px' }}
                                             >
                                                 Select All Unpaid
                                             </button>
@@ -746,12 +746,12 @@ export function Workforce() {
                                         <div
                                             className={`card h-100 transition-all cursor-pointer ${isSelected ? 'shadow-lg' : 'shadow-sm hover:shadow-md'}`}
                                             onClick={() => toggleEmployeeSelection(item.employee.id)}
-                                            style={{ borderRadius: '12px', border: isSelected ? '2px solid #f97316' : '2px solid transparent', background: isSelected ? '#fff7ed' : '#fff' }}
+                                            style={{ borderRadius: '12px', border: isSelected ? '2px solid #16a085' : '2px solid transparent', background: isSelected ? '#e8f8f5' : '#fff' }}
                                         >
                                             <div className="card-body p-2">
                                                 <div className="d-flex justify-content-between align-items-start mb-3">
                                                     <div className="d-flex align-items-center gap-3">
-                                                        <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold`} style={{ width: 44, height: 44, background: isSelected ? '#f97316' : '#f0f0f0', color: isSelected ? '#fff' : '#888' }}>
+                                                        <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold`} style={{ width: 44, height: 44, background: isSelected ? '#16a085' : '#f0f0f0', color: isSelected ? '#fff' : '#888' }}>
                                                             {isSelected ? <Check size={24} color="white" /> : item.employee.name.charAt(0)}
                                                         </div>
                                                         <div>
@@ -777,11 +777,11 @@ export function Workforce() {
                                                     </div>
                                                 </div>
 
-                                                <div className="p-2 rounded-3 mb-2" style={{ background: '#fff7ed' }}>
+                                                <div className="p-2 rounded-3 mb-2" style={{ background: '#e8f8f5' }}>
                                                     <div className="d-flex justify-content-between align-items-center mb-1 px-1">
                                                         <span className="smaller text-muted fw-bold">SALARY AMOUNT</span>
                                                         {customAmounts[item.employee.id] !== item.calculatedSalary && (
-                                                            <span className="badge smaller" style={{ background: '#fff7ed', color: '#f97316' }}>MODIFIED</span>
+                                                            <span className="badge smaller" style={{ background: '#e8f8f5', color: '#16a085' }}>MODIFIED</span>
                                                         )}
                                                     </div>
                                                     <div className="d-flex align-items-center gap-2">
@@ -792,7 +792,7 @@ export function Workforce() {
                                                             onChange={(e) => setCustomAmounts(prev => ({ ...prev, [item.employee.id]: Number(e.target.value) }))}
                                                             onClick={e => e.stopPropagation()}
                                                             disabled={item.isPaid}
-                                                            style={{ borderRadius: '8px', color: '#f97316' }}
+                                                            style={{ borderRadius: '8px', color: '#16a085' }}
                                                         />
                                                         {!item.isPaid && customAmounts[item.employee.id] !== item.calculatedSalary && (
                                                             <button
@@ -855,7 +855,7 @@ export function Workforce() {
                                 <div
                                     className={`p-3 border-2 cursor-pointer transition-all d-flex align-items-center justify-content-between ${batchChannel === ch.id ? '' : 'hover:bg-light'}`}
                                     onClick={() => setBatchChannel(ch.id)}
-                                    style={{ borderRadius: '12px', border: batchChannel === ch.id ? '2px solid #f97316' : '2px solid #e9ecef', background: batchChannel === ch.id ? '#fff7ed' : '' }}
+                                    style={{ borderRadius: '12px', border: batchChannel === ch.id ? '2px solid #16a085' : '2px solid #e9ecef', background: batchChannel === ch.id ? '#e8f8f5' : '' }}
                                 >
                                     <div className="d-flex align-items-center gap-3">
                                         <div className={`p-2 rounded-3 ${ch.bgColor} ${ch.color}`}><ch.icon size={20} /></div>
@@ -864,7 +864,7 @@ export function Workforce() {
                                             <div className="smaller text-muted">{ch.description}</div>
                                         </div>
                                     </div>
-                                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: batchChannel === ch.id ? '#f97316' : 'transparent', border: batchChannel === ch.id ? 'none' : '2px solid #ccc' }}>
+                                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: batchChannel === ch.id ? '#16a085' : 'transparent', border: batchChannel === ch.id ? 'none' : '2px solid #ccc' }}>
                                         {batchChannel === ch.id && <Check size={14} color="white" />}
                                     </div>
                                 </div>
@@ -883,7 +883,7 @@ export function Workforce() {
                 </div>
             </Modal>
             <style>{`
-                .bg-emerald-600 { background-color: #ea580c !important; }
+                .bg-emerald-600 { background-color: #0e6655 !important; }
                 .text-white { color: #ffffff !important; }
                 .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; }
                 .hover\:bg-light:hover { background-color: #f8f9fa !important; }

@@ -317,7 +317,7 @@ export function Payments() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent ps-4 focus:ring-0"
                 style={{ paddingLeft: '3rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.borderColor = '#f97316'}
+                onFocus={(e) => e.target.style.borderColor = '#16a085'}
                 onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
               />
             </div>

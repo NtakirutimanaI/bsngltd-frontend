@@ -360,7 +360,7 @@ export function Attendance() {
                                                                 className={`form-select form-select-sm border border-gray-200 fw-semibold bg-white dark:bg-gray-800 rounded-lg py-1.5 
                                                                     ${record.status === 'Present' ? 'text-emerald-600' :
                                                                         record.status === 'Absent' ? 'text-red-600' :
-                                                                            ['Late', 'Half Day'].includes(record.status || '') ? 'text-orange-600' :
+                                                                            ['Late', 'Half Day'].includes(record.status || '') ? 'text-emerald-600' :
                                                                                 ['Paid Leave', 'Holiday', 'Weekend'].includes(record.status || '') ? 'text-blue-600' :
                                                                                     'text-gray-600'
                                                                     }`}
@@ -507,8 +507,8 @@ export function Attendance() {
                                                     </thead>
                                                     <tbody className="text-sm">
                                                         <tr><td className="px-3 py-2 fw-medium">Present</td><td className="px-3 py-2 text-emerald-600">Full day paid</td></tr>
-                                                        <tr><td className="px-3 py-2 fw-medium">Late</td><td className="px-3 py-2 text-orange-500">Paid / Penalty after limit</td></tr>
-                                                        <tr><td className="px-3 py-2 fw-medium">Half Day</td><td className="px-3 py-2 text-orange-500">50% paid</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Late</td><td className="px-3 py-2 text-emerald-500">Paid / Penalty after limit</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Half Day</td><td className="px-3 py-2 text-emerald-500">50% paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Absent</td><td className="px-3 py-2 text-red-500">0 paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Paid Leave</td><td className="px-3 py-2 text-blue-500">100% paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Unpaid Leave</td><td className="px-3 py-2 text-red-500">0 paid</td></tr>
@@ -633,7 +633,7 @@ export function Attendance() {
                                 </div>
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                     <div className="text-sm text-gray-500 fw-bold mb-1">Overtime Cost</div>
-                                    <div className="text-2xl fw-bold text-orange-500 mb-2">{formatPrice(payrollData.reduce((s, c) => s + c.overtimeAmount, 0))}</div>
+                                    <div className="text-2xl fw-bold text-emerald-500 mb-2">{formatPrice(payrollData.reduce((s, c) => s + c.overtimeAmount, 0))}</div>
                                     <div className="text-xs text-red-500 d-flex align-items-center gap-1"><TrendingUp size={12} /> +12% over budget</div>
                                 </div>
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
@@ -656,7 +656,7 @@ export function Attendance() {
                                     </div>
                                     <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg">
                                         <div className="text-sm fw-bold text-gray-700 dark:text-gray-300">Excess Overtime</div>
-                                        <div className="text-lg fw-bold text-orange-600 mt-1">Warning</div>
+                                        <div className="text-lg fw-bold text-emerald-600 mt-1">Warning</div>
                                         <div className="text-xs text-gray-500 mt-1">Site B exceeding OT budget by 15%</div>
                                     </div>
                                     <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg">
@@ -680,7 +680,7 @@ export function Attendance() {
                                                 <th className="py-3 text-center">Working Days</th>
                                                 <th className="py-3 text-center text-emerald-600">Present</th>
                                                 <th className="py-3 text-center text-red-500">Absent / Unpaid</th>
-                                                <th className="py-3 text-center text-orange-500">Late / Half</th>
+                                                <th className="py-3 text-center text-emerald-500">Late / Half</th>
                                                 <th className="py-3 text-center">Overtime</th>
                                                 <th className="py-3 text-end">Final Pay</th>
                                             </tr>
