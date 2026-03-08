@@ -51,7 +51,15 @@ export function Analytics() {
         );
     }
 
-    if (!data) return <div className="p-4">Failed to load analytics data.</div>;
+    if (!data) return (
+        <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center min-vh-50">
+            <h4 className="text-danger fw-bold mb-2">Connection Interrupted</h4>
+            <p className="text-muted mb-4">The database server is still synchronizing the live tracking metrics. This usually finishes in a few moments.</p>
+            <button className="btn btn-primary px-4 py-2 fw-semibold" style={{ backgroundColor: '#16a085', borderColor: '#16a085' }} onClick={() => window.location.reload()}>
+                <Activity size={18} className="me-2 d-inline" /> Refresh Dashboard
+            </button>
+        </div>
+    );
 
     const chartData = data.dailyTrend.map(d => ({
         date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
