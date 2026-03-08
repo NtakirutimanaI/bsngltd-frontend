@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, RefreshCcw, Users } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, RefreshCcw, Users, MessageCircle } from 'lucide-react';
 import { fetchApi } from '@/app/api/client';
 import { useLanguage } from '@/app/context/LanguageContext';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 export function Contact() {
   const { t, dt } = useLanguage();
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
   const [settings, setSettings] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,16 +72,18 @@ export function Contact() {
   return (
     <div className="container-fluid bg-white p-0">
       {/* Page Header Start */}
-      <div className="container-fluid page-header py-3 wow fadeIn" data-wow-delay="0.1s">
-        <div className="container pt-3 pb-0">
-          <nav aria-label="breadcrumb animated slideInDown">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item"><Link to="/" className="text-body">{t('home')}</Link></li>
-              <li className="breadcrumb-item active text-primary" aria-current="page">{t('contact')}</li>
-            </ol>
-          </nav>
+      {!isDashboard && (
+        <div className="container-fluid page-header py-3 wow fadeIn" data-wow-delay="0.1s">
+          <div className="container pt-3 pb-0">
+            <nav aria-label="breadcrumb animated slideInDown">
+              <ol className="breadcrumb mb-0">
+                <li className="breadcrumb-item"><Link to="/" className="text-body">{t('home')}</Link></li>
+                <li className="breadcrumb-item active text-primary" aria-current="page">{t('contact')}</li>
+              </ol>
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
       {/* Page Header End */}
 
       {/* Contact Start */}
@@ -121,12 +125,16 @@ export function Contact() {
                 </div>
               </div>
               <div className="d-flex align-items-center p-4 bg-light rounded wow fadeIn" data-wow-delay="0.5s">
-                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#16a085' }}>
-                  <Clock className="text-white w-6 h-6" />
+                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#25D366' }}>
+                  <MessageCircle className="text-white w-6 h-6" />
                 </div>
                 <div className="ms-4">
-                  <h5 className="mb-1">{t('businessHours')}</h5>
-                  <p className="mb-0 fw-bold">{t('officeHoursWeekdays')}</p>
+                  <h5 className="mb-1">WhatsApp Chat</h5>
+                  <p className="mb-0 fw-bold">
+                    <a href={`https://wa.me/${(dt(settings.contact_phone) || '+250737213060').replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: '#25D366', textDecoration: 'none' }}>
+                      {t('chatWithUs')}
+                    </a>
+                  </p>
                 </div>
               </div>
             </div>

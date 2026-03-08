@@ -77,6 +77,7 @@ export const router = createBrowserRouter([
           { path: "insights", Component: Insights },
           { path: "calendar", Component: Calendar },
           { path: "services", Component: Services },
+          { path: "contact", Component: Contact },
           { path: "communications", Component: Communications },
           { path: "notifications", Component: Notifications },
           { path: "bookings", Component: Bookings },
