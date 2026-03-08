@@ -26,6 +26,9 @@ interface Booking {
     date: string;
     message: string;
     status: string;
+    bookingType: string;
+    paymentStatus: string;
+    amount: number;
     createdAt: string;
 }
 
@@ -208,7 +211,9 @@ export function Bookings() {
                                         <tr>
                                             <th className="fw-bold text-uppercase small py-3 ps-3" style={{ fontSize: '10px' }}>Customer</th>
                                             <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Property</th>
+                                            <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Type</th>
                                             <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Viewing Date</th>
+                                            <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Payment</th>
                                             <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Status</th>
                                             <th className="fw-bold text-uppercase small py-3" style={{ fontSize: '10px' }}>Submitted</th>
                                             <th className="fw-bold text-uppercase small py-3 pe-3 text-end" style={{ fontSize: '10px' }}>Actions</th>
@@ -239,10 +244,20 @@ export function Bookings() {
                                                         )}
                                                     </td>
                                                     <td className="py-3">
-                                                        <div className="d-flex align-items-center gap-1 small">
+                                                        <span className={`badge ${booking.bookingType === 'sale' ? 'bg-success' : 'bg-primary'} x-small text-capitalize`}>
+                                                            {booking.bookingType || 'rent'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3">
+                                                        <div className="d-flex align-items-center gap-1 small text-muted">
                                                             <Calendar size={12} className="text-primary" />
                                                             {formatDate(booking.date)}
                                                         </div>
+                                                    </td>
+                                                    <td className="py-3">
+                                                        <span className={`badge ${booking.paymentStatus === 'completed' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'} x-small text-capitalize`}>
+                                                            {booking.paymentStatus || 'pending'}
+                                                        </span>
                                                     </td>
                                                     <td className="py-3">
                                                         <span className={`badge ${statusColor.light} ${statusColor.text} d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill text-capitalize`}>
@@ -372,10 +387,29 @@ export function Bookings() {
                                         </div>
                                     </div>
                                     <div className="p-3 bg-light rounded-3 flex-fill">
+                                        <div className="text-muted small">Booking Type</div>
+                                        <span className={`badge ${selectedBooking.bookingType === 'sale' ? 'bg-success' : 'bg-primary'} mt-1`}>
+                                            {selectedBooking.bookingType === 'sale' ? 'For Sale' : 'For Rent'}
+                                        </span>
+                                    </div>
+                                    <div className="p-3 bg-light rounded-3 flex-fill">
                                         <div className="text-muted small">Status</div>
                                         <span className={`badge ${getStatusColor(selectedBooking.status).light} ${getStatusColor(selectedBooking.status).text} d-inline-flex align-items-center gap-1 px-2 py-1 rounded-pill text-capitalize mt-1`}>
                                             {getStatusIcon(selectedBooking.status)} {selectedBooking.status}
                                         </span>
+                                    </div>
+                                </div>
+
+                                <div className="p-3 bg-info-subtle border border-info-subtle rounded-3 mb-4">
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div className="text-info small fw-bold text-uppercase" style={{ fontSize: '9px' }}>Payment Status</div>
+                                            <div className="fw-bold text-info-emphasis">{selectedBooking.paymentStatus || 'Pending'}</div>
+                                        </div>
+                                        <div className="text-end">
+                                            <div className="text-info small fw-bold text-uppercase" style={{ fontSize: '9px' }}>Amount</div>
+                                            <div className="fw-bold text-info-emphasis">RWF {new Intl.NumberFormat().format(selectedBooking.amount || 0)}</div>
+                                        </div>
                                     </div>
                                 </div>
 

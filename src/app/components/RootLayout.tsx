@@ -20,7 +20,8 @@ import {
   Shield,
   CalendarCheck,
   Globe,
-  Eye
+  Eye,
+  LineChart as LineChartIcon
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { NotificationBell } from "@/app/components/NotificationBell";
@@ -118,6 +119,7 @@ export function RootLayout() {
     { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Analytics", path: "/dashboard/analytics", icon: LineChartIcon, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'content_editor'] },
   ];
 
   const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');

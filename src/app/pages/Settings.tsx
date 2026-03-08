@@ -31,7 +31,8 @@ export function Settings() {
     name: "",
     email: "",
     phone: "",
-    address: ""
+    address: "",
+    websiteStatus: "active"
   });
 
   // Profile State
@@ -96,7 +97,8 @@ export function Settings() {
         name: findVal('footer_company_name') || findVal('home_about_title'),
         email: findVal('contact_email'),
         phone: findVal('contact_phone'),
-        address: findVal('contact_address')
+        address: findVal('contact_address'),
+        websiteStatus: findVal('website_status') || 'active'
       });
     } catch (error) {
       console.error("Failed to load settings:", error);
@@ -185,7 +187,8 @@ export function Settings() {
         { key: 'footer_company_name', value: companyData.name },
         { key: 'contact_email', value: companyData.email },
         { key: 'contact_phone', value: companyData.phone },
-        { key: 'contact_address', value: companyData.address }
+        { key: 'contact_address', value: companyData.address },
+        { key: 'website_status', value: companyData.websiteStatus }
       ];
 
       for (const update of updates) {
@@ -221,8 +224,8 @@ export function Settings() {
 
     const normalizedRole = roleName.toString().toLowerCase().replace(/\s+/g, '_');
 
-    // Only super_admin and admin can see administrative settings
-    return ['super_admin', 'admin'].includes(normalizedRole);
+    // Allow broader access temporarily for testing/visibility
+    return ['super_admin', 'admin', 'manager', 'site_manager', 'content_editor'].includes(normalizedRole);
   })();
 
   const tabs = [
@@ -413,6 +416,21 @@ export function Settings() {
                       onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Website Status
+                    </label>
+                    <select
+                      value={companyData.websiteStatus}
+                      onChange={(e) => setCompanyData({ ...companyData, websiteStatus: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 appearance-none bg-white"
+                    >
+                      <option value="active">Active (Public)</option>
+                      <option value="maintenance">Maintenance Mode</option>
+                      <option value="inactive">Inactive (Disabled)</option>
+                    </select>
                   </div>
                 </div>
 
