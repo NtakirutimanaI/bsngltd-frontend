@@ -6,7 +6,6 @@ import {
   Home,
   Users,
   Menu,
-  BarChart3,
   CalendarDays,
   LogOut,
   Newspaper,
@@ -179,7 +178,7 @@ export function RootLayout() {
               <div style={{ width: '30px', height: '30px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
-              <span className="hidden sm:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
+              <span className="hidden min-[400px]:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
             </div>
           </div>
 
@@ -342,7 +341,6 @@ export function RootLayout() {
         <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
             {navigation.map((item) => {
-              const isActive = window.location.pathname === item.path || (item.path === '/dashboard' && window.location.pathname === '/dashboard/');
               return (
                 <NavLink
                   key={item.path}
