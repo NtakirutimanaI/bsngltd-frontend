@@ -55,13 +55,21 @@ export function Portfolio() {
                     <div className="nav nav-pills p-1 gap-2">
                         <button
                             onClick={() => setActiveTab('projects')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-none' : 'text-gray-500 hover:bg-emerald-50 hover:text-emerald-600'}`}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
+                            style={{
+                                backgroundColor: activeTab === 'projects' ? '#059669' : 'transparent',
+                                color: activeTab === 'projects' ? 'white' : '#6b7280'
+                            }}
                         >
                             <Building2 size={16} /> Active Projects
                         </button>
                         <button
                             onClick={() => setActiveTab('properties')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold rounded-xl border-0 ${activeTab === 'properties' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-none' : 'text-gray-500 hover:bg-emerald-50 hover:text-emerald-600'}`}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'properties' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
+                            style={{
+                                backgroundColor: activeTab === 'properties' ? '#059669' : 'transparent',
+                                color: activeTab === 'properties' ? 'white' : '#6b7280'
+                            }}
                         >
                             <Home size={16} /> Property Inventory
                         </button>
