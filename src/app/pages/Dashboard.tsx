@@ -384,7 +384,7 @@ export function Dashboard() {
                       {isClient && (
                         <>
                           <Button
-                            onClick={() => navigate('/dashboard/admin')}
+                            onClick={() => navigate('/dashboard/contact')}
                             size="sm"
                             style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: '120px' }}
                           >Contact Support</Button>
