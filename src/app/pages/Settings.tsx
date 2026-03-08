@@ -211,12 +211,28 @@ export function Settings() {
     toast.success("Notification preferences updated locally");
   };
 
+  // Determine if the user has an administrator role using the same logic as RootLayout
+  const isAdmin = (() => {
+    if (!user) return false;
+
+    const roleName = (typeof user?.role === 'object' && user.role !== null)
+      ? (user.role as any).name
+      : (user?.role || 'guest');
+
+    const normalizedRole = roleName.toString().toLowerCase().replace(/\s+/g, '_');
+
+    // Only super_admin and admin can see administrative settings
+    return ['super_admin', 'admin'].includes(normalizedRole);
+  })();
+
   const tabs = [
-    { id: "profile", name: "Profile", icon: User },
-    { id: "company", name: "Company", icon: Building },
-    { id: "notifications", name: "Notifications", icon: Bell },
-    { id: "security", name: "Security", icon: Shield },
-    { id: "api", name: "API & Integrations", icon: Globe },
+    { id: "profile", name: "Profile Settings", icon: User },
+    ...(isAdmin ? [
+      { id: "company", name: "Company", icon: Building },
+      { id: "notifications", name: "Notifications", icon: Bell },
+      { id: "security", name: "Security", icon: Shield },
+      { id: "api", name: "API & Integrations", icon: Globe },
+    ] : [])
   ];
 
   return (
@@ -346,7 +362,7 @@ export function Settings() {
             </ScrollReveal>
           )}
 
-          {activeTab === "company" && (
+          {isAdmin && activeTab === "company" && (
             <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Company Information</h3>
               <form onSubmit={handleSaveCompany} className="space-y-6">
@@ -418,7 +434,7 @@ export function Settings() {
             </ScrollReveal>
           )}
 
-          {activeTab === "notifications" && (
+          {isAdmin && activeTab === "notifications" && (
             <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Notification Preferences</h3>
               <form onSubmit={handleSaveNotifications} className="space-y-6">
@@ -513,7 +529,7 @@ export function Settings() {
             </ScrollReveal>
           )}
 
-          {activeTab === "security" && (
+          {isAdmin && activeTab === "security" && (
             <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Security Settings</h3>
               <div className="space-y-6">
@@ -596,7 +612,7 @@ export function Settings() {
             </ScrollReveal>
           )}
 
-          {activeTab === "api" && (
+          {isAdmin && activeTab === "api" && (
             <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="d-flex justify-content-between align-items-center mb-6">
                 <div>

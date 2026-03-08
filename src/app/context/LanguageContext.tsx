@@ -57,6 +57,9 @@ const translations: Translations = {
   name: { en: 'Name', rw: 'Izina', sw: 'Jina', fr: 'Nom' },
   email: { en: 'Email', rw: 'Imeli', sw: 'Barua pepe', fr: 'Email' },
   phone: { en: 'Phone', rw: 'Telefoni', sw: 'Simu', fr: 'Téléphone' },
+  address: { en: 'Address', rw: 'Aderesi', sw: 'Anwani', fr: 'Adresse' },
+  age: { en: 'Age', rw: 'Imyaka', sw: 'Umri', fr: 'Âge' },
+  registrationSuccess: { en: 'Registration successful! Please login.', rw: 'Iyandikisha ryagenze neza! Nyamuneka injira.', sw: 'Usajili umefanikiwa! Tafadhali ingia.', fr: 'Inscription réussie ! Veuillez vous connecter.' },
   loading: { en: 'Loading...', rw: 'Birimo...', sw: 'Inapakia...', fr: 'Chargement...' },
 
   // Footer
