@@ -10,10 +10,14 @@ export function Register() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
+        address: '',
+        age: '',
         password: '',
         confirmPassword: '',
     });
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,6 +54,7 @@ export function Register() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        setSuccess('');
 
         // Validate email
         const emailValidation = validateEmail(formData.email);
@@ -71,6 +76,9 @@ export function Register() {
                 body: JSON.stringify({
                     email: formData.email,
                     fullName: formData.name,
+                    phone: formData.phone,
+                    address: formData.address,
+                    age: formData.age,
                     password: formData.password
                 })
             });
@@ -80,13 +88,11 @@ export function Register() {
                 throw new Error(errorData.message || 'Registration failed');
             }
 
-            const data = await response.json();
-            localStorage.setItem('bsng_token', data.access_token);
-            localStorage.setItem('bsng_user', JSON.stringify(data.user));
+            setSuccess(t('registrationSuccess'));
 
             setTimeout(() => {
-                window.location.href = from;
-            }, 100);
+                navigate('/login');
+            }, 3000);
         } catch (err: any) {
             console.error('Registration error:', err);
             setError(err.message || 'Registration failed. Please try again.');
@@ -121,6 +127,12 @@ export function Register() {
                                         </div>
                                     )}
 
+                                    {success && (
+                                        <div className="alert alert-success py-1 px-2 text-center small mb-3" role="alert">
+                                            {success}
+                                        </div>
+                                    )}
+
                                     <form onSubmit={handleSubmit} className="d-flex flex-column gap-2">
                                         <div>
                                             <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '0.7rem' }}>{t('fullName')}</label>
@@ -142,6 +154,42 @@ export function Register() {
                                                 value={formData.email}
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                                 placeholder="john@example.com"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '0.7rem' }}>{t('phone')}</label>
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-sm py-2"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                placeholder="+250..."
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '0.7rem' }}>{t('address')}</label>
+                                            <input
+                                                type="text"
+                                                className="form-control form-control-sm py-2"
+                                                value={formData.address}
+                                                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                                placeholder="Kigali, Rwanda"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '0.7rem' }}>{t('age')}</label>
+                                            <input
+                                                type="number"
+                                                className="form-control form-control-sm py-2"
+                                                value={formData.age}
+                                                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                                                placeholder="25"
                                                 required
                                             />
                                         </div>

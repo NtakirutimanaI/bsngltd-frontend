@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Phone, ArrowRight, RefreshCcw } from 'lucide-react';
 import { useLanguage } from '@/app/context/LanguageContext';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { fetchApi, getImageUrl } from '@/app/api/client';
 
 export function Services() {
   const { t, dt } = useLanguage();
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
   const [settings, setSettings] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -88,18 +90,20 @@ export function Services() {
   const servicesTitle = dt(settings.services_title) || t('services');
 
   return (
-    <div className="container-fluid bg-white p-0">
+    <div className={`container-fluid ${isDashboard ? 'bg-transparent' : 'bg-white'} p-0`}>
       {/* Page Header Start */}
-      <div className="container-fluid page-header py-3 wow fadeIn" data-wow-delay="0.1s">
-        <div className="container pt-3 pb-0">
-          <nav aria-label="breadcrumb animated slideInDown">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item"><Link to="/" className="text-body">{t('home')}</Link></li>
-              <li className="breadcrumb-item active text-primary" aria-current="page" style={{ color: '#16a085' }}>{t('services')}</li>
-            </ol>
-          </nav>
+      {!isDashboard && (
+        <div className="container-fluid page-header py-3 wow fadeIn" data-wow-delay="0.1s">
+          <div className="container pt-3 pb-0">
+            <nav aria-label="breadcrumb animated slideInDown">
+              <ol className="breadcrumb mb-0">
+                <li className="breadcrumb-item"><Link to="/" className="text-body">{t('home')}</Link></li>
+                <li className="breadcrumb-item active text-primary" aria-current="page" style={{ color: '#16a085' }}>{t('services')}</li>
+              </ol>
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
       {/* Page Header End */}
 
       {/* Service Start */}
@@ -148,25 +152,27 @@ export function Services() {
       {/* Service End */}
 
       {/* Newsletter Start */}
-      <div className="container-fluid bg-primary newsletter p-0 my-5 wow fadeIn" data-wow-delay="0.1s">
-        <div className="container p-0">
-          <div className="row g-0 align-items-center">
-            <div className="col-md-5 ps-lg-0 text-start">
-              <img className="img-fluid w-100" src={getImageUrl(settings.global_newsletter_bg) || '/img/newsletter.jpg'} alt="Newsletter" style={{ maxHeight: '400px', objectFit: 'cover' }} />
-            </div>
-            <div className="col-md-7 py-5 newsletter-text">
-              <div className="p-5">
-                <h1 className="mb-4 text-white">{t('readyToBuild1')} <span className="text-uppercase text-primary bg-white px-2">{t('readyToBuild2')}</span></h1>
-                <p className="text-white mb-5 fs-4 fw-bold">{t('contactUsToday')}</p>
-                <div className="d-flex flex-column flex-sm-row gap-3">
-                  <Link to="/contact" className="btn btn-dark py-3 px-5">{t('getInTouch')}</Link>
-                  <Link to="/properties" className="btn btn-outline-light py-3 px-5">{t('viewProperties')}</Link>
+      {!isDashboard && (
+        <div className="container-fluid bg-primary newsletter p-0 my-5 wow fadeIn" data-wow-delay="0.1s">
+          <div className="container p-0">
+            <div className="row g-0 align-items-center">
+              <div className="col-md-5 ps-lg-0 text-start">
+                <img className="img-fluid w-100" src={getImageUrl(settings.global_newsletter_bg) || '/img/newsletter.jpg'} alt="Newsletter" style={{ maxHeight: '400px', objectFit: 'cover' }} />
+              </div>
+              <div className="col-md-7 py-5 newsletter-text">
+                <div className="p-5">
+                  <h1 className="mb-4 text-white">{t('readyToBuild1')} <span className="text-uppercase text-primary bg-white px-2">{t('readyToBuild2')}</span></h1>
+                  <p className="text-white mb-5 fs-4 fw-bold">{t('contactUsToday')}</p>
+                  <div className="d-flex flex-column flex-sm-row gap-3">
+                    <Link to="/contact" className="btn btn-dark py-3 px-5">{t('getInTouch')}</Link>
+                    <Link to="/properties" className="btn btn-outline-light py-3 px-5">{t('viewProperties')}</Link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       {/* Newsletter End */}
     </div>
   );

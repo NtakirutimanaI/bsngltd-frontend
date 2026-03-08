@@ -324,7 +324,7 @@ export function Dashboard() {
                       {roleName === 'manager' && "Financial audits and staff performance reviews are ready for your oversight."}
                       {isAdminLike && !roleName.includes('manager') && "Manage system users, project defaults, and global configurations."}
                     </p>
-                    <div className="d-flex flex-wrap gap-2">
+                    <div className="d-flex flex-nowrap gap-2">
                       {isEmployee && (
                         <>
                           <Button
@@ -389,7 +389,7 @@ export function Dashboard() {
                             style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, minWidth: '120px' }}
                           >Contact Support</Button>
                           <Button
-                            onClick={() => navigate('/services')}
+                            onClick={() => navigate('/dashboard/services')}
                             size="sm"
                             style={{ background: 'transparent', border: '2px solid #fff', color: '#fff', fontWeight: 600, minWidth: '120px' }}
                           >View Services</Button>
