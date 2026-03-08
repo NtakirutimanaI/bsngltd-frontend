@@ -102,15 +102,8 @@ export function PublicHeader() {
 
           {/* Menu Drawer */}
           <div
-            className={`collapse navbar-collapse ${isMenuOpen ? 'show d-block' : ''}`}
+            className={`collapse navbar-collapse mobile-menu-animated ${isMenuOpen ? 'show d-block' : ''}`}
             id="navbarCollapse"
-            style={{
-              maxHeight: isMenuOpen ? '90vh' : '0',
-              overflowY: 'auto',
-              transition: 'max-height 0.4s ease-in-out',
-              opacity: isMenuOpen ? 1 : 0,
-              visibility: isMenuOpen ? 'visible' : 'hidden'
-            }}
           >
             <div className="navbar-nav ms-auto py-2 py-lg-0 align-items-start align-items-lg-center px-2">
 
@@ -120,7 +113,7 @@ export function PublicHeader() {
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`nav-item nav-link px-3 fw-medium w-100 ${isActive(link.path) ? 'active text-primary font-bold' : 'text-dark'}`}
+                  className={`nav-item nav-link px-3 fw-medium w-full md:w-auto ${isActive(link.path) ? 'active text-primary font-bold' : 'text-dark'}`}
                   style={{
                     fontSize: '17px',
                     paddingTop: '12px',
@@ -227,6 +220,17 @@ export function PublicHeader() {
           </div>
         </nav>
       </div>
+      <style>{`
+        @media (max-width: 767.98px) {
+          .mobile-menu-animated {
+            max-height: ${isMenuOpen ? '90vh' : '0'};
+            overflow-y: auto;
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            opacity: ${isMenuOpen ? 1 : 0};
+            visibility: ${isMenuOpen ? 'visible' : 'hidden'};
+          }
+        }
+      `}</style>
     </div>
   );
 }
