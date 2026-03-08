@@ -123,6 +123,7 @@ export function RootLayout() {
 
   const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
   const isAdmin = ['super_admin', 'admin'].includes(normalizedRole);
+  const isAdminOrManager = ['super_admin', 'admin', 'manager'].includes(normalizedRole);
 
   const navigation = allNavItems.filter(item => {
     if (item.roles.includes('all')) return true;
@@ -195,83 +196,87 @@ export function RootLayout() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white rounded-lg h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center p-0"
-                  style={{ background: '#16a085', border: 'none' }}
-                >
-                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                <DropdownMenuLabel>Add New</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                  <Building2 className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Project
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                  <Home className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Property
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/dashboard/workforce')}>
-                  <Users className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Employee
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/dashboard/admin')}>
-                  <Newspaper className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Update
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {isAdminOrManager && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white rounded-lg h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center p-0"
+                    style={{ background: '#16a085', border: 'none' }}
+                  >
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                  <DropdownMenuLabel>Add New</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
+                    <Building2 className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Project
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
+                    <Home className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Property
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/workforce')}>
+                    <Users className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Employee
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/admin')}>
+                    <Newspaper className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Update
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" className="hidden sm:flex h-8 w-8 sm:h-9 sm:w-9 rounded-full items-center justify-center p-0" style={{ border: 'none' }}>
               {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </Button>
 
-            <div className="hidden sm:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
-                    <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                  <DropdownMenuLabel>Messages</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <div className="max-h-80 overflow-y-auto">
-                    {messages.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
-                    ) : (
-                      messages.map((msg) => (
-                        <DropdownMenuItem
-                          key={msg.id}
-                          className="cursor-pointer flex flex-col items-start gap-1 p-3"
-                          style={{ border: 'none' }}
-                          onClick={() => navigate('/dashboard/communications')}
-                        >
-                          <div className="flex justify-between w-full">
-                            <span className="font-medium text-sm">{msg.sender}</span>
-                            <span className="text-xs text-gray-400">{msg.time}</span>
-                          </div>
-                          <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
-                        </DropdownMenuItem>
-                      ))
-                    )}
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer justify-center font-semibold"
-                    style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
-                    onClick={() => navigate('/dashboard/communications')}
-                  >
-                    View all messages
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            {isAdminOrManager && (
+              <div className="hidden sm:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
+                      <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
+                      {unreadCount > 0 && (
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+                    <DropdownMenuLabel>Messages</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <div className="max-h-80 overflow-y-auto">
+                      {messages.length === 0 ? (
+                        <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
+                      ) : (
+                        messages.map((msg) => (
+                          <DropdownMenuItem
+                            key={msg.id}
+                            className="cursor-pointer flex flex-col items-start gap-1 p-3"
+                            style={{ border: 'none' }}
+                            onClick={() => navigate('/dashboard/communications')}
+                          >
+                            <div className="flex justify-between w-full">
+                              <span className="font-medium text-sm">{msg.sender}</span>
+                              <span className="text-xs text-gray-400">{msg.time}</span>
+                            </div>
+                            <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
+                          </DropdownMenuItem>
+                        ))
+                      )}
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="cursor-pointer justify-center font-semibold"
+                      style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
+                      onClick={() => navigate('/dashboard/communications')}
+                    >
+                      View all messages
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
 
             <div className="hidden sm:block">
               <NotificationBell />
