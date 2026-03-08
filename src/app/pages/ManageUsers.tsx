@@ -334,12 +334,12 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
             <div className={`card border-0 shadow-sm mb-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px' }}>
                 <div className="card-body py-2">
                     <div className="position-relative d-flex align-items-center gap-2">
-                        <Search className="position-absolute start-0 translate-middle-y ms-3 text-muted" size={14} />
+                        <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
                         <input
                             type="text" placeholder="Search by name, email, or username..."
                             value={searchQuery}
                             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                            className="form-control form-control-sm ps-5 bg-light border-0"
+                            className="form-control form-control-sm ps-3 pe-5 bg-light border-0"
                             style={{ fontSize: '12px', borderRadius: '8px' }}
                         />
                         {searchQuery && (
