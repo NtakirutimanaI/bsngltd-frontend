@@ -104,14 +104,14 @@ export function Home() {
         minHeight: '75vh',
         position: 'relative'
       }}>
-        <div className="container-fluid h-100 d-flex flex-column justify-content-center py-5 px-3 px-md-5">
+        <div className="container-fluid h-100 d-flex flex-column justify-content-center hero-content-container" style={{ padding: '150px 50px 80px 50px' }}>
           <div className="row g-5 align-items-center flex-grow-1">
             <div className="col-lg-6 animated fadeIn" style={{ zIndex: 1 }}>
-              <h1 className="display-4 display-md-1 mb-4 animated slideInRight">
+              <h1 className="display-1 mb-4 animated slideInRight">
                 {heroTitle.split(' ').slice(0, 3).join(' ')} <br />
                 <span className="text-primary" style={{ color: '#16a085' }}>{heroTitle.split(' ').slice(3).join(' ')}</span>
               </h1>
-              <h5 className="d-inline-block border border-2 border-white py-2 py-md-3 px-3 px-md-5 mb-5 animated slideInRight uppercase" style={{ fontSize: 'clamp(0.8rem, 2vw, 1.25rem)' }}>
+              <h5 className="d-inline-block border border-2 border-white py-3 px-5 mb-5 animated slideInRight uppercase">
                 {heroSubtitle}
               </h5>
             </div>
@@ -130,6 +130,8 @@ export function Home() {
                     background: '#16a085'
                   }}
                 />
+
+                {/* Mobile Teal Block (Subtle) */}
                 <div
                   className="bg-primary position-absolute d-md-none"
                   style={{
@@ -140,12 +142,12 @@ export function Home() {
                     zIndex: 0,
                     borderRadius: '2px',
                     background: '#16a085',
-                    opacity: 0.1
+                    opacity: 0.05
                   }}
                 />
 
                 {/* Image Container with Slider */}
-                <div className="position-relative z-index-1 w-100 px-0 px-md-4" style={{ paddingRight: window.innerWidth < 768 ? '0' : '12%', left: window.innerWidth < 768 ? '0' : '-60px' }}>
+                <div className="position-relative z-index-1 w-100 hero-image-slider-wrapper">
                   <div className="overflow-hidden rounded shadow-lg" style={{ minHeight: '350px' }}>
                     {heroImages.map((image, index) => (
                       <img
