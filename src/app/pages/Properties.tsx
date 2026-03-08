@@ -151,14 +151,14 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
         <div className="card-body py-2">
           <div className="row g-2">
             <div className="col-md-6 col-lg-8 position-relative">
-              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ left: '0', width: '20px', height: '20px' }} />
+              <Search className="position-absolute top-50 translate-middle-y text-muted ms-2" style={{ width: '18px', height: '18px' }} />
               <input
                 type="text"
                 placeholder="Search properties..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent ps-4 focus:ring-0"
-                style={{ paddingLeft: '3rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
+                className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent focus:ring-0"
+                style={{ paddingLeft: '2.5rem', paddingBottom: '0.5rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
                 onFocus={(e) => e.target.style.borderColor = '#f97316'}
                 onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
               />
