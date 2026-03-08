@@ -78,8 +78,13 @@ export function Home() {
           fetchApi<any[]>(`/events?public=true&${cacheBuster}`)
         ]);
 
+<<<<<<< HEAD
         setAllProperties(Array.isArray(propRes) ? propRes : (propRes.data || []));
         setLatestUpdates(Array.isArray(updatesRes) ? updatesRes : (updatesRes.data || []));
+=======
+        setAllProperties(propRes.data || []);
+        setLatestUpdates(updatesRes.data || []);
+>>>>>>> origin/main
         setUpcomingEvents(eventsRes || []);
 
         const s: any = {};
