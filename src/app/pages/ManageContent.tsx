@@ -304,7 +304,7 @@ export function ManageContent() {
             <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
                 <div className="card-body py-2">
                     <div className="position-relative d-flex align-items-center gap-2">
-                        <Search className="position-absolute start-0 translate-middle-y ms-3 text-muted" size={14} />
+                        <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
                         <input
                             type="text"
                             placeholder="Search content by title, section, or description..."

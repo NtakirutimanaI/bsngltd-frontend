@@ -172,14 +172,14 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
         <div className="card-body py-2">
           <div className="row g-2">
             <div className="col-md-8 position-relative">
-              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ left: '0', width: '20px', height: '20px' }} />
+              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ right: '0', width: '20px', height: '20px' }} />
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent focus:ring-0"
-                style={{ paddingLeft: '30px', paddingBottom: '0.5rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
+                style={{ paddingRight: '30px', paddingBottom: '0.5rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
                 onFocus={(e) => e.target.style.borderColor = '#16a085'}
                 onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
               />

@@ -434,10 +434,10 @@ export function Workforce() {
                         <div className="row g-2 align-items-center">
                             <div className="col-md-5">
                                 <div className="position-relative">
-                                    <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />
+                                    <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={14} />
                                     <input
                                         type="text"
-                                        className="form-control form-control-sm ps-5 bg-light border-0 py-1"
+                                        className="form-control form-control-sm ps-3 pe-5 bg-light border-0 py-1"
                                         placeholder="Search by name, ID or department..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}

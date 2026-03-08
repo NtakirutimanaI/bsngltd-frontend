@@ -309,7 +309,7 @@ export function Payments() {
         <div className="card-body py-2">
           <div className="row g-2">
             <div className="col-md-6 col-lg-8 position-relative">
-              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ left: '0', width: '20px', height: '20px' }} />
+              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ right: '0', width: '20px', height: '20px' }} />
               <input
                 type="text"
                 placeholder="Search payments..."

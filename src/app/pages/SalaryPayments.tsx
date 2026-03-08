@@ -569,10 +569,10 @@ export function SalaryPayments() {
                             <div className="row g-3 align-items-center">
                                 <div className="col-md-4">
                                     <div className="position-relative">
-                                        <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={16} />
+                                        <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={16} />
                                         <input
                                             type="text"
-                                            className="form-control form-control-sm ps-5 py-2 border-light bg-light"
+                                            className="form-control form-control-sm ps-3 pe-5 py-2 border-light bg-light"
                                             placeholder="Search name, ID, or department..."
                                             value={employeeSearch}
                                             onChange={(e) => setEmployeeSearch(e.target.value)}
