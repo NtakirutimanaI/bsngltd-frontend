@@ -468,7 +468,7 @@ export function Dashboard() {
                       <div className="d-flex align-items-center justify-content-between">
                         <div>
                           <small className="text-muted text-uppercase fw-bold tracking-widest opacity-75 d-block text-truncate" style={{ fontSize: '9px' }}>{stat.name}</small>
-                          <h4 className="fw-bold text-dark mt-1 mb-0 fs-6 fs-md-4">{stat.value}</h4>
+                          <h4 className="fw-bold text-dark mt-1 mb-0 fs-5 fs-md-4 text-truncate">{stat.value}</h4>
                           <div className="d-flex align-items-center gap-1 mt-1">
                             <span className="status-grid-badge" style={{ backgroundColor: 'rgba(22, 160, 133, 0.15)', color: '#16a085', fontSize: '8px', padding: '1px 5px' }}>{stat.change}</span>
                           </div>

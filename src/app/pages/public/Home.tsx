@@ -104,14 +104,14 @@ export function Home() {
         minHeight: '75vh',
         position: 'relative'
       }}>
-        <div className="container-fluid h-100 d-flex flex-column justify-content-center" style={{ padding: '150px 50px 80px 50px' }}>
+        <div className="container-fluid h-100 d-flex flex-column justify-content-center py-5 px-3 px-md-5">
           <div className="row g-5 align-items-center flex-grow-1">
             <div className="col-lg-6 animated fadeIn" style={{ zIndex: 1 }}>
-              <h1 className="display-1 mb-4 animated slideInRight">
+              <h1 className="display-4 display-md-1 mb-4 animated slideInRight">
                 {heroTitle.split(' ').slice(0, 3).join(' ')} <br />
                 <span className="text-primary" style={{ color: '#16a085' }}>{heroTitle.split(' ').slice(3).join(' ')}</span>
               </h1>
-              <h5 className="d-inline-block border border-2 border-white py-3 px-5 mb-5 animated slideInRight uppercase">
+              <h5 className="d-inline-block border border-2 border-white py-2 py-md-3 px-3 px-md-5 mb-5 animated slideInRight uppercase" style={{ fontSize: 'clamp(0.8rem, 2vw, 1.25rem)' }}>
                 {heroSubtitle}
               </h5>
             </div>
@@ -119,7 +119,7 @@ export function Home() {
               <div className="position-relative d-flex align-items-center justify-content-end animated fadeIn">
                 {/* Background Teal Block */}
                 <div
-                  className="bg-primary position-absolute"
+                  className="bg-primary position-absolute d-none d-md-block"
                   style={{
                     width: '65%',
                     height: 'calc(100% + 80px)', // Height covers image plus 40px top and 40px bottom
@@ -130,9 +130,22 @@ export function Home() {
                     background: '#16a085'
                   }}
                 />
+                <div
+                  className="bg-primary position-absolute d-md-none"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    right: '0',
+                    top: '0',
+                    zIndex: 0,
+                    borderRadius: '2px',
+                    background: '#16a085',
+                    opacity: 0.1
+                  }}
+                />
 
                 {/* Image Container with Slider */}
-                <div className="position-relative z-index-1 w-100" style={{ paddingRight: '12%', left: '-60px' }}>
+                <div className="position-relative z-index-1 w-100 px-0 px-md-4" style={{ paddingRight: window.innerWidth < 768 ? '0' : '12%', left: window.innerWidth < 768 ? '0' : '-60px' }}>
                   <div className="overflow-hidden rounded shadow-lg" style={{ minHeight: '350px' }}>
                     {heroImages.map((image, index) => (
                       <img
