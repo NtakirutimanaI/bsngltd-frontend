@@ -121,9 +121,11 @@ export function RootLayout() {
     { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
   ];
 
+  const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
+  const isAdmin = ['super_admin', 'admin'].includes(normalizedRole);
+
   const navigation = allNavItems.filter(item => {
     if (item.roles.includes('all')) return true;
-    const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
     return item.roles.includes(normalizedRole);
   });
 
@@ -292,11 +294,13 @@ export function RootLayout() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/dashboard/settings?tab=profile')} style={{ border: 'none' }}>
-                  <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile
+                  <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/dashboard/settings')} style={{ border: 'none' }}>
-                  <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Settings
-                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/settings?tab=company')} style={{ border: 'none' }}>
+                    <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> System Settings
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600" style={{ border: 'none' }}>
                   <LogOut className="mr-2 h-4 w-4" /> Logout
