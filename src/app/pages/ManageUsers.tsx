@@ -49,7 +49,7 @@ const USER_CATEGORIES = [
     },
     {
         key: 'employees', label: 'Employees', icon: Briefcase, color: '#3b82f6',
-        roles: ['employee', 'manager', 'site_manager', 'editor', 'hr', 'accountant']
+        roles: ['employee', 'manager', 'site_manager', 'editor', 'content_editor', 'hr', 'accountant']
     },
     {
         key: 'partners', label: 'Partners & Investors', icon: Heart, color: '#8b5cf6',
@@ -67,6 +67,7 @@ const ALL_USER_ROLES = [
     { value: 'manager', label: 'Manager', group: 'Employees' },
     { value: 'site_manager', label: 'Site Manager', group: 'Employees' },
     { value: 'editor', label: 'Editor', group: 'Employees' },
+    { value: 'content_editor', label: 'Content Editor', group: 'Employees' },
     { value: 'employee', label: 'Employee', group: 'Employees' },
     { value: 'hr', label: 'HR', group: 'Employees' },
     { value: 'accountant', label: 'Accountant', group: 'Employees' },
@@ -86,7 +87,7 @@ const ALL_USER_ROLES = [
 function getRoleBadgeColor(userRole: string): string {
     const map: Record<string, string> = {
         super_admin: '#ef4444', admin: '#16a085', manager: '#eab308',
-        site_manager: '#84cc16', editor: '#06b6d4', employee: '#3b82f6',
+        site_manager: '#84cc16', editor: '#06b6d4', content_editor: '#10b981', employee: '#3b82f6',
         hr: '#8b5cf6', accountant: '#a855f7', partner: '#ec4899',
         investor: '#f43f5e', donor: '#d946ef', contractor: '#14b8a6',
         consultant: '#0ea5e9', client: '#10b981', general_user: '#6b7280',

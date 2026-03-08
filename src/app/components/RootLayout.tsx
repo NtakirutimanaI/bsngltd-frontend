@@ -116,8 +116,8 @@ export function RootLayout() {
     { name: "Insights", path: "/dashboard/insights", icon: BarChart3, roles: ['super_admin', 'admin', 'auditor'] },
     { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
     { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
-    { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr'] },
-    { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin'] },
+    { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
+    { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
   ];
