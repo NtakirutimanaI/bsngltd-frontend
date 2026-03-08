@@ -44,6 +44,7 @@ export function NotificationBell() {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center p-0 flex-shrink-0"
         title="Notifications"
@@ -63,6 +64,7 @@ export function NotificationBell() {
               <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Notifications</h3>
               {unreadCount > 0 && (
                 <button
+                  type="button"
                   onClick={markAllAsRead}
                   className="text-xs text-emerald-600 hover:text-emerald-500 font-bold transition-colors"
                 >
@@ -106,6 +108,7 @@ export function NotificationBell() {
                         <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-2 font-medium">{notification.time}</p>
                       </div>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           deleteNotification(notification.id);
@@ -122,6 +125,7 @@ export function NotificationBell() {
 
             <div className="p-3 bg-gray-50/50 dark:bg-gray-800/50 text-center border-t border-gray-200 dark:border-gray-800">
               <button
+                type="button"
                 onClick={() => {
                   setIsOpen(false);
                   navigate('/dashboard/notifications');

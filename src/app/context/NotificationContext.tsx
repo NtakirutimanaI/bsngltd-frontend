@@ -30,7 +30,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             type: "info",
             time: "5 minutes ago",
             read: false,
-            link: "/dashboard/projects"
+            link: "/dashboard/portfolio"
         },
         {
             id: "2",
@@ -39,7 +39,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             type: "success",
             time: "1 hour ago",
             read: false,
-            link: "/dashboard/payments"
+            link: "/dashboard/finance"
         },
         {
             id: "3",
@@ -48,7 +48,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             type: "warning",
             time: "2 hours ago",
             read: false,
-            link: "/dashboard/reports"
+            link: "/dashboard/insights"
         },
         {
             id: "4",
@@ -57,7 +57,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             type: "error",
             time: "3 hours ago",
             read: true,
-            link: "/dashboard/payments"
+            link: "/dashboard/finance"
         },
         {
             id: "5",
