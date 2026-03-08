@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import { fetchApi, getImageUrl } from '@/app/api/client';
 import { useLanguage } from '@/app/context/LanguageContext';
-import { MapPin, Building2, HardHat, Wallet, Check, Phone, Facebook, Twitter, Instagram } from 'lucide-react';
+import { MapPin, Building2, HardHat, Wallet, Check, Phone, Facebook, Twitter, Instagram, ArrowRight, Calendar, Clock } from 'lucide-react';
 
 interface Property {
   id: string;
@@ -20,6 +20,26 @@ interface Property {
   isForRent: boolean;
   code: string;
   status: string;
+}
+
+interface LatestUpdate {
+  id: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  category: string;
+}
+
+interface UpcomingEvent {
+  id: string;
+  title: string;
+  type: string;
+  date: string;
+  time: string;
+  location?: string;
+  description: string;
+  project?: string;
 }
 
 export function Home() {
@@ -40,6 +60,8 @@ export function Home() {
   }, []);
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [latestUpdates, setLatestUpdates] = useState<LatestUpdate[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [settings, setSettings] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
   const { t, dt, language } = useLanguage();
@@ -47,13 +69,18 @@ export function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [propRes, settingsRes, contentRes] = await Promise.all([
-          fetchApi<any>(`/properties?limit=6`),
-          fetchApi<any[]>('/settings/public'),
-          fetchApi<any[]>('/content/public?section=hero')
+        const cacheBuster = `t=${Date.now()}`;
+        const [propRes, settingsRes, contentRes, updatesRes, eventsRes] = await Promise.all([
+          fetchApi<any>(`/properties?limit=6&${cacheBuster}`),
+          fetchApi<any[]>(`/settings/public?${cacheBuster}`),
+          fetchApi<any[]>(`/content/public?section=hero&${cacheBuster}`),
+          fetchApi<any>(`/updates?limit=3&${cacheBuster}`),
+          fetchApi<any[]>(`/events?public=true&${cacheBuster}`)
         ]);
 
         setAllProperties(propRes.data || []);
+        setLatestUpdates(updatesRes.data || []);
+        setUpcomingEvents(eventsRes || []);
 
         const s: any = {};
         settingsRes.forEach(item => { s[item.key] = item.value; });
@@ -228,6 +255,122 @@ export function Home() {
       </div>
       {/* Hero End */}
 
+      {/* Latest Updates Start - Container with clear spacing */}
+      <div className="container-fluid py-5 bg-white shadow-sm" style={{ clear: 'both', position: 'relative', zIndex: 5 }}>
+        <div className="container-fluid px-4 px-md-5">
+          <div className="d-flex justify-content-between align-items-end mb-4">
+            <div>
+              <h1 className="mb-2">{t('latestUpdates').split(' ')[0]} <span className="text-uppercase text-primary bg-light px-2">{t('latestUpdates').split(' ')[1]}</span></h1>
+              <p className="text-muted mb-0">{t('stayInformed')}</p>
+            </div>
+            <Link to="/updates" className="btn btn-outline-primary rounded-pill px-4 py-2 d-none d-md-flex align-items-center gap-2 font-bold text-xs uppercase transition-all hover:scale-105 active:scale-95">
+              {t('viewAll')} <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="row g-4">
+            {latestUpdates.map((update, index) => (
+              <div key={update.id} className="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay={`${0.1 * (index + 1)}s`}>
+                <div className="project-item position-relative overflow-hidden" style={{ height: '350px' }}>
+                  <img
+                    key={`update-${update.id}-${index}`}
+                    className="img-fluid w-100 h-100 transition-transform duration-500 transform hover:scale-110"
+                    src={getImageUrl(update.image) || `/img/project-${(index % 6) + 1}.jpg`}
+                    alt={dt(update.title)}
+                    style={{ objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('/img/project-')) {
+                        console.log(`Update image fail: ${update.title}`);
+                        target.src = `/img/project-${(index % 6) + 1}.jpg`;
+                        target.onerror = null;
+                      }
+                    }}
+                  />
+                  <Link to={`/updates/${update.id}`} className="project-overlay d-flex flex-column justify-content-end p-4 text-decoration-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent)' }}>
+                    <div className="d-flex align-items-center gap-2 text-white-50 mb-2" style={{ fontSize: '11px' }}>
+                      <Calendar size={12} className="text-primary" />
+                      <span className="font-bold uppercase tracking-tight">
+                        {new Date(update.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : (language === 'rw' ? 'rw-RW' : 'en-US'), { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      <span className="badge bg-primary text-white text-[8px] px-2 py-0.5 rounded-pill uppercase ms-auto">
+                        {update.category}
+                      </span>
+                    </div>
+                    <h4 className="text-white mb-2 fw-bold line-clamp-2">{dt(update.title)}</h4>
+                    <p className="text-white-50 small mb-0 line-clamp-2">
+                      {dt(update.excerpt)}
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            ))}
+            {latestUpdates.length === 0 && !isLoading && (
+              <div className="col-12 text-center py-5 text-muted border rounded bg-light">
+                {t('noUpdatesFound')}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {/* Latest Updates End */}
+
+      {/* Upcoming Events Start */}
+      {upcomingEvents.length > 0 && (
+        <div className="container-fluid py-5 bg-light">
+          <div className="container-fluid px-4 px-md-5">
+            <div className="d-flex justify-content-between align-items-end mb-4">
+              <div>
+                <h1 className="mb-2"><span className="text-uppercase text-primary bg-white px-2">{t('upcomingEvents').split(' ')[0]}</span> {t('upcomingEvents').split(' ').slice(1).join(' ')}</h1>
+                <p className="text-muted mb-0">{t('joinOurEvents')}</p>
+              </div>
+            </div>
+            <div className="row g-4 overflow-auto pb-4 flex-nowrap flex-md-wrap">
+              {upcomingEvents.map((event) => (
+                <div key={event.id} className="col-11 col-md-6 col-lg-4 flex-shrink-0 flex-md-shrink-1">
+                  <div className="bg-white p-4 rounded-xl shadow-sm border-start border-primary border-4 h-100 transition-all hover:shadow-lg hover:-translate-y-1">
+                    <div className="d-flex gap-4">
+                      <div className="bg-primary text-white p-3 rounded-xl text-center flex-shrink-0" style={{ minWidth: '70px', height: 'fit-content' }}>
+                        <div className="h4 mb-0 fw-bold">{new Date(event.date).getDate()}</div>
+                        <div className="text-[10px] text-uppercase font-bold opacity-80">{new Date(event.date).toLocaleDateString('en-US', { month: 'short' })}</div>
+                      </div>
+                      <div className="flex-fill">
+                        <div className="d-flex align-items-center gap-2 mb-2">
+                          <span className={`badge ${event.type === 'meeting' ? 'bg-blue-100 text-blue-600' :
+                            event.type === 'inspection' ? 'bg-emerald-100 text-emerald-600' :
+                              event.type === 'delivery' ? 'bg-green-100 text-green-600' :
+                                'bg-red-100 text-red-600'
+                            } text-[10px] uppercase font-bold px-2 py-1`}>
+                            {event.type}
+                          </span>
+                          <span className="text-muted text-[10px] fw-bold d-flex align-items-center gap-1">
+                            <Clock size={10} /> {event.time}
+                          </span>
+                        </div>
+                        <h5 className="fw-bold mb-2 text-dark">{event.title}</h5>
+                        <p className="text-muted small line-clamp-2 mb-3">{event.description}</p>
+                        {event.location && (
+                          <div className="d-flex align-items-center gap-2 text-muted text-[11px] mb-2">
+                            <MapPin size={12} className="text-primary" />
+                            <span>{event.location}</span>
+                          </div>
+                        )}
+                        {event.project && (
+                          <div className="d-flex align-items-center gap-2 text-muted text-[11px]">
+                            <Building2 size={12} className="text-primary" />
+                            <span>{event.project}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Upcoming Events End */}
       {/* About Start */}
       <div className="container-fluid py-5">
         <div className="container-fluid px-4 px-md-5">
@@ -299,7 +442,7 @@ export function Home() {
           <div className="row g-0">
             <div className="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
               <div className="d-flex flex-column justify-content-center bg-primary h-100 p-5">
-                <h1 className="text-white mb-5">{t('latestUpdates')} <span className="text-uppercase text-primary bg-light px-2">{t('properties')}</span></h1>
+                <h1 className="text-white mb-5">{t('featuredProperties').split(' ')[0]} <span className="text-uppercase text-primary bg-light px-2">{t('featuredProperties').split(' ')[1]}</span></h1>
                 <h4 className="text-white mb-0"><span className="display-1">{allProperties.length || 6}</span> {t('propertiesFound')}</h4>
               </div>
             </div>
@@ -332,7 +475,13 @@ export function Home() {
                 {allProperties.map((property, index) => (
                   <div key={property.id} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.2 + index * 0.1}s`}>
                     <div className="project-item position-relative overflow-hidden" style={{ height: '300px' }}>
-                      <img className="img-fluid w-100 h-100" src={getImageUrl(property.image) || `/img/project-${(index % 6) + 1}.jpg`} alt={dt(property.title)} style={{ objectFit: 'cover' }} />
+                      <img
+                        className="img-fluid w-100 h-100"
+                        src={getImageUrl(property.image) || `/img/project-${(index % 6) + 1}.jpg`}
+                        alt={dt(property.title)}
+                        style={{ objectFit: 'cover' }}
+                        onError={(e) => { (e.target as HTMLImageElement).src = `/img/project-${(index % 6) + 1}.jpg`; }}
+                      />
                       <Link className="project-overlay d-flex flex-column justify-content-end p-4 text-decoration-none" to={`/properties/${property.id}`} style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
                         <h4 className="text-white mb-1 fw-bold">{dt(property.title)}</h4>
                         <small className="text-white-50 d-flex align-items-center gap-1">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,6 +9,9 @@ import {
   Building2,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { fetchApi } from "../api/client";
+import { AddEventModal } from "../components/AddEventModal";
+import { Trash2, Globe, Lock } from "lucide-react";
 
 interface Event {
   id: string;
@@ -20,65 +23,52 @@ interface Event {
   attendees?: string[];
   project?: string;
   description: string;
+  isPublished?: boolean;
 }
 
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const events: Event[] = [
-    {
-      id: "1",
-      title: "Project Kickoff Meeting",
-      type: "meeting",
-      date: "2024-02-15",
-      time: "10:00 AM",
-      location: "BSNG Head Office",
-      attendees: ["Jean Baptiste", "Marie Claire", "Client Team"],
-      project: "Kigali Heights Tower",
-      description: "Initial project planning and requirements gathering",
-    },
-    {
-      id: "2",
-      title: "Site Inspection",
-      type: "inspection",
-      date: "2024-02-18",
-      time: "2:00 PM",
-      location: "Green Valley, Musanze",
-      attendees: ["Patrick Nkunda", "Engineering Team"],
-      project: "Green Valley Estates",
-      description: "Monthly progress inspection and quality check",
-    },
-    {
-      id: "3",
-      title: "Material Delivery",
-      type: "delivery",
-      date: "2024-02-20",
-      time: "8:00 AM",
-      location: "City Center Complex Site",
-      project: "City Center Complex",
-      description: "Steel beams and cement delivery",
-    },
-    {
-      id: "4",
-      title: "Payment Deadline",
-      type: "deadline",
-      date: "2024-02-25",
-      time: "5:00 PM",
-      project: "Nyarutarama Villas",
-      description: "Contractor payment due",
-    },
-    {
-      id: "5",
-      title: "Client Presentation",
-      type: "meeting",
-      date: "2024-02-22",
-      time: "11:00 AM",
-      location: "Client Office",
-      attendees: ["Marie Claire", "Design Team"],
-      project: "Rubavu Beach Resort",
-      description: "Present updated architectural designs",
-    },
-  ];
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchApi<Event[]>(`/events?t=${Date.now()}`);
+      setEvents(data || []);
+    } catch (err) {
+      console.error("Failed to load events", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this event?")) return;
+    try {
+      await fetchApi(`/events/${id}`, { method: 'DELETE' });
+      loadEvents();
+    } catch (err) {
+      console.error("Failed to delete event", err);
+    }
+  };
+
+  const handleEdit = (event: Event) => {
+    setEditingEvent(event);
+    setIsModalOpen(true);
+  };
+
+  const handleAdd = () => {
+    setEditingEvent(null);
+    setIsModalOpen(true);
+  };
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -162,9 +152,11 @@ export function Calendar() {
           <h1 className="h5 fw-bold text-dark mb-0">Schedule & Calendar</h1>
           <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage project timelines and important dates</p>
         </div>
-        <button className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1" style={{
-          background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
-        }}>
+        <button
+          onClick={handleAdd}
+          className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1" style={{
+            background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
+          }}>
           <Plus size={13} /> Add Event
         </button>
       </ScrollReveal>
@@ -272,18 +264,33 @@ export function Calendar() {
                 {events
                   .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                   .slice(0, 5)
-                  .map((event, index) => (
-                    <ScrollReveal
+                  .map((event) => (
+                    <div
                       key={event.id}
-                      delay={0.3 + index * 0.1}
-                      className="p-2 border border-secondary-subtle rounded hover:border-warning transition-all cursor-pointer small"
+                      onClick={() => handleEdit(event)}
+                      className="p-2 border border-secondary-subtle rounded hover:border-warning transition-all cursor-pointer small position-relative group"
                     >
+                      <div className="position-absolute top-2 end-2 d-none group-hover:flex gap-1">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDelete(event.id); }}
+                          className="btn btn-xs btn-light p-1 text-danger border shadow-sm"
+                        >
+                          <Trash2 size={10} />
+                        </button>
+                      </div>
                       <div className="d-flex align-items-start gap-2">
                         <div className="fs-6">{getTypeIcon(event.type)}</div>
                         <div className="flex-fill">
-                          <h4 className="fw-medium text-dark mb-1" style={{ fontSize: '12px' }}>
-                            {event.title}
-                          </h4>
+                          <div className="d-flex align-items-center justify-content-between">
+                            <h4 className="fw-medium text-dark mb-1" style={{ fontSize: '12px' }}>
+                              {event.title}
+                            </h4>
+                            {event.isPublished ? (
+                              <Globe size={10} className="text-emerald-500" />
+                            ) : (
+                              <Lock size={10} className="text-gray-400" />
+                            )}
+                          </div>
                           <div className="d-flex flex-column gap-1">
                             <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '10px' }}>
                               <CalendarIcon size={10} />
@@ -308,13 +315,31 @@ export function Calendar() {
                           </div>
                         </div>
                       </div>
-                    </ScrollReveal>
+                    </div>
                   ))}
+                {events.length === 0 && !loading && (
+                  <div className="text-center py-5 text-muted small">
+                    <CalendarIcon size={24} className="mb-2 opacity-20" />
+                    <div>No upcoming events found</div>
+                  </div>
+                )}
+                {loading && (
+                  <div className="text-center py-5">
+                    <div className="spinner-border spinner-border-sm text-primary opacity-50" role="status"></div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </ScrollReveal>
       </div>
+
+      <AddEventModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={loadEvents}
+        editingEvent={editingEvent}
+      />
 
       {/* Event Legend */}
       <ScrollReveal delay={0.3} className="mx-2 mx-md-4">

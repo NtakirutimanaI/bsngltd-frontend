@@ -61,7 +61,7 @@ export function PropertyDetails() {
       description?: string;
     }
 
-    fetchApi<ApiProperty>(`/properties/${id}`)
+    fetchApi<ApiProperty>(`/properties/${id}?t=${Date.now()}`)
       .then(p => {
         const mappedProperty: Property = {
           id: p.id,
@@ -139,11 +139,33 @@ export function PropertyDetails() {
               {/* Property Image Gallery */}
               <div className="row g-3 mb-5">
                 <div className="col-12 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid w-100 rounded" src={property.images[0]} alt={property.title} style={{ height: '450px', objectFit: 'cover' }} />
+                  <img
+                    className="img-fluid w-100 rounded"
+                    src={property.images[0]}
+                    alt={property.title}
+                    style={{ height: '450px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('/img/project-')) {
+                        target.src = '/img/project-1.jpg';
+                      }
+                    }}
+                  />
                 </div>
                 {property.images.slice(1, 3).map((img, idx) => (
                   <div key={idx} className="col-6 wow fadeIn" data-wow-delay={`${0.1 * (idx + 2)}s`}>
-                    <img className="img-fluid w-100 rounded" src={img} alt={`${property.title} ${idx + 2}`} style={{ height: '220px', objectFit: 'cover' }} />
+                    <img
+                      className="img-fluid w-100 rounded"
+                      src={img}
+                      alt={`${property.title} ${idx + 2}`}
+                      style={{ height: '220px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (!target.src.includes('/img/project-')) {
+                          target.src = `/img/project-${idx + 2}.jpg`;
+                        }
+                      }}
+                    />
                   </div>
                 ))}
               </div>
