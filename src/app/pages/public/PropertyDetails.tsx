@@ -97,7 +97,7 @@ export function PropertyDetails() {
       navigate('/login', { state: { returnUrl: `/properties/${id}` } });
       return;
     }
-    setIsPaymentFloatingOpen(true);
+    setIsBookingOpen(true);
   };
 
   if (!property) {

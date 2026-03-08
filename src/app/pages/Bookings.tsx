@@ -6,6 +6,7 @@ import {
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from '../api/client';
 import { useLanguage } from "@/app/context/LanguageContext";
+import { useAuth } from "@/app/context/AuthContext";
 
 interface Booking {
     id: string;
@@ -34,20 +35,24 @@ interface Booking {
 
 export function Bookings() {
     const { dt } = useLanguage();
+    const { user } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
+    const isAdmin = user?.role === 'super_admin' || user?.role === 'admin' || user?.role === 'manager';
+
     useEffect(() => {
         loadBookings();
-    }, []);
+    }, [user]);
 
     const loadBookings = async () => {
         try {
             setIsLoading(true);
-            const data = await fetchApi<Booking[]>('/bookings');
+            const query = isAdmin ? '' : `?userId=${user?.id}`;
+            const data = await fetchApi<Booking[]>(`/bookings${query}`);
             setBookings(data);
         } catch (error) {
             console.error("Failed to load bookings:", error);
@@ -75,6 +80,7 @@ export function Bookings() {
         switch (status) {
             case 'confirmed': return { bg: 'bg-success', text: 'text-success', light: 'bg-success-subtle' };
             case 'cancelled': return { bg: 'bg-danger', text: 'text-danger', light: 'bg-danger-subtle' };
+            case 'rejected': return { bg: 'bg-danger', text: 'text-danger', light: 'bg-danger-subtle' };
             default: return { bg: 'bg-warning', text: 'text-warning', light: 'bg-warning-subtle' };
         }
     };
@@ -83,6 +89,7 @@ export function Bookings() {
         switch (status) {
             case 'confirmed': return <CheckCircle size={14} />;
             case 'cancelled': return <XCircle size={14} />;
+            case 'rejected': return <XCircle size={14} />;
             default: return <Clock size={14} />;
         }
     };
@@ -107,7 +114,7 @@ export function Bookings() {
         total: bookings.length,
         pending: bookings.filter(b => b.status === 'pending').length,
         confirmed: bookings.filter(b => b.status === 'confirmed').length,
-        cancelled: bookings.filter(b => b.status === 'cancelled').length,
+        cancelled: bookings.filter(b => b.status === 'cancelled' || b.status === 'rejected').length,
     };
 
     if (isLoading) {
@@ -178,7 +185,7 @@ export function Bookings() {
                             <div className="col-md-6">
                                 <div className="d-flex gap-2 align-items-center">
                                     <Filter size={16} className="text-muted" />
-                                    {['all', 'pending', 'confirmed', 'cancelled'].map(status => (
+                                    {['all', 'pending', 'confirmed', 'cancelled', 'rejected'].map(status => (
                                         <button
                                             key={status}
                                             onClick={() => setStatusFilter(status)}
@@ -244,7 +251,7 @@ export function Bookings() {
                                                         )}
                                                     </td>
                                                     <td className="py-3">
-                                                        <span className={`badge ${booking.bookingType === 'sale' ? 'bg-success' : 'bg-primary'} x-small text-capitalize`}>
+                                                        <span className={`badge ${booking.bookingType === 'sale' ? 'bg-success' : (booking.bookingType === 'rent' ? 'bg-primary' : 'bg-info')} x-small text-capitalize`}>
                                                             {booking.bookingType || 'rent'}
                                                         </span>
                                                     </td>
@@ -269,7 +276,7 @@ export function Bookings() {
                                                     </td>
                                                     <td className="pe-3 py-3 text-end" onClick={(e) => e.stopPropagation()}>
                                                         <div className="d-flex gap-1 justify-content-end">
-                                                            {booking.status === 'pending' && (
+                                                            {isAdmin && booking.status === 'pending' && (
                                                                 <>
                                                                     <button
                                                                         onClick={() => updateStatus(booking.id, 'confirmed')}
@@ -279,15 +286,15 @@ export function Bookings() {
                                                                         <CheckCircle size={12} /> Confirm
                                                                     </button>
                                                                     <button
-                                                                        onClick={() => updateStatus(booking.id, 'cancelled')}
+                                                                        onClick={() => updateStatus(booking.id, 'rejected')}
                                                                         className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-                                                                        title="Cancel"
+                                                                        title="Reject"
                                                                     >
-                                                                        <XCircle size={12} />
+                                                                        <XCircle size={12} /> Reject
                                                                     </button>
                                                                 </>
                                                             )}
-                                                            {booking.status === 'confirmed' && (
+                                                            {isAdmin && booking.status === 'confirmed' && (
                                                                 <button
                                                                     onClick={() => updateStatus(booking.id, 'cancelled')}
                                                                     className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
@@ -295,13 +302,11 @@ export function Bookings() {
                                                                     <XCircle size={12} /> Cancel
                                                                 </button>
                                                             )}
-                                                            {booking.status === 'cancelled' && (
-                                                                <button
-                                                                    onClick={() => updateStatus(booking.id, 'pending')}
-                                                                    className="btn btn-sm btn-outline-warning d-flex align-items-center gap-1"
-                                                                >
-                                                                    <Clock size={12} /> Reopen
-                                                                </button>
+                                                            {!isAdmin && booking.status === 'pending' && (
+                                                                <span className="text-muted x-small italic text-uppercase">Waiting for review</span>
+                                                            )}
+                                                            {!isAdmin && booking.status === 'confirmed' && (
+                                                                <span className="text-success x-small fw-bold text-uppercase">Approved</span>
                                                             )}
                                                         </div>
                                                     </td>
@@ -427,40 +432,34 @@ export function Bookings() {
                                 )}
 
                                 {/* Actions */}
-                                <div className="d-flex gap-2">
-                                    {selectedBooking.status === 'pending' && (
-                                        <>
-                                            <button
-                                                onClick={() => updateStatus(selectedBooking.id, 'confirmed')}
-                                                className="btn btn-success flex-fill d-flex align-items-center justify-content-center gap-2"
-                                            >
-                                                <CheckCircle size={16} /> Confirm Viewing
-                                            </button>
+                                {isAdmin && (
+                                    <div className="d-flex gap-2">
+                                        {selectedBooking.status === 'pending' && (
+                                            <>
+                                                <button
+                                                    onClick={() => updateStatus(selectedBooking.id, 'confirmed')}
+                                                    className="btn btn-success flex-fill d-flex align-items-center justify-content-center gap-2"
+                                                >
+                                                    <CheckCircle size={16} /> Confirm Viewing
+                                                </button>
+                                                <button
+                                                    onClick={() => updateStatus(selectedBooking.id, 'rejected')}
+                                                    className="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2"
+                                                >
+                                                    <XCircle size={16} /> Reject
+                                                </button>
+                                            </>
+                                        )}
+                                        {selectedBooking.status === 'confirmed' && (
                                             <button
                                                 onClick={() => updateStatus(selectedBooking.id, 'cancelled')}
-                                                className="btn btn-outline-danger d-flex align-items-center justify-content-center gap-2"
+                                                className="btn btn-outline-danger flex-fill d-flex align-items-center justify-content-center gap-2"
                                             >
-                                                <XCircle size={16} /> Cancel
+                                                <XCircle size={16} /> Cancel Viewing
                                             </button>
-                                        </>
-                                    )}
-                                    {selectedBooking.status === 'confirmed' && (
-                                        <button
-                                            onClick={() => updateStatus(selectedBooking.id, 'cancelled')}
-                                            className="btn btn-outline-danger flex-fill d-flex align-items-center justify-content-center gap-2"
-                                        >
-                                            <XCircle size={16} /> Cancel Viewing
-                                        </button>
-                                    )}
-                                    {selectedBooking.status === 'cancelled' && (
-                                        <button
-                                            onClick={() => updateStatus(selectedBooking.id, 'pending')}
-                                            className="btn btn-outline-warning flex-fill d-flex align-items-center justify-content-center gap-2"
-                                        >
-                                            <Clock size={16} /> Reopen Booking
-                                        </button>
-                                    )}
-                                </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ import { X, Users, Mail, Phone, Calendar, Send, Check, GripVertical, CreditCard,
 import { useLanguage } from '@/app/context/LanguageContext';
 import { fetchApi } from '@/app/api/client';
 import { useCurrency } from '@/app/context/CurrencyContext';
+import { useAuth } from '@/app/context/AuthContext';
 
 type BookingStep = 'form' | 'payment_method' | 'payment_details' | 'success';
 type PaymentMethod = 'momo' | 'bank' | 'cash' | null;
@@ -18,15 +19,16 @@ interface BookingFloatingFormProps {
 
 export function BookingFloatingForm({ propertyId, serviceId, title, type, amount, onClose }: BookingFloatingFormProps) {
     const { t } = useLanguage();
+    const { user } = useAuth();
     const { formatPrice } = useCurrency();
     const [step, setStep] = useState<BookingStep>('form');
     const [bookingId, setBookingId] = useState<string | null>(null);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>(null);
 
     const [bookingData, setBookingData] = useState({
-        name: '',
-        email: '',
-        phone: '',
+        name: user?.fullName || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
         date: '',
         message: '',
     });
@@ -84,6 +86,7 @@ export function BookingFloatingForm({ propertyId, serviceId, title, type, amount
                     ...bookingData,
                     propertyId,
                     serviceId,
+                    userId: user?.id,
                     bookingType: type,
                     amount: amount
                 }),
