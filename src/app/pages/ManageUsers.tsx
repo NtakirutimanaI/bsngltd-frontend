@@ -42,7 +42,7 @@ interface UserFormData {
 }
 
 const USER_CATEGORIES = [
-    { key: 'all', label: 'All Users', icon: Users, color: '#f97316' },
+    { key: 'all', label: 'All Users', icon: Users, color: '#16a085' },
     {
         key: 'administration', label: 'Administration', icon: Shield, color: '#ef4444',
         roles: ['super_admin', 'admin']
@@ -85,7 +85,7 @@ const ALL_USER_ROLES = [
 
 function getRoleBadgeColor(userRole: string): string {
     const map: Record<string, string> = {
-        super_admin: '#ef4444', admin: '#f97316', manager: '#eab308',
+        super_admin: '#ef4444', admin: '#16a085', manager: '#eab308',
         site_manager: '#84cc16', editor: '#06b6d4', employee: '#3b82f6',
         hr: '#8b5cf6', accountant: '#a855f7', partner: '#ec4899',
         investor: '#f43f5e', donor: '#d946ef', contractor: '#14b8a6',

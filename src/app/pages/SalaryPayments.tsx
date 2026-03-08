@@ -337,7 +337,7 @@ export function SalaryPayments() {
             <ScrollReveal delay={0.05}>
                 <div className="row g-3 mb-4">
                     <div className="col-md-3">
-                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' }}>
+                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #16a085 0%, #0e6655 100%)' }}>
                             <div className="card-body d-flex align-items-center gap-3 py-3">
                                 <div className="rounded-circle bg-white bg-opacity-25 p-2 d-flex align-items-center justify-content-center" style={{ width: 44, height: 44 }}>
                                     <Users color="white" size={22} />
