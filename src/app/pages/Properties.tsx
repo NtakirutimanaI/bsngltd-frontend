@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, MapPin, Maximize2, Plus, Search, Filter, Eye, Edit2 } from "lucide-react";
+import { Home, MapPin, Maximize2, Plus, Search, Filter, Eye, Edit2, Building, LandPlot, Store } from "lucide-react";
 import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { useLanguage } from "@/app/context/LanguageContext";
@@ -91,18 +91,13 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: string, size: number = 24) => {
     switch (type) {
-      case "house":
-        return "🏡";
-      case "apartment":
-        return "🏢";
-      case "plot":
-        return "🏞️";
-      case "commercial":
-        return "🏪";
-      default:
-        return "🏠";
+      case "house": return <Home size={size} className="text-emerald-600" />;
+      case "apartment": return <Building size={size} className="text-blue-600" />;
+      case "plot": return <LandPlot size={size} className="text-orange-600" />;
+      case "commercial": return <Store size={size} className="text-teal-600" />;
+      default: return <Home size={size} className="text-gray-500" />;
     }
   };
 
@@ -204,8 +199,10 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
               delay={index * 0.1}
               className="card border-0 shadow-sm h-100 overflow-hidden"
             >
-              <div className="position-relative d-flex align-items-center justify-content-center bg-light" style={{ height: '150px' }}>
-                <div className="display-4">{getTypeIcon(property.type)}</div>
+              <div className="position-relative d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 border-bottom border-gray-100 dark:border-gray-700" style={{ height: '150px' }}>
+                <div className="bg-white dark:bg-gray-900 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
+                  {getTypeIcon(property.type, 32)}
+                </div>
                 <div className="position-absolute top-0 end-0 m-3">
                   <span
                     className={`badge ${getStatusColor(
@@ -337,8 +334,10 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
       <Modal isOpen={!!selectedProperty} onClose={() => setSelectedProperty(null)} title="Property Details" size="md" draggable={true}>
         {selectedProperty && (
           <div className="flex flex-col gap-2">
-            <div className="position-relative d-flex align-items-center justify-content-center bg-gray-900 rounded overflow-hidden" style={{ height: '120px' }}>
-              <div className="display-4">{getTypeIcon(selectedProperty.type)}</div>
+            <div className="position-relative d-flex align-items-center justify-content-center bg-gray-900 rounded overflow-hidden" style={{ height: '120px', background: '#16a085' }}>
+              <div className="bg-white/20 p-3 rounded-xl shadow-sm">
+                {getTypeIcon(selectedProperty.type, 36)}
+              </div>
               <div className="position-absolute bottom-0 start-0 m-3 text-white">
                 <span className={`badge ${getStatusColor(selectedProperty.status)} mb-1`} style={{ fontSize: '0.7rem' }}>
                   {selectedProperty.status.toUpperCase()}

@@ -13,6 +13,10 @@ import {
   Eye,
   Edit,
   Trash2,
+  HardHat,
+  Wrench,
+  LandPlot,
+  ClipboardList,
 } from "lucide-react";
 import { AddProjectModal } from "@/app/components/AddProjectModal";
 import { fetchApi } from '../api/client';
@@ -136,13 +140,13 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
     }
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type: string, size: number = 24) => {
     switch (type) {
-      case "construction": return "🏗️";
-      case "renovation": return "🔧";
-      case "plot_sale": return "🏞️";
-      case "rental": return "🏠";
-      default: return "📋";
+      case "construction": return <HardHat size={size} className="text-emerald-600" />;
+      case "renovation": return <Wrench size={size} className="text-blue-600" />;
+      case "plot_sale": return <LandPlot size={size} className="text-orange-600" />;
+      case "rental": return <Building2 size={size} className="text-teal-600" />;
+      default: return <ClipboardList size={size} className="text-gray-500" />;
     }
   };
 
@@ -217,7 +221,9 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
               <div className="card-body">
                 <div className="d-flex align-items-start justify-content-between mb-3">
                   <div className="d-flex align-items-center gap-2">
-                    <div className="display-6 me-2">{getTypeIcon(project.type)}</div>
+                    <div className="me-2 d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 rounded-3 shadow-sm border border-gray-100 dark:border-gray-700" style={{ width: '48px', height: '48px' }}>
+                      {getTypeIcon(project.type, 22)}
+                    </div>
                     <div>
                       <h5 className="card-title fw-bold text-dark mb-0">{project.name}</h5>
                       <small className="text-muted">{project.code}</small>
@@ -361,9 +367,11 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
       <Modal isOpen={!!selectedProject} onClose={() => setSelectedProject(null)} title="Project Details" size="md" draggable={true}>
         {selectedProject && (
           <div className="flex flex-col gap-4">
-            <div className="bg-primary p-2 rounded text-white flex justify-between items-center shrink-0">
+            <div className="bg-primary p-3 rounded text-white flex justify-between items-center shrink-0" style={{ background: '#16a085' }}>
               <div className="d-flex align-items-center gap-3">
-                <div className="text-3xl bg-white/20 p-2 rounded-xl">{getTypeIcon(selectedProject.type)}</div>
+                <div className="bg-white/20 p-3 rounded-xl d-flex align-items-center justify-content-center">
+                  {getTypeIcon(selectedProject.type, 28)}
+                </div>
                 <div>
                   <h4 className="fw-bold mb-0 text-white">{selectedProject.name}</h4>
                   <p className="opacity-75 mb-0 small text-white">{selectedProject.code}</p>
