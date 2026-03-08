@@ -25,10 +25,13 @@ import {
 } from "recharts";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useTheme } from "@/app/context/ThemeContext";
+import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   const { theme } = useTheme();
-  const quarterlyRevenue = [
+  
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+const quarterlyRevenue = [
     { quarter: "Q1 2023", revenue: 120, expenses: 85, profit: 35 },
     { quarter: "Q2 2023", revenue: 145, expenses: 95, profit: 50 },
     { quarter: "Q3 2023", revenue: 160, expenses: 105, profit: 55 },
@@ -69,6 +72,8 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
 
   return (
     <div className="space-y-6">
+            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+
       {/* Header */}
       {!hideHeader && (
         <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

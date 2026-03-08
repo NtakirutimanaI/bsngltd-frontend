@@ -17,16 +17,21 @@ import { useAuth } from "@/app/context/AuthContext";
 // Components (Assuming we keep old logic or import it)
 import { Projects } from "./Projects";
 import { Properties } from "./Properties";
+import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 export function Portfolio() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState<'projects' | 'properties'>('projects');
 
-    const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
+    
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const canAdd = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
     return (
         <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+            <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+
             {/* Header */}
             <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
                 <div>
@@ -37,7 +42,7 @@ export function Portfolio() {
                     {canAdd && (
                         <button
                             className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
-                        >
+                         onClick={() => setIsExportModalOpen(true)}>
                             <Plus size={14} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
                         </button>
                     )}
