@@ -118,6 +118,8 @@ const translations: Translations = {
   contactUsMessage: { en: 'Contact us today for a free consultation and quote', rw: 'Twandikire uyu munsi dufatanye umushinga', sw: 'Wasiliana nasi leo kwa ushauri bure', fr: 'Contactez-nous aujourd\'hui pour une consultation gratuite' },
   dreamProperty: { en: 'Dream Property', rw: 'Inzu y\'Inzozi', sw: 'Mali ya Ndoto', fr: 'Propriété de Rêve' },
   availableCollection: { en: 'Available Collection', rw: 'Urutonde ruhari', sw: 'Mkusanyiko Unaopatikana', fr: 'Collection Disponible' },
+  upcomingEvents: { en: 'Upcoming Events', rw: 'Ibirori Bitegerejwe', sw: 'Matukio Yajayo', fr: 'Événements à Venir' },
+  joinOurEvents: { en: 'Join our upcoming site inspections, meetings and community events', rw: 'Iyunge natwe mu birori, inama n\'ibindi bikorwa', sw: 'Jiunge na matukio yetu yajayo', fr: 'Rejoignez nos prochains événements' },
 
   // About Page
   aboutBsng: { en: 'About BSNG Ltd', rw: 'Ibyerekeye BSNG Ltd', sw: 'Kuhusu BSNG Ltd', fr: 'À propos de BSNG Ltd' },
@@ -281,6 +283,8 @@ const translations: Translations = {
   allUpdates: { en: 'All Updates', rw: 'Amakuru Yose', sw: 'Taarifa Zote', fr: 'Toutes les Actualités' },
   updatesFound: { en: 'Updates Found', rw: 'Amakuru Abonetse', sw: 'Taarifa Zilizopatikana', fr: 'Actualités Trouvées' },
   updateFound: { en: 'Update Found', rw: 'Amakuru Abonetse', sw: 'Taarifa Iliyopatikana', fr: 'Actualité Trouvée' },
+  stayInformed: { en: 'Stay informed with our latest news and announcements', rw: 'Guma uzi amakuru mashya n\'itangazo byacu', sw: 'Pata habari mpya na matangazo yetu', fr: 'Restez informé de nos dernières nouvelles et annonces' },
+  viewAll: { en: 'View All', rw: 'Reba Byose', sw: 'Angalia Zote', fr: 'Voir Tout' },
 
   tagProjects: { en: 'Projects', rw: 'Imishinga', sw: 'Miradi', fr: 'Projets' },
   tagAwards: { en: 'Awards', rw: 'Ibihembo', sw: 'Tuzo', fr: 'Récompenses' },

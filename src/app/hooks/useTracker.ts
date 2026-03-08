@@ -14,21 +14,29 @@ export function useTracker() {
     const user = auth?.user;
 
     useEffect(() => {
-        // Only track in production or if needed.
         const track = async () => {
             try {
-                // Simple geo detection mock or use a service like ipapi.co
-                // For now, we just send the basics.
+                let geoData = { country_name: '', city: '' };
+                try {
+                    // Fetch geo location
+                    const geoRes = await fetch('https://ipapi.co/json/');
+                    if (geoRes.ok) {
+                        geoData = await geoRes.json();
+                    }
+                } catch (e) {
+                    console.debug('Geo fetch failed', e);
+                }
+
                 await fetchApi('/statistics/track', {
                     method: 'POST',
                     body: JSON.stringify({
                         url: location.pathname,
                         userId: user?.id,
-                        // You can integrate an IP geo service here
+                        country: geoData.country_name || 'Unknown',
+                        city: geoData.city || 'Unknown',
                     }),
                 });
             } catch (err) {
-                // Silently fail as tracking shouldn't break the UI
                 console.debug('Tracking failed', err);
             }
         };

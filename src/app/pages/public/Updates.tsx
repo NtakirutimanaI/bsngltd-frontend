@@ -48,7 +48,7 @@ export function Updates() {
     }
     const query = new URLSearchParams(params).toString();
 
-    fetchApi<PaginatedResponse<Update>>(`/updates?${query}`)
+    fetchApi<PaginatedResponse<Update>>(`/updates?${query}&t=${Date.now()}`)
       .then(res => {
         setUpdates(res.data);
         setTotalPages(res.lastPage);
@@ -127,7 +127,18 @@ export function Updates() {
             {updates.map((update, index) => (
               <div key={update.id} className="col-lg-4 col-md-6 wow fadeIn" data-wow-delay={`${0.1 * (index + 1)}s`}>
                 <div className="project-item position-relative overflow-hidden mb-4 rounded">
-                  <img className="img-fluid w-100" src={getImageUrl(update.image) || '/img/project-1.jpg'} alt={dt(update.title)} style={{ height: '240px', objectFit: 'cover' }} />
+                  <img
+                    className="img-fluid w-100"
+                    src={getImageUrl(update.image) || `/img/project-${(index % 6) + 1}.jpg`}
+                    alt={dt(update.title)}
+                    style={{ height: '240px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('/img/project-')) {
+                        target.src = `/img/project-${(index % 6) + 1}.jpg`;
+                      }
+                    }}
+                  />
                   <Link to={`/updates/${update.id}`} className="project-overlay text-decoration-none">
                     <h4 className="text-white mb-1">{dt(update.title)}</h4>
                     <small className="text-white">{t('category' + update.category)}</small>

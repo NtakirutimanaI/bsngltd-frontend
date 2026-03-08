@@ -1,3 +1,4 @@
+// DEPLOYMENT_VERSION: 1.0.3 - FORCE_REBUILD
 import { useState, useEffect } from 'react';
 import { fetchApi, getImageUrl } from '@/app/api/client';
 import { Link } from 'react-router';
@@ -58,7 +59,7 @@ export function PublicProperties() {
 
     const query = new URLSearchParams(params).toString();
 
-    fetchApi<PaginatedResponse<any>>(`/properties?${query}`)
+    fetchApi<PaginatedResponse<any>>(`/properties?${query}&t=${Date.now()}`)
       .then(res => {
         const mappedProperties: Property[] = res.data.map(p => ({
           id: p.id,
@@ -187,7 +188,21 @@ export function PublicProperties() {
             {properties.map((property, index) => (
               <div key={property.id} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.1 * (index + 1)}s`}>
                 <div className="project-item position-relative overflow-hidden mb-4">
-                  <img className="img-fluid w-100" src={property.image} alt={property.title} style={{ height: '250px', objectFit: 'cover' }} />
+                  <img
+                    key={`${property.id}-${index}`}
+                    className="img-fluid w-100"
+                    src={property.image}
+                    alt={property.title}
+                    style={{ height: '250px', objectFit: 'cover' }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('/img/project-')) {
+                        console.log(`Image failed, falling back: ${property.title}`);
+                        target.src = `/img/project-${(index % 6) + 1}.jpg`;
+                        target.onerror = null; // Prevent infinite loop
+                      }
+                    }}
+                  />
                   <div className="project-overlay text-decoration-none">
                     <h4 className="text-white mb-1">{property.title}</h4>
                     <small className="text-white">{property.location}</small>

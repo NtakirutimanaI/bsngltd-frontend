@@ -16,7 +16,7 @@ export function Services() {
 
   useEffect(() => {
     // Fetch settings
-    fetchApi<any[]>('/settings/public')
+    fetchApi<any[]>(`/settings/public?t=${Date.now()}`)
       .then(data => {
         const s: any = {};
         data.forEach(item => { s[item.key] = item.value; });
@@ -25,7 +25,7 @@ export function Services() {
       .catch(err => console.error('Failed to fetch settings', err));
 
     // Fetch services
-    fetchApi<any[]>('/services/public')
+    fetchApi<any[]>(`/services/public?t=${Date.now()}`)
       .then(data => {
         if (data && data.length > 0) {
           setDynamicServices(data);
