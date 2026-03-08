@@ -182,10 +182,11 @@ export function RootLayout() {
           </div>
 
           <div className="hidden lg:flex" style={{ flex: 1, maxWidth: '320px', position: 'relative', margin: '0 12px' }}>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <Search className="absolute top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" style={{ left: '12px', width: '18px', height: '18px' }} />
             <Input
               placeholder="Find anything..."
-              className="pl-10 pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
+              className="pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
+              style={{ paddingLeft: '40px' }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearch}
