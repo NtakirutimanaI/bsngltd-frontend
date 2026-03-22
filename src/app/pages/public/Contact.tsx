@@ -107,7 +107,7 @@ export function Contact() {
                 </div>
               </div>
               <div className="d-flex align-items-center mb-4 p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.3s">
-                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#16a085' }}>
+                <div className="btn-square bg-primary flex-shrink-0" style={{ width: '60px', height: '60px', background: '#009CFF' }}>
                   <Mail className="text-white w-6 h-6" />
                 </div>
                 <div className="ms-4">
@@ -153,7 +153,7 @@ export function Contact() {
                     <div className="col-md-6">
                       <label className="form-label small fw-bold text-muted text-uppercase mb-1" style={{ fontSize: '11px' }}>{t('fullName')}</label>
                       <div className="input-group">
-                        <span className="input-group-text bg-light border-end-0"><Users size={16} className="text-primary" style={{ color: '#16a085' }} /></span>
+                        <span className="input-group-text bg-light border-end-0"><Users size={16} className="text-primary" style={{ color: '#009CFF' }} /></span>
                         <input
                           type="text"
                           className="form-control border-start-0 ps-0"

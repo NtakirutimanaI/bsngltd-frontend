@@ -83,7 +83,7 @@ export default function EmployeeDashboard() {
                 {salary ? (salary.netSalary / 1000).toFixed(0) : "0"}K
               </p>
               <p className="text-xs font-medium" style={{ color: 'var(--primary)' }}>Salary</p>
-              <Badge className="h-4 py-0 mt-1 text-xs" style={{ backgroundColor: salary?.status === 'paid' ? '#10b981' : '#16a085', color: 'white' }}>
+              <Badge className="h-4 py-0 mt-1 text-xs" style={{ backgroundColor: salary?.status === 'paid' ? '#10b981' : '#009CFF', color: 'white' }}>
                 {salary?.status || "Pending"}
               </Badge>
             </CardContent>
@@ -244,19 +244,19 @@ export default function EmployeeDashboard() {
           <CardContent className="px-3 pb-3">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               <Link to="/dashboard/attendance">
-                <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                   <Calendar className="mr-1 size-3" />
                   Attendance
                 </Button>
               </Link>
               <Link to="/dashboard/salary">
-                <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                   <DollarSign className="mr-1 size-3" />
                   Salary
                 </Button>
               </Link>
               <Link to="/dashboard/documents">
-                <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                   <FileText className="mr-1 size-3" />
                   Documents
                 </Button>

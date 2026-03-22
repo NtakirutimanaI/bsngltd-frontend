@@ -24,8 +24,8 @@ const buttonVariants = cva(
         info: "bg-[var(--info)] text-white hover:bg-[var(--info)]/90 active:bg-[var(--info)]/80 shadow-md",
         "outline-success": "border border-[var(--success)] text-[var(--success)] hover:bg-[var(--success)]/10 shadow-sm",
         "outline-warning": "border border-[var(--warning)] text-[var(--warning)] hover:bg-[var(--warning)]/10 shadow-sm",
-        brand: "bg-[#16a085] text-white hover:bg-[#138d72] active:bg-[#117a65] shadow-md",
-        "outline-brand": "border-b-2 border-[#16a085] text-[#16a085] bg-transparent hover:bg-[#16a085]/10 shadow-none",
+        brand: "bg-[#009CFF] text-white hover:bg-[#0088e2] active:bg-[#0074c1] shadow-md",
+        "outline-brand": "border-b-2 border-[#009CFF] text-[#009CFF] bg-transparent hover:bg-[#009CFF]/10 shadow-none",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -224,24 +224,24 @@ export function Messages() {
 
     return (
         <div className="min-h-[60vh] h-[calc(100vh-120px)] flex flex-col gap-4 relative">
-            <ScrollReveal className="relative z-10 shrink-0">
-                <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg shadow-indigo-500/20">
-                            <MessageSquare size={24} strokeWidth={2} />
+            <ScrollReveal className="relative z-10 shrink-0 mb-4">
+                <div className="bg-light rounded p-4 shadow-sm d-flex flex-column flex-md-row justify-content-between align-items-center gap-4">
+                    <div className="d-flex align-items-center gap-4">
+                        <div className="p-3 bg-primary rounded-circle text-white shadow-sm d-flex align-items-center justify-content-center" style={{ width: 60, height: 60 }}>
+                            <MessageSquare size={28} strokeWidth={2} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-extrabold mb-0 text-gray-900 dark:text-white tracking-tight">Internal Team Chats</h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-0">Secure collaboration workspace</p>
+                            <h4 className="fw-bold mb-1">Internal Team Chats</h4>
+                            <p className="text-muted small mb-0">Secure collaboration workspace</p>
                         </div>
                     </div>
                 </div>
             </ScrollReveal>
 
-            <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden relative z-10">
+            <div className="flex-grow-1 d-flex flex-column flex-md-row gap-4 overflow-hidden position-relative z-10 pb-4">
                 {/* Chat List */}
-                <div className="w-full md:w-80 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden shrink-0">
-                    <div className="p-3 border-b border-gray-100 dark:border-gray-800 relative bg-gray-50/50 dark:bg-gray-800/50">
+                <div className="w-100 bg-light rounded shadow-sm d-flex flex-column overflow-hidden shrink-0" style={{ maxWidth: '320px' }}>
+                    <div className="p-3 border-bottom position-relative bg-white">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                             <Input
@@ -263,7 +263,7 @@ export function Messages() {
                                             className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
                                         >
                                             <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="bg-emerald-100 text-emerald-600 text-xs">
+                                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
                                                     {res.fullName.charAt(0)}
                                                 </AvatarFallback>
                                             </Avatar>
@@ -295,7 +295,7 @@ export function Messages() {
                                         </AvatarFallback>
                                     </Avatar>
                                     {chat.status === "online" && (
-                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-gray-900 rounded-full shadow-sm" />
+                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 border-2 border-white dark:border-gray-900 rounded-full shadow-sm" />
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0 text-left">
@@ -321,12 +321,12 @@ export function Messages() {
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
+                <div className="flex-grow-1 bg-light rounded shadow-sm d-flex flex-column overflow-hidden">
                     {selectedChat ? (
                         <>
                             {/* Header */}
-                            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-20 shadow-sm">
-                                <div className="flex items-center gap-4">
+                            <div className="p-3 border-bottom d-flex align-items-center justify-content-between bg-white z-20 shadow-sm">
+                                <div className="d-flex align-items-center gap-3">
                                     <Avatar className="h-10 w-10 shadow-sm border border-gray-100 dark:border-gray-700">
                                         <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold">
                                             {selectedChat.name.charAt(0)}
@@ -335,7 +335,7 @@ export function Messages() {
                                     <div>
                                         <h3 className="font-bold text-gray-900 dark:text-white leading-none mb-1.5">{selectedChat.name}</h3>
                                         <div className="flex items-center gap-1.5">
-                                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm"></span>
+                                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-sm"></span>
                                             <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Active Now</span>
                                         </div>
                                     </div>
@@ -393,28 +393,26 @@ export function Messages() {
                                         className="flex-1 h-10 border-none bg-transparent focus-visible:ring-0 dark:text-white placeholder:text-gray-400 text-sm px-2"
                                     />
                                     <Button variant="ghost" size="icon" type="button" className="h-10 w-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Smile className="h-5 w-5 text-gray-400" /></Button>
-                                    <Button size="icon" className="shrink-0 bg-gradient-to-br from-indigo-500 to-purple-600 hover:opacity-90 transition-opacity text-white h-10 w-10 rounded-full shadow-md">
-                                        <Send className="h-4 w-4 ml-0.5" />
+                                    <Button size="icon" className="shrink-0 btn btn-primary rounded-circle shadow-sm" style={{ width: 40, height: 40 }}>
+                                        <Send size={16} className="ms-1" />
                                     </Button>
                                 </div>
                             </form>
                         </>
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 p-8 bg-gray-50/50 dark:bg-gray-900/50 border-t border-transparent relative overflow-hidden">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
-                            <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-6 shadow-md border border-gray-100 dark:border-gray-700 relative z-10">
-                                <MessageSquare className="h-10 w-10 text-indigo-500" strokeWidth={1.5} />
+                        <div className="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted p-5 bg-white border-top border-transparent position-relative overflow-hidden">
+                            <div className="p-4 bg-light rounded-circle mb-4 shadow-sm border">
+                                <MessageSquare size={40} className="text-primary" strokeWidth={1.5} />
                             </div>
-                            <h3 className="text-2xl font-extrabold dark:text-white mb-2 text-gray-900 relative z-10">Your Workspace</h3>
-                            <p className="text-sm text-center max-w-sm mb-8 text-gray-500 dark:text-gray-400 relative z-10">
+                            <h4 className="fw-bold mb-2">Your Workspace</h4>
+                            <p className="small text-center max-w-sm mb-4">
                                 Select a team member from the sidebar to start collaborating securely.
                             </p>
                             <Button
-                                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 transition-all text-white rounded-full shadow-lg shadow-indigo-500/30 px-8 py-5 h-auto text-base font-bold relative z-10 hover:scale-105 active:scale-95 border-0"
+                                className="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm"
                                 onClick={() => document.querySelector<HTMLInputElement>('input[placeholder*="Find team"]')?.focus()}
                             >
-                                <Plus className="h-5 w-5 mr-2" />
+                                <Plus size={18} className="me-2" />
                                 Start New Chat
                             </Button>
                         </div>

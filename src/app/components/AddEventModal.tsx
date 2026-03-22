@@ -105,11 +105,11 @@ export function AddEventModal({ isOpen, onClose, onSuccess, editingEvent }: AddE
                     <div className="md:col-span-2">
                         <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Event Title</label>
                         <div className="relative group">
-                            <Type className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={16} />
+                            <Type className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={16} />
                             <input
                                 type="text"
                                 required
-                                className="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                                className="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                                 placeholder="Enter event name..."
                                 value={formData.title}
                                 onChange={e => setFormData({ ...formData, title: e.target.value })}
@@ -120,7 +120,7 @@ export function AddEventModal({ isOpen, onClose, onSuccess, editingEvent }: AddE
                     <div>
                         <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Type</label>
                         <select
-                            className="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl py-2.5 px-4 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                            className="w-full bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl py-2.5 px-4 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
                             value={formData.type}
                             onChange={e => setFormData({ ...formData, type: e.target.value as any })}
                         >
@@ -201,12 +201,12 @@ export function AddEventModal({ isOpen, onClose, onSuccess, editingEvent }: AddE
                     </div>
 
                     <div className="md:col-span-2">
-                        <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/20">
+                        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/20">
                             <div className="flex items-center gap-2">
-                                <Globe className="text-emerald-600" size={18} />
+                                <Globe className="text-blue-600" size={18} />
                                 <div>
-                                    <div className="text-sm font-bold text-emerald-900 dark:text-emerald-100">Publish to Website</div>
-                                    <div className="text-[10px] text-emerald-600 font-medium">Allow this event to be visible on the public calendar</div>
+                                    <div className="text-sm font-bold text-blue-900 dark:text-blue-100">Publish to Website</div>
+                                    <div className="text-[10px] text-blue-600 font-medium">Allow this event to be visible on the public calendar</div>
                                 </div>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -216,7 +216,7 @@ export function AddEventModal({ isOpen, onClose, onSuccess, editingEvent }: AddE
                                     checked={formData.isPublished}
                                     onChange={e => setFormData({ ...formData, isPublished: e.target.checked })}
                                 />
-                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
                     </div>
@@ -233,7 +233,7 @@ export function AddEventModal({ isOpen, onClose, onSuccess, editingEvent }: AddE
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none hover:bg-emerald-700 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center gap-2"
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center gap-2"
                     >
                         {isSubmitting ? (
                             <><Clock className="animate-spin" size={16} /> Saving...</>

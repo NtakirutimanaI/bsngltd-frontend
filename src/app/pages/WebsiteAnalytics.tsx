@@ -52,12 +52,12 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
             });
     }, []);
 
-    const COLORS = ["#16a085", "#3b82f6", "#10b981", "#8b5cf6", "#f43f5e"];
+    const COLORS = ["#009CFF", "#3b82f6", "#10b981", "#8b5cf6", "#f43f5e"];
 
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
         );
     }
@@ -83,7 +83,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                             <p className="text-gray-500 dark:text-gray-400 mt-1">Track your visitors, locations, and monetization status.</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg text-sm font-bold flex items-center gap-2">
+                            <div className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-bold flex items-center gap-2">
                                 <Activity className="h-4 w-4" />
                                 Live Tracking Active
                             </div>
@@ -96,8 +96,8 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                     { label: "Daily Visitors", value: data?.overview.daily, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50" },
-                    { label: "Monthly Visitors", value: data?.overview.monthly, icon: Globe, color: "text-green-600", bg: "bg-green-50" },
+                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-50" },
+                    { label: "Monthly Visitors", value: data?.overview.monthly, icon: Globe, color: "text-blue-600", bg: "bg-green-50" },
                     { label: "Ad Revenue (Est.)", value: "$124.50", icon: DollarSign, color: "text-purple-600", bg: "bg-purple-50" },
                 ].map((stat, i) => (
                     <ScrollReveal key={i} delay={i * 0.1} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
@@ -123,7 +123,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                 <ScrollReveal delay={0.4} className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
-                            <BarChart3 className="h-5 w-5 text-emerald-500" />
+                            <BarChart3 className="h-5 w-5 text-blue-500" />
                             Visitor Statistics
                         </h3>
                     </div>
@@ -132,8 +132,8 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="colorVis" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#16a085" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#16a085" stopOpacity={0} />
+                                        <stop offset="5%" stopColor="#009CFF" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
@@ -142,7 +142,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                                 />
-                                <Area type="monotone" dataKey="visitors" stroke="#16a085" strokeWidth={3} fillOpacity={1} fill="url(#colorVis)" />
+                                <Area type="monotone" dataKey="visitors" stroke="#009CFF" strokeWidth={3} fillOpacity={1} fill="url(#colorVis)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -200,7 +200,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                             data.topMembers.map((member, i) => (
                                 <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-full flex items-center justify-center font-bold">
+                                        <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center font-bold">
                                             {member.name.charAt(0)}
                                         </div>
                                         <div>
@@ -209,7 +209,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <div className="text-sm font-bold text-emerald-600">{member.visits}</div>
+                                        <div className="text-sm font-bold text-blue-600">{member.visits}</div>
                                         <div className="text-[10px] text-gray-400 uppercase font-bold">Visits</div>
                                     </div>
                                 </div>
@@ -227,7 +227,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                             <DollarSign className="h-5 w-5 text-purple-500" />
                             Monetization (Google Addons)
                         </h3>
-                        <span className="px-2 py-1 bg-green-100 text-green-600 text-[10px] font-bold rounded uppercase">Active</span>
+                        <span className="px-2 py-1 bg-green-100 text-blue-600 text-[10px] font-bold rounded uppercase">Active</span>
                     </div>
 
                     <div className="p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center space-y-4 py-8">

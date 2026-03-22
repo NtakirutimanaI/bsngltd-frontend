@@ -3,13 +3,7 @@ import { toast } from "sonner";
 import {
     Building2,
     Home,
-    Search,
-    Filter,
     Plus,
-    Calendar,
-    MapPin,
-    Tag,
-    Layers,
     Download
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
@@ -20,10 +14,16 @@ import { Projects } from "./Projects";
 import { Properties } from "./Properties";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
 
+import { useSearchParams } from "react-router";
+
 export function Portfolio() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'projects' | 'properties'>('projects');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = (searchParams.get('tab') as 'projects' | 'properties') || 'projects';
 
+    const setActiveTab = (tab: 'projects' | 'properties') => {
+        setSearchParams({ tab });
+    };
 
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
@@ -34,21 +34,21 @@ export function Portfolio() {
             <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
                 <div>
                     <h1 className="h5 fw-bold text-dark mb-0">Portfolio Hub</h1>
                     <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage real estate assets, construction projects, and inventory</p>
                 </div>
-                <div className="d-flex gap-3">
+                <div className="d-flex gap-2">
                     {canAdd && (
                         <button
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
                             onClick={() => setActiveTab(activeTab)}>
                             <Plus size={14} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
                         </button>
                     )}
                     <button
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+                        className="btn btn-light p-2 border rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95 bg-white shadow-sm"
                         onClick={() => setIsExportModalOpen(true)}
                     >
                         <Download size={16} />
@@ -57,30 +57,22 @@ export function Portfolio() {
             </ScrollReveal>
 
             {/* Hub Tabs */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-x-auto custom-scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                        <button
-                            onClick={() => setActiveTab('projects')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'projects' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
-                            style={{
-                                backgroundColor: activeTab === 'projects' ? '#16a085' : 'transparent',
-                                color: activeTab === 'projects' ? 'white' : '#6b7280'
-                            }}
-                        >
-                            <Building2 size={16} /> Active Projects
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('properties')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold rounded-xl border-0 ${activeTab === 'properties' ? 'shadow-lg' : 'hover:bg-emerald-50'}`}
-                            style={{
-                                backgroundColor: activeTab === 'properties' ? '#16a085' : 'transparent',
-                                color: activeTab === 'properties' ? 'white' : '#6b7280'
-                            }}
-                        >
-                            <Home size={16} /> Property Inventory
-                        </button>
-                    </div>
+            <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
+                <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl">
+                    <button
+                        onClick={() => setActiveTab('projects')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'projects' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px' }}
+                    >
+                        <Building2 size={16} /> Active Projects
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('properties')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'properties' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px' }}
+                    >
+                        <Home size={16} /> Property Inventory
+                    </button>
                 </div>
             </div>
 

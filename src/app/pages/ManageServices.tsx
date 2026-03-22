@@ -4,8 +4,6 @@ import {
     Plus,
     Edit,
     Trash2,
-    CheckCircle,
-    XCircle,
     Layout,
     RefreshCcw,
 } from "lucide-react";
@@ -110,112 +108,126 @@ export function ManageServices() {
     );
 
     return (
-        <div className="space-y-6">
+        <div className="container-fluid bg-light min-vh-100 px-2 px-md-4 pt-4 pb-4">
             {/* Header */}
-            <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
                 <div>
-                    <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Manage Services</h1>
-                    <p className="text-muted small">
+                    <h1 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                        <Layout size={20} className="text-primary" />
+                        Manage Services
+                    </h1>
+                    <p className="text-muted small mb-0">
                         Configure public services and their order of appearance
                     </p>
                 </div>
                 <button
                     onClick={() => { setEditingService(null); setIsModalOpen(true); }}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                    className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2.5 fw-bold shadow-sm"
+                    style={{ borderRadius: '10px' }}
                 >
-                    <Plus className="h-5 w-5" />
+                    <Plus size={18} />
                     Add New Service
                 </button>
             </ScrollReveal>
 
             {/* Filters & Actions */}
-            <ScrollReveal delay={0.1} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <div className="flex flex-col md:flex-row gap-4 items-center">
-                    <div className="flex-1 relative w-full">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search services..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none dark:text-white"
-                        />
+            <ScrollReveal delay={0.1} className="card shadow-sm border-0 rounded-4 mb-4 bg-white overflow-hidden">
+                <div className="card-body p-3">
+                    <div className="d-flex flex-column flex-md-row gap-3 align-items-center">
+                        <div className="position-relative flex-grow-1 w-100">
+                            <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search services by title or keyword..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
+                                style={{ height: '40px', borderRadius: '8px', fontSize: '14px' }}
+                            />
+                        </div>
+                        <button
+                            onClick={() => fetchApi('/services/seed', { method: 'POST' }).then(fetchServices)}
+                            className="btn btn-light border d-flex align-items-center gap-2 px-4 py-2 fw-bold text-muted whitespace-nowrap"
+                            style={{ height: '40px', borderRadius: '8px', fontSize: '13px' }}
+                        >
+                            <RefreshCcw size={16} />
+                            Reset Defaults
+                        </button>
                     </div>
-                    <button
-                        onClick={() => fetchApi('/services/seed', { method: 'POST' }).then(fetchServices)}
-                        className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
-                    >
-                        <RefreshCcw size={16} />
-                        Reset/Seed Defaults
-                    </button>
                 </div>
             </ScrollReveal>
 
             {/* Services Table */}
-            <ScrollReveal delay={0.2} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
+            <ScrollReveal delay={0.2} className="card shadow-sm border-0 rounded-4 mb-4 bg-white overflow-hidden">
+                <div className="table-responsive">
+                    <table className="table table-hover align-middle mb-0">
+                        <thead className="bg-light">
                             <tr>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Service</th>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Order</th>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">Actions</th>
+                                <th className="ps-4 py-3 border-0 text-dark small text-uppercase fw-bold">Service</th>
+                                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Description</th>
+                                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Order</th>
+                                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Status</th>
+                                <th className="pe-4 py-3 border-0 text-dark small text-uppercase fw-bold text-end">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="border-0">
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-10 text-center text-gray-400">Loading services...</td>
+                                    <td colSpan={5} className="py-12 text-center text-muted">Loading services...</td>
                                 </tr>
                             ) : filteredServices.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-10 text-center text-gray-400">No services found.</td>
+                                    <td colSpan={5} className="py-12 text-center text-muted">No services found.</td>
                                 </tr>
                             ) : (
                                 filteredServices.map((service) => (
-                                    <tr key={service.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`p-2 rounded-lg ${service.isDark ? 'bg-emerald-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
-                                                    <Layout className="h-5 w-5" />
+                                    <tr key={service.id} className="border-bottom border-light/50">
+                                        <td className="ps-4 py-3">
+                                            <div className="d-flex align-items-center gap-3">
+                                                <div className={`p-2 rounded-lg ${service.isDark ? 'bg-primary text-white shadow-sm' : 'bg-light text-primary border'}`}>
+                                                    <Layout size={18} />
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-gray-900 dark:text-white">{service.title || service.name}</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400">Key: {service.name}</p>
+                                                    <div className="fw-bold text-dark mb-0.5">{service.title || service.name}</div>
+                                                    <div className="text-muted small">Key: {service.name}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-1 max-w-xs">{service.description}</p>
+                                        <td className="py-3">
+                                            <div className="text-muted text-truncate" style={{ fontSize: '12px', maxWidth: '250px' }}>{service.description}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{service.order}</td>
-                                        <td className="px-6 py-4">
-                                            <button
-                                                onClick={() => handleToggleActive(service)}
-                                                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${service.isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'
-                                                    }`}
-                                            >
-                                                {service.isActive ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
-                                                {service.isActive ? 'Active' : 'Inactive'}
-                                            </button>
+                                        <td className="py-3">
+                                            <span className="badge bg-light text-dark border px-2 py-1.5 rounded">{service.order}</span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
+                                        <td className="py-3">
+                                            <div className="form-check form-switch cursor-pointer">
+                                                <input
+                                                    className="form-check-input cursor-pointer shadow-none"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    checked={service.isActive}
+                                                    onChange={() => handleToggleActive(service)}
+                                                />
+                                                <span className={`small fw-bold ms-2 ${service.isActive ? 'text-success' : 'text-muted'}`}>
+                                                    {service.isActive ? 'ACTIVE' : 'INACTIVE'}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="pe-4 py-3 text-end">
+                                            <div className="d-flex justify-content-end gap-2">
                                                 <button
                                                     onClick={() => { setEditingService(service); setIsModalOpen(true); }}
-                                                    className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors hover:scale-110 active:scale-95"
-                                                    title="Edit"
+                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-primary hover:bg-primary hover:text-white transition-all"
+                                                    style={{ borderRadius: '8px' }}
                                                 >
-                                                    <Edit className="h-4 w-4" />
+                                                    <Edit size={14} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(service.id)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors hover:scale-110 active:scale-95"
-                                                    title="Delete"
+                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-danger hover:bg-danger hover:text-white transition-all"
+                                                    style={{ borderRadius: '8px' }}
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
+                                                    <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         </td>
@@ -238,7 +250,7 @@ export function ManageServices() {
                                 defaultValue={editingService?.name}
                                 required
                                 placeholder="e.g. brokerage"
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                             />
                         </div>
                         <div className="space-y-1">
@@ -248,7 +260,7 @@ export function ManageServices() {
                                 defaultValue={editingService?.title}
                                 required
                                 placeholder="Brokerage Services"
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                             />
                         </div>
                     </div>
@@ -260,7 +272,7 @@ export function ManageServices() {
                             defaultValue={editingService?.description}
                             required
                             rows={3}
-                            className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                            className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                         />
                     </div>
 
@@ -272,7 +284,7 @@ export function ManageServices() {
                                 name="order"
                                 defaultValue={editingService?.order || 0}
                                 required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                             />
                         </div>
                         <div className="space-y-1">
@@ -281,7 +293,7 @@ export function ManageServices() {
                                 name="delay"
                                 defaultValue={editingService?.delay || '0.1s'}
                                 required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                             />
                         </div>
                     </div>
@@ -292,35 +304,37 @@ export function ManageServices() {
                                 type="checkbox"
                                 name="isActive"
                                 defaultChecked={editingService ? editingService.isActive : true}
-                                className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                             />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 transition-colors">Active Service</span>
+                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Active Service</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer group">
                             <input
                                 type="checkbox"
                                 name="isDark"
                                 defaultChecked={editingService?.isDark}
-                                className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                             />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-emerald-600 transition-colors">Dark Theme</span>
+                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Dark Theme</span>
                         </label>
                     </div>
 
-                    <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800 mt-4">
+                    <div className="d-flex gap-3 pt-4 border-top mt-4">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
+                            className="btn btn-light flex-grow-1 fw-bold text-muted border shadow-sm"
+                            style={{ borderRadius: '10px', height: '42px' }}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                            className="btn btn-primary flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-center gap-2"
+                            style={{ borderRadius: '10px', height: '42px' }}
                         >
-                            {editingService ? <RefreshCcw className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                            <span>{editingService ? "Update Service" : "Create Service"}</span>
+                            {editingService ? <RefreshCcw size={18} /> : <Plus size={18} />}
+                            {editingService ? "Update" : "Create"}
                         </button>
                     </div>
                 </form>

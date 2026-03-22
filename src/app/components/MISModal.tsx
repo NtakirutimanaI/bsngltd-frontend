@@ -32,12 +32,12 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                 {/* Header */}
                 <div className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
                             M
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight">MAKE IT SOLUTIONS Ltd</h3>
-                            <p className="text-xs text-emerald-600 font-medium tracking-wider uppercase">Official Partner</p>
+                            <p className="text-xs text-blue-600 font-medium tracking-wider uppercase">Official Partner</p>
                         </div>
                     </div>
                     <button
@@ -52,8 +52,8 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                     {/* Intro */}
                     <section>
                         <div className="flex items-start gap-4 mb-4">
-                            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
-                                <Award className="text-emerald-600" size={24} />
+                            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                                <Award className="text-blue-600" size={24} />
                             </div>
                             <div>
                                 <h4 className="font-bold text-gray-900 dark:text-white mb-2">Company Registration</h4>
@@ -78,7 +78,7 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                     {/* Business Activities */}
                     <section>
                         <h4 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-6 bg-emerald-600 rounded-full"></span>
+                            <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
                             Core Business Activities
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -92,7 +92,7 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                                 "Management Consultancy"
                             ].map((activity, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-50 dark:border-gray-700 shadow-sm">
-                                    <CheckCircle2 size={14} className="text-green-500 shrink-0" />
+                                    <CheckCircle2 size={14} className="text-blue-500 shrink-0" />
                                     <span>{activity}</span>
                                 </div>
                             ))}
@@ -100,7 +100,7 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                     </section>
 
                     {/* Contact & Management */}
-                    <section className="bg-emerald-600 rounded-2xl p-6 text-white overflow-hidden relative">
+                    <section className="bg-blue-600 rounded-2xl p-6 text-white overflow-hidden relative">
                         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
                             <ExternalLink size={120} />
                         </div>
@@ -113,7 +113,7 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                                 </div>
                                 <div>
                                     <p className="text-xs text-white/70">Email Address</p>
-                                    <p className="font-medium">innocentntakir@gmail.com</p>
+                                    <p className="font-medium">info.buildstronggenerations@gmail.com</p>
                                 </div>
                             </div>
 
@@ -142,19 +142,19 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                             <p className="text-[10px] text-white/60 mb-3 uppercase tracking-widest font-bold">Tax & Legal Compliance</p>
                             <div className="grid grid-cols-2 gap-y-2 text-[11px]">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                                     <span>Profit Income Tax</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                                     <span>Certified VAT</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                                     <span>PAYE Compliant</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                                     <span>RSSB Registered</span>
                                 </div>
                             </div>
@@ -169,7 +169,7 @@ export function MISModal({ isOpen, onClose }: MISModalProps) {
                                 href="http://www.rdb.rw/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-white text-emerald-600 px-4 py-2 rounded-xl font-bold text-sm shadow-xl hover:bg-gray-50 transition-colors self-start sm:self-auto"
+                                className="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-xl font-bold text-sm shadow-xl hover:bg-gray-50 transition-colors self-start sm:self-auto"
                             >
                                 Verify on RDB
                                 <ExternalLink size={14} />

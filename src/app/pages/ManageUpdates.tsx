@@ -241,55 +241,59 @@ export function ManageUpdates() {
 
   const UpdateForm = ({ onSubmit, isEdit = false }: { onSubmit: (e: React.FormEvent) => void; isEdit?: boolean }) => (
     <form onSubmit={onSubmit} className="space-y-3">
-      <div className="flex items-center gap-1.5 p-1 bg-gray-50 rounded-lg mb-3">
+      <div className="d-flex gap-1 p-1 bg-light rounded-3 mb-4 border">
         {languages.map(lang => (
           <button
             key={lang.id}
             type="button"
             onClick={() => setActiveLang(lang.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md transition-all text-xs font-semibold ${activeLang === lang.id
-              ? 'bg-white shadow-sm text-emerald-600'
-              : 'text-gray-500 hover:text-gray-700'
+            className={`flex-grow-1 btn btn-sm py-1.5 fw-bold transition-all ${activeLang === lang.id
+              ? 'btn-white bg-white shadow-sm text-primary'
+              : 'text-muted hover:text-dark border-0 bg-transparent'
               }`}
+            style={{ borderRadius: '6px' }}
           >
-            <span className="uppercase">{lang.id}</span>
+            <span className="text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.05em' }}>{lang.name}</span>
           </button>
         ))}
       </div>
 
-      <div className="space-y-3 p-3 border border-emerald-100 rounded-lg bg-emerald-50/20">
-        <div>
-          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Title ({activeLang.toUpperCase()}) *</label>
+      <div className="p-3 border rounded-4 bg-light/30 mb-4">
+        <div className="mb-3">
+          <label className="form-label text-uppercase fw-bold text-muted" style={{ fontSize: '10px' }}>Title ({activeLang.toUpperCase()}) *</label>
           <input
             type="text"
             value={localizedData.title[activeLang]}
             onChange={(e) => handleLocalizedChange('title', e.target.value)}
             required={activeLang === 'en'}
-            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            className="form-control bg-white border-0 focus:bg-white shadow-none"
+            style={{ borderRadius: '8px', fontSize: '14px' }}
             placeholder={`Title in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Excerpt ({activeLang.toUpperCase()}) *</label>
+        <div className="mb-3">
+          <label className="form-label text-uppercase fw-bold text-muted" style={{ fontSize: '10px' }}>Excerpt ({activeLang.toUpperCase()}) *</label>
           <textarea
             value={localizedData.excerpt[activeLang]}
             onChange={(e) => handleLocalizedChange('excerpt', e.target.value)}
             required={activeLang === 'en'}
             rows={2}
-            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none bg-white"
+            className="form-control bg-white border-0 focus:bg-white shadow-none resize-none"
+            style={{ borderRadius: '8px', fontSize: '13px' }}
             placeholder={`Brief summary in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-emerald-900 mb-1 uppercase">Content ({activeLang.toUpperCase()}) *</label>
+          <label className="form-label text-uppercase fw-bold text-muted" style={{ fontSize: '10px' }}>Body Content ({activeLang.toUpperCase()}) *</label>
           <textarea
             value={localizedData.content[activeLang]}
             onChange={(e) => handleLocalizedChange('content', e.target.value)}
             required={activeLang === 'en'}
-            rows={3}
-            className="w-full px-3 py-2 text-sm border border-emerald-200 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none bg-white"
+            rows={4}
+            className="form-control bg-white border-0 focus:bg-white shadow-none resize-none"
+            style={{ borderRadius: '8px', fontSize: '13px' }}
             placeholder={`Full article body in ${languages.find(l => l.id === activeLang)?.name}`}
           />
         </div>
@@ -302,7 +306,7 @@ export function ManageUpdates() {
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -319,7 +323,7 @@ export function ManageUpdates() {
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
           />
         </div>
 
@@ -330,7 +334,7 @@ export function ManageUpdates() {
             value={formData.author}
             onChange={(e) => setFormData({ ...formData, author: e.target.value })}
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
             placeholder="Author name"
           />
         </div>
@@ -343,7 +347,7 @@ export function ManageUpdates() {
           value={formData.image}
           onChange={(e) => setFormData({ ...formData, image: e.target.value })}
           required
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
           placeholder="https://example.com/image.jpg"
         />
       </div>
@@ -356,7 +360,7 @@ export function ManageUpdates() {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
             placeholder="Add a tag"
           />
           <button
@@ -371,13 +375,13 @@ export function ManageUpdates() {
           {formData.tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs"
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => removeTag(tag)}
-                className="hover:text-emerald-900 font-bold"
+                className="hover:text-blue-900 font-bold"
               >
                 ×
               </button>
@@ -386,97 +390,136 @@ export function ManageUpdates() {
         </div>
       </div>
 
-      <div className="flex gap-3 pt-6 border-t border-gray-100 dark:border-gray-800 mt-4">
+      <div className="d-flex gap-3 pt-4 border-top mt-4">
         <button
           type="button"
           onClick={() => {
             isEdit ? setIsEditModalOpen(false) : setIsAddModalOpen(false);
             resetForm();
           }}
-          className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-2"
+          className="btn btn-light flex-grow-1 fw-bold text-muted border shadow-sm"
+          style={{ borderRadius: '10px', height: '42px' }}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="flex-1 px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+          className="btn btn-primary flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-center gap-2"
+          style={{ borderRadius: '10px', height: '42px' }}
         >
-          {isEdit ? <RefreshCcw className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-          <span>{isEdit ? 'Update' : 'Create'} Update</span>
+          {isEdit ? <RefreshCcw size={18} /> : <Plus size={18} />}
+          {isEdit ? 'Update' : 'Publish'} Update
         </button>
       </div>
     </form>
   );
 
   return (
-    <div className="p-6">
+    <div className="container-fluid bg-light min-vh-100 px-2 px-md-4 pt-4 pb-4">
       {/* Header */}
-      <ScrollReveal className="mb-4">
-        <h1 className="h3 fw-bold text-gray-900 mb-1">Manage Updates</h1>
-        <p className="text-muted small">Create and manage company updates, news, and announcements</p>
-      </ScrollReveal>
-
-      {/* Actions Bar */}
-      <ScrollReveal delay={0.1} className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-0 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search updates..."
-            className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:ring-0 focus:border-emerald-500 outline-none transition-colors"
-          />
+      <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+          <h1 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+            <RefreshCcw size={20} className="text-primary" />
+            Manage Updates
+          </h1>
+          <p className="text-muted small mb-0">Create and manage company updates, news, and announcements</p>
         </div>
         <div className="d-flex gap-2">
           <button
             onClick={handleSeed}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all d-flex align-items-center gap-2 border-0"
+            className="btn btn-light border d-flex align-items-center gap-2 px-4 py-2 fw-bold text-muted"
+            style={{ borderRadius: '10px', height: '38px' }}
           >
-            <RefreshCcw className="w-4 h-4" />
-            Seed Data
+            <RefreshCcw size={16} />
+            Seed Sample
           </button>
           <button
             onClick={() => { resetForm(); setIsAddModalOpen(true); }}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+            className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 fw-bold shadow-sm"
+            style={{ borderRadius: '10px', height: '38px' }}
           >
-            <Plus className="w-5 h-5" />
+            <Plus size={18} />
             Add Update
           </button>
         </div>
       </ScrollReveal>
 
+      {/* Actions Bar */}
+      <ScrollReveal delay={0.1} className="card shadow-sm border-0 rounded-4 mb-4 bg-white overflow-hidden">
+        <div className="card-body p-3">
+          <div className="position-relative">
+            <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={18} />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Filter by title, content or author..."
+              className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
+              style={{ height: '45px', borderRadius: '10px', fontSize: '14px' }}
+            />
+          </div>
+        </div>
+      </ScrollReveal>
+
       {/* Stats */}
-      <ScrollReveal delay={0.2} className="grid sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">{updates.length}</div>
-          <div className="text-sm text-gray-600">Total Updates</div>
+      <ScrollReveal delay={0.2} className="row g-3 mb-4">
+        <div className="col-12 col-md-4">
+          <div className="card shadow-sm border-0 rounded-4 bg-white p-3 h-100">
+            <div className="d-flex align-items-center gap-3">
+              <div className="p-3 bg-primary-subtle text-primary rounded-4">
+                <RefreshCcw size={24} />
+              </div>
+              <div>
+                <div className="h4 fw-bold mb-0 text-dark">{updates.length}</div>
+                <div className="text-muted small fw-bold text-uppercase" style={{ fontSize: '10px' }}>Total Updates</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">{updates.length}</div>
-          <div className="text-sm text-gray-600">Visible Results</div>
+        <div className="col-12 col-md-4">
+          <div className="card shadow-sm border-0 rounded-4 bg-white p-3 h-100">
+            <div className="d-flex align-items-center gap-3">
+              <div className="p-3 bg-success-subtle text-success rounded-4">
+                <Search size={24} />
+              </div>
+              <div>
+                <div className="h4 fw-bold mb-0 text-dark">{updates.length}</div>
+                <div className="text-muted small fw-bold text-uppercase" style={{ fontSize: '10px' }}>Visible Results</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">{categories.length}</div>
-          <div className="text-sm text-gray-600">Categories</div>
+        <div className="col-12 col-md-4">
+          <div className="card shadow-sm border-0 rounded-4 bg-white p-3 h-100">
+            <div className="d-flex align-items-center gap-3">
+              <div className="p-3 bg-info-subtle text-info rounded-4">
+                <Plus size={24} />
+              </div>
+              <div>
+                <div className="h4 fw-bold mb-0 text-dark">{categories.length}</div>
+                <div className="text-muted small fw-bold text-uppercase" style={{ fontSize: '10px' }}>Categories</div>
+              </div>
+            </div>
+          </div>
         </div>
       </ScrollReveal>
 
       {/* Updates List */}
-      <ScrollReveal delay={0.3} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+      <ScrollReveal delay={0.3} className="card shadow-sm border-0 rounded-4 mb-4 bg-white overflow-hidden">
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0">
+            <thead className="bg-light">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Title</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Category</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Author</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Date</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-gray-700">Tags</th>
-                <th className="px-6 py-4 text-right text-sm font-medium text-gray-700">Actions</th>
+                <th className="ps-4 py-3 border-0 text-dark small text-uppercase fw-bold">Title & Excerpt</th>
+                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Category</th>
+                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Author</th>
+                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Date</th>
+                <th className="py-3 border-0 text-dark small text-uppercase fw-bold">Tags</th>
+                <th className="pe-4 py-3 border-0 text-dark small text-uppercase fw-bold text-end">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="border-0">
               {updates.map((update) => (
                 <tr key={update.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
@@ -484,7 +527,7 @@ export function ManageUpdates() {
                     <div className="text-sm text-gray-500 line-clamp-1">{dt(update.excerpt)}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-block px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                       {update.category}
                     </span>
                   </td>

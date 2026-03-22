@@ -23,9 +23,9 @@ export function NotificationBell() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case "success":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
       case "warning":
-        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
       case "error":
         return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
       default:
@@ -52,7 +52,7 @@ export function NotificationBell() {
       >
         <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700 dark:text-gray-300" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1.5 h-2 w-2 bg-emerald-600 rounded-full border border-white dark:border-gray-900" />
+          <span className="absolute top-1 right-1.5 h-2 w-2 bg-blue-600 rounded-full border border-white dark:border-gray-900" />
         )}
       </button>
 
@@ -66,7 +66,7 @@ export function NotificationBell() {
                 <button
                   type="button"
                   onClick={markAllAsRead}
-                  className="text-xs text-emerald-600 hover:text-emerald-500 font-bold transition-colors"
+                  className="text-xs text-blue-600 hover:text-blue-500 font-bold transition-colors"
                 >
                   MARK ALL AS READ
                 </button>
@@ -83,7 +83,7 @@ export function NotificationBell() {
                 notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors relative group ${!notification.read ? "bg-emerald-50/30 dark:bg-emerald-900/5" : ""
+                    className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors relative group ${!notification.read ? "bg-blue-50/30 dark:bg-blue-900/5" : ""
                       }`}
                     onClick={() => handleNotificationClick(notification.id, notification.link)}
                   >
@@ -98,7 +98,7 @@ export function NotificationBell() {
                             {notification.type.toUpperCase()}
                           </span>
                           {!notification.read && (
-                            <span className="h-1.5 w-1.5 bg-emerald-600 rounded-full"></span>
+                            <span className="h-1.5 w-1.5 bg-blue-600 rounded-full"></span>
                           )}
                         </div>
                         <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-snug">
@@ -130,7 +130,7 @@ export function NotificationBell() {
                   setIsOpen(false);
                   navigate('/dashboard/notifications');
                 }}
-                className="text-xs text-emerald-600 hover:text-emerald-500 font-bold uppercase tracking-wider transition-colors"
+                className="text-xs text-blue-600 hover:text-blue-500 font-bold uppercase tracking-wider transition-colors"
               >
                 View all notifications
               </button>

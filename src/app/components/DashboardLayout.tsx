@@ -19,7 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ title, children }) =>
                     <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
                         {title}
                     </h1>
-                    <div className="h-1.5 w-20 bg-emerald-500 rounded-full mt-2" />
+                    <div className="h-1 w-24 bg-primary rounded-full mt-2" />
                 </div>
             </div>
             <div className="relative">

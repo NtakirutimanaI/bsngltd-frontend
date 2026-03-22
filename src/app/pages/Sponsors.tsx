@@ -118,7 +118,7 @@ export function Sponsors() {
             Manage relationships with project sponsors and investors
           </p>
         </div>
-        <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
           <Plus className="h-4 w-4" />
           Add Sponsor
         </button>
@@ -147,7 +147,7 @@ export function Sponsors() {
               </p>
             </div>
             <div className="bg-green-100 p-3 rounded-lg">
-              <DollarSign className="h-6 w-6 text-green-600" />
+              <DollarSign className="h-6 w-6 text-blue-600" />
             </div>
           </div>
         </ScrollReveal>
@@ -172,8 +172,8 @@ export function Sponsors() {
                 {formatAmount(totalInvestment / (sponsors.length || 1))}
               </p>
             </div>
-            <div className="bg-emerald-100 p-3 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-emerald-600" />
+            <div className="bg-blue-100 p-3 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
             </div>
           </div>
         </ScrollReveal>
@@ -189,14 +189,14 @@ export function Sponsors() {
               placeholder="Search sponsors..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:outline-none focus:ring-0 focus:border-emerald-500 transition-colors"
+              className="w-full pl-12 pr-4 py-2 bg-transparent border-0 border-b-2 border-gray-400 rounded-none focus:outline-none focus:ring-0 focus:border-blue-500 transition-colors"
             />
           </div>
           <div className="flex items-center gap-2">
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
               <option value="government">Government</option>
@@ -259,7 +259,7 @@ export function Sponsors() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Sponsored Projects:</span>
-                <span className="text-base font-semibold text-emerald-600">
+                <span className="text-base font-semibold text-blue-600">
                   {sponsor.projects}
                 </span>
               </div>
@@ -303,14 +303,14 @@ export function Sponsors() {
       <Modal isOpen={!!selectedSponsor} onClose={() => setSelectedSponsor(null)} title="Sponsor Details" size="sm" draggable={true}>
         {selectedSponsor && (
           <div className="flex flex-col gap-4">
-            <div className="bg-emerald-600 p-4 rounded-xl text-white flex justify-between items-center shrink-0">
+            <div className="bg-blue-600 p-4 rounded-xl text-white flex justify-between items-center shrink-0">
               <div className="flex items-center gap-3">
                 <div className="text-2xl bg-white/20 p-2 rounded-xl">
                   {getTypeIcon(selectedSponsor.type)}
                 </div>
                 <div>
                   <h2 className="text-lg font-bold mb-0 text-white">{selectedSponsor.name}</h2>
-                  <p className="text-emerald-100 uppercase text-[10px] font-bold tracking-wider mb-0 text-white">
+                  <p className="text-blue-100 uppercase text-[10px] font-bold tracking-wider mb-0 text-white">
                     {selectedSponsor.type} Investor
                   </p>
                 </div>
@@ -348,8 +348,8 @@ export function Sponsors() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-100 dark:border-green-900/30">
                     <div className="flex items-center gap-2 mb-1">
-                      <DollarSign className="h-3.5 w-3.5 text-green-600" />
-                      <span className="text-[10px] text-green-600 font-bold uppercase">Investment</span>
+                      <DollarSign className="h-3.5 w-3.5 text-blue-600" />
+                      <span className="text-[10px] text-blue-600 font-bold uppercase">Investment</span>
                     </div>
                     <p className="font-bold text-green-700 dark:text-green-400 mb-0">{formatAmount(selectedSponsor.investmentAmount)}</p>
                   </div>
@@ -361,10 +361,10 @@ export function Sponsors() {
                     <p className="font-bold text-blue-700 dark:text-blue-400 mb-0">{selectedSponsor.projects}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
-                  <Calendar className="h-4 w-4 text-emerald-600" />
+                <div className="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                  <Calendar className="h-4 w-4 text-blue-600" />
                   <div>
-                    <p className="text-[10px] text-emerald-500 mb-0">Sponsor Since</p>
+                    <p className="text-[10px] text-blue-500 mb-0">Sponsor Since</p>
                     <p className="font-semibold text-sm mb-0 dark:text-gray-200">{selectedSponsor.investmentDate}</p>
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export function Sponsors() {
               >
                 Close
               </button>
-              <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0">
                 <MessageCircle className="h-4 w-4" />
                 Send Message
               </button>

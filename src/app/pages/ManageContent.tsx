@@ -7,14 +7,11 @@ import {
     Save,
     Upload,
     Image as ImageIcon,
-    Type,
     FileText,
     Globe,
     Home,
     Building2,
     Phone,
-    Mail,
-    MapPin,
     CheckCircle,
     XCircle,
     Eye,
@@ -208,70 +205,51 @@ export function ManageContent() {
     };
 
     return (
-        <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+        <div className="container-fluid bg-white min-vh-100 px-2 px-md-4 pt-4 pb-4">
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
                 <div>
-                    <h1 className="h5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                        <FileText size={16} style={{ color: '#16a085' }} />
+                    <h1 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                        <FileText size={20} className="text-primary" />
                         Content Management
                     </h1>
-                    <p className="text-muted mb-0" style={{ fontSize: '12px' }}>
+                    <p className="text-muted small mb-0">
                         Manage website content, images, and text across all sections
                     </p>
                 </div>
                 <div className="d-flex gap-2">
                     <button
                         onClick={() => setPreviewMode(!previewMode)}
-                        className="btn px-3 py-1 d-flex align-items-center gap-1"
-                        style={{
-                            background: previewMode ? '#16a085' : 'transparent',
-                            border: '2px solid #16a085',
-                            color: previewMode ? '#fff' : '#16a085',
-                            fontWeight: 600,
-                            fontSize: '12px',
-                            height: '30px'
-                        }}
+                        className={`btn btn-sm d-flex align-items-center gap-2 px-3 fw-bold ${previewMode ? 'btn-primary' : 'btn-outline-primary'}`}
+                        style={{ height: '38px', borderRadius: '8px' }}
                     >
-                        {previewMode ? <EyeOff size={13} /> : <Eye size={13} />}
-                        {previewMode ? 'Edit Mode' : 'Preview Mode'}
+                        {previewMode ? <EyeOff size={16} /> : <Eye size={16} />}
+                        {previewMode ? 'Editor View' : 'Live Preview'}
                     </button>
                     <button
                         onClick={() => { setEditingContent(null); setIsModalOpen(true); }}
-                        className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
-                        style={{
-                            background: '#16a085',
-                            border: 'none',
-                            color: '#fff',
-                            fontWeight: 600,
-                            fontSize: '12px',
-                            height: '30px'
-                        }}
+                        className="btn btn-primary btn-sm d-flex align-items-center gap-2 px-3 fw-bold shadow-sm"
+                        style={{ height: '38px', borderRadius: '8px' }}
                     >
-                        <Plus size={13} /> Add Content
+                        <Plus size={16} /> Add New Section
                     </button>
                 </div>
             </ScrollReveal>
 
             {/* Category Filters */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-auto">
+            <div className="bg-light rounded p-4 mb-4 shadow-sm">
+                <div className="p-0">
+                    <div className="nav nav-pills gap-2 flex-nowrap overflow-auto pb-1">
                         <button
                             onClick={() => setSelectedCategory("all")}
-                            className={`nav-link flex-shrink-0 d-flex align-items-center gap-1 py-2 transition-all ${selectedCategory === "all" ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                            className={`nav-link flex-shrink-0 d-flex align-items-center gap-2 px-3 py-2 fw-semibold transition-all ${selectedCategory === "all" ? 'active' : 'text-muted'}`}
                             style={{
-                                borderRadius: '8px',
-                                border: 'none',
-                                background: selectedCategory === "all" ? '#16a085' : 'transparent',
-                                color: selectedCategory === "all" ? '#fff' : '#6c757d',
-                                fontWeight: 600,
-                                fontSize: '12px',
-                                padding: '6px 12px',
-                                minWidth: 'fit-content'
+                                borderRadius: '10px',
+                                fontSize: '13px',
+                                background: selectedCategory === "all" ? '#009CFF' : 'transparent'
                             }}
                         >
-                            <FileText size={14} /> All Content
+                            <FileText size={16} /> All Sections
                         </button>
                         {CONTENT_CATEGORIES.map(category => {
                             const Icon = category.icon;
@@ -279,20 +257,15 @@ export function ManageContent() {
                                 <button
                                     key={category.key}
                                     onClick={() => setSelectedCategory(category.key)}
-                                    className={`nav-link flex-shrink-0 d-flex align-items-center gap-1 py-2 transition-all ${selectedCategory === category.key ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
+                                    className={`nav-link flex-shrink-0 d-flex align-items-center gap-2 px-3 py-2 fw-semibold transition-all ${selectedCategory === category.key ? 'active' : 'text-muted'}`}
                                     style={{
-                                        borderRadius: '8px',
-                                        border: 'none',
-                                        background: selectedCategory === category.key ? '#16a085' : 'transparent',
-                                        color: selectedCategory === category.key ? '#fff' : '#6c757d',
-                                        fontWeight: 600,
-                                        fontSize: '12px',
-                                        padding: '6px 12px',
-                                        minWidth: 'fit-content'
+                                        borderRadius: '10px',
+                                        fontSize: '13px',
+                                        background: selectedCategory === category.key ? '#009CFF' : 'transparent'
                                     }}
                                 >
-                                    <Icon size={14} />
-                                    <span className="d-none d-md-inline">{category.label}</span>
+                                    <Icon size={16} />
+                                    <span>{category.label}</span>
                                 </button>
                             );
                         })}
@@ -301,149 +274,113 @@ export function ManageContent() {
             </div>
 
             {/* Search Bar */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
-                <div className="card-body py-2">
-                    <div className="position-relative d-flex align-items-center gap-2">
-                        <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
-                        <input
-                            type="text"
-                            placeholder="Search content by title, section, or description..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="form-control form-control-sm ps-5 bg-light border-0"
-                            style={{ fontSize: '12px', borderRadius: '8px' }}
-                        />
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm('')}
-                                className="btn btn-light btn-sm p-1"
-                                style={{ borderRadius: '6px' }}
-                            >
-                                <XCircle size={12} />
-                            </button>
-                        )}
-                        <div className="text-muted small" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
-                            {totalItems} item{totalItems !== 1 ? 's' : ''} found
+            <div className="bg-light rounded p-4 mb-4 shadow-sm">
+                <div className="p-0">
+                    <div className="position-relative d-flex align-items-center gap-3">
+                        <div className="position-relative flex-grow-1">
+                            <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Find sections by title, description or code..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="form-control form-control-lg ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
+                                style={{ fontSize: '14px', borderRadius: '10px', height: '45px' }}
+                            />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm('')}
+                                    className="position-absolute end-0 top-50 translate-middle-y me-3 btn btn-link p-0 text-muted hover:text-dark"
+                                >
+                                    <XCircle size={18} />
+                                </button>
+                            )}
+                        </div>
+                        <div className="text-muted small fw-bold text-uppercase px-3 py-2 bg-light rounded-pill border" style={{ fontSize: '10px', whiteSpace: 'nowrap', letterSpacing: '0.05em' }}>
+                            {totalItems} entries total
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Content Grid */}
-            <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
+            <div className="bg-light rounded p-4 shadow-sm mb-4">
                 {isLoading ? (
-                    <div className="text-center py-4">
+                    <div className="text-center py-12">
                         <div className="spinner-border text-primary" role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>
-                        <p className="text-muted mt-2" style={{ fontSize: '12px' }}>Loading content...</p>
+                        <p className="text-muted mt-3 small">Retrieving content data...</p>
                     </div>
                 ) : filteredContent.length === 0 ? (
-                    <div className="text-center py-4 text-muted">
-                        <FileText size={32} style={{ marginBottom: 8, opacity: 0.4 }} />
-                        <p style={{ fontSize: '14px', fontWeight: 500 }}>No content found</p>
-                        <p style={{ fontSize: '12px' }}>Try adjusting your search or filter criteria</p>
+                    <div className="text-center py-12 bg-white">
+                        <div className="w-16 h-16 bg-light rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border">
+                            <FileText size={32} className="text-muted" />
+                        </div>
+                        <h6 className="fw-bold text-dark">No Results Found</h6>
+                        <p className="text-muted small px-4">We couldn't find any content sections matching your current filters.</p>
+                        <button onClick={() => { setSearchTerm(''); setSelectedCategory('all'); }} className="btn btn-primary btn-sm px-4 fw-bold mt-2">Clear Filters</button>
                     </div>
                 ) : (
                     <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0" style={{ fontSize: '12px' }}>
-                            <thead className="bg-light">
+                        <table className="table table-hover align-middle mb-0">
+                            <thead>
                                 <tr>
-                                    {['Section', 'Title', 'Description', 'Status', 'Actions'].map(h => (
-                                        <th key={h} className={
-                                            h === 'Actions' ? 'text-end pe-4' : 'ps-4'
-                                        } style={{
-                                            fontWeight: 600,
-                                            color: '#374151',
-                                            fontSize: '11px',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em',
-                                            padding: '8px 16px'
-                                        }}>{h}</th>
-                                    ))}
+                                    <th className="ps-4 py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Section</th>
+                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Title & Subtitle</th>
+                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Description</th>
+                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Visibility</th>
+                                    <th className="pe-4 py-3 border-0 text-dark small text-uppercase fw-bold text-end" style={{ letterSpacing: '0.02em' }}>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="border-0">
                                 {filteredContent.map((item) => (
-                                    <tr key={item.id} className="transition-all">
-                                        <td className="ps-4 py-2">
-                                            <span style={{
-                                                background: '#e0e7ff',
-                                                color: '#4338ca',
-                                                padding: '2px 8px',
-                                                borderRadius: 12,
-                                                fontSize: '10px',
-                                                fontWeight: 600,
-                                                textTransform: 'capitalize'
-                                            }}>
+                                    <tr key={item.id} className="border-bottom border-light/50">
+                                        <td className="ps-4 py-3">
+                                            <span className="badge bg-primary-subtle text-primary border border-primary/10 px-2 py-1.5 rounded-pill text-uppercase" style={{ fontSize: '9px', fontWeight: 800 }}>
                                                 {item.section}
                                             </span>
                                         </td>
-                                        <td className="py-2">
-                                            <div className="fw-medium" style={{ color: '#1f2937', fontSize: '12px' }}>
-                                                {item.title}
-                                            </div>
-                                            {item.subtitle && (
-                                                <div className="text-muted" style={{ fontSize: '10px' }}>
-                                                    {item.subtitle}
-                                                </div>
-                                            )}
+                                        <td className="py-3">
+                                            <div className="fw-bold text-dark mb-0.5" style={{ fontSize: '13px' }}>{item.title}</div>
+                                            {item.subtitle && <div className="text-muted" style={{ fontSize: '11px' }}>{item.subtitle}</div>}
                                         </td>
-                                        <td className="py-2">
-                                            <div className="text-muted" style={{ fontSize: '11px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        <td className="py-3">
+                                            <div className="text-muted text-truncate" style={{ fontSize: '12px', maxWidth: '250px' }}>
                                                 {item.description}
                                             </div>
                                         </td>
-                                        <td className="py-2">
-                                            <button
-                                                onClick={() => toggleContentStatus(item.id, item.isActive)}
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 4,
-                                                    padding: '2px 8px',
-                                                    borderRadius: 12,
-                                                    border: 'none',
-                                                    cursor: 'pointer',
-                                                    fontSize: '10px',
-                                                    fontWeight: 600,
-                                                    background: item.isActive ? '#dcfce7' : '#fee2e2',
-                                                    color: item.isActive ? '#16a34a' : '#dc2626'
-                                                }}
-                                            >
-                                                {item.isActive ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                                                {item.isActive ? 'Active' : 'Inactive'}
-                                            </button>
+                                        <td className="py-3">
+                                            <div className="form-check form-switch cursor-pointer">
+                                                <input
+                                                    className="form-check-input cursor-pointer"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    checked={item.isActive}
+                                                    onChange={() => toggleContentStatus(item.id, item.isActive)}
+                                                />
+                                                <span className={`small fw-bold ms-2 ${item.isActive ? 'text-success' : 'text-muted'}`}>
+                                                    {item.isActive ? 'VISIBLE' : 'HIDDEN'}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="py-2 pe-4 text-end">
-                                            <div className="d-flex justify-content-end gap-1">
+                                        <td className="py-3 pe-4 text-end">
+                                            <div className="d-flex justify-content-end gap-2">
                                                 <button
                                                     onClick={() => setEditingContent(item)}
-                                                    title="Edit"
-                                                    style={{
-                                                        background: '#eff6ff',
-                                                        border: '1px solid #bfdbfe',
-                                                        borderRadius: 6,
-                                                        padding: '4px 6px',
-                                                        cursor: 'pointer',
-                                                        color: '#2563eb'
-                                                    }}
+                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-primary hover:bg-primary hover:text-white transition-all"
+                                                    style={{ borderRadius: '8px' }}
+                                                    title="Edit Entry"
                                                 >
-                                                    <Edit size={12} />
+                                                    <Edit size={14} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(item.id, item.title)}
-                                                    title="Delete"
-                                                    style={{
-                                                        background: '#fef2f2',
-                                                        border: '1px solid #fecaca',
-                                                        borderRadius: 6,
-                                                        padding: '4px 6px',
-                                                        cursor: 'pointer',
-                                                        color: '#dc2626'
-                                                    }}
+                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-danger hover:bg-danger hover:text-white transition-all"
+                                                    style={{ borderRadius: '8px' }}
+                                                    title="Delete Entry"
                                                 >
-                                                    <Trash2 size={12} />
+                                                    <Trash2 size={14} />
                                                 </button>
                                             </div>
                                         </td>
@@ -699,57 +636,22 @@ function ContentModal({ isOpen, onClose, content, onSave, onImageUpload, categor
                     </div>
                 </div>
 
-                {/* Modal Actions */}
                 <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="btn d-flex align-items-center justify-content-center"
-                        style={{
-                            background: 'transparent',
-                            border: '2px solid #6c757d',
-                            color: '#6c757d',
-                            fontWeight: 600,
-                            fontSize: '12px',
-                            height: '32px',
-                            borderRadius: '8px',
-                            transition: 'all 0.2s ease',
-                            padding: '0 20px'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#6c757d';
-                            e.currentTarget.style.color = '#fff';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#6c757d';
-                        }}
+                        className="btn btn-light px-4 fw-bold text-dark border shadow-sm"
+                        style={{ height: '38px', borderRadius: '8px', fontSize: '13px' }}
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
-                        className="btn d-flex align-items-center justify-content-center"
-                        style={{
-                            background: '#16a085',
-                            border: 'none',
-                            color: '#fff',
-                            fontWeight: 600,
-                            fontSize: '12px',
-                            height: '32px',
-                            borderRadius: '8px',
-                            transition: 'all 0.2s ease',
-                            padding: '0 20px'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = '#1a9b7d';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = '#16a085';
-                        }}
+                        className="btn btn-primary px-4 fw-bold shadow-sm d-flex align-items-center gap-2"
+                        style={{ height: '38px', borderRadius: '8px', fontSize: '13px' }}
                     >
-                        <Save size={12} className="me-1" />
-                        {content ? 'Update Content' : 'Add Content'}
+                        <Save size={16} />
+                        {content ? 'Update Content' : 'Publish Section'}
                     </button>
                 </div>
             </form>

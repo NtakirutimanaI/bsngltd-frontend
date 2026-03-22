@@ -145,7 +145,7 @@ export default function SiteManagerDashboard() {
                         <p className="text-xs font-medium" style={{ color: 'var(--primary)' }}>{project.name}</p>
                         <Badge
                           className="h-4 py-0 text-xs text-white"
-                          style={{ backgroundColor: '#16a085', border: 'none' }}
+                          style={{ backgroundColor: '#009CFF', border: 'none' }}
                         >
                           {project.progress}%
                         </Badge>
@@ -173,7 +173,7 @@ export default function SiteManagerDashboard() {
                       <Badge
                         className="h-4 py-0 text-xs"
                         style={{
-                          backgroundColor: prop.status === 'available' ? '#10b981' : '#16a085',
+                          backgroundColor: prop.status === 'available' ? '#10b981' : '#009CFF',
                           color: 'white'
                         }}
                       >
@@ -199,25 +199,25 @@ export default function SiteManagerDashboard() {
             <CardContent className="px-3 pb-3">
               <div className="grid grid-cols-2 gap-2">
                 <Link to="/dashboard/projects">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <HardHat className="mr-1 size-3" />
                     Projects
                   </Button>
                 </Link>
                 <Link to="/dashboard/properties">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Home className="mr-1 size-3" />
                     Properties
                   </Button>
                 </Link>
                 <Link to="/dashboard/attendance">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Calendar className="mr-1 size-3" />
                     Attendance
                   </Button>
                 </Link>
                 <Link to="/dashboard/notifications">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <FileText className="mr-1 size-3" />
                     Docs
                   </Button>
@@ -237,7 +237,7 @@ export default function SiteManagerDashboard() {
                   <span style={{ color: 'var(--primary)' }} className="font-medium">Projects in Progress</span>
                   <Badge
                     className="h-4 py-0 text-white"
-                    style={{ backgroundColor: '#16a085', border: 'none' }}
+                    style={{ backgroundColor: '#009CFF', border: 'none' }}
                   >
                     {stats.activeProjects}
                   </Badge>
@@ -246,7 +246,7 @@ export default function SiteManagerDashboard() {
                   <span style={{ color: 'var(--primary)' }} className="font-medium">Available Properties</span>
                   <Badge
                     className="h-4 py-0 text-white"
-                    style={{ backgroundColor: '#16a085', border: 'none' }}
+                    style={{ backgroundColor: '#009CFF', border: 'none' }}
                   >
                     {stats.availableProperties}
                   </Badge>

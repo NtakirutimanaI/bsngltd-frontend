@@ -174,7 +174,7 @@ export function Payments() {
         {isAdminOrManager && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
           >
             <Plus className="w-5 h-5" />
             New Payment
@@ -317,7 +317,7 @@ export function Payments() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent ps-4 focus:ring-0"
                 style={{ paddingLeft: '3rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.borderColor = '#16a085'}
+                onFocus={(e) => e.target.style.borderColor = '#009CFF'}
                 onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
               />
             </div>

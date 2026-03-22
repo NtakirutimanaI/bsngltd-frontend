@@ -55,7 +55,7 @@ export function About() {
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
                   <img className="img-fluid h-75" src={getImageUrl(settings.about_image_2) || '/img/about-2.jpg'} alt="About 2" />
-                  <div className="h-25 d-flex align-items-center text-center bg-primary px-4" style={{ background: '#16a085' }}>
+                  <div className="h-25 d-flex align-items-center text-center bg-primary px-4" style={{ background: '#009CFF' }}>
                     <h4 className="text-white lh-base mb-0">{t('buildingExcellenceSince2010')}</h4>
                   </div>
                 </div>
@@ -63,29 +63,29 @@ export function About() {
             </div>
             <div className="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
               <h1 className="mb-5">
-                <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{aboutTitle.split(' ')[0]}</span> {aboutTitle.split(' ').slice(1).join(' ')}
+                <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#009CFF' }}>{aboutTitle.split(' ')[0]}</span> {aboutTitle.split(' ').slice(1).join(' ')}
               </h1>
               <div className="mb-4 text-muted " style={{ whiteSpace: 'pre-wrap' }}>
                 {dt(settings.about_company_history) || t('aboutDesc')}
               </div>
-              <p className="mb-5 fw-bold text-primary italic" style={{ color: '#16a085' }}>
+              <p className="mb-5 fw-bold text-primary italic" style={{ color: '#009CFF' }}>
                 {dt(settings.about_vision)}
               </p>
               <div className="row g-3">
                 <div className="col-sm-6">
-                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('awardWinning')}</h6>
-                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('professionalStaff')}</h6>
+                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#009CFF' }} />{t('awardWinning')}</h6>
+                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#009CFF' }} />{t('professionalStaff')}</h6>
                 </div>
                 <div className="col-sm-6">
-                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('support24_7')}</h6>
-                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#16a085' }} />{t('fairPrices')}</h6>
+                  <h6 className="mb-3 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#009CFF' }} />{t('support24_7')}</h6>
+                  <h6 className="mb-0 d-flex align-items-center"><Check className="text-primary me-2 w-5 h-5" style={{ color: '#009CFF' }} />{t('fairPrices')}</h6>
                 </div>
               </div>
               <div className="d-flex align-items-center mt-5">
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Facebook className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Twitter className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Instagram className="w-5 h-5" /></a>
-                <a className="btn btn-outline-primary btn-square border-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Linkedin className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Facebook className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Twitter className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2 me-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Instagram className="w-5 h-5" /></a>
+                <a className="btn btn-outline-primary btn-square border-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Linkedin className="w-5 h-5" /></a>
               </div>
             </div>
           </div>
@@ -97,21 +97,21 @@ export function About() {
       <div className="container-fluid py-5">
         <div className="container">
           <div className="text-center wow fadeIn" data-wow-delay="0.1s">
-            <h1 className="mb-5">{t('whyPeople')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{t('chooseUs')}</span></h1>
+            <h1 className="mb-5">{t('whyPeople')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#009CFF' }}>{t('chooseUs')}</span></h1>
           </div>
           <div className="row g-5 align-items-center text-center">
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.1s">
-              <Calendar className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <Calendar className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#009CFF' }} strokeWidth={1} />
               <h4>{t('yearsExperience15')}</h4>
               <p className="mb-0 text-muted">{t('yearsExperienceDesc')}</p>
             </div>
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.3s">
-              <HardHat className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <HardHat className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#009CFF' }} strokeWidth={1} />
               <h4>{t('professionalConstruction')}</h4>
               <p className="mb-0 text-muted">{t('professionalConstructionDesc2')}</p>
             </div>
             <div className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay="0.5s">
-              <ShieldCheck className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#16a085' }} strokeWidth={1} />
+              <ShieldCheck className="text-primary w-25 h-25 mb-4 mx-auto" style={{ color: '#009CFF' }} strokeWidth={1} />
               <h4>{t('guaranteedQuality')}</h4>
               <p className="mb-0 text-muted">{t('guaranteedQualityDesc')}</p>
             </div>
@@ -125,7 +125,7 @@ export function About() {
         <div className="container-fluid bg-light py-5">
           <div className="container py-5">
             <h1 className="mb-5 text-center wow fadeIn" data-wow-delay="0.1s">
-              {t('ourProfessional')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#16a085' }}>{t('team')}</span>
+              {t('ourProfessional')} <span className="text-uppercase text-primary bg-light px-2" style={{ color: '#009CFF' }}>{t('team')}</span>
             </h1>
             <div className="row g-4">
               {[
@@ -138,12 +138,12 @@ export function About() {
                   <div className="team-item position-relative overflow-hidden rounded shadow-sm">
                     <img className="img-fluid w-100" src={member.img} alt={member.name} />
                     <div className="team-overlay">
-                      <small className="mb-2 text-uppercase fw-bold text-white" style={{ letterSpacing: '2px', color: '#16a085' }}>{member.role}</small>
-                      <h4 className="lh-base text-white mb-3" style={{ color: '#16a085' }}>{member.name}</h4>
+                      <small className="mb-2 text-uppercase fw-bold text-white" style={{ letterSpacing: '2px', color: '#009CFF' }}>{member.role}</small>
+                      <h4 className="lh-base text-white mb-3" style={{ color: '#009CFF' }}>{member.name}</h4>
                       <div className="d-flex justify-content-center">
-                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Facebook className="w-4 h-4" /></a>
-                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Twitter className="w-4 h-4" /></a>
-                        <a className="btn btn-outline-light btn-sm-square border-2" href="#!" style={{ borderColor: '#16a085', color: '#16a085' }}><Instagram className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Facebook className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2 me-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Twitter className="w-4 h-4" /></a>
+                        <a className="btn btn-outline-light btn-sm-square border-2" href="#!" style={{ borderColor: '#009CFF', color: '#009CFF' }}><Instagram className="w-4 h-4" /></a>
                       </div>
                     </div>
                   </div>

@@ -137,25 +137,25 @@ export default function ManagerDashboard() {
             <CardContent className="px-3 pb-3">
               <div className="grid grid-cols-2 gap-2">
                 <Link to="/dashboard/finance">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <DollarSign className="mr-1 size-3" />
                     Finances
                   </Button>
                 </Link>
                 <Link to="/dashboard/workforce">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Users className="mr-1 size-3" />
                     Employees
                   </Button>
                 </Link>
                 <Link to="/dashboard/finance">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Banknote className="mr-1 size-3" />
                     Salaries
                   </Button>
                 </Link>
                 <Link to="/dashboard/attendance">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Calendar className="mr-1 size-3" />
                     Attendance
                   </Button>

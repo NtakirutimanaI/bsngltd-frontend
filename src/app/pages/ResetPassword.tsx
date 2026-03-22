@@ -165,7 +165,7 @@ export function ResetPassword() {
                                         <button
                                             type="submit"
                                             disabled={isLoading || !token}
-                                            className="btn btn-sm bg-emerald-600 border-emerald-600 text-white w-100 py-2 fw-bold text-uppercase shadow-sm fs-6 hover:bg-emerald-700 transition-all"
+                                            className="btn btn-sm bg-blue-600 border-blue-600 text-white w-100 py-2 fw-bold text-uppercase shadow-sm fs-6 hover:bg-blue-700 transition-all"
                                         >
                                             {isLoading ? (
                                                 <>

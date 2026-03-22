@@ -15,9 +15,16 @@ import { Reports } from "./Reports";
 import { WebsiteAnalytics } from "./WebsiteAnalytics";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
 
+import { useSearchParams } from "react-router";
+
 export function Insights() {
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState<'business' | 'website'>('business');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = (searchParams.get('tab') as 'business' | 'website') || 'business';
+
+    const setActiveTab = (tab: any) => {
+        setSearchParams({ tab });
+    };
 
 
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -46,13 +53,13 @@ export function Insights() {
                 </div>
                 <div className="d-flex gap-2">
                     <button className="btn px-3 py-1 d-flex align-items-center gap-1" style={{
-                        background: 'transparent', border: '2px solid #16a085', color: '#16a085', fontWeight: 600, fontSize: '12px', height: '30px'
+                        background: 'transparent', border: '2px solid #009CFF', color: '#009CFF', fontWeight: 600, fontSize: '12px', height: '30px'
                     }}>
                         <Download size={13} /> Generate PDF
                     </button>
                     <button
                         className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1"
-                        style={{ background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
+                        style={{ background: '#009CFF', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px' }}
                     >
                         <FileText size={13} /> Export Raw Data
                     </button>
@@ -66,14 +73,14 @@ export function Insights() {
                         <button
                             onClick={() => setActiveTab('business')}
                             className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'business' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'business' ? '#16a085' : 'transparent', color: activeTab === 'business' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
+                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'business' ? '#009CFF' : 'transparent', color: activeTab === 'business' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
                         >
                             <TrendingUp size={14} /> Business Performance
                         </button>
                         <button
                             onClick={() => setActiveTab('website')}
                             className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-1 py-2 transition-all ${activeTab === 'website' ? 'text-white shadow' : 'text-muted hover:bg-light'}`}
-                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'website' ? '#16a085' : 'transparent', color: activeTab === 'website' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
+                            style={{ borderRadius: '8px', border: 'none', background: activeTab === 'website' ? '#009CFF' : 'transparent', color: activeTab === 'website' ? '#fff' : '#6c757d', fontWeight: 600, fontSize: '12px' }}
                         >
                             <Globe size={14} /> Digital Analytics
                         </button>

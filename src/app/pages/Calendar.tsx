@@ -121,7 +121,7 @@ export function Calendar() {
       case "deadline":
         return "bg-red-500";
       case "inspection":
-        return "bg-emerald-500";
+        return "bg-blue-500";
       case "delivery":
         return "bg-green-500";
       default:
@@ -155,7 +155,7 @@ export function Calendar() {
         <button
           onClick={handleAdd}
           className="btn px-3 py-1 text-white border-0 shadow d-flex align-items-center gap-1" style={{
-            background: '#16a085', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
+            background: '#009CFF', border: 'none', color: '#fff', fontWeight: 600, fontSize: '12px', height: '30px'
           }}>
           <Plus size={13} /> Add Event
         </button>
@@ -286,7 +286,7 @@ export function Calendar() {
                               {event.title}
                             </h4>
                             {event.isPublished ? (
-                              <Globe size={10} className="text-emerald-500" />
+                              <Globe size={10} className="text-blue-500" />
                             ) : (
                               <Lock size={10} className="text-gray-400" />
                             )}

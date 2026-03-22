@@ -26,19 +26,19 @@ export function ExportReportModal({ isOpen, onClose, title = "Export Report", on
                     <label className="fw-semibold text-dark text-sm mb-2 d-block">Select Format</label>
                     <div className="d-flex gap-2">
                         <button
-                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'pdf' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'pdf' ? 'border-blue-500 bg-blue-50 text-blue-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                             onClick={() => setFormat('pdf')}
                         >
                             <FileText size={16} /> PDF
                         </button>
                         <button
-                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'excel' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'excel' ? 'border-blue-500 bg-blue-50 text-blue-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                             onClick={() => setFormat('excel')}
                         >
                             <FileSpreadsheet size={16} /> Excel
                         </button>
                         <button
-                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'csv' ? 'border-emerald-500 bg-emerald-50 text-emerald-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                            className={`flex-fill d-flex align-items-center justify-content-center gap-2 py-2 rounded-xl transition-all border ${format === 'csv' ? 'border-blue-500 bg-blue-50 text-blue-700 fw-bold' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                             onClick={() => setFormat('csv')}
                         >
                             <FileText size={16} /> CSV
@@ -87,7 +87,7 @@ export function ExportReportModal({ isOpen, onClose, title = "Export Report", on
                         Cancel
                     </button>
                     <button
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all d-flex align-items-center gap-2 border-0"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all d-flex align-items-center gap-2 border-0"
                         onClick={handleExport}
                     >
                         <Download size={14} /> Download Report

@@ -120,7 +120,7 @@ export function Bookings() {
     if (isLoading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-                <RefreshCcw className="animate-spin text-emerald-600" size={32} />
+                <RefreshCcw className="animate-spin text-blue-600" size={32} />
             </div>
         );
     }

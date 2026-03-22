@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal } from "@/app/components/Modal";
 import { useCurrency } from "@/app/context/CurrencyContext";
-import { Coins, Globe } from "lucide-react";
+import { Coins } from "lucide-react";
 
 import { fetchApi } from '../api/client';
 
@@ -144,23 +144,21 @@ export function AddPropertyModal({ isOpen, onClose, onSuccess, initialData }: Ad
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Edit Property" : "Add New Property"} size="md" draggable={true}>
-      <div className="mb-4 bg-light p-2 rounded d-flex gap-2">
+      <div className="d-flex gap-2 p-1 bg-light rounded-3 mb-4 border">
         {languages.map(lang => (
           <button
             key={lang.id}
+            type="button"
             onClick={() => setActiveLang(lang.id)}
-            className={`btn text-xs h-6 d-flex align-items-center gap-1 px-2 py-1 rounded-pill transition-all ${activeLang === lang.id
-              ? 'btn-primary shadow-sm'
-              : 'btn-light hover-bg-gray-200 text-muted'
+            className={`flex-grow-1 btn btn-sm py-1.5 fw-bold transition-all ${activeLang === lang.id
+              ? 'btn-white bg-white shadow-sm text-primary'
+              : 'text-muted hover:text-dark border-0 bg-transparent'
               }`}
+            style={{ borderRadius: '6px' }}
           >
-            <Globe size={14} />
-            <span className="fw-bold small text-uppercase">{lang.id}</span>
+            <span className="text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.05em' }}>{lang.name}</span>
           </button>
         ))}
-        <div className="ms-auto d-flex align-items-center px-3">
-          <span className="text-xs text-muted fw-bold text-uppercase">Editing: {languages.find(l => l.id === activeLang)?.name}</span>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="d-flex flex-column gap-2">
@@ -386,55 +384,20 @@ export function AddPropertyModal({ isOpen, onClose, onSuccess, initialData }: Ad
           />
         </div>
 
-        <div className="d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-2">
+        <div className="d-flex align-items-center justify-content-end gap-3 pt-4 border-top mt-4">
           <button
             type="button"
             onClick={onClose}
-            className="btn d-flex align-items-center justify-content-center"
-            style={{
-              background: 'transparent',
-              border: '2px solid #6c757d',
-              color: '#6c757d',
-              fontWeight: 600,
-              fontSize: '12px',
-              height: '32px',
-              borderRadius: '8px',
-              transition: 'all 0.2s ease',
-              padding: '0 20px'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#6c757d';
-              e.currentTarget.style.color = '#fff';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = '#6c757d';
-            }}
+            className="btn btn-light fw-bold text-muted border shadow-sm px-4"
+            style={{ borderRadius: '10px', height: '42px' }}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn d-flex align-items-center justify-content-center"
-            style={{
-              background: '#16a085',
-              border: 'none',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '12px',
-              height: '32px',
-              borderRadius: '8px',
-              transition: 'all 0.2s ease',
-              padding: '0 20px',
-              opacity: isSubmitting ? 0.7 : 1
-            }}
-            onMouseEnter={(e) => {
-              if (!isSubmitting) e.currentTarget.style.background = '#1a9b7d';
-            }}
-            onMouseLeave={(e) => {
-              if (!isSubmitting) e.currentTarget.style.background = '#16a085';
-            }}
+            className="btn btn-primary fw-bold shadow-sm px-5"
+            style={{ borderRadius: '10px', height: '42px' }}
           >
             {isSubmitting ? (initialData ? "Updating..." : "Adding...") : (initialData ? "Update Property" : "Add Property")}
           </button>

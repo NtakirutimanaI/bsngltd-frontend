@@ -42,7 +42,7 @@ interface UserFormData {
 }
 
 const USER_CATEGORIES = [
-    { key: 'all', label: 'All Users', icon: Users, color: '#16a085' },
+    { key: 'all', label: 'All Users', icon: Users, color: '#009CFF' },
     {
         key: 'administration', label: 'Administration', icon: Shield, color: '#ef4444',
         roles: ['super_admin', 'admin']
@@ -86,7 +86,7 @@ const ALL_USER_ROLES = [
 
 function getRoleBadgeColor(userRole: string): string {
     const map: Record<string, string> = {
-        super_admin: '#ef4444', admin: '#16a085', manager: '#eab308',
+        super_admin: '#ef4444', admin: '#009CFF', manager: '#eab308',
         site_manager: '#84cc16', editor: '#06b6d4', content_editor: '#10b981', employee: '#3b82f6',
         hr: '#8b5cf6', accountant: '#a855f7', partner: '#ec4899',
         investor: '#f43f5e', donor: '#d946ef', contractor: '#14b8a6',
@@ -278,10 +278,10 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
 
             {/* Header */}
             {!hideHeader && (
-                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
+                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
                     <div>
                         <h1 className="h5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                            <UserCog size={16} style={{ color: '#16a085' }} />
+                            <UserCog size={20} className="text-primary" />
                             User Management
                         </h1>
                         <p className="text-muted mb-0" style={{ fontSize: '12px' }}>
@@ -291,13 +291,13 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                     <div className="d-flex gap-3">
                         <button
                             onClick={() => fetchUsers()}
-                            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-4 py-1.5 rounded-xl text-xs font-bold shadow-sm transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 d-flex align-items-center gap-2"
+                            className="btn btn-light btn-sm px-4 py-2 rounded-xl text-xs font-bold shadow-sm d-flex align-items-center gap-2"
                         >
                             <RefreshCw size={14} /> Refresh
                         </button>
                         <button
                             onClick={() => { resetForm(); setShowModal(true); }}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="btn btn-primary btn-sm px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
                         >
                             <UserPlus size={14} /> Add New User
                         </button>
@@ -306,81 +306,78 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
             )}
 
             {/* Category Tabs */}
-            <div className={`card border-0 shadow-sm mb-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-auto">
-                        {USER_CATEGORIES.map(cat => {
-                            const Icon = cat.icon;
-                            const isActive = activeCategory === cat.key;
-                            return (
-                                <button key={cat.key} onClick={() => { setActiveCategory(cat.key); setCurrentPage(1); }}
-                                    className={`nav-link flex-shrink-0 d-flex align-items-center gap-1.5 py-2 transition-all ${isActive ? 'text-white' : 'text-muted hover:bg-light'}`}
-                                    style={{
-                                        borderRadius: '8px', border: 'none',
-                                        background: isActive ? '#16a085' : 'transparent',
-                                        color: isActive ? '#fff' : '#6c757d',
-                                        fontWeight: 600, fontSize: '12px',
-                                        padding: '6px 12px', minWidth: 'fit-content'
-                                    }}>
-                                    <Icon size={14} />
-                                    <span className="d-none d-md-inline">{cat.label}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
+            <div className={`bg-light rounded mb-4 p-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ border: '1px solid #dee2e6' }}>
+                <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-auto">
+                    {USER_CATEGORIES.map(cat => {
+                        const Icon = cat.icon;
+                        const isActive = activeCategory === cat.key;
+                        return (
+                            <button key={cat.key} onClick={() => { setActiveCategory(cat.key); setCurrentPage(1); }}
+                                className={`nav-link flex-shrink-0 d-flex align-items-center gap-1.5 py-2 transition-all ${isActive ? 'active' : ''}`}
+                                style={{
+                                    borderRadius: '8px', border: 'none',
+                                    fontWeight: 600, fontSize: '12px',
+                                    padding: '8px 16px', minWidth: 'fit-content'
+                                }}>
+                                <Icon size={14} />
+                                <span className="d-none d-md-inline">{cat.label}</span>
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
 
             {/* Search Bar */}
-            <div className={`card border-0 shadow-sm mb-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px' }}>
-                <div className="card-body py-2">
-                    <div className="position-relative d-flex align-items-center gap-2">
-                        <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
-                        <input
-                            type="text" placeholder="Search by name, email, or username..."
-                            value={searchQuery}
-                            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                            className="form-control form-control-sm ps-3 pe-5 bg-light border-0"
-                            style={{ fontSize: '12px', borderRadius: '8px' }}
-                        />
-                        {searchQuery && (
-                            <button onClick={() => setSearchQuery('')} className="btn btn-light btn-sm p-1" style={{ borderRadius: '6px' }}>
-                                <X size={12} />
-                            </button>
-                        )}
-                        <div className="text-muted small" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
-                            {totalUsers} user{totalUsers !== 1 ? 's' : ''} found
-                        </div>
+            <div className={`bg-light rounded mb-4 p-4 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`}>
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                    <h6 className="mb-0 fw-bold">Recent Users</h6>
+                    <div className="text-muted small" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
+                        {totalUsers} user{totalUsers !== 1 ? 's' : ''} found
                     </div>
+                </div>
+                <div className="position-relative d-flex align-items-center gap-2">
+                    <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
+                    <input
+                        type="text" placeholder="Search by name, email, or username..."
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="form-control ps-3 pe-5 bg-white border-1"
+                        style={{ fontSize: '13px', borderRadius: '5px' }}
+                    />
+                    {searchQuery && (
+                        <button onClick={() => setSearchQuery('')} className="btn btn-light btn-sm p-1" style={{ borderRadius: '6px' }}>
+                            <X size={12} />
+                        </button>
+                    )}
                 </div>
             </div>
 
             {/* Users Table */}
-            <div className={`card border-0 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ borderRadius: '12px' }}>
+            <div className={`bg-light rounded p-4 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`}>
                 {loading ? (
-                    <div className="text-center py-4">
-                        <RefreshCw size={24} style={{ color: '#16a085', animation: 'spin 1s linear infinite' }} />
-                        <p className="text-muted mt-2" style={{ fontSize: '12px' }}>Loading users...</p>
+                    <div className="text-center py-5">
+                        <RefreshCw size={32} className="text-primary animate-spin mb-3" />
+                        <p className="text-muted" style={{ fontSize: '14px' }}>Loading users...</p>
                     </div>
                 ) : users.length === 0 ? (
-                    <div className="text-center py-4 text-muted">
-                        <Users size={32} style={{ marginBottom: 8, opacity: 0.4 }} />
-                        <p style={{ fontSize: '14px', fontWeight: 500 }}>No users found</p>
-                        <p style={{ fontSize: '12px' }}>Try adjusting your search or filter criteria</p>
+                    <div className="text-center py-5 text-muted">
+                        <Users size={48} className="mb-3 opacity-25" />
+                        <p className="fw-bold mb-1">No users found</p>
+                        <p className="small">Try adjusting your search or filter criteria</p>
                     </div>
                 ) : (
                     <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0" style={{ fontSize: '12px' }}>
-                            <thead className="bg-light">
-                                <tr>
-                                    {['Full Name', 'Email', 'Username', 'User Role', 'System Role', 'Status', 'Joined', 'Actions'].map(h => (
-                                        <th key={h} className={
-                                            h === 'Actions' ? 'text-end pe-4' : 'ps-4'
-                                        } style={{
-                                            fontWeight: 600, color: '#374151', fontSize: '11px',
-                                            textTransform: 'uppercase', letterSpacing: '0.05em', padding: '8px 16px'
-                                        }}>{h}</th>
-                                    ))}
+                        <table className="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead className="bg-white">
+                                <tr className="text-dark">
+                                    <th className="ps-4">Full Name</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>User Role</th>
+                                    <th>System Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th className="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -539,7 +536,7 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                                 borderRadius: 6, cursor: 'pointer', fontWeight: 600, color: '#374151', fontSize: '12px'
                             }}>Close</button>
                             <button onClick={() => { handleEdit(viewUser); setViewUser(null); }} style={{
-                                background: '#16a085', border: 'none', padding: '6px 16px',
+                                background: '#009CFF', border: 'none', padding: '6px 16px',
                                 borderRadius: 6, cursor: 'pointer', fontWeight: 600, color: 'white', fontSize: '12px'
                             }}>Edit User</button>
                         </div>
@@ -671,7 +668,7 @@ export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
                         </button>
                         <button
                             type="submit"
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                         >
                             {editingUser ? 'Update User' : 'Create User'}
                         </button>

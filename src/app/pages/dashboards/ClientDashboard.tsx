@@ -144,7 +144,7 @@ export default function ClientDashboard() {
                         <Badge
                           className="h-4 py-0 text-xs"
                           style={{
-                            backgroundColor: property.status === 'available' ? '#10b981' : '#16a085',
+                            backgroundColor: property.status === 'available' ? '#10b981' : '#009CFF',
                             color: 'white'
                           }}
                         >

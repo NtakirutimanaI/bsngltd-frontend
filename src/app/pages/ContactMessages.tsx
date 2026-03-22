@@ -82,12 +82,12 @@ export function ContactMessages() {
 
     return (
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 min-h-[60vh] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
             <ScrollReveal className="relative z-10">
                 <div className="d-flex flex-col md:flex-row justify-content-between align-items-md-center gap-4 mb-6">
                     <div className="d-flex align-items-center gap-3">
-                        <div className="p-2.5 bg-emerald-50 rounded-xl text-emerald-600">
+                        <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
                             <Mail size={24} strokeWidth={2} />
                         </div>
                         <div>
@@ -95,8 +95,8 @@ export function ContactMessages() {
                             <p className="text-gray-500 dark:text-gray-400 small mb-0">Manage messages from the public contact form</p>
                         </div>
                     </div>
-                    <Button onClick={() => loadMessages(1)} disabled={isLoading} variant="outline" className="d-flex align-items-center gap-2 rounded-xl border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-emerald-600 transition-colors bg-white dark:bg-gray-900 dark:text-gray-300 shadow-sm">
-                        <RefreshCcw size={16} className={isLoading ? "animate-spin text-emerald-600" : ""} />
+                    <Button onClick={() => loadMessages(1)} disabled={isLoading} variant="outline" className="d-flex align-items-center gap-2 rounded-xl border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 transition-colors bg-white dark:bg-gray-900 dark:text-gray-300 shadow-sm">
+                        <RefreshCcw size={16} className={isLoading ? "animate-spin text-blue-600" : ""} />
                         Refresh
                     </Button>
                 </div>
@@ -105,7 +105,7 @@ export function ContactMessages() {
                     <div className="d-flex gap-2 flex-wrap">
                         {[
                             { id: 'all', label: 'All Messages', icon: null },
-                            { id: 'new', label: 'Unread', icon: <span className="w-2 h-2 rounded-full bg-emerald-500"></span> },
+                            { id: 'new', label: 'Unread', icon: <span className="w-2 h-2 rounded-full bg-blue-500"></span> },
                             { id: 'read', label: 'Read', icon: <CheckCircle size={14} /> },
                             { id: 'deleted', label: 'Deleted', icon: <Trash2 size={14} /> }
                         ].map(filter => (
@@ -124,19 +124,19 @@ export function ContactMessages() {
                     </div>
 
                     <div className="relative w-full lg:w-80 group">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
                         <Input
                             placeholder="Search by name, email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-emerald-500 focus:ring-emerald-500/20 rounded-xl transition-all shadow-sm w-full dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            className="pl-10 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl transition-all shadow-sm w-full dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         />
                     </div>
                 </div>
 
                 {isLoading && messages.length === 0 ? (
                     <div className="text-center py-12">
-                        <RefreshCcw size={32} className="animate-spin text-emerald-600 mx-auto mb-4" />
+                        <RefreshCcw size={32} className="animate-spin text-blue-600 mx-auto mb-4" />
                         <p className="text-gray-500 font-medium">Loading messages...</p>
                     </div>
                 ) : filteredMessages.length === 0 ? (
@@ -153,21 +153,21 @@ export function ContactMessages() {
                     <div className="space-y-4">
                         {filteredMessages.map(msg => (
                             <div key={msg.id} className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-md ${msg.status === 'new'
-                                ? 'bg-emerald-50/30 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/30 shadow-sm'
+                                ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30 shadow-sm'
                                 : msg.status === 'deleted'
                                     ? 'bg-gray-50/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800 opacity-75 grayscale-[0.5]'
-                                    : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm hover:border-emerald-100 dark:hover:border-emerald-900/50'
+                                    : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm hover:border-blue-100 dark:hover:border-blue-900/50'
                                 }`}>
                                 <div className="d-flex flex-col md:flex-row justify-content-between align-items-start gap-4">
                                     <div className="d-flex align-items-start gap-4 flex-grow-1">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 d-flex align-items-center justify-content-center font-bold text-lg shadow-inner flex-shrink-0">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-teal-100 text-blue-700 d-flex align-items-center justify-content-center font-bold text-lg shadow-inner flex-shrink-0">
                                             {msg.name.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
                                             <div className="d-flex align-items-center gap-2 mb-1">
                                                 <h5 className="font-bold text-gray-900 dark:text-white mb-0">{msg.subject}</h5>
                                                 {msg.status === 'new' && (
-                                                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">New</span>
+                                                    <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-wider">New</span>
                                                 )}
                                                 {msg.status === 'deleted' && (
                                                     <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider">Deleted</span>
@@ -176,7 +176,7 @@ export function ContactMessages() {
                                             <div className="text-sm text-gray-500 d-flex flex-wrap align-items-center gap-2 mb-3">
                                                 <span className="fw-semibold text-gray-700 dark:text-gray-300">{msg.name}</span>
                                                 <span className="text-gray-300 dark:text-gray-600">•</span>
-                                                <a href={`mailto:${msg.email}`} className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline transition-colors">{msg.email}</a>
+                                                <a href={`mailto:${msg.email}`} className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors">{msg.email}</a>
                                                 {msg.phone && (
                                                     <>
                                                         <span className="text-gray-300 dark:text-gray-600">•</span>
@@ -185,7 +185,7 @@ export function ContactMessages() {
                                                 )}
                                             </div>
                                             <div className="bg-gray-50/80 dark:bg-gray-900/50 p-4 rounded-xl text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed border border-gray-100/50 dark:border-gray-700/50 relative">
-                                                {msg.status === 'new' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-400 dark:bg-emerald-500 rounded-l-xl"></div>}
+                                                {msg.status === 'new' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 dark:bg-blue-500 rounded-l-xl"></div>}
                                                 {msg.message}
                                             </div>
                                         </div>
@@ -198,7 +198,7 @@ export function ContactMessages() {
                                         </span>
                                         <div className="d-flex gap-2 w-full md:w-auto mt-auto">
                                             {msg.status === 'new' ? (
-                                                <Button size="sm" className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors flex-1 md:flex-auto rounded-lg" onClick={() => handleStatusChange(msg.id, 'read')}>
+                                                <Button size="sm" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex-1 md:flex-auto rounded-lg" onClick={() => handleStatusChange(msg.id, 'read')}>
                                                     <CheckCircle size={14} className="mr-1.5" />
                                                     Mark Read
                                                 </Button>
@@ -222,7 +222,7 @@ export function ContactMessages() {
 
                         {hasMore && (
                             <div className="text-center mt-8 pt-4 pb-2">
-                                <Button onClick={() => loadMessages(page + 1)} disabled={isLoading} className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-xl px-8 py-2.5 font-semibold transition-all shadow-sm hover:shadow">
+                                <Button onClick={() => loadMessages(page + 1)} disabled={isLoading} className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl px-8 py-2.5 font-semibold transition-all shadow-sm hover:shadow">
                                     {isLoading ? (
                                         <><RefreshCcw size={16} className="animate-spin mr-2" /> Loading...</>
                                     ) : (

@@ -118,7 +118,7 @@ export function PublicHeader() {
                     fontSize: '17px',
                     paddingTop: '12px',
                     paddingBottom: '12px',
-                    color: isActive(link.path) ? '#16a085' : '#333333'
+                    color: isActive(link.path) ? '#009CFF' : '#333333'
                   }}
                 >
                   {link.name}
@@ -131,7 +131,7 @@ export function PublicHeader() {
                   to="/login"
                   className="text-primary fw-bold d-flex align-items-center gap-2 p-0 w-100"
                   onClick={() => setIsMenuOpen(false)}
-                  style={{ fontSize: '18px', color: '#16a085', textDecoration: 'none' }}
+                  style={{ fontSize: '18px', color: '#009CFF', textDecoration: 'none' }}
                 >
                   <LogIn style={{ width: '22px', height: '22px' }} />
                   {t('joinUs')}
@@ -182,7 +182,7 @@ export function PublicHeader() {
               <Link
                 to="/login"
                 className="nav-item nav-link text-primary fw-bold d-none d-md-flex align-items-center gap-2 px-3 py-3"
-                style={{ fontSize: '17px', color: '#16a085' }}
+                style={{ fontSize: '17px', color: '#009CFF' }}
               >
                 <LogIn style={{ width: '18px', height: '18px' }} />
                 {t('joinUs')}

@@ -6,9 +6,7 @@ import {
   Plus,
   Mail,
   Phone,
-  Briefcase,
   DollarSign,
-  Calendar,
   CheckCircle,
   XCircle,
   Clock,
@@ -231,7 +229,7 @@ export function Employees() {
                   <h5 className="card-title fw-bold text-dark mb-0">Leave Requests</h5>
                   <button
                     onClick={() => toast.info("Leave request system is being updated. Please contact HR.")}
-                    className="btn btn-link text-emerald-600 text-decoration-none fw-medium btn-sm"
+                    className="btn btn-link text-blue-600 text-decoration-none fw-medium btn-sm"
                   >
                     Request Leave
                   </button>
@@ -318,118 +316,84 @@ export function Employees() {
         {isAdminOrManager && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+            className="btn btn-primary d-flex align-items-center gap-2"
           >
-            <Plus className="h-4 w-4" />
+            <Plus size={16} />
             <span>{isSiteManager ? 'Add Site Staff' : 'Add Employee'}</span>
           </button>
         )}
       </ScrollReveal>
 
-      {/* Stats Cards */}
+      {/* Stats Cards — Dashmin style */}
       <div className="row g-4 mb-4">
-        <div className="col-md-6 col-lg-3">
-          <ScrollReveal delay={0.1} className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center justify-content-between">
-                <div>
-                  <small className="text-muted text-uppercase fw-bold">Total Employees</small>
-                  <h4 className="fw-bold text-dark my-1">{employees.length}</h4>
-                </div>
-                <div className="bg-emerald-100 dark:bg-emerald-950/40 p-2 rounded">
-                  <Users className="text-emerald-600 w-5 h-5" />
-                </div>
+        <div className="col-sm-6 col-xl-3">
+          <ScrollReveal delay={0.1}>
+            <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm">
+              <i className="fas fa-users fa-3x text-primary"></i>
+              <div className="ms-3">
+                <p className="mb-2 text-muted small">Total Employees</p>
+                <h6 className="mb-0 fw-bold">{employees.length}</h6>
               </div>
             </div>
           </ScrollReveal>
         </div>
-        <div className="col-md-6 col-lg-3">
-          <ScrollReveal delay={0.2} className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center justify-content-between">
-                <div>
-                  <small className="text-muted text-uppercase fw-bold">Active</small>
-                  <h4 className="fw-bold text-dark my-1">
-                    {employees.filter((e) => e.status === "active").length}
-                  </h4>
-                </div>
-                <div className="bg-success-subtle p-2 rounded">
-                  <CheckCircle className="text-success w-5 h-5" />
-                </div>
+        <div className="col-sm-6 col-xl-3">
+          <ScrollReveal delay={0.15}>
+            <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm">
+              <i className="fas fa-check-circle fa-3x text-primary"></i>
+              <div className="ms-3">
+                <p className="mb-2 text-muted small">Active</p>
+                <h6 className="mb-0 fw-bold">{employees.filter(e => e.status === 'active').length}</h6>
               </div>
             </div>
           </ScrollReveal>
         </div>
-        <div className="col-md-6 col-lg-3">
-          <ScrollReveal delay={0.3} className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center justify-content-between">
-                <div>
-                  <small className="text-muted text-uppercase fw-bold">Departments</small>
-                  <h4 className="fw-bold text-dark my-1">{departments.length}</h4>
-                </div>
-                <div className="bg-emerald-100 dark:bg-emerald-950/40 p-2 rounded">
-                  <Briefcase className="text-emerald-600 w-5 h-5" />
-                </div>
+        <div className="col-sm-6 col-xl-3">
+          <ScrollReveal delay={0.2}>
+            <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm">
+              <i className="fas fa-briefcase fa-3x text-primary"></i>
+              <div className="ms-3">
+                <p className="mb-2 text-muted small">Departments</p>
+                <h6 className="mb-0 fw-bold">{departments.length}</h6>
               </div>
             </div>
           </ScrollReveal>
         </div>
-        <div className="col-md-6 col-lg-3">
-          <ScrollReveal delay={0.4} className="card border-0 shadow-sm h-100">
-            <div className="card-body">
-              <div className="d-flex align-items-center justify-content-between">
-                <div>
-                  <small className="text-muted text-uppercase fw-bold">Avg Attendance</small>
-                  <h4 className="fw-bold text-dark my-1">
-                    {Math.round(
-                      employees.reduce((sum, e) => sum + e.attendance, 0) / (employees.length || 1)
-                    )}
-                    %
-                  </h4>
-                </div>
-                <div className="bg-warning-subtle p-2 rounded">
-                  <Calendar className="text-warning w-5 h-5" />
-                </div>
+        <div className="col-sm-6 col-xl-3">
+          <ScrollReveal delay={0.25}>
+            <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm">
+              <i className="fas fa-calendar-check fa-3x text-primary"></i>
+              <div className="ms-3">
+                <p className="mb-2 text-muted small">Avg Attendance</p>
+                <h6 className="mb-0 fw-bold">{Math.round(employees.reduce((s,e) => s + e.attendance, 0) / (employees.length || 1))}%</h6>
               </div>
             </div>
           </ScrollReveal>
         </div>
       </div>
 
-      {/* Filters */}
-      <ScrollReveal delay={0.2} className="card border-0 shadow-sm mb-4">
-        <div className="card-body py-2">
+      {/* Filters — Dashmin style */}
+      <ScrollReveal delay={0.2}>
+        <div className="bg-light rounded p-3 shadow-sm mb-4">
           <div className="row g-2">
-            <div className="col-md-8 position-relative">
-              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ left: '0', width: '20px', height: '20px' }} />
-              <input
-                type="text"
-                placeholder="Search employees..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent ps-4 focus:ring-0"
-                style={{ paddingLeft: '3rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.borderColor = '#16a085'}
-                onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
-              />
-            </div>
-            <div className="col-md-4 d-flex gap-2">
+            <div className="col-md-8">
               <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <Filter className="w-4 h-4 text-muted" />
-                </span>
-                <select
-                  value={filterDepartment}
-                  onChange={(e) => setFilterDepartment(e.target.value)}
-                  className="form-select form-select-sm border-start-0"
-                >
+                <span className="input-group-text bg-white"><Search size={14} className="text-muted" /></span>
+                <input
+                  type="text"
+                  placeholder="Search employees..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="input-group">
+                <span className="input-group-text bg-white"><Filter size={14} className="text-muted" /></span>
+                <select value={filterDepartment} onChange={(e) => setFilterDepartment(e.target.value)} className="form-select">
                   <option value="all">All Departments</option>
-                  {departments.map((dept) => (
-                    <option key={dept} value={dept}>
-                      {dept}
-                    </option>
-                  ))}
+                  {departments.map((dept) => (<option key={dept} value={dept}>{dept}</option>))}
                 </select>
               </div>
             </div>
@@ -437,9 +401,13 @@ export function Employees() {
         </div>
       </ScrollReveal>
 
-      {/* Employees Table */}
-      <ScrollReveal delay={0.3} className="card border-0 shadow-sm">
-        <div className="card-body p-0">
+      {/* Employees Table — Dashmin style */}
+      <ScrollReveal delay={0.3}>
+        <div className="bg-light rounded p-4 shadow-sm">
+          <div className="d-flex align-items-center justify-content-between mb-4">
+            <h6 className="mb-0 fw-bold">Employee Records</h6>
+            <span className="text-muted small">{employees.length} total</span>
+          </div>
           <div className="table-responsive">
             <table className="table table-hover align-middle mb-0">
               <thead className="table-light">
@@ -477,7 +445,7 @@ export function Employees() {
                     <tr key={employee.id}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center gap-2">
-                          <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold small" style={{ width: '32px', height: '32px' }}>
+                          <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold small" style={{ width: '32px', height: '32px' }}>
                             {employee.name.split(" ").map((n) => n[0]).join("")}
                           </div>
                           <div>
@@ -540,7 +508,7 @@ export function Employees() {
                         <div className="d-flex align-items-center justify-content-end gap-2">
                           <button
                             onClick={() => setSelectedEmployee(employee)}
-                            className="p-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+                            className="p-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
                             title="View Details"
                           >
                             <Eye size={16} />
@@ -549,7 +517,7 @@ export function Employees() {
                             <>
                               <button
                                 onClick={() => setEditingEmployee(employee)}
-                                className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all hover:scale-110 active:scale-95 border-0 shadow-sm"
+                                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all hover:scale-110 active:scale-95 border-0 shadow-sm"
                                 title="Edit Employee"
                               >
                                 <Edit size={16} />
@@ -642,7 +610,7 @@ export function Employees() {
         {selectedEmployee && (
           <div className="row g-4">
             <div className="col-md-4 text-center border-end">
-              <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold mx-auto mb-3" style={{ width: '120px', height: '120px', fontSize: '40px' }}>
+              <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold mx-auto mb-3" style={{ width: '120px', height: '120px', fontSize: '40px' }}>
                 {selectedEmployee.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <h4 className="fw-bold mb-1 text-dark">{selectedEmployee.name}</h4>
@@ -706,7 +674,7 @@ export function Employees() {
               {isAdminOrManager && (
                 <button
                   onClick={() => { setEditingEmployee(selectedEmployee); setSelectedEmployee(null); }}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                 >
                   <Edit size={16} /> Edit Profile
                 </button>

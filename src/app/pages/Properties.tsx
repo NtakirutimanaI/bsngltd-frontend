@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, MapPin, Maximize2, Plus, Search, Filter, Eye, Edit2, Building, LandPlot, Store } from "lucide-react";
+import { Home, MapPin, Maximize2, Plus, Search, Eye, Edit2, Building, LandPlot, Store } from "lucide-react";
 import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { useLanguage } from "@/app/context/LanguageContext";
@@ -93,11 +93,11 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
 
   const getTypeIcon = (type: string, size: number = 24) => {
     switch (type) {
-      case "house": return <Home size={size} className="text-emerald-600" />;
-      case "apartment": return <Building size={size} className="text-blue-600" />;
-      case "plot": return <LandPlot size={size} className="text-orange-600" />;
-      case "commercial": return <Store size={size} className="text-teal-600" />;
-      default: return <Home size={size} className="text-gray-500" />;
+      case "house": return <Home size={size} className="text-primary" />;
+      case "apartment": return <Building size={size} className="text-info" />;
+      case "plot": return <LandPlot size={size} className="text-warning" />;
+      case "commercial": return <Store size={size} className="text-danger" />;
+      default: return <Home size={size} className="text-muted" />;
     }
   };
 
@@ -120,65 +120,61 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
 
 
   return (
-    <div className="container-fluid p-4">
+    <div className="container-fluid bg-white min-vh-100 px-2 px-md-4 pt-4 pb-4">
       {/* Header */}
       {!hideHeader && (
-        <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4 mb-4">
+        <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
           <div>
-            <h1 className="h3 fw-bold text-dark">Properties</h1>
-            <p className="text-muted mt-1">Browse available properties for sale and rent</p>
+            <h1 className="h4 fw-bold text-dark mb-1">Properties</h1>
+            <p className="text-muted small mb-0">Browse and manage available properties for sale and rent</p>
           </div>
           <button
             onClick={() => {
               setEditingProperty(null);
               setIsAddModalOpen(true);
             }}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+            className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2.5 fw-bold shadow-sm"
+            style={{ borderRadius: '10px' }}
           >
-            <Plus className="h-4 w-4" />
+            <Plus size={18} />
             Add Property
           </button>
         </ScrollReveal>
       )}
 
       {/* Filters */}
-      <ScrollReveal delay={0.1} className="card border-0 shadow-sm mb-4">
-        <div className="card-body py-2">
-          <div className="row g-2">
-            <div className="col-md-6 col-lg-8 position-relative">
-              <Search className="position-absolute top-50 translate-middle-y text-muted" style={{ right: '0', width: '20px', height: '20px' }} />
+      <ScrollReveal delay={0.1} className="bg-light rounded p-4 mb-4 shadow-sm">
+        <div className="p-0">
+          <div className="row g-3 align-items-center">
+            <div className="col-lg-7 position-relative">
+              <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={18} />
               <input
                 type="text"
-                placeholder="Search properties..."
+                placeholder="Find properties by title, code or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-control form-control-sm border-0 border-bottom border-2 rounded-0 bg-transparent focus:ring-0"
-                style={{ paddingRight: '30px', paddingBottom: '0.5rem', borderColor: '#9ca3af', outline: 'none', boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.borderColor = '#16a085'}
-                onBlur={(e) => e.target.style.borderColor = '#9ca3af'}
+                className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
+                style={{ height: '45px', borderRadius: '10px', fontSize: '14px' }}
               />
             </div>
-            <div className="col-md-6 col-lg-4 d-flex gap-2">
-              <div className="input-group">
-                <span className="input-group-text bg-white border-end-0">
-                  <Filter className="w-4 h-4 text-muted" />
-                </span>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="form-select form-select-sm border-start-0"
-                >
-                  <option value="all">All Types</option>
-                  <option value="house">House</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="plot">Plot</option>
-                  <option value="commercial">Commercial</option>
-                </select>
-              </div>
+            <div className="col-lg-5 d-flex gap-2">
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="form-select bg-light border-0 shadow-none fw-semibold"
+                style={{ height: '45px', borderRadius: '10px', fontSize: '13px' }}
+              >
+                <option value="all">All Types</option>
+                <option value="house">House</option>
+                <option value="apartment">Apartment</option>
+                <option value="plot">Plot</option>
+                <option value="commercial">Commercial</option>
+              </select>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="form-select form-select-sm"
+                className="form-select bg-light border-0 shadow-none fw-semibold"
+                style={{ height: '45px', borderRadius: '10px', fontSize: '13px' }}
               >
                 <option value="all">All Status</option>
                 <option value="available">Available</option>
@@ -197,7 +193,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
           <div key={property.id} className="col-md-6 col-lg-4">
             <ScrollReveal
               delay={index * 0.1}
-              className="card border-0 shadow-sm h-100 overflow-hidden"
+              className="bg-light rounded p-4 shadow-sm h-100 transition-all border-0 shadow-sm"
             >
               <div className="position-relative d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 border-bottom border-gray-100 dark:border-gray-700" style={{ height: '150px' }}>
                 <div className="bg-white dark:bg-gray-900 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
@@ -226,7 +222,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                 </div>
               </div>
 
-              <div className="card-body">
+              <div className="p-0">
                 <h5 className="card-title fw-bold text-dark mb-1">{dt(property.title)}</h5>
                 <small className="text-muted d-block mb-3">{property.code}</small>
 
@@ -270,12 +266,13 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                   )}
                 </div>
 
-                <div className="d-flex gap-2">
+                <div className="d-flex gap-2 mt-2">
                   <button
                     onClick={() => setSelectedProperty(property)}
-                    className="flex-fill bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:scale-[1.02] active:scale-95 d-flex align-items-center justify-content-center gap-2"
+                    className="btn btn-light flex-grow-1 border shadow-sm py-2 fw-bold text-primary d-flex align-items-center justify-content-center gap-2"
+                    style={{ borderRadius: '10px', fontSize: '13px' }}
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye size={16} />
                     Details
                   </button>
                   <button
@@ -283,10 +280,11 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                       setEditingProperty(property);
                       setIsAddModalOpen(true);
                     }}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-xl transition-all hover:scale-110 active:scale-90 border-0 shadow-sm"
+                    className="btn btn-primary shadow-sm p-2 d-flex align-items-center justify-content-center"
+                    style={{ borderRadius: '10px', width: '40px', height: '40px' }}
                     title="Edit Property"
                   >
-                    <Edit2 className="w-4 h-4" />
+                    <Edit2 size={18} />
                   </button>
                 </div>
               </div>
@@ -334,7 +332,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
       <Modal isOpen={!!selectedProperty} onClose={() => setSelectedProperty(null)} title="Property Details" size="md" draggable={true}>
         {selectedProperty && (
           <div className="flex flex-col gap-2">
-            <div className="position-relative d-flex align-items-center justify-content-center bg-gray-900 rounded overflow-hidden" style={{ height: '120px', background: '#16a085' }}>
+            <div className="position-relative d-flex align-items-center justify-content-center bg-gray-900 rounded overflow-hidden" style={{ height: '120px', background: '#009CFF' }}>
               <div className="bg-white/20 p-3 rounded-xl shadow-sm">
                 {getTypeIcon(selectedProperty.type, 36)}
               </div>
@@ -400,18 +398,19 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                 </div>
               </div>
             </div>
-            <div className="d-flex justify-content-end gap-3 pt-3 border-top border-gray-100 dark:border-gray-800">
+            <div className="d-flex justify-content-end gap-3 pt-4 border-top mt-4">
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
+                className="btn btn-light px-4 py-2 border fw-bold text-muted shadow-sm"
+                style={{ borderRadius: '10px' }}
                 onClick={() => setSelectedProperty(null)}
               >
                 Close
               </button>
               <button
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                className="btn btn-primary px-5 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 disabled"
               >
-                Contact
+                Message Manager
               </button>
             </div>
           </div>

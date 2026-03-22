@@ -268,7 +268,7 @@ export function Attendance() {
                         <button
                             onClick={saveAttendance}
                             disabled={isSubmitting}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
                         >
                             <Save size={16} />
                             {isSubmitting ? 'Saving...' : 'Validate & Save'}
@@ -286,8 +286,8 @@ export function Attendance() {
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id as any)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === item.id
-                                    ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 font-semibold"
-                                    : "text-gray-600 dark:text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/20"
+                                    ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-semibold"
+                                    : "text-gray-600 dark:text-gray-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20"
                                     }`}
                             >
                                 <item.icon size={20} />
@@ -308,14 +308,14 @@ export function Attendance() {
                                             <h5 className="mb-0 fw-bold me-2">Validate Daily Attendance</h5>
                                             <input
                                                 type="date"
-                                                className="form-control form-control-sm bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-emerald-500 font-medium"
+                                                className="form-control form-control-sm bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-blue-500 font-medium"
                                                 value={selectedDate}
                                                 onChange={(e) => setSelectedDate(e.target.value)}
                                                 style={{ width: '180px' }}
                                             />
                                         </div>
                                         <div className="d-flex gap-2">
-                                            <div className="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 px-3 py-1.5 rounded-lg text-sm font-semibold d-flex align-items-center gap-2">
+                                            <div className="bg-blue-50 text-blue-600 dark:bg-blue-900/20 px-3 py-1.5 rounded-lg text-sm font-semibold d-flex align-items-center gap-2">
                                                 <CheckCircle size={14} /> Present: {Object.values(attendanceRecords).filter(r => r.status === 'Present').length}
                                             </div>
                                             <div className="bg-red-50 text-red-600 dark:bg-red-900/20 px-3 py-1.5 rounded-lg text-sm font-semibold d-flex align-items-center gap-2">
@@ -346,7 +346,7 @@ export function Attendance() {
                                                     <tr key={emp.id} className="border-t border-gray-100 dark:border-gray-700">
                                                         <td className="ps-4 py-3">
                                                             <div className="d-flex align-items-center gap-3">
-                                                                <div className="h-10 w-10 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400 rounded-full d-flex align-items-center justify-content-center fw-bold text-lg">
+                                                                <div className="h-10 w-10 bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400 rounded-full d-flex align-items-center justify-content-center fw-bold text-lg">
                                                                     {emp.name.charAt(0)}
                                                                 </div>
                                                                 <div>
@@ -358,9 +358,9 @@ export function Attendance() {
                                                         <td className="py-3">
                                                             <select
                                                                 className={`form-select form-select-sm border border-gray-200 fw-semibold bg-white dark:bg-gray-800 rounded-lg py-1.5 
-                                                                    ${record.status === 'Present' ? 'text-emerald-600' :
+                                                                    ${record.status === 'Present' ? 'text-blue-600' :
                                                                         record.status === 'Absent' ? 'text-red-600' :
-                                                                            ['Late', 'Half Day'].includes(record.status || '') ? 'text-emerald-600' :
+                                                                            ['Late', 'Half Day'].includes(record.status || '') ? 'text-blue-600' :
                                                                                 ['Paid Leave', 'Holiday', 'Weekend'].includes(record.status || '') ? 'text-blue-600' :
                                                                                     'text-gray-600'
                                                                     }`}
@@ -384,14 +384,14 @@ export function Attendance() {
                                                                 <input
                                                                     type="time"
                                                                     title="Check In"
-                                                                    className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-emerald-500 w-24"
+                                                                    className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-blue-500 w-24"
                                                                     value={record.checkIn || ''}
                                                                     onChange={(e) => handleFieldChange(emp.id, 'checkIn', e.target.value)}
                                                                 />
                                                                 <input
                                                                     type="time"
                                                                     title="Check Out"
-                                                                    className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-emerald-500 w-24"
+                                                                    className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-blue-500 w-24"
                                                                     value={record.checkOut || ''}
                                                                     onChange={(e) => handleFieldChange(emp.id, 'checkOut', e.target.value)}
                                                                 />
@@ -400,7 +400,7 @@ export function Attendance() {
                                                         <td className="py-3">
                                                             <input
                                                                 type="number"
-                                                                className="form-control form-control-sm border-gray-200 dark:border-gray-700 text-center fw-bold bg-white dark:bg-gray-800 focus:ring-emerald-500 text-gray-700 dark:text-gray-300 rounded-lg"
+                                                                className="form-control form-control-sm border-gray-200 dark:border-gray-700 text-center fw-bold bg-white dark:bg-gray-800 focus:ring-blue-500 text-gray-700 dark:text-gray-300 rounded-lg"
                                                                 style={{ width: 60 }}
                                                                 value={record.overtimeHours || 0}
                                                                 onChange={(e) => handleFieldChange(emp.id, 'overtimeHours', Number(e.target.value))}
@@ -409,7 +409,7 @@ export function Attendance() {
                                                         <td className="py-3 pe-4">
                                                             <input
                                                                 type="text"
-                                                                className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-emerald-500"
+                                                                className="form-control form-control-sm border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-lg focus:ring-blue-500"
                                                                 placeholder="Reason for exception..."
                                                                 value={record.reason || ''}
                                                                 onChange={(e) => handleFieldChange(emp.id, 'reason', e.target.value)}
@@ -428,7 +428,7 @@ export function Attendance() {
                     {activeTab === 'monthly_summary' && isSiteManager && (
                         <ScrollReveal delay={0.2} className="fade-in">
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-center">
-                                <div className="mx-auto h-16 w-16 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+                                <div className="mx-auto h-16 w-16 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-full flex items-center justify-center mb-4">
                                     <FileCheck size={32} />
                                 </div>
                                 <h4 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Submit Monthly Attendance Summary</h4>
@@ -442,7 +442,7 @@ export function Attendance() {
                                     </div>
                                     <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl">
                                         <div className="text-sm text-gray-500">Total Employees</div>
-                                        <div className="fw-bold text-emerald-600">{employees.length} Active</div>
+                                        <div className="fw-bold text-blue-600">{employees.length} Active</div>
                                     </div>
                                     <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl">
                                         <div className="text-sm text-gray-500">Total Validated Days</div>
@@ -453,7 +453,7 @@ export function Attendance() {
                                         <div className="fw-bold text-red-600">32 Days</div>
                                     </div>
                                 </div>
-                                <button className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-200 dark:shadow-none">
+                                <button className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none">
                                     Confirm & Freeze Attendance
                                 </button>
                             </div>
@@ -470,7 +470,7 @@ export function Attendance() {
                                 <div className="p-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2"><Settings size={18} className="text-emerald-500" /> Base Configurations</h6>
+                                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2"><Settings size={18} className="text-blue-500" /> Base Configurations</h6>
                                             <div className="space-y-4">
                                                 <div>
                                                     <label className="form-label text-sm fw-bold">Monthly Working Days Standard</label>
@@ -496,7 +496,7 @@ export function Attendance() {
                                             </div>
                                         </div>
                                         <div>
-                                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2"><DollarSign size={18} className="text-emerald-500" /> Status Impact Mapping</h6>
+                                            <h6 className="fw-bold mb-3 d-flex align-items-center gap-2"><DollarSign size={18} className="text-blue-500" /> Status Impact Mapping</h6>
                                             <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                                                 <table className="table table-sm mb-0">
                                                     <thead className="bg-gray-50 dark:bg-gray-900">
@@ -506,20 +506,20 @@ export function Attendance() {
                                                         </tr>
                                                     </thead>
                                                     <tbody className="text-sm">
-                                                        <tr><td className="px-3 py-2 fw-medium">Present</td><td className="px-3 py-2 text-emerald-600">Full day paid</td></tr>
-                                                        <tr><td className="px-3 py-2 fw-medium">Late</td><td className="px-3 py-2 text-emerald-500">Paid / Penalty after limit</td></tr>
-                                                        <tr><td className="px-3 py-2 fw-medium">Half Day</td><td className="px-3 py-2 text-emerald-500">50% paid</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Present</td><td className="px-3 py-2 text-blue-600">Full day paid</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Late</td><td className="px-3 py-2 text-blue-500">Paid / Penalty after limit</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Half Day</td><td className="px-3 py-2 text-blue-500">50% paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Absent</td><td className="px-3 py-2 text-red-500">0 paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Paid Leave</td><td className="px-3 py-2 text-blue-500">100% paid</td></tr>
                                                         <tr><td className="px-3 py-2 fw-medium">Unpaid Leave</td><td className="px-3 py-2 text-red-500">0 paid</td></tr>
-                                                        <tr><td className="px-3 py-2 fw-medium">Holiday</td><td className="px-3 py-2 text-emerald-600">Paid</td></tr>
+                                                        <tr><td className="px-3 py-2 fw-medium">Holiday</td><td className="px-3 py-2 text-blue-600">Paid</td></tr>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700 text-end">
-                                        <button className="btn btn-primary bg-emerald-600 border-0 fw-bold px-4">Update Salary Rules</button>
+                                        <button className="btn btn-primary bg-blue-600 border-0 fw-bold px-4">Update Salary Rules</button>
                                     </div>
                                 </div>
                             </div>
@@ -571,7 +571,7 @@ export function Attendance() {
                                                 <th className="py-3 text-center">Base Salary</th>
                                                 <th className="py-3 text-center" title="Days Present + Paid Leave">Payable Days</th>
                                                 <th className="py-3 text-center text-red-500">Deductions</th>
-                                                <th className="py-3 text-center text-emerald-500">Additions (OT)</th>
+                                                <th className="py-3 text-center text-blue-500">Additions (OT)</th>
                                                 <th className="py-3 text-end">Gross Salary</th>
                                                 <th className="text-end pe-4 py-3">Action</th>
                                             </tr>
@@ -592,7 +592,7 @@ export function Attendance() {
                                                         <div className="text-xs text-gray-400">({item.absences} abs)</div>
                                                     </td>
                                                     <td className="py-3 text-center text-sm">
-                                                        <div className="text-emerald-600">+{formatPrice(item.overtimeAmount)}</div>
+                                                        <div className="text-blue-600">+{formatPrice(item.overtimeAmount)}</div>
                                                         <div className="text-xs text-gray-400">({item.overtimeHours} hrs)</div>
                                                     </td>
                                                     <td className="py-3 text-end">
@@ -603,7 +603,7 @@ export function Attendance() {
                                                     <td className="text-end pe-4 py-3">
                                                         <button
                                                             onClick={() => disburseSalary(item)}
-                                                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm"
+                                                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm"
                                                         >
                                                             Approve & Pay
                                                         </button>
@@ -624,7 +624,7 @@ export function Attendance() {
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                     <div className="text-sm text-gray-500 fw-bold mb-1">Total Salary Cost</div>
                                     <div className="text-2xl fw-bold text-gray-900 dark:text-white mb-2">{formatPrice(payrollData.reduce((s, c) => s + c.calculatedSalary, 0))}</div>
-                                    <div className="text-xs text-emerald-600 d-flex align-items-center gap-1"><TrendingDown size={12} /> -2.4% from last month</div>
+                                    <div className="text-xs text-blue-600 d-flex align-items-center gap-1"><TrendingDown size={12} /> -2.4% from last month</div>
                                 </div>
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                     <div className="text-sm text-gray-500 fw-bold mb-1">Total Deductions</div>
@@ -633,12 +633,12 @@ export function Attendance() {
                                 </div>
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                     <div className="text-sm text-gray-500 fw-bold mb-1">Overtime Cost</div>
-                                    <div className="text-2xl fw-bold text-emerald-500 mb-2">{formatPrice(payrollData.reduce((s, c) => s + c.overtimeAmount, 0))}</div>
+                                    <div className="text-2xl fw-bold text-blue-500 mb-2">{formatPrice(payrollData.reduce((s, c) => s + c.overtimeAmount, 0))}</div>
                                     <div className="text-xs text-red-500 d-flex align-items-center gap-1"><TrendingUp size={12} /> +12% over budget</div>
                                 </div>
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                                     <div className="text-sm text-gray-500 fw-bold mb-1">Net Payable Days</div>
-                                    <div className="text-2xl fw-bold text-emerald-600 mb-2">{payrollData.reduce((s, c) => s + c.payableDays, 0)}</div>
+                                    <div className="text-2xl fw-bold text-blue-600 mb-2">{payrollData.reduce((s, c) => s + c.payableDays, 0)}</div>
                                     <div className="text-xs text-gray-500">Across {payrollData.length} employees</div>
                                 </div>
                             </div>
@@ -656,7 +656,7 @@ export function Attendance() {
                                     </div>
                                     <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg">
                                         <div className="text-sm fw-bold text-gray-700 dark:text-gray-300">Excess Overtime</div>
-                                        <div className="text-lg fw-bold text-emerald-600 mt-1">Warning</div>
+                                        <div className="text-lg fw-bold text-blue-600 mt-1">Warning</div>
                                         <div className="text-xs text-gray-500 mt-1">Site B exceeding OT budget by 15%</div>
                                     </div>
                                     <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-lg">
@@ -678,9 +678,9 @@ export function Attendance() {
                                             <tr>
                                                 <th className="ps-4 py-3">Employee</th>
                                                 <th className="py-3 text-center">Working Days</th>
-                                                <th className="py-3 text-center text-emerald-600">Present</th>
+                                                <th className="py-3 text-center text-blue-600">Present</th>
                                                 <th className="py-3 text-center text-red-500">Absent / Unpaid</th>
-                                                <th className="py-3 text-center text-emerald-500">Late / Half</th>
+                                                <th className="py-3 text-center text-blue-500">Late / Half</th>
                                                 <th className="py-3 text-center">Overtime</th>
                                                 <th className="py-3 text-end">Final Pay</th>
                                             </tr>
@@ -728,7 +728,7 @@ export function Attendance() {
                                                         <tr key={i} className="border-t border-gray-100 dark:border-gray-700">
                                                             <td className="ps-4 py-3 fw-medium text-sm text-gray-800 dark:text-gray-200">{h.date}</td>
                                                             <td className="py-3">
-                                                                <span className={`px-2 py-1 rounded-md text-xs font-semibold ${h.status === 'Present' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
+                                                                <span className={`px-2 py-1 rounded-md text-xs font-semibold ${h.status === 'Present' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20' : 'bg-red-50 text-red-600 dark:bg-red-900/20'}`}>
                                                                     {h.status}
                                                                 </span>
                                                             </td>
@@ -746,17 +746,17 @@ export function Attendance() {
                                     </div>
                                 </div>
                                 <div className="lg:col-span-1">
-                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border-l-4 border-emerald-500 overflow-hidden h-full">
+                                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border-l-4 border-blue-500 overflow-hidden h-full">
                                         <div className="p-4 border-b border-gray-100 dark:border-gray-700 d-flex justify-content-between items-center">
                                             <h5 className="fw-bold mb-0 text-gray-900 dark:text-gray-100">Payment Records</h5>
-                                            <CreditCard className="text-emerald-500 h-5 w-5" />
+                                            <CreditCard className="text-blue-500 h-5 w-5" />
                                         </div>
                                         <div className="p-0">
                                             {myPayments.map((p, i) => (
                                                 <div key={i} className="p-4 border-b border-gray-100 dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                                                     <div className="d-flex justify-content-between align-items-center mb-1">
                                                         <div className="fw-bold text-gray-900 dark:text-gray-100 text-lg">{formatPrice(p.amount)}</div>
-                                                        <span className="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded">Paid</span>
+                                                        <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">Paid</span>
                                                     </div>
                                                     <div className="text-xs text-gray-500 mb-2">{p.date}</div>
                                                     <div className="text-sm text-gray-600 dark:text-gray-400">{p.description}</div>

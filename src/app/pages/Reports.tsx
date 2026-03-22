@@ -43,7 +43,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   ];
 
   const projectTypeData = [
-    { name: "Construction", value: 45, color: "#16a085" },
+    { name: "Construction", value: 45, color: "#009CFF" },
     { name: "Renovation", value: 25, color: "#3b82f6" },
     { name: "Plot Sale", value: 20, color: "#10b981" },
     { name: "Rental", value: 10, color: "#6366f1" },
@@ -86,7 +86,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+              className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
             >
               <Download className="h-4 w-4" />
             </button>
@@ -99,7 +99,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             </button>
             <button
               onClick={() => exportReport("Excel")}
-              className="flex items-center gap-2 px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-5 py-2 bg-[#009CFF] text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
             >
               <FileText className="h-4 w-4" />
               Export Excel
@@ -109,45 +109,45 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ScrollReveal delay={0.1} className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-sm p-4 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="h-6 w-6" />
-            <TrendingUp className="h-4 w-4" />
+      <div className="row g-4 mb-4">
+        <ScrollReveal delay={0.1} className="col-sm-6 col-xl-3">
+          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
+            <DollarSign className="h-10 w-10 text-primary" />
+            <div className="ms-3 text-end">
+              <p className="mb-2 text-xs text-muted">Revenue (2024)</p>
+              <h6 className="mb-0 font-bold">RWF 445M</h6>
+            </div>
           </div>
-          <p className="text-emerald-100 text-xs mb-0.5">Total Revenue (2024)</p>
-          <p className="text-2xl font-bold">RWF 445M</p>
-          <p className="text-emerald-100 text-xs mt-1">+28% from last year</p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.2} className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm p-4 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <Building2 className="h-6 w-6" />
-            <TrendingUp className="h-4 w-4" />
+        <ScrollReveal delay={0.2} className="col-sm-6 col-xl-3">
+          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
+            <Building2 className="h-10 w-10 text-primary" />
+            <div className="ms-3 text-end">
+              <p className="mb-2 text-xs text-muted">Fixed Projects</p>
+              <h6 className="mb-0 font-bold">15</h6>
+            </div>
           </div>
-          <p className="text-blue-100 text-xs mb-0.5">Projects Completed</p>
-          <p className="text-2xl font-bold">15</p>
-          <p className="text-blue-100 text-xs mt-1">93% on-time delivery</p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.3} className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm p-4 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <Users className="h-6 w-6" />
-            <TrendingUp className="h-4 w-4" />
+        <ScrollReveal delay={0.3} className="col-sm-6 col-xl-3">
+          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
+            <Users className="h-10 w-10 text-primary" />
+            <div className="ms-3 text-end">
+              <p className="mb-2 text-xs text-muted">Productivity</p>
+              <h6 className="mb-0 font-bold">94%</h6>
+            </div>
           </div>
-          <p className="text-green-100 text-xs mb-0.5">Team Productivity</p>
-          <p className="text-2xl font-bold">94%</p>
-          <p className="text-green-100 text-xs mt-1">Average efficiency rate</p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.4} className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-sm p-4 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <BarChart3 className="h-6 w-6" />
-            <TrendingUp className="h-4 w-4" />
+        <ScrollReveal delay={0.4} className="col-sm-6 col-xl-3">
+          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
+            <BarChart3 className="h-10 w-10 text-primary" />
+            <div className="ms-3 text-end">
+              <p className="mb-2 text-xs text-muted">Margin</p>
+              <h6 className="mb-0 font-bold">42.5%</h6>
+            </div>
           </div>
-          <p className="text-purple-100 text-xs mb-0.5">Profit Margin</p>
-          <p className="text-2xl font-bold">42.5%</p>
-          <p className="text-purple-100 text-xs mt-1">Above industry avg</p>
         </ScrollReveal>
       </div>
 
@@ -159,7 +159,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             <p className="text-xs text-gray-600 mt-0.5">Revenue, expenses, and profit trends</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-xs font-medium">
+            <button className="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">
               6 Months
             </button>
             <button className="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-xs font-medium">
@@ -174,12 +174,12 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
           <AreaChart data={quarterlyRevenue}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                <stop offset="5%" stopColor="#009CFF" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#16a085" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#16a085" stopOpacity={0} />
+                <stop offset="5%" stopColor="#009CFF" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
               </linearGradient>
               <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -202,7 +202,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#10b981"
+              stroke="#009CFF"
               fillOpacity={1}
               fill="url(#colorRevenue)"
               name="Revenue (M)"
@@ -210,7 +210,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
             <Area
               type="monotone"
               dataKey="expenses"
-              stroke="#16a085"
+              stroke="#009CFF"
               fillOpacity={1}
               fill="url(#colorExpenses)"
               name="Expenses (M)"
@@ -276,7 +276,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
                 }}
                 itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
               />
-              <Bar dataKey="amount" fill="#16a085" radius={[8, 8, 0, 0]} name="Amount (M)" />
+              <Bar dataKey="amount" fill="#009CFF" radius={[8, 8, 0, 0]} name="Amount (M)" />
             </BarChart>
           </ResponsiveContainer>
         </ScrollReveal>
@@ -302,9 +302,9 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
               itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
             />
             <Legend />
-            <Bar dataKey="completed" stackId="a" fill="#10b981" name="Completed" radius={[8, 8, 0, 0]} />
-            <Bar dataKey="active" stackId="a" fill="#16a085" name="Active" />
-            <Bar dataKey="planning" stackId="a" fill="#3b82f6" name="Planning" />
+            <Bar dataKey="completed" stackId="a" fill="#009CFF" name="Completed" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="active" stackId="a" fill="#3b82f6" name="Active" />
+            <Bar dataKey="planning" stackId="a" fill="#10b981" name="Planning" />
           </BarChart>
         </ResponsiveContainer>
       </ScrollReveal>
@@ -313,8 +313,8 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <ScrollReveal delay={0.9} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-xs text-gray-600">Client Satisfaction</p>
@@ -339,8 +339,8 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
 
         <ScrollReveal delay={1.1} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-emerald-600" />
+            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="h-5 w-5 text-blue-600" />
             </div>
             <div>
               <p className="text-xs text-gray-600">Budget Adherence</p>

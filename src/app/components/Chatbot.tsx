@@ -167,7 +167,7 @@ export function Chatbot() {
                                 <div>
                                     <h3 className="font-bold text-[11px] tracking-tight leading-none mb-1">{t('chatbotAssistant')}</h3>
                                     <div className="flex items-center gap-1">
-                                        <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse shadow-[0_0_3px_#4ade80]"></div>
+                                        <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse shadow-[0_0_3px_#4ade80]"></div>
                                         <span className="text-[8px] opacity-80 font-medium uppercase tracking-wider leading-none">{t('alwaysOnline')}</span>
                                     </div>
                                 </div>
@@ -293,8 +293,8 @@ export function Chatbot() {
                 {isOpen ? <X size={24} /> : <MessageCircle size={24} strokeWidth={2.5} />}
                 {!isOpen && (
                     <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white dark:border-gray-900"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-4 w-4 bg-blue-500 border-2 border-white dark:border-gray-900"></span>
                     </span>
                 )}
             </motion.button>

@@ -190,25 +190,25 @@ export default function ContractorDashboard() {
             <CardContent className="px-3 pb-3">
               <div className="grid grid-cols-2 gap-2">
                 <Link to="/dashboard/projects">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <HardHat className="mr-1 size-3" />
                     Projects
                   </Button>
                 </Link>
                 <Link to="/dashboard/documents">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <FileText className="mr-1 size-3" />
                     Documents
                   </Button>
                 </Link>
                 <Link to="/dashboard/calendar">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Calendar className="mr-1 size-3" />
                     Timeline
                   </Button>
                 </Link>
                 <Link to="/dashboard/notifications">
-                  <Button size="sm" className="w-full text-xs" style={{ background: '#16a085', border: 'none', color: '#fff' }}>
+                  <Button size="sm" className="w-full text-xs" style={{ background: '#009CFF', border: 'none', color: '#fff' }}>
                     <Clock className="mr-1 size-3" />
                     Updates
                   </Button>

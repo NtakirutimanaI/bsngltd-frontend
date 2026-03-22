@@ -21,7 +21,19 @@ import {
   CalendarCheck,
   Globe,
   Eye,
-  LineChart as LineChartIcon
+  LineChart as LineChartIcon,
+  TrendingUp,
+  FileText,
+  Briefcase,
+  DollarSign,
+  Heart,
+  Terminal,
+  FolderKanban,
+  Bell,
+  Wrench,
+  Mail,
+  Info,
+  ArrowUp
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { NotificationBell } from "@/app/components/NotificationBell";
@@ -53,6 +65,15 @@ export function RootLayout() {
   const [messages, setMessages] = useState<any[]>([]);
   const [unreadContactMessages, setUnreadContactMessages] = useState(0);
   const location = useLocation();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowBackToTop(window.scrollY > 300);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // Close sidebar on route change - this allows the user to see the link selection before the sidebar closes
   useEffect(() => {
@@ -107,296 +128,215 @@ export function RootLayout() {
     ? user.role.name
     : (user?.role || 'guest');
 
-  // Define Access Control List
+  // Restoring EXACT sidebar links from original project with HUB-TAB routing where needed
   const allNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, roles: ['all'] },
-    { name: "Portfolio", path: "/dashboard/portfolio", icon: Building2, roles: ['all'] },
+    { name: "Portfolio Hub", path: "/dashboard/portfolio", icon: Building2, roles: ['all'] },
+    { name: "Properties", path: "/dashboard/portfolio?tab=properties", icon: Home, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'client'] },
+    { name: "Project List", path: "/dashboard/portfolio?tab=projects", icon: FolderKanban, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Workforce", path: "/dashboard/workforce", icon: Users, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
-    { name: "Finance Hub", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'accountant', 'auditor', 'employee', 'contractor'] },
-    { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
+    { name: "Employees", path: "/dashboard/employees", icon: User, roles: ['super_admin', 'admin', 'manager', 'hr'] },
+    { name: "Finance Hub", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
+    { name: "Salary Payments", path: "/dashboard/salary-payments", icon: DollarSign, roles: ['super_admin', 'admin', 'manager', 'accountant', 'hr'] },
     { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Booking Center", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
+    { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
     { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
     { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
-    { name: "Bookings", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Administration", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Services Hub", path: "/dashboard/content?tab=services", icon: Wrench, roles: ['super_admin', 'admin'] },
+    { name: "Inquiries", path: "/dashboard/communications?tab=website", icon: Mail, roles: ['super_admin', 'admin', 'manager', 'hr'] },
+    { name: "Insights Hub", path: "/dashboard/insights", icon: TrendingUp, roles: ['super_admin', 'admin', 'manager', 'auditor'] },
+    { name: "Report Center", path: "/dashboard/insights?tab=business", icon: FileText, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'auditor'] },
     { name: "Analytics", path: "/dashboard/analytics", icon: LineChartIcon, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'content_editor'] },
+    { name: "Administration Department", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Manage Users", path: "/dashboard/admin?tab=users", icon: Users, roles: ['super_admin', 'admin'] },
+    { name: "Partners & Sponsors", path: "/dashboard/admin?tab=sponsors", icon: Heart, roles: ['super_admin', 'admin'] },
+    { name: "Notifications", path: "/dashboard/notifications", icon: Bell, roles: ['all'] },
+    { name: "System Settings", path: "/dashboard/settings", icon: Settings, roles: ['all'] },
   ];
 
   const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
-  const isAdmin = ['super_admin', 'admin'].includes(normalizedRole);
   const isAdminOrManager = ['super_admin', 'admin', 'manager'].includes(normalizedRole);
 
   const navigation = allNavItems.filter(item => {
     if (item.roles.includes('all')) return true;
+    if (normalizedRole === 'super_admin') return true;
     return item.roles.includes(normalizedRole);
   });
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   const unreadCount = messages.reduce((sum, m) => sum + (m.unread || 0), 0) + unreadContactMessages;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="container-fluid position-relative d-flex p-0">
       <ScrollToTopOnNavigate />
 
-      {/* Header — Fixed at the top */}
-      <header
-        className="fixed top-0 right-0 left-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md transition-all duration-300"
-        style={{
-          height: '64px',
-          zIndex: 100,
-          borderBottom: '2px solid #16a085',
-          display: 'flex',
-          alignItems: 'center',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0
-        }}
-      >
-        <div className="w-full h-full px-3 md:px-6" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            <button
-              id="sidebarToggle"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSidebarOpen(!sidebarOpen);
-              }}
-              className="lg:hidden"
-              style={{
-                border: 'none', background: 'transparent', padding: '6px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: theme === 'dark' ? '#e5e7eb' : '#374151'
-              }}
-            >
-              <Menu className="h-6 w-6" />
-            </button>
+      {/* Sidebar Start */}
+      <div className={`sidebar pe-4 pb-3 ${sidebarOpen ? "open" : ""}`}>
+        <nav className="navbar bg-light navbar-light">
+          <NavLink to="/dashboard" className="navbar-brand mx-4 mt-4 mb-0 pb-0 text-decoration-none">
+            <h3 className="text-primary mb-0"><i className="fa fa-hashtag me-2"></i>BSNG</h3>
+          </NavLink>
 
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: '30px', height: '30px', backgroundColor: '#16a085', borderRadius: '6px', padding: '4px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              </div>
-              <span className="hidden sm:inline-block" style={{ fontSize: '16px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#111', whiteSpace: 'nowrap' }}>BSNG</span>
-            </div>
+          <div className="navbar-nav w-100 flex-column pt-0" style={{ marginTop: '-10px' }}>
+            {navigation.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.path}
+                end={item.path === "/dashboard"}
+                className={({ isActive }) =>
+                  `nav-item nav-link d-flex align-items-center mb-1 ${isActive ? "active" : ""}`
+                }
+              >
+                <i className="d-inline-flex align-items-center justify-content-center me-2">
+                   <item.icon size={21} />
+                </i>
+                <span className="fw-bold" style={{ fontSize: '16px' }}>{item.name}</span>
+                {item.name === "Notifications" && unreadCount > 0 && (
+                  <span className="ms-auto badge bg-danger rounded-pill" style={{ fontSize: '9px' }}>{unreadCount}</span>
+                )}
+              </NavLink>
+            ))}
           </div>
+        </nav>
+      </div>
+      {/* Sidebar End */}
 
-          <div className="hidden lg:flex" style={{ flex: 1, maxWidth: '320px', position: 'relative', margin: '0 12px' }}>
-            <Search className="absolute top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" style={{ right: '12px', width: '18px', height: '18px' }} />
+      {/* Content Start */}
+      <div className={`content ${sidebarOpen ? "open" : ""}`}>
+        {/* Navbar Start */}
+        <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0 shadow-sm" style={{ height: '64px', top: 0, zIndex: 1020 }}>
+          <NavLink to="/" className="navbar-brand d-flex d-lg-none me-4">
+            <h2 className="text-primary mb-0"><i className="fa fa-hashtag"></i></h2>
+          </NavLink>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="sidebar-toggler flex-shrink-0 border-0 bg-transparent"
+          >
+            <Menu className="text-primary" />
+          </button>
+          <form className="d-none d-md-flex ms-4">
             <Input
-              placeholder="Find anything..."
-              className="pr-4 py-1.5 bg-gray-50 dark:bg-gray-800/50 border-gray-100 dark:border-gray-800 rounded-lg w-full text-[13px]"
-              style={{ paddingRight: '40px', paddingLeft: '12px' }}
+              type="search"
+              placeholder="Search..."
+              className="form-control border-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearch}
             />
-          </div>
+          </form>
+          <div className="navbar-nav align-items-center ms-auto gap-3">
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-circle">
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
             {isAdminOrManager && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-white rounded-lg h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center p-0"
-                    style={{ background: '#16a085', border: 'none' }}
-                  >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <Button variant="ghost" size="icon" className="nav-link position-relative rounded-circle border-0 bg-transparent">
+                    <MessageSquare className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="position-absolute top-1 end-1 p-1 bg-danger border border-white rounded-circle"></span>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                  <DropdownMenuLabel>Add New</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-80 border-0 bg-light shadow-sm">
+                  <DropdownMenuLabel className="fw-bold px-3 py-2">Messages</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                    <Building2 className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Project
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/portfolio')}>
-                    <Home className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Property
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/workforce')}>
-                    <Users className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Employee
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/admin')}>
-                    <Newspaper className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Update
+                  <div className="max-h-64 overflow-y-auto">
+                    {messages.length === 0 ? (
+                      <div className="p-4 text-center text-sm text-gray-500">No messages</div>
+                    ) : (
+                      messages.map((msg) => (
+                        <DropdownMenuItem
+                          key={msg.id}
+                          className="d-flex flex-column align-items-start p-3 gap-1 cursor-pointer"
+                          onClick={() => navigate("/dashboard/communications")}
+                        >
+                          <div className="d-flex justify-content-between w-100 fw-bold small">
+                            <span>{msg.sender}</span>
+                            <span className="text-muted fw-normal smaller">{msg.time}</span>
+                          </div>
+                          <span className="small text-muted line-clamp-1">{msg.content}</span>
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="justify-center text-primary fw-bold cursor-pointer text-center py-2"
+                    onClick={() => navigate("/dashboard/communications")}
+                  >
+                    View All Messages
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
 
-            <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle Theme" className="hidden sm:flex h-8 w-8 sm:h-9 sm:w-9 rounded-full items-center justify-center p-0" style={{ border: 'none' }}>
-              {theme === 'dark' ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
-            </Button>
+            <NotificationBell />
 
-            {isAdminOrManager && (
-              <div className="hidden sm:block">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" title="Messages" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center p-0" style={{ border: 'none' }}>
-                      <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
-                      {unreadCount > 0 && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full border border-white dark:border-gray-900" style={{ background: '#e74c3c' }} />
-                      )}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[280px] sm:w-80 max-w-[calc(100vw-32px)]" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                    <DropdownMenuLabel>Messages</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <div className="max-h-80 overflow-y-auto">
-                      {messages.length === 0 ? (
-                        <div className="p-4 text-center text-sm text-gray-500">No new messages</div>
-                      ) : (
-                        messages.map((msg) => (
-                          <DropdownMenuItem
-                            key={msg.id}
-                            className="cursor-pointer flex flex-col items-start gap-1 p-3"
-                            style={{ border: 'none' }}
-                            onClick={() => navigate('/dashboard/communications')}
-                          >
-                            <div className="flex justify-between w-full">
-                              <span className="font-medium text-sm">{msg.sender}</span>
-                              <span className="text-xs text-gray-400">{msg.time}</span>
-                            </div>
-                            <span className="text-xs text-gray-500 line-clamp-1">{msg.content}</span>
-                          </DropdownMenuItem>
-                        ))
-                      )}
-                    </div>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="cursor-pointer justify-center font-semibold"
-                      style={{ color: '#16a085', border: 'none', borderTop: '2px solid #f0fdfa' }}
-                      onClick={() => navigate('/dashboard/communications')}
-                    >
-                      View all messages
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            )}
-
-            <div className="hidden sm:block">
-              <NotificationBell />
-            </div>
-
-            <div className="hidden md:block h-8 w-px bg-gray-200 dark:bg-gray-800 mx-1 md:mx-2" />
+            <div className="h-8 w-px bg-gray-200 mx-1" />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors border-0 bg-transparent flex-shrink-0">
-                  <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-                    <AvatarImage src={user?.avatar ? getImageUrl(user.avatar) : ""} style={{ objectFit: 'cover' }} />
-                    <AvatarFallback className="font-bold text-white" style={{ background: '#16a085' }}>
-                      {user?.fullName?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                <button className="nav-link dropdown-toggle d-flex align-items-center gap-2 border-0 bg-transparent">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user?.avatar ? getImageUrl(user.avatar) : ""} style={{ objectFit: "cover" }} />
+                    <AvatarFallback className="bg-primary text-white font-bold">
+                      {user?.fullName?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
+                  <span className="d-none d-lg-inline small fw-bold">{user?.fullName || user?.name}</span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56" style={{ border: 'none', borderBottom: '2px solid #16a085', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <div className="px-2 py-1.5 text-sm text-gray-500">
-                  {user?.fullName || user?.name}
-                  <div className="text-xs font-normal opacity-70 capitalize">{roleName}</div>
-                </div>
+              <DropdownMenuContent align="end" className="w-56 border-0 bg-light shadow-sm">
+                <DropdownMenuLabel className="fw-bold">My Profile</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/dashboard/settings?tab=profile')} style={{ border: 'none' }}>
-                  <User className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> Profile Settings
+                <DropdownMenuItem onClick={() => navigate("/dashboard/settings?tab=profile")} className="cursor-pointer">
+                  <User className="me-2 h-4 w-4" /> Profile
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/settings?tab=company')} style={{ border: 'none' }}>
-                    <Settings className="mr-2 h-4 w-4" style={{ color: '#16a085' }} /> System Settings
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem onClick={() => navigate("/dashboard/settings?tab=company")} className="cursor-pointer">
+                  <Settings className="me-2 h-4 w-4" /> Settings
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600" style={{ border: 'none' }}>
-                  <LogOut className="mr-2 h-4 w-4" /> Logout
+                <DropdownMenuItem onClick={logout} className="text-danger cursor-pointer font-bold">
+                  <LogOut className="me-2 h-4 w-4" /> Log Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-      </header>
+        </nav>
+        {/* Navbar End */}
 
-      {/* Sidebar — starts exactly under header (64px) */}
-      <aside
-        className={`fixed left-0 w-20 hover:w-64 group/sidebar transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col z-[40] ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-        style={{
-          top: '64px',
-          bottom: 0,
-          height: 'auto',
-          background: '#18181b',
-          borderRight: '1px solid rgba(22,160,133,0.2)',
-          boxShadow: sidebarOpen ? '10px 0 30px rgba(0,0,0,0.5)' : 'none',
-          position: 'fixed'
-        }}
-      >
-        {/* Nav label */}
-        <div className="px-5 pt-6 pb-2 shrink-0 overflow-hidden">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500/80 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">Menu Explorer</span>
+        {/* Dash Page Content */}
+        <div className="container-fluid pt-4 px-4 min-vh-100">
+           <Outlet />
         </div>
 
-        {/* Nav Items */}
-        <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-            {navigation.map((item) => {
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === '/dashboard'}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-300 group relative ${isActive
-                      ? "text-white font-bold bg-[#16a085] shadow-lg"
-                      : "text-gray-100 font-semibold hover:bg-white/5"
-                    }`
-                  }
-                  style={{ border: 'none', display: 'flex', width: '100%', textDecoration: 'none' }}
-                >
-                  <item.icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110" style={{ minWidth: '20px' }} />
-                  <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300" style={{ fontSize: '13.5px', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>{item.name}</span>
-                  {item.name === "Communications" && unreadCount > 0 && (
-                    <span className="ml-auto text-white text-[10px] font-bold px-2 py-0.5 rounded-full opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300" style={{ background: '#e74c3c' }}>
-                      {unreadCount}
-                    </span>
-                  )}
-                </NavLink>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Logout Section */}
-        <div className="px-4 pb-8 mt-auto shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
-          <button
-            onClick={handleLogout}
-            className="group/logout flex items-center gap-3 px-5 py-3.5 w-full text-white rounded-xl transition-all duration-300 font-bold text-[14px] shadow-lg border-none"
-            style={{ backgroundColor: '#dc2626', border: 'none', cursor: 'pointer', display: 'flex', overflow: 'hidden' }}
-          >
-            <LogOut className="h-5 w-5 shrink-0" />
-            <span className="opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-300 whitespace-nowrap">Sign Out</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Container */}
-      <div className="lg:ml-20 flex flex-col min-h-screen pt-16 transition-all duration-300">
-        <main className="flex-1 p-3 md:p-6 bg-gray-50/50 dark:bg-gray-950/50 overflow-x-auto max-w-full custom-scrollbar">
-          <div className="w-full max-w-[1600px] mx-auto min-w-[320px]">
-            <Outlet />
+        {/* Footer */}
+        <div className="container-fluid pt-4 px-4 mt-auto">
+          <div className="bg-light rounded-top p-4 shadow-sm">
+            <div className="row g-2">
+              <div className="col-12 col-sm-6 text-center text-sm-start text-muted smaller">
+                &copy; {new Date().getFullYear()} <NavLink to="/" className="text-primary fw-bold text-decoration-none">BSNG Construction</NavLink>, All Right Reserved.
+              </div>
+              <div className="col-12 col-sm-6 text-center text-sm-end text-muted smaller">
+                Designed By <a href="https://bsng.org" className="text-primary text-decoration-none fw-bold">BSNG Tech Team</a>
+              </div>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
+      {/* Content End */}
 
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[35] lg:hidden"
-          style={{ top: '64px' }}
-          onClick={() => setSidebarOpen(false)}
-        />
+      {/* Back to Top */}
+      {showBackToTop && (
+        <button
+          className="btn btn-primary btn-lg-square rounded-circle shadow"
+          onClick={scrollToTop}
+          style={{ position: 'fixed', bottom: '25px', right: '25px', zIndex: 1050, width: '48px', height: '48px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <ArrowUp size={24} />
+        </button>
       )}
     </div>
   );

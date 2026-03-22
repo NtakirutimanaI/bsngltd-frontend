@@ -27,11 +27,9 @@ import {
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi, getImageUrl } from "@/app/api/client";
-import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Switch } from "@/app/components/ui/switch";
-import { useLanguage } from "@/app/context/LanguageContext";
 
 interface Setting {
     key: string;
@@ -118,9 +116,9 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-light rounded overflow-hidden border shadow-sm h-100">
             {/* Image preview */}
-            <div className="relative w-full h-32 sm:h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
+            <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
                 <img
                     src={displaySrc}
                     alt={imgDef.label}
@@ -133,7 +131,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center">
                     <button
                         onClick={() => fileRef.current?.click()}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-gray-800 rounded-full p-3 shadow-lg hover:bg-emerald-50 transition-colors"
+                        className="btn btn-light rounded-circle p-3 shadow-lg"
                         disabled={uploading}
                     >
                         {uploading ? <RefreshCcw className="animate-spin" size={20} /> : <Camera size={20} />}
@@ -141,7 +139,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                 </div>
                 {/* Status badge */}
                 {currentValue && currentValue !== imgDef.fallback && (
-                    <div className="absolute top-2 right-2 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                         Custom
                     </div>
                 )}
@@ -149,19 +147,13 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
             {/* Info */}
             <div className="p-3">
                 <div className="flex items-center justify-between mb-1">
-                    <h6 className="font-bold text-sm text-gray-800 dark:text-gray-200 mb-0">{imgDef.label}</h6>
+                    <h6 className="font-bold text-sm mb-0">{imgDef.label}</h6>
                 </div>
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-2 leading-tight">{imgDef.description}</p>
+                <p className="text-[11px] text-muted mb-2 leading-tight">{imgDef.description}</p>
                 <button
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all"
-                    style={{
-                        background: uploading ? '#e5e7eb' : 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)',
-                        color: uploading ? '#9ca3af' : '#fff',
-                        border: 'none',
-                        cursor: uploading ? 'not-allowed' : 'pointer'
-                    }}
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-2"
                 >
                     {uploading ? (
                         <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
@@ -169,7 +161,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                         <><Upload size={12} /> Replace Image</>
                     )}
                 </button>
-                {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+                {error && <p className="text-danger small mt-1 mb-0" style={{ fontSize: '10px' }}>{error}</p>}
             </div>
             {/* Hidden file input */}
             <input
@@ -238,8 +230,8 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <div className="relative w-full h-32 sm:h-40 bg-gray-100 dark:bg-gray-900 overflow-hidden group">
+        <div className="bg-light rounded overflow-hidden border shadow-sm h-100">
+            <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
                 <img
                     src={displaySrc}
                     alt={displayTitle}
@@ -251,38 +243,32 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center">
                     <button
                         onClick={() => fileRef.current?.click()}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-gray-800 rounded-full p-3 shadow-lg hover:bg-emerald-50 transition-colors"
+                        className="btn btn-light rounded-circle p-3 shadow-lg"
                         disabled={uploading}
                     >
                         {uploading ? <RefreshCcw className="animate-spin" size={20} /> : <Camera size={20} />}
                     </button>
                 </div>
                 {currentImage && currentImage.includes('/uploads/') && (
-                    <div className="absolute top-2 right-2 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                         Custom
                     </div>
                 )}
                 {/* Field badge */}
-                <div className="absolute top-2 left-2 bg-gray-900/70 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                <div className="absolute top-2 left-2 bg-dark/70 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                     {label}
                 </div>
             </div>
             <div className="p-3">
-                <h6 className="font-bold text-sm text-gray-800 dark:text-gray-200 mb-0 truncate">{displayTitle}</h6>
-                {record.code && <p className="text-[10px] text-gray-400 mb-1">{record.code}</p>}
-                <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-2 leading-tight">
+                <h6 className="font-bold text-sm mb-0 truncate">{displayTitle}</h6>
+                {record.code && <p className="text-[10px] text-muted mb-1">{record.code}</p>}
+                <p className="text-[11px] text-muted mb-2 leading-tight">
                     {label} — {type === 'properties' ? 'Property gallery' : 'Post image'}
                 </p>
                 <button
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all"
-                    style={{
-                        background: uploading ? '#e5e7eb' : 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)',
-                        color: uploading ? '#9ca3af' : '#fff',
-                        border: 'none',
-                        cursor: uploading ? 'not-allowed' : 'pointer'
-                    }}
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-2"
                 >
                     {uploading ? (
                         <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
@@ -290,7 +276,7 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
                         <><Upload size={12} /> Replace Image</>
                     )}
                 </button>
-                {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+                {error && <p className="text-danger small mt-1 mb-0" style={{ fontSize: '10px' }}>{error}</p>}
             </div>
             <input
                 ref={fileRef}
@@ -483,7 +469,7 @@ export function WebsiteCMS() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <RefreshCcw className="animate-spin text-emerald-600" size={32} />
+                <RefreshCcw className="animate-spin text-blue-600" size={32} />
             </div>
         );
     }
@@ -491,45 +477,45 @@ export function WebsiteCMS() {
     return (
         <div className="space-y-6">
             <ScrollReveal>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                     <div>
-                        <h1 className="h3 fw-bold text-gray-900 dark:text-white">Website CMS</h1>
+                        <h1 className="h4 fw-bold text-dark">Website CMS</h1>
                         <p className="text-muted small mt-1">Manage public website content, images, and section visibility</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button
-                            variant="outline"
-                            size="sm"
+                        <button
                             onClick={() => {
                                 if (isRecordPage) loadRecords();
                                 else loadSettings();
                             }}
-                            className="h-9 px-3 text-xs font-bold gap-2 text-gray-600 border-gray-200"
+                            className="btn btn-light btn-sm d-flex align-items-center gap-2 border px-3"
+                            style={{ height: '38px', borderRadius: '5px' }}
                         >
                             <RefreshCcw size={14} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
-                            Refresh Data
-                        </Button>
+                            Refresh
+                        </button>
                         {activeView === 'text' && (
-                            <div className="bg-white dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 flex mr-4">
+                            <div className="bg-light p-1 rounded border d-flex mr-4">
                                 {languages.map(lang => (
                                     <button
                                         key={lang.id}
                                         onClick={() => setActiveLang(lang.id)}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeLang === lang.id ? 'bg-emerald-600 text-white' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                                        className={`px-3 py-1.5 rounded text-[11px] font-bold transition-all border-0 ${activeLang === lang.id ? 'bg-primary text-white' : 'text-muted bg-transparent hover:bg-white'}`}
                                     >
                                         {lang.id.toUpperCase()}
                                     </button>
                                 ))}
                             </div>
                         )}
-                        <Button
+                        <button
                             onClick={saveSettings}
                             disabled={isSaving}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 px-4 py-2 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 text-sm h-10"
+                            className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 rounded shadow-sm text-sm font-bold"
+                            style={{ height: '38px' }}
                         >
                             {isSaving ? <RefreshCcw className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
                             Publish Changes
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </ScrollReveal>
@@ -546,13 +532,11 @@ export function WebsiteCMS() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Page Selector Sidebar */}
                 <ScrollReveal delay={0.1} className="lg:col-span-1">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2 h-fit sticky top-24">
+                    <div className="bg-light rounded p-2 shadow-sm border h-fit sticky top-24">
                         {pages.map((page) => {
                             const isRecordPage = page.id === 'properties' || page.id === 'updates';
                             let countStr = "";
                             if (isRecordPage) {
-                                // If we're on the page, use records.length, else we don't know yet without a global records state
-                                // For now, if active, show records.length. If not active, maybe show nothing or fetch it.
                                 if (activePage === page.id) countStr = `${records.length} items`;
                             } else if (PAGE_IMAGES[page.id]) {
                                 countStr = `${PAGE_IMAGES[page.id].length} img`;
@@ -562,15 +546,15 @@ export function WebsiteCMS() {
                                 <button
                                     key={page.id}
                                     onClick={() => setActivePage(page.id)}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activePage === page.id
-                                        ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
-                                        : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50"
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded text-start transition-all border-0 mb-1 ${activePage === page.id
+                                        ? "bg-white text-primary fw-bold border-start border-primary"
+                                        : "text-muted hover:bg-white"
                                         }`}
                                 >
-                                    <page.icon size={20} />
-                                    <span className="font-medium text-sm">{page.name}</span>
+                                    <page.icon size={18} />
+                                    <span className="text-sm">{page.name}</span>
                                     {countStr && (
-                                        <span className={`ms-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full ${isRecordPage ? 'bg-emerald-100 text-emerald-600' : 'bg-purple-100 text-purple-600'}`}>
+                                        <span className={`ms-auto text-[9px] font-bold px-2 py-0.5 rounded-pill ${activePage === page.id ? 'bg-primary text-white' : 'bg-secondary text-white opacity-50'}`}>
                                             {countStr}
                                         </span>
                                     )}
@@ -584,28 +568,22 @@ export function WebsiteCMS() {
                 <div className="lg:col-span-3 space-y-6">
                     {/* View Toggle */}
                     <ScrollReveal delay={0.15}>
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2 flex gap-2">
+                        <div className="bg-light rounded p-2 shadow-sm border flex gap-2">
                             <button
                                 onClick={() => setActiveView('images')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeView === 'images'
-                                    ? 'text-white shadow-lg'
-                                    : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition-all border-0 ${activeView === 'images'
+                                    ? 'bg-white text-primary shadow-sm'
+                                    : 'text-muted hover:bg-white'
                                     }`}
-                                style={{
-                                    background: activeView === 'images' ? 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' : 'transparent'
-                                }}
                             >
                                 <ImageIcon size={16} /> Image Management ({(activePage === 'properties' || activePage === 'updates') ? records.length : currentPageImages.length})
                             </button>
                             <button
                                 onClick={() => setActiveView('text')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all ${activeView === 'text'
-                                    ? 'text-white shadow-lg'
-                                    : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition-all border-0 ${activeView === 'text'
+                                    ? 'bg-white text-primary shadow-sm'
+                                    : 'text-muted hover:bg-white'
                                     }`}
-                                style={{
-                                    background: activeView === 'text' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent'
-                                }}
                             >
                                 <Type size={16} /> Text Content ({(activePage === 'properties' || activePage === 'updates') ? records.length : textSettings.length})
                             </button>
@@ -615,17 +593,17 @@ export function WebsiteCMS() {
                     {/* IMAGE VIEW */}
                     {activeView === 'images' && (
                         <ScrollReveal delay={0.2}>
-                            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-gray-900/50 dark:to-gray-900/50 px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                            <div className="bg-light rounded shadow-sm border overflow-hidden">
+                                <div className="bg-white px-4 py-3 border-b">
                                     <div className="flex items-center gap-3">
-                                        <div className="h-8 w-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                                            <ImageIcon className="text-purple-600" size={16} />
+                                        <div className="h-8 w-8 bg-light rounded flex items-center justify-center">
+                                            <ImageIcon className="text-primary" size={16} />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold text-gray-900 dark:text-white capitalize">
+                                            <h3 className="text-sm font-bold text-dark mb-0 capitalize">
                                                 {activePage.replace('_', ' ')} — Images
                                             </h3>
-                                            <p className="text-[11px] text-gray-500">Click any image or the "Replace Image" button to upload a new image from your device</p>
+                                            <p className="text-[11px] text-muted mb-0">Click any image icon or "Replace Image" to upload a new version</p>
                                         </div>
                                     </div>
                                 </div>
@@ -645,7 +623,7 @@ export function WebsiteCMS() {
                                     ) : isRecordPage ? (
                                         recordsLoading ? (
                                             <div className="text-center py-12">
-                                                <RefreshCcw className="animate-spin mx-auto text-emerald-600 mb-3" size={28} />
+                                                <RefreshCcw className="animate-spin mx-auto text-blue-600 mb-3" size={28} />
                                                 <p className="text-gray-500">Loading {activePage}...</p>
                                             </div>
                                         ) : records.length > 0 ? (
@@ -654,12 +632,12 @@ export function WebsiteCMS() {
                                                     records.map((record) => (
                                                         <div key={record.id} className="mb-6">
                                                             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                                                                <Building2 className="text-emerald-600" size={16} />
+                                                                <Building2 className="text-blue-600" size={16} />
                                                                 <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
                                                                     {(() => { try { if (record.title?.startsWith('{')) { const o = JSON.parse(record.title); return o.en || o.rw || Object.values(o)[0]; } } catch { } return record.title; })() || 'Untitled'}
                                                                 </span>
                                                                 {record.code && <span className="text-[10px] text-gray-400">({record.code})</span>}
-                                                                <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">3 images</span>
+                                                                <span className="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-bold">3 images</span>
                                                             </div>
                                                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                                                                 <RecordImageCard
@@ -722,46 +700,45 @@ export function WebsiteCMS() {
                     {/* TEXT VIEW */}
                     {activeView === 'text' && (
                         <ScrollReveal delay={0.2}>
-                            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                                <div className="bg-gray-50 dark:bg-gray-900/50 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                                    <div className="flex items-center gap-4">
-                                        <h3 className="text-md font-semibold text-gray-900 dark:text-white capitalize">
+                            <div className="bg-light rounded shadow-sm border overflow-hidden">
+                                <div className="bg-white px-4 py-3 border-b d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center gap-4">
+                                        <h3 className="text-sm font-bold text-dark mb-0 capitalize">
                                             {activePage.replace('_', ' ')} Content
                                         </h3>
-                                        <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                                        <div className="d-flex align-items-center gap-1.5 px-3 py-1 bg-light text-primary rounded-pill border">
                                             <Globe size={12} />
                                             <span className="text-[10px] font-bold uppercase tracking-wider">{languages.find(l => l.id === activeLang)?.name}</span>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-medium px-2 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded">
+                                    <span className="text-[10px] font-bold px-2 py-0.5 bg-primary text-white rounded">
                                         {isRecordPage ? records.length : textSettings.length} Items
                                     </span>
                                 </div>
 
-                                <div className="p-4 space-y-8">
-                                    {/* Handle Records (Properties/Updates/Services) */}
+                                <div className="p-4">
                                     {isRecordPage && (
-                                        <div className="space-y-8">
+                                        <div className="space-y-6">
                                             {recordsLoading ? (
                                                 <div className="text-center py-12">
-                                                    <RefreshCcw className="animate-spin mx-auto text-emerald-600 mb-3" size={28} />
-                                                    <p className="text-gray-500">Loading {activePage}...</p>
+                                                    <RefreshCcw className="animate-spin mx-auto text-primary mb-3" size={28} />
+                                                    <p className="text-muted">Loading {activePage}...</p>
                                                 </div>
                                             ) : records.length > 0 ? (
                                                 records.map((record: any) => (
-                                                    <div key={record.id} className="p-4 border border-gray-100 dark:border-gray-700 rounded-xl bg-gray-50/30 dark:bg-gray-900/10 space-y-4 text-left">
-                                                        <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-2">
-                                                            <div className="flex items-center gap-2">
-                                                                <div className="w-8 h-8 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                                                    {activePage === 'properties' ? <Building2 size={14} className="text-emerald-600" /> : <Newspaper size={14} className="text-emerald-600" />}
+                                                    <div key={record.id} className="p-4 border rounded bg-white shadow-sm space-y-4">
+                                                        <div className="d-flex align-items-center justify-content-between border-bottom pb-3">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <div className="w-8 h-8 rounded bg-light d-flex align-items-center justify-center">
+                                                                    {activePage === 'properties' ? <Building2 size={14} className="text-primary" /> : <Newspaper size={14} className="text-primary" />}
                                                                 </div>
-                                                                <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
+                                                                <span className="fw-bold text-sm text-dark">
                                                                     {record.code ? `[${record.code}]` : ''} Editing Entry
                                                                 </span>
                                                             </div>
-                                                            <Button
-                                                                size="sm"
-                                                                className="h-8 px-3 text-[10px] font-bold uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                            <button
+                                                                className="btn btn-primary btn-sm px-3 fw-bold"
+                                                                style={{ fontSize: '11px' }}
                                                                 onClick={async () => {
                                                                     try {
                                                                         const upRecord = records.find(r => r.id === record.id);
@@ -787,12 +764,12 @@ export function WebsiteCMS() {
                                                                 }}
                                                             >
                                                                 Save This Entry
-                                                            </Button>
+                                                            </button>
                                                         </div>
 
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div className="space-y-1.5">
-                                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
+                                                                <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
                                                                 <Input
                                                                     value={getLocalizedValue(record.title || '', activeLang)}
                                                                     onChange={(e) => {
@@ -805,14 +782,14 @@ export function WebsiteCMS() {
                                                                             return { ...r, title: JSON.stringify(obj) };
                                                                         }));
                                                                     }}
-                                                                    className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                    className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                     placeholder="Enter title..."
                                                                 />
                                                             </div>
 
                                                             {activePage === 'properties' ? (
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Location ({activeLang.toUpperCase()})</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Location ({activeLang.toUpperCase()})</label>
                                                                     <Input
                                                                         value={getLocalizedValue(record.location || '', activeLang)}
                                                                         onChange={(e) => {
@@ -825,13 +802,13 @@ export function WebsiteCMS() {
                                                                                 return { ...r, location: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="Enter location..."
                                                                     />
                                                                 </div>
                                                             ) : (
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Excerpt ({activeLang.toUpperCase()})</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Excerpt ({activeLang.toUpperCase()})</label>
                                                                     <Input
                                                                         value={getLocalizedValue(record.excerpt || '', activeLang)}
                                                                         onChange={(e) => {
@@ -844,7 +821,7 @@ export function WebsiteCMS() {
                                                                                 return { ...r, excerpt: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="Brief summary..."
                                                                     />
                                                                 </div>
@@ -854,7 +831,7 @@ export function WebsiteCMS() {
                                                         {activePage === 'properties' && (
                                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Price (RWF)</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Price (RWF)</label>
                                                                     <Input
                                                                         type="number"
                                                                         value={record.price || ''}
@@ -862,12 +839,12 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, price: newVal } : r));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="e.g. 85000000"
                                                                     />
                                                                 </div>
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Size (sqft)</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Size (sqft)</label>
                                                                     <Input
                                                                         type="number"
                                                                         value={record.size || ''}
@@ -875,12 +852,12 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, size: newVal } : r));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="e.g. 120"
                                                                     />
                                                                 </div>
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Beds</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Beds</label>
                                                                     <Input
                                                                         type="number"
                                                                         value={record.bedrooms || ''}
@@ -888,12 +865,12 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bedrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="3"
                                                                     />
                                                                 </div>
                                                                 <div className="space-y-1.5">
-                                                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Baths</label>
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Baths</label>
                                                                     <Input
                                                                         type="number"
                                                                         value={record.bathrooms || ''}
@@ -901,42 +878,40 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bathrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-white dark:bg-gray-900 text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
                                                                         placeholder="2"
                                                                     />
                                                                 </div>
                                                             </div>
                                                         )}
 
-                                                        {isRecordPage && (
-                                                            <div className="space-y-1.5">
-                                                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">
-                                                                    {activePage === 'properties' ? 'Description' : 'Content'} ({activeLang.toUpperCase()})
-                                                                </label>
-                                                                <Textarea
-                                                                    value={getLocalizedValue(activePage === 'properties' ? record.description || "" : record.content || "", activeLang)}
-                                                                    onChange={(e) => {
-                                                                        const newVal = e.target.value;
-                                                                        const field = activePage === 'properties' ? 'description' : 'content';
-                                                                        setRecords(prev => prev.map(r => {
-                                                                            if (r.id !== record.id) return r;
-                                                                            let obj: any = {};
-                                                                            const currentVal = r[field];
-                                                                            try { if (currentVal?.startsWith('{')) obj = JSON.parse(currentVal); else obj = { en: currentVal }; } catch { obj = { en: currentVal }; }
-                                                                            obj[activeLang] = newVal;
-                                                                            return { ...r, [field]: JSON.stringify(obj) };
-                                                                        }));
-                                                                    }}
-                                                                    className="bg-white dark:bg-gray-900 text-sm min-h-[100px]"
-                                                                    placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
-                                                                />
-                                                            </div>
-                                                        )}
+                                                        <div className="space-y-1.5 pt-2">
+                                                            <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">
+                                                                {activePage === 'properties' ? 'Description' : 'Content'} ({activeLang.toUpperCase()})
+                                                            </label>
+                                                            <Textarea
+                                                                value={getLocalizedValue(activePage === 'properties' ? record.description || "" : record.content || "", activeLang)}
+                                                                onChange={(e) => {
+                                                                    const newVal = e.target.value;
+                                                                    const field = activePage === 'properties' ? 'description' : 'content';
+                                                                    setRecords(prev => prev.map(r => {
+                                                                        if (r.id !== record.id) return r;
+                                                                        let obj: any = {};
+                                                                        const currentVal = r[field];
+                                                                        try { if (currentVal?.startsWith('{')) obj = JSON.parse(currentVal); else obj = { en: currentVal }; } catch { obj = { en: currentVal }; }
+                                                                        obj[activeLang] = newVal;
+                                                                        return { ...r, [field]: JSON.stringify(obj) };
+                                                                    }));
+                                                                }}
+                                                                className="bg-light border-0 focus:bg-white text-sm min-h-[120px]"
+                                                                placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ))
                                             ) : (
                                                 <div className="text-center py-12">
-                                                    <p className="text-gray-500">No {activePage} found to edit text content.</p>
+                                                    <p className="text-muted">No {activePage} found to edit text content.</p>
                                                 </div>
                                             )}
                                         </div>
@@ -944,36 +919,36 @@ export function WebsiteCMS() {
 
                                     {/* Handle Settings (General) */}
                                     {!isRecordPage && textSettings.map((setting) => (
-                                        <div key={setting.key} className="space-y-3 group text-left">
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                    {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-emerald-600" /> :
-                                                        setting.key.includes('phone') ? <Phone size={16} className="text-blue-600" /> :
-                                                            setting.key.includes('email') ? <Mail size={16} className="text-red-600" /> :
-                                                                setting.key.includes('address') ? <MapPin size={16} className="text-green-600" /> :
-                                                                    setting.key.includes('facebook') ? <FacebookIcon size={16} className="text-blue-700" /> :
-                                                                        setting.key.includes('twitter') ? <TwitterIcon size={16} className="text-sky-500" /> :
-                                                                            setting.key.includes('instagram') ? <InstagramIcon size={16} className="text-pink-600" /> :
-                                                                                setting.key.includes('linkedin') ? <LinkedinIcon size={16} className="text-blue-800" /> :
-                                                                                    setting.key.includes('youtube') ? <YoutubeIcon size={16} className="text-red-600" /> :
-                                                                                        <Layout size={16} className="text-gray-600" />}
-                                                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                                        <div key={setting.key} className="p-4 border rounded bg-white shadow-sm space-y-4 mb-4">
+                                            <div className="d-flex align-items-center justify-content-between">
+                                                <div className="d-flex align-items-center gap-2">
+                                                    {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-primary" /> :
+                                                        setting.key.includes('phone') ? <Phone size={16} className="text-dark" /> :
+                                                            setting.key.includes('email') ? <Mail size={16} className="text-dark" /> :
+                                                                setting.key.includes('address') ? <MapPin size={16} className="text-dark" /> :
+                                                                    setting.key.includes('facebook') ? <FacebookIcon size={16} className="text-primary" /> :
+                                                                        setting.key.includes('twitter') ? <TwitterIcon size={16} className="text-primary" /> :
+                                                                            setting.key.includes('instagram') ? <InstagramIcon size={16} className="text-primary" /> :
+                                                                                setting.key.includes('linkedin') ? <LinkedinIcon size={16} className="text-primary" /> :
+                                                                                    setting.key.includes('youtube') ? <YoutubeIcon size={16} className="text-danger" /> :
+                                                                                        <Layout size={16} className="text-muted" />}
+                                                    <label className="text-sm fw-bold text-dark uppercase tracking-wider mb-0">
                                                         {setting.key.split('_').slice(1).join(' ')}
                                                     </label>
                                                 </div>
 
                                                 {setting.key.includes('visible') ? (
-                                                    <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
-                                                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Section Visibility</span>
+                                                    <div className="d-flex align-items-center gap-2 bg-light px-3 py-1.5 rounded-pill border">
+                                                        <span className="text-[10px] fw-bold text-muted uppercase">Section Visibility</span>
                                                         <Switch
                                                             checked={setting.value === 'true'}
                                                             onCheckedChange={(checked) => handleUpdateSetting(setting.key, checked)}
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center gap-2 group-hover:opacity-100 opacity-50 transition-opacity">
-                                                        {setting.isPublic ? <Eye size={14} className="text-green-600" /> : <EyeOff size={14} className="text-gray-400" />}
-                                                        <span className="text-[10px] font-bold uppercase text-gray-500">Publicly Visible</span>
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        {setting.isPublic ? <Eye size={14} className="text-success" /> : <EyeOff size={14} className="text-muted" />}
+                                                        <span className="text-[10px] fw-bold uppercase text-muted">Publicly Visible</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -984,19 +959,19 @@ export function WebsiteCMS() {
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
                                                         rows={3}
-                                                        className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-emerald-500 rounded-lg resize-none text-sm p-2"
+                                                        className="w-full bg-light border-0 focus:bg-white rounded p-3 text-sm"
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
                                                 ) : (
                                                     <Input
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                        className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 focus:ring-emerald-500 rounded-lg h-9 text-sm px-3"
+                                                        className="w-full bg-light border-0 focus:bg-white rounded h-10 text-sm px-3"
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
                                                 )
                                             )}
-                                            <p className="text-xs text-gray-400 dark:text-gray-500 italic pl-1">
+                                            <p className="text-[11px] text-muted italic pl-1 mb-0">
                                                 {setting.description}
                                             </p>
                                         </div>
@@ -1005,11 +980,11 @@ export function WebsiteCMS() {
                                     {/* Empty state for non-record pages */}
                                     {!isRecordPage && textSettings.length === 0 && !isLoading && (
                                         <div className="text-center py-12">
-                                            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <Layout className="text-gray-400" size={32} />
+                                            <div className="w-16 h-16 bg-white rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border">
+                                                <Layout className="text-muted" size={32} />
                                             </div>
-                                            <p className="text-gray-500 font-medium">No manageable text content found for this page.</p>
-                                            <p className="text-sm text-gray-400 mt-1">Visit Global Settings or other pages to see editable fields.</p>
+                                            <p className="text-muted fw-bold">No manageable text content found for this page.</p>
+                                            <p className="text-sm text-muted mt-1">Visit Global Settings or other pages to see editable fields.</p>
                                         </div>
                                     )}
                                 </div>
@@ -1018,17 +993,16 @@ export function WebsiteCMS() {
                     )}
 
 
-                    <ScrollReveal delay={0.3} className="bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 rounded-xl p-6">
-                        <div className="flex gap-4">
-                            <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center shrink-0">
-                                <SettingsIcon className="text-emerald-600" size={20} />
+                    <ScrollReveal delay={0.3} className="bg-light border rounded p-4">
+                        <div className="d-flex gap-4">
+                            <div className="h-10 w-10 bg-white border rounded-circle d-flex align-items-center justify-center shrink-0">
+                                <SettingsIcon className="text-primary" size={20} />
                             </div>
                             <div>
-                                <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-sm uppercase">How Image Upload Works</h4>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    Switch to the <strong>"Image Management"</strong> tab to see all images on the selected page.
-                                    Click <strong>"Replace Image"</strong> or click directly on the image to upload a replacement from your device.
-                                    Images are saved instantly — no need to click "Publish Changes" for images. Text changes still require publishing.
+                                <h4 className="fw-bold text-dark mb-1 text-sm uppercase">How Website CMS Works</h4>
+                                <p className="text-xs text-muted leading-relaxed mb-0">
+                                    Use the <strong>"Image Management"</strong> tab to browse and replace visuals on specific pages. Images are updated instantly across the site when uploaded.
+                                    The <strong>"Text Content"</strong> tab allows you to localize headlines and descriptions for all supported languages. Remember to click <strong>"Publish Changes"</strong> or <strong>"Save This Entry"</strong> to make your text updates public.
                                 </p>
                             </div>
                         </div>

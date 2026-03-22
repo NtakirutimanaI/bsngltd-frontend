@@ -320,7 +320,7 @@ export function SalaryPayments() {
                 <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between mb-4 gap-3">
                     <div>
                         <h1 className="h3 fw-bold text-dark dark:text-white d-flex align-items-center gap-2">
-                            <Banknote className="text-emerald-500" size={28} />
+                            <Banknote className="text-blue-500" size={28} />
                             Salary Payments
                         </h1>
                         <p className="text-muted mb-0">
@@ -337,7 +337,7 @@ export function SalaryPayments() {
             <ScrollReveal delay={0.05}>
                 <div className="row g-3 mb-4">
                     <div className="col-md-3">
-                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #16a085 0%, #0e6655 100%)' }}>
+                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #009CFF 0%, #0e6655 100%)' }}>
                             <div className="card-body d-flex align-items-center gap-3 py-3">
                                 <div className="rounded-circle bg-white bg-opacity-25 p-2 d-flex align-items-center justify-content-center" style={{ width: 44, height: 44 }}>
                                     <Users color="white" size={22} />
@@ -397,21 +397,21 @@ export function SalaryPayments() {
                     <div className="nav nav-tabs border-0 flex-nowrap">
                         <button
                             onClick={() => setActiveTab('payroll')}
-                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'payroll' ? 'text-emerald-600 border-bottom border-emerald-600 border-2' : 'text-muted'}`}
+                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'payroll' ? 'text-blue-600 border-bottom border-blue-600 border-2' : 'text-muted'}`}
                         >
                             <CalendarDays size={18} className="me-2" />
                             Payroll Overview
                         </button>
                         <button
                             onClick={() => setActiveTab('pay')}
-                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'pay' ? 'text-emerald-600 border-bottom border-emerald-600 border-2' : 'text-muted'}`}
+                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'pay' ? 'text-blue-600 border-bottom border-blue-600 border-2' : 'text-muted'}`}
                         >
                             <Send size={18} className="me-2" />
                             Pay Salaries
                         </button>
                         <button
                             onClick={() => setActiveTab('history')}
-                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'history' ? 'text-emerald-600 border-bottom border-emerald-600 border-2' : 'text-muted'}`}
+                            className={`nav-link border-0 py-3 px-4 fw-medium text-nowrap ${activeTab === 'history' ? 'text-blue-600 border-bottom border-blue-600 border-2' : 'text-muted'}`}
                         >
                             <Receipt size={18} className="me-2" />
                             Payment History
@@ -475,7 +475,7 @@ export function SalaryPayments() {
 
             {isLoading && (
                 <div className="text-center py-5">
-                    <Loader2 className="mx-auto animate-spin text-emerald-500" size={32} />
+                    <Loader2 className="mx-auto animate-spin text-blue-500" size={32} />
                     <div className="text-muted mt-2 small">Loading payroll data...</div>
                 </div>
             )}
@@ -490,7 +490,7 @@ export function SalaryPayments() {
                             <h6 className="fw-bold mb-0">
                                 Payroll for {MONTHS[selectedMonth - 1]} {selectedYear}
                             </h6>
-                            <span className="badge bg-emerald-100 text-emerald-700 px-3 py-2">
+                            <span className="badge bg-blue-100 text-blue-700 px-3 py-2">
                                 {payrollData.length} Employees
                             </span>
                         </div>
@@ -513,7 +513,7 @@ export function SalaryPayments() {
                                         <tr key={item.employee.id}>
                                             <td className="ps-4">
                                                 <div className="d-flex align-items-center gap-2">
-                                                    <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 36, height: 36, fontSize: 14 }}>
+                                                    <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 36, height: 36, fontSize: 14 }}>
                                                         {item.employee.name.charAt(0)}
                                                     </div>
                                                     <div>
@@ -607,7 +607,7 @@ export function SalaryPayments() {
                                         <button
                                             onClick={openBatchModal}
                                             disabled={selectedEmployees.size === 0}
-                                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0 disabled:opacity-50"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0 disabled:opacity-50"
                                         >
                                             <Send size={16} />
                                             Pay Selected
@@ -628,7 +628,7 @@ export function SalaryPayments() {
                                         className={`card border-2 shadow-sm h-100 transition-all position-relative ${item.isPaid
                                             ? 'border-success bg-success-subtle opacity-75'
                                             : isSelected
-                                                ? 'border-emerald-500'
+                                                ? 'border-blue-500'
                                                 : 'border-light'
                                             }`}
                                         style={{ cursor: item.isPaid ? 'default' : 'pointer', transition: 'all 0.2s ease' }}
@@ -637,7 +637,7 @@ export function SalaryPayments() {
                                         {/* Selection indicator */}
                                         {isSelected && !item.isPaid && (
                                             <div className="position-absolute" style={{ top: 8, right: 8 }}>
-                                                <div className="bg-emerald-500 text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: 24, height: 24 }}>
+                                                <div className="bg-blue-500 text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: 24, height: 24 }}>
                                                     <Check size={14} />
                                                 </div>
                                             </div>
@@ -653,7 +653,7 @@ export function SalaryPayments() {
 
                                         <div className="card-body p-3">
                                             <div className="d-flex align-items-center gap-3 mb-3">
-                                                <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style={{ width: 44, height: 44, fontSize: 16 }}>
+                                                <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style={{ width: 44, height: 44, fontSize: 16 }}>
                                                     {item.employee.name.charAt(0)}
                                                 </div>
                                                 <div className="flex-grow-1 overflow-hidden">
@@ -682,7 +682,7 @@ export function SalaryPayments() {
                                                     <div className="text-muted d-flex justify-content-between" style={{ fontSize: 10 }}>
                                                         <span>SALARY AMOUNT ({currency})</span>
                                                         {customAmounts[item.employee.id] !== item.calculatedSalary && (
-                                                            <span className="text-emerald-500 fw-bold">MODIFIED</span>
+                                                            <span className="text-blue-500 fw-bold">MODIFIED</span>
                                                         )}
                                                     </div>
                                                     <div className="position-relative mt-1">
@@ -701,7 +701,7 @@ export function SalaryPayments() {
                                                         {!item.isPaid && (
                                                             <div className="position-absolute end-0 top-50 translate-middle-y pe-2">
                                                                 <button
-                                                                    className="btn btn-sm p-0 text-muted hover:text-emerald-500"
+                                                                    className="btn btn-sm p-0 text-muted hover:text-blue-500"
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         setCustomAmounts(prev => ({ ...prev, [item.employee.id]: item.calculatedSalary }));
@@ -775,7 +775,7 @@ export function SalaryPayments() {
                                             <tr key={record.id}>
                                                 <td className="ps-4">
                                                     <div className="d-flex align-items-center gap-2">
-                                                        <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 32, height: 32, fontSize: 12 }}>
+                                                        <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 32, height: 32, fontSize: 12 }}>
                                                             {record.employee?.name?.charAt(0) || '?'}
                                                         </div>
                                                         <div>
@@ -838,7 +838,7 @@ export function SalaryPayments() {
                     <div>
                         {/* Employee Info */}
                         <div className="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
-                            <div className="rounded-circle bg-emerald-500 text-white d-flex align-items-center justify-content-center fw-bold" style={{ width: 50, height: 50, fontSize: 20 }}>
+                            <div className="rounded-circle bg-blue-500 text-white d-flex align-items-center justify-content-center fw-bold" style={{ width: 50, height: 50, fontSize: 20 }}>
                                 {payTarget.employee.name.charAt(0)}
                             </div>
                             <div className="flex-grow-1">
@@ -1042,7 +1042,7 @@ export function SalaryPayments() {
                                 {payrollData.filter(p => selectedEmployees.has(p.employee.id)).map(item => (
                                     <div key={item.employee.id} className="d-flex align-items-center justify-content-between p-2 border-bottom">
                                         <div className="d-flex align-items-center gap-2">
-                                            <div className="rounded-circle bg-emerald-100 text-emerald-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 28, height: 28, fontSize: 11 }}>
+                                            <div className="rounded-circle bg-blue-100 text-blue-600 d-flex align-items-center justify-content-center fw-bold" style={{ width: 28, height: 28, fontSize: 11 }}>
                                                 {item.employee.name.charAt(0)}
                                             </div>
                                             <div>

@@ -136,7 +136,7 @@ export function Home() {
             <div className="col-lg-6 animated fadeIn" style={{ zIndex: 1 }}>
               <h1 className="display-1 mb-4 animated slideInRight">
                 {heroTitle.split(' ').slice(0, 3).join(' ')} <br />
-                <span className="text-primary" style={{ color: '#16a085' }}>{heroTitle.split(' ').slice(3).join(' ')}</span>
+                <span className="text-primary" style={{ color: '#009CFF' }}>{heroTitle.split(' ').slice(3).join(' ')}</span>
               </h1>
               <h5 className="d-inline-block border border-2 border-white py-3 px-5 mb-5 animated slideInRight uppercase">
                 {heroSubtitle}
@@ -154,7 +154,7 @@ export function Home() {
                     top: '-40px', // Shifted up 40px to appear at the top of the image
                     zIndex: 0,
                     borderRadius: '2px',
-                    background: '#16a085'
+                    background: '#009CFF'
                   }}
                 />
 
@@ -168,7 +168,7 @@ export function Home() {
                     top: '0',
                     zIndex: 0,
                     borderRadius: '2px',
-                    background: '#16a085',
+                    background: '#009CFF',
                     opacity: 0.05
                   }}
                 />
@@ -337,8 +337,8 @@ export function Home() {
                       <div className="flex-fill">
                         <div className="d-flex align-items-center gap-2 mb-2">
                           <span className={`badge ${event.type === 'meeting' ? 'bg-blue-100 text-blue-600' :
-                            event.type === 'inspection' ? 'bg-emerald-100 text-emerald-600' :
-                              event.type === 'delivery' ? 'bg-green-100 text-green-600' :
+                            event.type === 'inspection' ? 'bg-blue-100 text-blue-600' :
+                              event.type === 'delivery' ? 'bg-green-100 text-blue-600' :
                                 'bg-red-100 text-red-600'
                             } text-[10px] uppercase font-bold px-2 py-1`}>
                             {event.type}

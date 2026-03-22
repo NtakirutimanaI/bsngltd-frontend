@@ -85,11 +85,11 @@ export default function AdminDashboard() {
           {/* Stats Grid */}
           <div className="row g-2">
             {([
-              { label: 'Total Revenue', value: `RWF ${(stats.totalRevenue / 1000000).toFixed(1)}M`, sub: `${revenueGrowth}% margin`, color: '#16a085', Icon: DollarSign },
+              { label: 'Total Revenue', value: `RWF ${(stats.totalRevenue / 1000000).toFixed(1)}M`, sub: `${revenueGrowth}% margin`, color: '#009CFF', Icon: DollarSign },
               { label: 'Expenses', value: `RWF ${(stats.totalExpenses / 1000000).toFixed(1)}M`, sub: 'Salaries & ops', color: '#e74c3c', Icon: TrendingDown },
-              { label: 'Active Projects', value: `${stats.activeProjects}`, sub: `${stats.completedProjects} completed`, color: '#16a085', Icon: HardHat },
-              { label: 'Properties', value: `${stats.totalProperties}`, sub: `${stats.availableProperties} available`, color: '#16a085', Icon: Home },
-              { label: 'Employees', value: `${stats.totalEmployees}`, sub: `${stats.activeEmployees} active`, color: '#16a085', Icon: Users },
+              { label: 'Active Projects', value: `${stats.activeProjects}`, sub: `${stats.completedProjects} completed`, color: '#009CFF', Icon: HardHat },
+              { label: 'Properties', value: `${stats.totalProperties}`, sub: `${stats.availableProperties} available`, color: '#009CFF', Icon: Home },
+              { label: 'Employees', value: `${stats.totalEmployees}`, sub: `${stats.activeEmployees} active`, color: '#009CFF', Icon: Users },
               { label: 'Sold', value: `${stats.soldProperties}`, sub: 'Properties', color: '#3498db', Icon: Globe },
               { label: 'Rented', value: `${stats.rentedProperties}`, sub: 'Active rentals', color: '#9b59b6', Icon: TrendingUp },
               { label: 'Pending', value: `${stats.pendingTransactions + stats.pendingTaxes}`, sub: 'Action needed', color: '#f39c12', Icon: AlertCircle },
@@ -130,8 +130,8 @@ export default function AdminDashboard() {
             <div className="col-md-6">
               <div className="card border-0 shadow-sm h-100" style={{ border: 'none' }}>
                 <div className="card-body p-2">
-                  <div className="d-flex align-items-center justify-content-between mb-2" style={{ border: 'none', borderBottom: '2px solid #16a085' }}>
-                    <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#16a085' }}>Active Projects</h3>
+                  <div className="d-flex align-items-center justify-content-between mb-2" style={{ border: 'none', borderBottom: '2px solid #009CFF' }}>
+                    <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#009CFF' }}>Active Projects</h3>
                     <Link to="/dashboard/portfolio">
                       <Button variant="brand" size="sm" className="px-2 py-1 fw-bold" style={{ fontSize: '11px', border: 'none' }}>
                         VIEW ALL <ArrowRight className="ms-1" size={10} />
@@ -153,8 +153,8 @@ export default function AdminDashboard() {
                               variant="secondary"
                               className="text-xs h-auto py-1 px-2"
                               style={{
-                                background: project.status === 'in_progress' ? '#16a085' : '#f0faf8',
-                                color: project.status === 'in_progress' ? 'white' : '#16a085',
+                                background: project.status === 'in_progress' ? '#009CFF' : '#f0faf8',
+                                color: project.status === 'in_progress' ? 'white' : '#009CFF',
                                 border: 'none'
                               }}
                             >
@@ -163,7 +163,7 @@ export default function AdminDashboard() {
                           </div>
                           <div className="d-flex align-items-center justify-content-between text-muted mb-1" style={{ fontSize: '10px' }}>
                             <span>Progress</span>
-                            <span className="fw-bold" style={{ color: '#16a085' }}>{project.progress}%</span>
+                            <span className="fw-bold" style={{ color: '#009CFF' }}>{project.progress}%</span>
                           </div>
                           <Progress value={project.progress} className="h-1" style={{ background: '#e8f8f5' }} />
                         </div>
@@ -177,8 +177,8 @@ export default function AdminDashboard() {
               <div className="col-md-6">
                 <div className="card border-0 shadow-sm h-100" style={{ border: 'none' }}>
                   <div className="card-body p-2">
-                    <div className="d-flex align-items-center justify-content-between mb-2" style={{ border: 'none', borderBottom: '2px solid #16a085' }}>
-                      <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#16a085' }}>Recent Transactions</h3>
+                    <div className="d-flex align-items-center justify-content-between mb-2" style={{ border: 'none', borderBottom: '2px solid #009CFF' }}>
+                      <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#009CFF' }}>Recent Transactions</h3>
                       <Link to="/dashboard/finance">
                         <Button variant="brand" size="sm" className="px-2 py-1 fw-bold" style={{ fontSize: '11px', border: 'none' }}>
                           VIEW ALL <ArrowRight className="ms-1" size={10} />
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                                 variant="secondary"
                                 className="text-xs h-auto py-1 px-1 mt-1"
                                 style={{
-                                  background: transaction.status === 'completed' ? '#16a085' : '#fef9e7',
+                                  background: transaction.status === 'completed' ? '#009CFF' : '#fef9e7',
                                   color: transaction.status === 'completed' ? 'white' : '#f39c12',
                                   border: 'none'
                                 }}
@@ -227,12 +227,12 @@ export default function AdminDashboard() {
                 style={{ border: 'none' }}
               >
                 <div className="card-body p-2">
-                  <div className="d-flex align-items-center gap-2 mb-2" style={{ border: 'none', borderBottom: '2px solid #16a085' }}>
-                    <div className="p-1 rounded" style={{ background: '#16a085' }}>
+                  <div className="d-flex align-items-center gap-2 mb-2" style={{ border: 'none', borderBottom: '2px solid #009CFF' }}>
+                    <div className="p-1 rounded" style={{ background: '#009CFF' }}>
                       <Globe className="text-white" size={12} />
                     </div>
                     <div>
-                      <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#16a085' }}>Website Content</h3>
+                      <h3 className="fw-bold mb-0" style={{ fontSize: '12px', color: '#009CFF' }}>Website Content</h3>
                       <p className="text-muted mb-0" style={{ fontSize: '10px' }}>Manage public-facing pages</p>
                     </div>
                   </div>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                           <Button
                             variant="outline-brand"
                             className="w-auto h-auto fw-semibold rounded"
-                            style={{ fontSize: '11px', borderBottom: '2px solid #16a085' }}
+                            style={{ fontSize: '11px', borderBottom: '2px solid #009CFF' }}
                           >
                             Pages
                           </Button>
@@ -254,7 +254,7 @@ export default function AdminDashboard() {
                           <Button
                             variant="outline-brand"
                             className="w-auto h-auto fw-semibold rounded"
-                            style={{ fontSize: '11px', borderBottom: '2px solid #16a085' }}
+                            style={{ fontSize: '11px', borderBottom: '2px solid #009CFF' }}
                           >
                             Media
                           </Button>

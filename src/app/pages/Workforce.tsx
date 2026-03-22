@@ -106,10 +106,17 @@ const MONTHS = [
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+import { useSearchParams } from "react-router";
+
 export function Workforce() {
     const { user } = useAuth();
     const { currency } = useCurrency();
-    const [activeTab, setActiveTab] = useState<'directory' | 'attendance' | 'payroll' | 'sites' | 'contracts' | 'assignments'>('directory');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = (searchParams.get('tab') as 'directory' | 'attendance' | 'payroll' | 'sites' | 'contracts' | 'assignments') || 'directory';
+
+    const setActiveTab = (tab: any) => {
+        setSearchParams({ tab });
+    };
 
     
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -308,7 +315,7 @@ export function Workforce() {
             <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 px-2 px-md-4 pt-1">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
                 <div>
                     <h1 className="h5 fw-bold text-dark mb-0">Workforce Center</h1>
                     <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage employees, attendance, and payroll in one place</p>
@@ -317,7 +324,7 @@ export function Workforce() {
                     {activeTab === 'directory' && isAdminOrManager && (
                         <button
                             onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
                         >
                             <Plus size={14} /> <span>Add Staff</span>
                         </button>
@@ -326,163 +333,116 @@ export function Workforce() {
                         <button
                             onClick={saveAttendance}
                             disabled={isSavingAttendance}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+                            className="btn btn-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg d-flex align-items-center gap-2 border-0"
                         >
                             {isSavingAttendance ? <RefreshCw size={16} className="animate-spin" /> : <Save size={16} />}
                             <span>{isSavingAttendance ? 'Saving...' : 'Save Records'}</span>
                         </button>
                     )}
                     <button
-                        className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-emerald-600 hover:border-emerald-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
+                        className="btn btn-light p-2 border rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95 bg-white shadow-sm"
                      onClick={() => setIsExportModalOpen(true)}>
                         <Download size={16} />
                     </button>
                 </div>
             </ScrollReveal>
 
-            {/* Hub Tabs */}
-            <div className="card border-0 shadow-sm mb-2 mx-2 mx-md-4" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <div className="card-header bg-white border-0 p-0">
-                    <div className="nav nav-pills p-1.5 gap-2 bg-gray-50 dark:bg-gray-800/50 rounded-2xl mx-1 my-1">
-                        <button
-                            onClick={() => setActiveTab('directory')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'directory' ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'directory' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <Users size={16} /> Staff Directory
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('attendance')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'attendance' ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'attendance' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <CalendarDays size={16} /> {isAdminOrManager ? 'Daily Attendance' : 'My Attendance'}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('payroll')}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'payroll' ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'payroll' ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <CreditCard size={16} /> Payroll Center
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('sites' as any)}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'sites' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'sites' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <Building2 size={16} /> Sites
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('contracts' as any)}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'contracts' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'contracts' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <CalendarDays size={16} /> Contracts
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('assignments' as any)}
-                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'assignments' as any ? 'text-white shadow-lg scale-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'}`}
-                            style={{
-                                borderRadius: '14px',
-                                border: 'none',
-                                background: activeTab === 'assignments' as any ? 'linear-gradient(135deg, #16a085 0%, #1abc9c 100%)' : 'transparent',
-                                fontWeight: 700,
-                                fontSize: '12px',
-                                letterSpacing: '0.5px'
-                            }}
-                        >
-                            <Users size={16} /> Assignments
-                        </button>
-                    </div>
+            <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
+                <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl overflow-x-auto">
+                    <button
+                        onClick={() => setActiveTab('directory')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'directory' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <Users size={16} /> Staff Directory
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('attendance')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'attendance' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <CalendarDays size={16} /> {isAdminOrManager ? 'Attendance' : 'My Attendance'}
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('payroll')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'payroll' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <CreditCard size={16} /> Payroll
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('sites' as any)}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'sites' as any ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <Building2 size={16} /> Sites
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('contracts' as any)}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'contracts' as any ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <CalendarDays size={16} /> Contracts
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('assignments' as any)}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'assignments' as any ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                    >
+                        <Users size={16} /> Assignments
+                    </button>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <ScrollReveal className="mb-2">
-                <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
-                    <div className="card-body py-3">
-                        <div className="row g-2 align-items-center">
-                            <div className="col-md-5">
-                                <div className="position-relative">
-                                    <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={14} />
-                                    <input
-                                        type="text"
-                                        className="form-control form-control-sm ps-3 pe-5 bg-light border-0 py-1"
-                                        placeholder="Search by name, ID or department..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        style={{ borderRadius: '8px' }}
-                                    />
-                                </div>
+            <ScrollReveal className="mb-4">
+                <div className="bg-light rounded p-4 shadow-sm mx-2 mx-md-4 border">
+                    <div className="row g-2 align-items-center">
+                        <div className="col-md-5">
+                            <div className="position-relative">
+                                <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={14} />
+                                <input
+                                    type="text"
+                                    className="form-control ps-3 pe-5 bg-white py-1"
+                                    placeholder="Search by name, ID or department..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    style={{ borderRadius: '5px', fontSize: '13px' }}
+                                />
                             </div>
-                            <div className="col-md-7 d-flex justify-content-md-end gap-2 align-items-center">
-                                {activeTab === 'attendance' ? (
-                                    <input
-                                        type="date"
-                                        className="form-control form-control-sm border-0 bg-light"
-                                        value={selectedDate}
-                                        onChange={(e) => setSelectedDate(e.target.value)}
-                                        style={{ width: '160px', borderRadius: '8px' }}
-                                    />
-                                ) : (
-                                    <>
-                                        <select
-                                            className="form-select form-select-sm border-0 bg-light"
-                                            value={selectedMonth}
-                                            onChange={(e) => setSelectedMonth(Number(e.target.value))}
-                                            style={{ width: '120px', borderRadius: '8px' }}
-                                        >
-                                            {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-                                        </select>
-                                        <select
-                                            className="form-select form-select-sm border-0 bg-light"
-                                            value={selectedYear}
-                                            onChange={(e) => setSelectedYear(Number(e.target.value))}
-                                            style={{ width: '90px', borderRadius: '8px' }}
-                                        >
-                                            {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
-                                        </select>
-                                    </>
-                                )}
-                                <button className="btn btn-light btn-sm p-1" style={{ borderRadius: '8px' }}>
-                                    <Filter size={14} />
-                                </button>
-                            </div>
+                        </div>
+                        <div className="col-md-7 d-flex justify-content-md-end gap-2 align-items-center">
+                            {activeTab === 'attendance' ? (
+                                <input
+                                    type="date"
+                                    className="form-control border-1 bg-white"
+                                    value={selectedDate}
+                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    style={{ width: '160px', borderRadius: '5px', fontSize: '13px' }}
+                                />
+                            ) : (
+                                <>
+                                    <select
+                                        className="form-select border-1 bg-white"
+                                        value={selectedMonth}
+                                        onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                                        style={{ width: '120px', borderRadius: '5px', fontSize: '13px' }}
+                                    >
+                                        {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                    </select>
+                                    <select
+                                        className="form-select border-1 bg-white"
+                                        value={selectedYear}
+                                        onChange={(e) => setSelectedYear(Number(e.target.value))}
+                                        style={{ width: '100px', borderRadius: '5px', fontSize: '13px' }}
+                                    >
+                                        {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
+                                    </select>
+                                </>
+                            )}
+                            <button className="btn btn-primary p-2 d-flex align-items-center justify-content-center" style={{ borderRadius: '5px' }}>
+                                <Filter size={16} />
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -493,11 +453,15 @@ export function Workforce() {
                 {/* 1. DIRECTORY TAB */}
                 {activeTab === 'directory' && (
                     <ScrollReveal>
-                        <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
+                        <div className="bg-light rounded p-4 shadow-sm h-100">
+                            <div className="d-flex align-items-center justify-content-between mb-4">
+                                <h6 className="mb-0 fw-bold">Staff Directory</h6>
+                                <span className="text-muted small">Total: {totalItems} members</span>
+                            </div>
                             <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="bg-light">
-                                        <tr className="text-muted small text-uppercase">
+                                <table className="table text-start align-middle table-bordered table-hover mb-0">
+                                    <thead className="bg-white">
+                                        <tr className="text-dark">
                                             <th className="ps-4">Employee Info</th>
                                             <th>Department</th>
                                             <th>Position</th>
@@ -511,7 +475,7 @@ export function Workforce() {
                                             <tr key={emp.id} className="transition-all">
                                                 <td className="ps-4 py-2">
                                                     <div className="d-flex align-items-center gap-2">
-                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, backgroundColor: '#e8f8f5', color: '#16a085', fontSize: '12px' }}>
+                                                        <div className="rounded-circle fw-bold d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, backgroundColor: '#e8f8f5', color: '#009CFF', fontSize: '12px' }}>
                                                             {emp.name.charAt(0)}
                                                         </div>
                                                         <div>
@@ -525,7 +489,7 @@ export function Workforce() {
                                                         className="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider"
                                                         style={{
                                                             backgroundColor: 'rgba(22, 160, 133, 0.12)',
-                                                            color: '#16a085',
+                                                            color: '#009CFF',
                                                             border: '1px solid rgba(22, 160, 133, 0.3)'
                                                         }}
                                                     >
@@ -572,12 +536,16 @@ export function Workforce() {
                 {/* 2. ATTENDANCE TAB */}
                 {activeTab === 'attendance' && (
                     <ScrollReveal>
-                        <div className="card border-0 shadow-sm" style={{ borderRadius: '12px' }}>
+                        <div className="bg-light rounded p-4 shadow-sm h-100">
+                            <div className="d-flex align-items-center justify-content-between mb-4">
+                                <h6 className="mb-0 fw-bold">Attendance Records</h6>
+                                <span className="text-muted small">Date: {new Date(selectedDate).toLocaleDateString()}</span>
+                            </div>
                             <div className="table-responsive">
                                 {isAdminOrManager ? (
-                                    <table className="table align-middle table-hover mb-0">
-                                        <thead className="bg-light">
-                                            <tr className="text-muted small text-uppercase">
+                                    <table className="table text-start align-middle table-bordered table-hover mb-0">
+                                        <thead className="bg-white">
+                                            <tr className="text-dark">
                                                 <th className="ps-4">Employee</th>
                                                 <th>Status</th>
                                                 <th>Check In</th>
@@ -611,7 +579,7 @@ export function Workforce() {
                                                         <td>
                                                             <input
                                                                 type="time"
-                                                                className="form-control form-control-sm border-0 bg-light"
+                                                                className="form-control form-control-sm border-1 bg-white"
                                                                 value={record.checkIn || ''}
                                                                 onChange={(e) => {
                                                                     const val = e.target.value;
@@ -623,13 +591,13 @@ export function Workforce() {
                                                                         return { ...prev, [emp.id]: updated };
                                                                     });
                                                                 }}
-                                                                style={{ borderRadius: '6px' }}
+                                                                style={{ borderRadius: '5px' }}
                                                             />
                                                         </td>
                                                         <td>
                                                             <input
                                                                 type="time"
-                                                                className="form-control form-control-sm border-0 bg-light"
+                                                                className="form-control form-control-sm border-1 bg-white"
                                                                 value={record.checkOut || ''}
                                                                 onChange={(e) => {
                                                                     const val = e.target.value;
@@ -641,10 +609,10 @@ export function Workforce() {
                                                                         return { ...prev, [emp.id]: updated };
                                                                     });
                                                                 }}
-                                                                style={{ borderRadius: '6px' }}
+                                                                style={{ borderRadius: '5px' }}
                                                             />
                                                         </td>
-                                                        <td className="text-center fw-bold" style={{ color: '#16a085' }}>{record.workingHours || 0}h</td>
+                                                        <td className="text-center fw-bold" style={{ color: '#009CFF' }}>{record.workingHours || 0}h</td>
                                                         <td className="pe-4">
                                                             <input
                                                                 type="text"
@@ -660,9 +628,9 @@ export function Workforce() {
                                         </tbody>
                                     </table>
                                 ) : (
-                                    <table className="table align-middle table-hover mb-0">
-                                        <thead className="bg-light">
-                                            <tr className="text-muted small text-uppercase">
+                                    <table className="table text-start align-middle table-bordered table-hover mb-0">
+                                        <thead className="bg-white">
+                                            <tr className="text-dark">
                                                 <th className="ps-4">Date</th>
                                                 <th>Status</th>
                                                 <th>Check In</th>
@@ -677,13 +645,13 @@ export function Workforce() {
                                                     <tr key={record.id}>
                                                         <td className="ps-4 fw-medium text-dark">{new Date(record.date).toLocaleDateString()}</td>
                                                         <td>
-                                                            <span className={`badge px-2 py-1 ${record.status === 'Present' ? 'bg-success-subtle text-success' : record.status === 'Absent' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning'}`}>
+                                                            <span className={`badge px-2 py-1 ${record.status === 'Present' ? 'bg-success-api text-white' : record.status === 'Absent' ? 'bg-danger-api text-white' : 'bg-warning-api text-white'}`}>
                                                                 {record.status}
                                                             </span>
                                                         </td>
                                                         <td className="small">{record.checkIn}</td>
                                                         <td className="small">{record.checkOut}</td>
-                                                        <td className="text-center fw-bold small" style={{ color: '#16a085' }}>{record.workingHours}h</td>
+                                                        <td className="text-center fw-bold small" style={{ color: '#009CFF' }}>{record.workingHours}h</td>
                                                         <td className="pe-4 text-muted small">{record.reason || '-'}</td>
                                                     </tr>
                                                 ))
@@ -703,44 +671,42 @@ export function Workforce() {
                 {/* 3. PAYROLL TAB */}
                 {activeTab === 'payroll' && (
                     <>
-                        <ScrollReveal className="mb-2">
-                            <div className="card border-0 shadow-sm mx-2 mx-md-4" style={{ borderRadius: '12px' }}>
-                                <div className="card-body py-2">
-                                    <div className="d-flex align-items-center justify-content-between">
-                                        <div className="d-flex align-items-center gap-3">
-                                            <button
-                                                onClick={() => setSelectedEmployees(new Set(payrollData.filter(p => !p.isPaid).map(p => p.employee.id)))}
-                                                className="btn btn-sm px-3"
-                                                style={{ borderRadius: '8px', background: '#e8f8f5', color: '#16a085', border: '1px solid #16a085', fontWeight: 600, fontSize: '12px' }}
-                                            >
-                                                Select All Unpaid
-                                            </button>
-                                            <button
-                                                onClick={() => setSelectedEmployees(new Set())}
-                                                className="btn btn-sm btn-outline-secondary px-3"
-                                                style={{ borderRadius: '8px', fontSize: '12px' }}
-                                            >
-                                                Clear
-                                            </button>
-                                            <div className="vr mx-2"></div>
-                                            <span className="text-muted small">
-                                                {selectedEmployees.size} staff selected
-                                                {selectedEmployees.size > 0 && <span className="fw-bold text-success ms-2">(Total: {formatCurrency(selectedTotal)})</span>}
-                                            </span>
-                                        </div>
+                        <ScrollReveal className="mb-4">
+                            <div className="bg-light rounded p-4 shadow-sm mx-2 mx-md-4 border">
+                                <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                    <div className="d-flex align-items-center gap-3">
                                         <button
-                                            disabled={selectedEmployees.size === 0}
-                                            onClick={() => setShowBatchModal(true)}
-                                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0 disabled:opacity-50"
+                                            onClick={() => setSelectedEmployees(new Set(payrollData.filter(p => !p.isPaid).map(p => p.employee.id)))}
+                                            className="btn btn-sm btn-outline-primary px-3 fw-bold"
+                                            style={{ borderRadius: '5px', fontSize: '13px' }}
                                         >
-                                            <Send size={14} /> Pay Selected
+                                            Select All Unpaid
                                         </button>
+                                        <button
+                                            onClick={() => setSelectedEmployees(new Set())}
+                                            className="btn btn-sm btn-outline-secondary px-3"
+                                            style={{ borderRadius: '5px', fontSize: '13px' }}
+                                        >
+                                            Clear Selection
+                                        </button>
+                                        <div className="vr d-none d-md-block mx-2"></div>
+                                        <span className="text-dark small fw-bold">
+                                            {selectedEmployees.size} staff selected
+                                            {selectedEmployees.size > 0 && <span className="ms-2 px-2 py-1 bg-white rounded border text-primary">{formatCurrency(selectedTotal)}</span>}
+                                        </span>
                                     </div>
+                                    <button
+                                        disabled={selectedEmployees.size === 0}
+                                        onClick={() => setShowBatchModal(true)}
+                                        className="btn btn-primary px-5 py-2 rounded-xl text-sm font-bold shadow-lg d-flex align-items-center gap-2 border-0 disabled:opacity-50"
+                                    >
+                                        <Send size={14} /> Pay Selected
+                                    </button>
                                 </div>
                             </div>
                         </ScrollReveal>
 
-                        <div className="row g-2">
+                        <div className="row g-4 px-2 px-md-4">
                             {payrollData.filter(item =>
                                 item.employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 item.employee.employeeId.toLowerCase().includes(searchTerm.toLowerCase())
@@ -749,65 +715,66 @@ export function Workforce() {
                                 return (
                                     <div key={item.employee.id} className="col-md-6 col-lg-4">
                                         <div
-                                            className={`card h-100 transition-all cursor-pointer ${isSelected ? 'shadow-lg' : 'shadow-sm hover:shadow-md'}`}
+                                            className={`bg-light rounded p-4 h-100 transition-all cursor-pointer border ${isSelected ? 'border-primary' : ''}`}
                                             onClick={() => toggleEmployeeSelection(item.employee.id)}
-                                            style={{ borderRadius: '12px', border: isSelected ? '2px solid #16a085' : '2px solid transparent', background: isSelected ? '#e8f8f5' : '#fff' }}
+                                            style={{ backgroundColor: isSelected ? 'rgba(0, 156, 255, 0.05)' : '#f8f9fa' }}
                                         >
-                                            <div className="card-body p-2">
-                                                <div className="d-flex justify-content-between align-items-start mb-3">
-                                                    <div className="d-flex align-items-center gap-3">
-                                                        <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold`} style={{ width: 44, height: 44, background: isSelected ? '#16a085' : '#f0f0f0', color: isSelected ? '#fff' : '#888' }}>
-                                                            {isSelected ? <Check size={24} color="white" /> : item.employee.name.charAt(0)}
-                                                        </div>
-                                                        <div>
-                                                            <div className="fw-bold text-dark">{item.employee.name}</div>
-                                                            <div className="badge bg-light text-muted small">{item.employee.department}</div>
-                                                        </div>
+                                            <div className="d-flex justify-content-between align-items-start mb-4">
+                                                <div className="d-flex align-items-center gap-3">
+                                                    <div className={`rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm`} style={{ width: 44, height: 44, background: isSelected ? '#009CFF' : '#6c757d' }}>
+                                                        {isSelected ? <Check size={24} /> : item.employee.name.charAt(0)}
                                                     </div>
-                                                    {item.isPaid && <div className="badge bg-success text-white px-2 py-1"><Check size={12} /> Paid</div>}
-                                                </div>
-
-                                                <div className="row g-2 mb-3">
-                                                    <div className="col-6">
-                                                        <div className="bg-light p-2 rounded-3 text-center">
-                                                            <div className="smaller text-muted">Attendance</div>
-                                                            <div className="fw-bold text-dark">{item.daysAttended} Days</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-6">
-                                                        <div className="bg-light p-2 rounded-3 text-center">
-                                                            <div className="smaller text-muted">Total Hours</div>
-                                                            <div className="fw-bold text-dark">{item.totalHours}h</div>
-                                                        </div>
+                                                    <div>
+                                                        <div className="fw-bold text-dark">{item.employee.name}</div>
+                                                        <div className="text-muted small">ID: {item.employee.employeeId}</div>
                                                     </div>
                                                 </div>
+                                                {item.isPaid && <span className="badge bg-primary text-white px-3 py-1.5"><Check size={14} className="me-1" /> Paid</span>}
+                                            </div>
 
-                                                <div className="p-2 rounded-3 mb-2" style={{ background: '#e8f8f5' }}>
-                                                    <div className="d-flex justify-content-between align-items-center mb-1 px-1">
-                                                        <span className="smaller text-muted fw-bold">SALARY AMOUNT</span>
-                                                        {customAmounts[item.employee.id] !== item.calculatedSalary && (
-                                                            <span className="badge smaller" style={{ background: '#e8f8f5', color: '#16a085' }}>MODIFIED</span>
-                                                        )}
+                                            <div className="row g-2 mb-4">
+                                                <div className="col-6">
+                                                    <div className="bg-white p-3 rounded text-center border">
+                                                        <div className="smaller text-muted fw-bold">ATTENDANCE</div>
+                                                        <div className="fw-bold text-dark">{item.daysAttended} Days</div>
                                                     </div>
-                                                    <div className="d-flex align-items-center gap-2">
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="bg-white p-3 rounded text-center border">
+                                                        <div className="smaller text-muted fw-bold">TOTAL HOURS</div>
+                                                        <div className="fw-bold text-dark">{item.totalHours}h</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="bg-white p-3 rounded border">
+                                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                                    <span className="smaller text-muted fw-bold">SALARY AMOUNT</span>
+                                                    {customAmounts[item.employee.id] !== item.calculatedSalary && (
+                                                        <span className="text-primary smaller fw-bold">MODIFIED</span>
+                                                    )}
+                                                </div>
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-0 py-1 px-2 text-primary fw-bold" style={{ fontSize: '13px' }}>RWF</span>
                                                         <input
                                                             type="number"
-                                                            className="form-control form-control-sm border-0 bg-white fw-bold p-2"
+                                                            className="form-control border-0 bg-light fw-bold text-primary py-1"
                                                             value={customAmounts[item.employee.id] || 0}
                                                             onChange={(e) => setCustomAmounts(prev => ({ ...prev, [item.employee.id]: Number(e.target.value) }))}
                                                             onClick={e => e.stopPropagation()}
                                                             disabled={item.isPaid}
-                                                            style={{ borderRadius: '8px', color: '#16a085' }}
+                                                            style={{ fontSize: '14px' }}
                                                         />
-                                                        {!item.isPaid && customAmounts[item.employee.id] !== item.calculatedSalary && (
-                                                            <button
-                                                                className="btn btn-sm p-1 text-muted hover:text-teal-500"
-                                                                onClick={(e) => { e.stopPropagation(); setCustomAmounts(prev => ({ ...prev, [item.employee.id]: item.calculatedSalary })); }}
-                                                            >
-                                                                <RotateCcw size={14} />
-                                                            </button>
-                                                        )}
                                                     </div>
+                                                    {!item.isPaid && customAmounts[item.employee.id] !== item.calculatedSalary && (
+                                                        <button
+                                                            className="btn btn-sm btn-light border p-1"
+                                                            onClick={(e) => { e.stopPropagation(); setCustomAmounts(prev => ({ ...prev, [item.employee.id]: item.calculatedSalary })); }}
+                                                        >
+                                                            <RotateCcw size={14} />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -860,7 +827,7 @@ export function Workforce() {
                                 <div
                                     className={`p-3 border-2 cursor-pointer transition-all d-flex align-items-center justify-content-between ${batchChannel === ch.id ? '' : 'hover:bg-light'}`}
                                     onClick={() => setBatchChannel(ch.id)}
-                                    style={{ borderRadius: '12px', border: batchChannel === ch.id ? '2px solid #16a085' : '2px solid #e9ecef', background: batchChannel === ch.id ? '#e8f8f5' : '' }}
+                                    style={{ borderRadius: '12px', border: batchChannel === ch.id ? '2px solid #009CFF' : '2px solid #e9ecef', background: batchChannel === ch.id ? '#e8f8f5' : '' }}
                                 >
                                     <div className="d-flex align-items-center gap-3">
                                         <div className={`p-2 rounded-3 ${ch.bgColor} ${ch.color}`}><ch.icon size={20} /></div>
@@ -869,7 +836,7 @@ export function Workforce() {
                                             <div className="smaller text-muted">{ch.description}</div>
                                         </div>
                                     </div>
-                                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: batchChannel === ch.id ? '#16a085' : 'transparent', border: batchChannel === ch.id ? 'none' : '2px solid #ccc' }}>
+                                    <div style={{ width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: batchChannel === ch.id ? '#009CFF' : 'transparent', border: batchChannel === ch.id ? 'none' : '2px solid #ccc' }}>
                                         {batchChannel === ch.id && <Check size={14} color="white" />}
                                     </div>
                                 </div>
@@ -881,21 +848,18 @@ export function Workforce() {
                         onClick={handleBatchPay}
                         disabled={isBatchPaying}
                         className="btn w-100 py-2 fw-bold text-white"
-                        style={{ borderRadius: '10px', background: '#16a085', border: 'none', fontSize: '14px' }}
+                        style={{ borderRadius: '10px', background: '#009CFF', border: 'none', fontSize: '14px' }}
                     >
                         {isBatchPaying ? <><RotateCcw className="spinning me-2" size={16} /> Processing...</> : <><Send size={16} className="me-2" /> Disburse {formatCurrency(selectedTotal)}</>}
                     </button>
                 </div>
             </Modal>
             <style>{`
-                .bg-emerald-600 { background-color: #0e6655 !important; }
-                .text-white { color: #ffffff !important; }
-                .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; }
-                .hover\:bg-light:hover { background-color: #f8f9fa !important; }
-                .scale-102 { transform: scale(1.02); }
-                .smaller { font-size: 0.75rem; }
                 .spinning { animation: spin 1s linear infinite; }
                 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                .bg-success-api { background-color: #00b894 !important; }
+                .bg-danger-api { background-color: #ff7675 !important; }
+                .bg-warning-api { background-color: #fab1a0 !important; }
             `}</style>
         </div>
     );

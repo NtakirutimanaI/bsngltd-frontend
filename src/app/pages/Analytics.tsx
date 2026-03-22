@@ -55,7 +55,7 @@ export function Analytics() {
         <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center min-vh-50">
             <h4 className="text-danger fw-bold mb-2">Connection Interrupted</h4>
             <p className="text-muted mb-4">The database server is still synchronizing the live tracking metrics. This usually finishes in a few moments.</p>
-            <button className="btn btn-primary px-4 py-2 fw-semibold" style={{ backgroundColor: '#16a085', borderColor: '#16a085' }} onClick={() => window.location.reload()}>
+            <button className="btn btn-primary px-4 py-2 fw-semibold" style={{ backgroundColor: '#009CFF', borderColor: '#009CFF' }} onClick={() => window.location.reload()}>
                 <Activity size={18} className="me-2 d-inline" /> Refresh Dashboard
             </button>
         </div>
@@ -148,7 +148,7 @@ export function Analytics() {
                                         <XAxis dataKey="date" stroke={theme === 'dark' ? "#9ca3af" : "#64748b"} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                                         <YAxis stroke={theme === 'dark' ? "#9ca3af" : "#64748b"} tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                                         <RechartsTooltip contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-                                        <Line type="monotone" dataKey="visits" stroke="#16a085" strokeWidth={4} dot={{ r: 4, fill: '#16a085', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Visits" />
+                                        <Line type="monotone" dataKey="visits" stroke="#009CFF" strokeWidth={4} dot={{ r: 4, fill: '#009CFF', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Visits" />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>
@@ -171,7 +171,7 @@ export function Analytics() {
                                         <XAxis type="number" hide />
                                         <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={80} tick={{ fontSize: 12, fill: theme === 'dark' ? '#9ca3af' : '#64748b' }} />
                                         <RechartsTooltip cursor={{ fill: theme === 'dark' ? '#374151' : '#f8f9fa' }} contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }} />
-                                        <Bar dataKey="visitors" fill="#16a085" radius={[0, 4, 4, 0]} barSize={20} />
+                                        <Bar dataKey="visitors" fill="#009CFF" radius={[0, 4, 4, 0]} barSize={20} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>

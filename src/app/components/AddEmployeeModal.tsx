@@ -316,7 +316,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
             disabled={isSubmitting}
             className="btn d-flex align-items-center justify-content-center"
             style={{
-              background: '#16a085',
+              background: '#009CFF',
               border: 'none',
               color: '#fff',
               fontWeight: 600,
@@ -331,7 +331,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
               if (!isSubmitting) e.currentTarget.style.background = '#1a9b7d';
             }}
             onMouseLeave={(e) => {
-              if (!isSubmitting) e.currentTarget.style.background = '#16a085';
+              if (!isSubmitting) e.currentTarget.style.background = '#009CFF';
             }}
           >
             {isSubmitting ? (initialData ? "Updating..." : "Adding...") : (initialData ? "Update Employee" : "Add Employee")}

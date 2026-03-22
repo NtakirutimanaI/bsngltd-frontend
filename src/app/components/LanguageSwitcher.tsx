@@ -29,18 +29,18 @@ export function LanguageSwitcher() {
                     className="flex items-center gap-2 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
                     style={{ border: 'none', background: 'transparent' }}
                 >
-                    <Globe className="h-5 w-5 text-[#16a085]" />
+                    <Globe className="h-5 w-5 text-[#009CFF]" />
                     <span className="text-sm font-bold">{currentLang.flag}</span>
                     <ChevronDown className="h-3 w-3 opacity-50 d-none d-sm-inline" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 p-1 shadow-xl border-none border-b-2 border-[#16a085]">
+            <DropdownMenuContent align="end" className="w-48 p-1 shadow-xl border-none border-b-2 border-[#009CFF]">
                 {languages.map((lang) => (
                     <DropdownMenuItem
                         key={lang.code}
                         onClick={() => setLanguage(lang.code)}
                         className={`flex items-center gap-3 p-2.5 cursor-pointer rounded-lg transition-colors ${lang.code === language
-                            ? "bg-[#16a085]/10 text-[#16a085] font-bold"
+                            ? "bg-[#009CFF]/10 text-[#009CFF] font-bold"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                             }`}
                     >

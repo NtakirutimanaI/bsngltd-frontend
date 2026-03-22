@@ -9,8 +9,8 @@ export function Notifications() {
 
     const getTypeIcon = (type: string) => {
         switch (type) {
-            case "success": return <CreditCard className="w-5 h-5 text-green-600" />;
-            case "warning": return <AlertCircle className="w-5 h-5 text-emerald-600" />;
+            case "success": return <CreditCard className="w-5 h-5 text-blue-600" />;
+            case "warning": return <AlertCircle className="w-5 h-5 text-blue-600" />;
             case "error": return <AlertCircle className="w-5 h-5 text-red-600" />;
             case "info": return <MapPin className="w-5 h-5 text-blue-600" />;
             default: return <Bell className="w-5 h-5 text-gray-600" />;
@@ -20,7 +20,7 @@ export function Notifications() {
     const getTypeStyles = (type: string) => {
         switch (type) {
             case "success": return "bg-green-100 text-green-800 border-green-200";
-            case "warning": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+            case "warning": return "bg-blue-100 text-blue-800 border-blue-200";
             case "error": return "bg-red-100 text-red-800 border-red-200";
             default: return "bg-blue-100 text-blue-800 border-blue-200";
         }
@@ -44,7 +44,7 @@ export function Notifications() {
                     {unreadCount > 0 && (
                         <button
                             onClick={markAllAsRead}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-emerald-600 border border-emerald-200 dark:border-emerald-900/50 rounded-lg font-bold text-sm shadow-sm hover:bg-emerald-50 transition-all"
+                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-blue-600 border border-blue-200 dark:border-blue-900/50 rounded-lg font-bold text-sm shadow-sm hover:bg-blue-50 transition-all"
                         >
                             <Check className="w-4 h-4" />
                             MARK ALL AS READ
@@ -58,7 +58,7 @@ export function Notifications() {
                     <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-800/20">
                         <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Recent Activity</span>
-                            <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{notifications.length}</span>
+                            <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{notifications.length}</span>
                         </div>
                     </div>
 
@@ -75,7 +75,7 @@ export function Notifications() {
                             notifications.map((notification) => (
                                 <div
                                     key={notification.id}
-                                    className={`group relative p-5 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer ${!notification.read ? "bg-emerald-50/20 dark:bg-emerald-900/5" : ""
+                                    className={`group relative p-5 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer ${!notification.read ? "bg-blue-50/20 dark:bg-blue-900/5" : ""
                                         }`}
                                     onClick={() => handleItemClick(notification)}
                                 >
@@ -95,7 +95,7 @@ export function Notifications() {
                                                     {notification.time}
                                                 </div>
                                                 {!notification.read && (
-                                                    <div className="h-2 w-2 bg-emerald-600 rounded-full shadow-[0_0_8px_rgba(234,88,12,0.5)] animator-pulse" />
+                                                    <div className="h-2 w-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(234,88,12,0.5)] animator-pulse" />
                                                 )}
                                             </div>
 

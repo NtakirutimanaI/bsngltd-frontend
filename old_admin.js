@@ -32,7 +32,7 @@ export function Administration() {
 
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const isAdmin = ['super_admin', 'admin', 'manager'].includes(roleName);
-    const isDeveloper = user?.email === 'innocentntakir@gmail.com';
+    const isDeveloper = user?.email === 'info.buildstronggenerations@gmail.com';
 
     if (!isAdmin) {
         return (

@@ -40,7 +40,7 @@ export function PublicLayout() {
   if (loading) {
     return (
       <div className="min-vh-100 d-flex justify-content-center align-items-center bg-white">
-        <Loader2 className="animate-spin text-primary" size={48} style={{ color: '#16a085' }} />
+        <Loader2 className="animate-spin text-primary" size={48} style={{ color: '#009CFF' }} />
       </div>
     );
   }
@@ -51,7 +51,7 @@ export function PublicLayout() {
     return (
       <div className="min-vh-100 d-flex flex-column justify-content-center align-items-center bg-light text-center px-4">
         {isMaintenance ? (
-          <Settings className="text-primary mb-4 animate-spin" size={80} style={{ color: '#16a085', animationDuration: '3s' }} />
+          <Settings className="text-primary mb-4 animate-spin" size={80} style={{ color: '#009CFF', animationDuration: '3s' }} />
         ) : (
           <Lock className="text-secondary mb-4" size={80} />
         )}
