@@ -66,11 +66,17 @@ export function RootLayout() {
   const [unreadContactMessages, setUnreadContactMessages] = useState(0);
   const location = useLocation();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 992);
 
   useEffect(() => {
     const handleScroll = () => setShowBackToTop(window.scrollY > 300);
+    const handleResize = () => setIsDesktop(window.innerWidth >= 992);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -204,7 +210,7 @@ export function RootLayout() {
       {/* Content Start */}
       <div className={`content ${sidebarOpen ? "open" : ""}`}>
         {/* Navbar Start */}
-        <nav className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0 shadow-sm" style={{ height: '64px', top: 0, zIndex: 1020 }}>
+        <nav className="navbar navbar-expand bg-light navbar-light px-4 py-0 shadow-sm" style={{ height: '64px', position: 'fixed', top: 0, right: 0, left: isDesktop ? (sidebarOpen ? '0px' : '250px') : '0px', zIndex: 1020, transition: 'left 0.5s' }}>
           <NavLink to="/" className="navbar-brand d-flex d-lg-none me-4">
             <h2 className="text-primary mb-0"><i className="fa fa-hashtag"></i></h2>
           </NavLink>
@@ -306,6 +312,9 @@ export function RootLayout() {
           </div>
         </nav>
         {/* Navbar End */}
+
+        {/* Navbar Spacer — prevents content from hiding behind fixed navbar */}
+        <div style={{ height: '64px', flexShrink: 0 }} />
 
         {/* Dash Page Content */}
         <div className="container-fluid pt-4 px-4 min-vh-100">
