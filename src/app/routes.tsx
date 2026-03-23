@@ -35,6 +35,7 @@ import { Insights } from "@/app/pages/Insights";
 import { Bookings } from "@/app/pages/Bookings";
 import { Communications } from "@/app/pages/Communications";
 import { Analytics } from "@/app/pages/Analytics";
+import { SalaryPayments } from "@/app/pages/SalaryPayments";
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -83,6 +84,7 @@ export const router = createBrowserRouter([
           { path: "notifications", Component: Notifications },
           { path: "bookings", Component: Bookings },
           { path: "analytics", Component: Analytics },
+          { path: "salary-payments", Component: SalaryPayments },
         ],
       },
     ],
