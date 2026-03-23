@@ -1,28 +1,44 @@
-import { Bell, Check, Trash2, Calendar, MapPin, CreditCard, AlertCircle } from "lucide-react";
+import {
+    Bell,
+    Check,
+    Trash2,
+    Clock,
+    Search,
+    AlertCircle,
+    Info,
+    Inbox,
+    CheckCircle2,
+    XCircle
+} from "lucide-react";
+import { useState, useMemo } from "react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useNotifications, Notification } from "@/app/context/NotificationContext";
 import { useNavigate } from "react-router";
+import "@/styles/dashboard-premium.css";
 
 export function Notifications() {
     const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeFilter, setActiveFilter] = useState<"all" | "unread" | "success" | "info" | "warning" | "error">("all");
 
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case "success": return <CreditCard className="w-5 h-5 text-blue-600" />;
-            case "warning": return <AlertCircle className="w-5 h-5 text-blue-600" />;
-            case "error": return <AlertCircle className="w-5 h-5 text-red-600" />;
-            case "info": return <MapPin className="w-5 h-5 text-blue-600" />;
-            default: return <Bell className="w-5 h-5 text-gray-600" />;
-        }
-    };
+    const filteredNotifications = useMemo(() => {
+        return notifications.filter(n => {
+            const matchesSearch = n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                n.message.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesFilter = activeFilter === "all" ? true : (activeFilter === "unread" ? !n.read : n.type === activeFilter);
+            return matchesSearch && matchesFilter;
+        });
+    }, [notifications, searchQuery, activeFilter]);
 
-    const getTypeStyles = (type: string) => {
+    const getTypeIcon = (type: string, isRead: boolean) => {
+        const iconSize = 20;
         switch (type) {
-            case "success": return "bg-green-100 text-green-800 border-green-200";
-            case "warning": return "bg-blue-100 text-blue-800 border-blue-200";
-            case "error": return "bg-red-100 text-red-800 border-red-200";
-            default: return "bg-blue-100 text-blue-800 border-blue-200";
+            case "success": return <div className={`p-2.5 rounded-xl ${isRead ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-950/30' : 'bg-emerald-500 text-white shadow-lg shadow-emerald-200 dark:shadow-none'}`}><CheckCircle2 size={iconSize} /></div>;
+            case "warning": return <div className={`p-2.5 rounded-xl ${isRead ? 'bg-amber-50 text-amber-500 dark:bg-amber-950/30' : 'bg-amber-500 text-white shadow-lg shadow-amber-200 dark:shadow-none'}`}><AlertCircle size={iconSize} /></div>;
+            case "error": return <div className={`p-2.5 rounded-xl ${isRead ? 'bg-rose-50 text-rose-500 dark:bg-rose-950/30' : 'bg-rose-500 text-white shadow-lg shadow-rose-200 dark:shadow-none'}`}><XCircle size={iconSize} /></div>;
+            case "info": return <div className={`p-2.5 rounded-xl ${isRead ? 'bg-sky-50 text-sky-500 dark:bg-sky-950/30' : 'bg-sky-500 text-white shadow-lg shadow-sky-200 dark:shadow-none'}`}><Info size={iconSize} /></div>;
+            default: return <div className={`p-2.5 rounded-xl ${isRead ? 'bg-slate-50 text-slate-500 dark:bg-slate-950/30' : 'bg-slate-500 text-white shadow-lg shadow-slate-200 dark:shadow-none'}`}><Bell size={iconSize} /></div>;
         }
     };
 
@@ -34,87 +50,125 @@ export function Notifications() {
     };
 
     return (
-        <div className="container-fluid p-4">
-            <ScrollReveal className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">Notifications Center</h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your alerts, updates, and system activities.</p>
-                </div>
-                <div className="flex gap-3">
-                    {unreadCount > 0 && (
-                        <button
-                            onClick={markAllAsRead}
-                            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 text-blue-600 border border-blue-200 dark:border-blue-900/50 rounded-lg font-bold text-sm shadow-sm hover:bg-blue-50 transition-all"
-                        >
-                            <Check className="w-4 h-4" />
-                            MARK ALL AS READ
-                        </button>
-                    )}
-                </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.1}>
-                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
-                    <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-800/20">
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Recent Activity</span>
-                            <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{notifications.length}</span>
+        <div className="container-fluid px-4 py-3 min-vh-100 bg-gray-50/50 dark:bg-gray-950/20">
+            {/* Header Section */}
+            <div className="max-w-6xl mx-auto">
+                <ScrollReveal className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 mt-2">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1.5 overflow-hidden">
+                            <span className="h-px w-8 bg-blue-600 rounded-full"></span>
+                            <span className="text-blue-600 font-bold tracking-[0.2em] text-[10px] uppercase">Notification Center</span>
                         </div>
+                        <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight">Stay Updated</h1>
+                        <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">Manage your system activity and project alerts in one place.</p>
                     </div>
 
-                    <div className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {notifications.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-24 text-center">
-                                <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                                    <Bell className="w-10 h-10 text-gray-300 dark:text-gray-600" />
+                    <div className="flex flex-wrap gap-3">
+                        <div className="flex items-center gap-4 bg-white dark:bg-gray-900 p-1.5 pl-4 pr-1.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none">Unread Alerts</span>
+                                <span className="text-xl font-black text-blue-600 mt-1">{unreadCount}</span>
+                            </div>
+                            {unreadCount > 0 && (
+                                <button
+                                    onClick={markAllAsRead}
+                                    className="h-12 flex items-center gap-2 px-4 bg-blue-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    <Check size={16} />
+                                    MARK ALL AS READ
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </ScrollReveal>
+
+                {/* Filter & Search Section */}
+                <ScrollReveal delay={0.1} className="mb-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div className="lg:col-span-8 flex flex-wrap gap-2 p-1.5 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+                            {(["all", "unread", "success", "info", "warning", "error"] as const).map((filter) => (
+                                <button
+                                    key={filter}
+                                    onClick={() => setActiveFilter(filter)}
+                                    className={`flex-1 min-w-[80px] py-2 px-3 rounded-xl font-bold text-[11px] transition-all capitalize ${activeFilter === filter
+                                        ? "bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none"
+                                        : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800"
+                                    }`}
+                                >
+                                    {filter}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="lg:col-span-4 relative group">
+                            <Search className="absolute left-4 top-1/2 -translate-middle-y text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search notifications..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full h-full min-h-[52px] pl-12 pr-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium"
+                            />
+                        </div>
+                    </div>
+                </ScrollReveal>
+
+                {/* List Section */}
+                <ScrollReveal delay={0.2}>
+                    <div className="flex flex-col gap-4 mb-12">
+                        {filteredNotifications.length === 0 ? (
+                            <div className="premium-card bg-white dark:bg-gray-900 rounded-[2.5rem] py-20 px-6 flex flex-col items-center justify-center text-center">
+                                <div className="w-24 h-24 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mb-6 animate-bounce transition-all duration-300">
+                                    <Inbox className="w-10 h-10 text-blue-500" />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">You're all caught up!</h3>
-                                <p className="text-gray-500 dark:text-gray-400 max-w-xs mx-auto">No new notifications at the moment. We'll let you know when something important happens.</p>
+                                <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Everything is Clear</h3>
+                                <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto font-medium">
+                                    No {activeFilter !== 'all' ? activeFilter : ''} notifications found. Your inbox is perfectly organized!
+                                </p>
                             </div>
                         ) : (
-                            notifications.map((notification) => (
+                            filteredNotifications.map((notification) => (
                                 <div
                                     key={notification.id}
-                                    className={`group relative p-5 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer ${!notification.read ? "bg-blue-50/20 dark:bg-blue-900/5" : ""
-                                        }`}
                                     onClick={() => handleItemClick(notification)}
+                                    className={`premium-card group relative p-1 transition-all cursor-pointer ${!notification.read ? "border-l-4 border-l-blue-600" : ""}`}
                                 >
-                                    <div className="flex items-start gap-4">
-                                        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${!notification.read ? "scale-110" : ""
-                                            } transition-transform duration-300 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700`}>
-                                            {getTypeIcon(notification.type)}
+                                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 flex items-start gap-5">
+                                        <div className="shrink-0 relative">
+                                            {getTypeIcon(notification.type, notification.read)}
+                                            {!notification.read && (
+                                                <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-blue-600 rounded-full border-2 border-white dark:border-gray-900 animator-pulse" />
+                                            )}
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-bold tracking-tight border ${getTypeStyles(notification.type)}`}>
-                                                    {notification.type.toUpperCase()}
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${notification.read ? 'bg-gray-100 text-gray-400 dark:bg-gray-800' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30'}`}>
+                                                    {notification.type}
                                                 </span>
-                                                <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-medium">
-                                                    <Calendar className="w-3 h-3" />
-                                                    {notification.time}
+                                                <div className="flex items-center gap-4 text-[11px] text-gray-400 font-bold uppercase tracking-tighter">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Clock size={12} strokeWidth={3} />
+                                                        {notification.time}
+                                                    </div>
                                                 </div>
-                                                {!notification.read && (
-                                                    <div className="h-2 w-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(234,88,12,0.5)] animator-pulse" />
-                                                )}
                                             </div>
 
-                                            <h3 className={`text-base font-bold text-gray-900 dark:text-white mb-1 ${!notification.read ? "font-extrabold" : ""}`}>
+                                            <h3 className={`text-lg mb-1 tracking-tight ${notification.read ? "text-gray-600 font-bold" : "text-gray-950 dark:text-white font-black"}`}>
                                                 {notification.title}
                                             </h3>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl">
+                                            <p className={`text-sm leading-relaxed max-w-3xl ${notification.read ? "text-gray-400 font-medium" : "text-gray-500 dark:text-gray-400 font-semibold"}`}>
                                                 {notification.message}
                                             </p>
                                         </div>
 
-                                        <div className="shrink-0 flex items-center gap-2 self-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="shrink-0 flex items-center self-center opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     deleteNotification(notification.id);
                                                 }}
-                                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
-                                                title="Delete notification"
+                                                className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-xl transition-all shadow-sm active:scale-90"
+                                                title="Delete this alert"
                                             >
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
@@ -125,24 +179,33 @@ export function Notifications() {
                         )}
                     </div>
 
-                    {notifications.length > 0 && (
-                        <div className="p-4 bg-gray-50/30 dark:bg-gray-800/10 text-center border-t border-gray-100 dark:border-gray-800">
-                            <span className="text-xs font-medium text-gray-400">Total {notifications.length} notifications</span>
+                    {filteredNotifications.length > 0 && (
+                        <div className="flex items-center justify-center pb-12">
+                            <div className="flex items-center gap-3 px-6 py-3 bg-white dark:bg-gray-900 rounded-full shadow-sm border border-gray-100 dark:border-gray-800">
+                                <span className="h-1.5 w-1.5 bg-blue-600 rounded-full"></span>
+                                <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">End of Activity Log</span>
+                            </div>
                         </div>
                     )}
-                </div>
-            </ScrollReveal>
+                </ScrollReveal>
+            </div>
 
             <style>{`
-        @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.4); opacity: 0.7; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-        .animator-pulse {
-          animation: pulse 2s infinite ease-in-out;
-        }
-      `}</style>
+                @keyframes pulse {
+                    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+                    70% { transform: scale(1.2); opacity: 0.5; box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+                    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+                }
+                .animator-pulse {
+                    animation: pulse 2s infinite ease-in-out;
+                }
+                .premium-card {
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                .premium-card:hover {
+                    transform: translateX(8px);
+                }
+            `}</style>
         </div>
     );
 }

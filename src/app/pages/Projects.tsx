@@ -7,7 +7,6 @@ import {
   DollarSign,
   Users,
   Search,
-  Filter,
   Plus,
   MoreVertical,
   Eye,
@@ -50,7 +49,7 @@ interface Project {
   description?: string;
 }
 
-export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
+export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 0 }: { hideHeader?: boolean, refreshKey?: number }) {
   const { user } = useAuth();
   const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
 
@@ -91,9 +90,15 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [internalRefreshKey, setInternalRefreshKey] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Combine internal and external refresh triggers
+  useEffect(() => {
+    setRefreshKey(internalRefreshKey + externalRefreshKey);
+  }, [internalRefreshKey, externalRefreshKey]);
 
   // Handle direct navigation to a project
   useEffect(() => {
@@ -305,7 +310,7 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
                           if (confirm(`Are you sure you want to delete project ${project.name}?`)) {
                             try {
                               await fetchApi(`/projects/${project.id}`, { method: 'DELETE' });
-                              setRefreshKey(prev => prev + 1);
+                              setInternalRefreshKey(prev => prev + 1);
                             } catch (err) {
                               console.error("Delete failed", err);
                               alert("Failed to delete project");
@@ -360,7 +365,7 @@ export function Projects({ hideHeader = false }: { hideHeader?: boolean }) {
           setEditingProject(null);
         }}
         initialData={editingProject}
-        onSuccess={() => setRefreshKey(prev => prev + 1)}
+        onSuccess={() => setInternalRefreshKey(prev => prev + 1)}
       />
 
       {/* Project Details Modal */}

@@ -13,6 +13,8 @@ import { useAuth } from "@/app/context/AuthContext";
 import { Projects } from "./Projects";
 import { Properties } from "./Properties";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
+import { AddProjectModal } from "@/app/components/AddProjectModal";
+import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 
 import { useSearchParams } from "react-router";
 
@@ -26,6 +28,10 @@ export function Portfolio() {
     };
 
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+    const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+    const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const canAdd = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
@@ -43,7 +49,10 @@ export function Portfolio() {
                     {canAdd && (
                         <button
                             className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
-                            onClick={() => setActiveTab(activeTab)}>
+                            onClick={() => {
+                                if (activeTab === 'projects') setIsAddProjectModalOpen(true);
+                                else setIsAddPropertyModalOpen(true);
+                            }}>
                             <Plus size={14} /> {activeTab === 'projects' ? 'New Project' : 'New Property'}
                         </button>
                     )}
@@ -80,14 +89,32 @@ export function Portfolio() {
             <div className="portfolio-content-panel px-2 px-md-4">
                 {activeTab === 'projects' ? (
                     <div className="fade-in">
-                        <Projects hideHeader />
+                        <Projects hideHeader refreshKey={refreshKey} />
                     </div>
                 ) : (
                     <div className="fade-in">
-                        <Properties hideHeader />
+                        <Properties hideHeader refreshKey={refreshKey} />
                     </div>
                 )}
             </div>
+
+            {/* Modals */}
+            <AddProjectModal 
+                isOpen={isAddProjectModalOpen} 
+                onClose={() => setIsAddProjectModalOpen(false)} 
+                onSuccess={() => {
+                    setRefreshKey(prev => prev + 1);
+                    setIsAddProjectModalOpen(false);
+                }}
+            />
+            <AddPropertyModal 
+                isOpen={isAddPropertyModalOpen} 
+                onClose={() => setIsAddPropertyModalOpen(false)} 
+                onSuccess={() => {
+                    setRefreshKey(prev => prev + 1);
+                    setIsAddPropertyModalOpen(false);
+                }}
+            />
 
             <style>{`
                 .fade-in { animation: fadeIn 0.3s ease-in-out; }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import { Home, MapPin, Maximize2, Plus, Search, Eye, Edit2, Building, LandPlot, Store } from "lucide-react";
 import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { useCurrency } from "@/app/context/CurrencyContext";
@@ -34,9 +35,37 @@ interface Property {
 
 import { fetchApi } from '../api/client';
 
-export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
-  const [searchTerm, setSearchTerm] = useState("");
+export function Properties({ hideHeader = false, refreshKey: externalRefreshKey = 0 }: { hideHeader?: boolean, refreshKey?: number }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // Sync URL search parameter to local state (for header search)
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    if (urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
+    }
+  }, [searchParams]);
+
+  // Sync state changes to URL
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    if (term) {
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set('search', term);
+        return next;
+      });
+    } else {
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.delete('search');
+        return next;
+      });
+    }
+  };
+
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -48,9 +77,15 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [internalRefreshKey, setInternalRefreshKey] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
+
+  // Combine internal and external refresh triggers
+  useEffect(() => {
+    setRefreshKey(internalRefreshKey + externalRefreshKey);
+  }, [internalRefreshKey, externalRefreshKey]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -152,7 +187,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
                 type="text"
                 placeholder="Find properties by title, code or location..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
                 style={{ height: '45px', borderRadius: '10px', fontSize: '14px' }}
               />
@@ -324,7 +359,7 @@ export function Properties({ hideHeader = false }: { hideHeader?: boolean }) {
           setIsAddModalOpen(false);
           setEditingProperty(null);
         }}
-        onSuccess={() => setRefreshKey(prev => prev + 1)}
+        onSuccess={() => setInternalRefreshKey(prev => prev + 1)}
         initialData={editingProperty}
       />
 
