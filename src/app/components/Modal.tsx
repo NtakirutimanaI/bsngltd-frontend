@@ -77,8 +77,8 @@ export function Modal({ isOpen, onClose, title, children, size = "md", draggable
   };
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto">
-      <div className="flex min-h-screen items-center justify-center p-3">
+    <div className="fixed inset-0 z-[1050] overflow-y-auto">
+      <div className="flex min-h-screen items-start justify-center p-3 pt-24">
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-backdrop transition-opacity"
@@ -90,7 +90,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md", draggable
           ref={modalRef}
           className={`relative w-full ${sizeClasses[size]} bg-white dark:bg-gray-900 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col ${animationClass} ${draggable ? 'cursor-move' : ''}`}
           style={{ 
-            maxHeight: 'calc(100vh - 30px)',
+            maxHeight: 'calc(100vh - 120px)',
             transform: draggable ? `translate(${position.x}px, ${position.y}px)` : undefined
           }}
         >
