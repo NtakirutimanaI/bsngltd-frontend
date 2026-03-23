@@ -132,7 +132,7 @@ export function Notifications() {
                                     onClick={() => handleItemClick(notification)}
                                     className={`premium-card group relative p-1 transition-all cursor-pointer ${!notification.read ? "border-l-4 border-l-blue-600" : ""}`}
                                 >
-                                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 flex items-start gap-5">
+                                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-3 flex items-start gap-3">
                                         <div className="shrink-0 relative">
                                             {getTypeIcon(notification.type, notification.read)}
                                             {!notification.read && (
@@ -141,11 +141,11 @@ export function Notifications() {
                                         </div>
 
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-2">
+                                            <div className="flex items-center gap-2 mb-1">
                                                 <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${notification.read ? 'bg-gray-100 text-gray-400 dark:bg-gray-800' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/30'}`}>
                                                     {notification.type}
                                                 </span>
-                                                <div className="flex items-center gap-4 text-[11px] text-gray-400 font-bold uppercase tracking-tighter">
+                                                <div className="flex items-center gap-4 text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
                                                     <div className="flex items-center gap-1.5">
                                                         <Clock size={12} strokeWidth={3} />
                                                         {notification.time}
@@ -153,7 +153,7 @@ export function Notifications() {
                                                 </div>
                                             </div>
 
-                                            <h3 className={`text-lg mb-1 tracking-tight ${notification.read ? "text-gray-600 font-bold" : "text-gray-950 dark:text-white font-black"}`}>
+                                            <h3 className={`text-base mb-1 tracking-tight ${notification.read ? "text-gray-600 font-bold" : "text-gray-950 dark:text-white font-black"}`}>
                                                 {notification.title}
                                             </h3>
                                             <p className={`text-sm leading-relaxed max-w-3xl ${notification.read ? "text-gray-400 font-medium" : "text-gray-500 dark:text-gray-400 font-semibold"}`}>
