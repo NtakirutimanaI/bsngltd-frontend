@@ -86,17 +86,22 @@ export function Home() {
         settingsRes.forEach(item => { s[item.key] = item.value; });
         setSettings(s);
 
-        // Set hero images from content management
-        if (contentRes && contentRes.length > 0) {
+        // Default to checking for settings first
+        const heroImagesFromSettings = [];
+        if (s.home_carousel_1) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_1), alt: 'Carousel 1' });
+        if (s.home_carousel_2) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_2), alt: 'Carousel 2' });
+        if (s.home_carousel_3) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_3), alt: 'Carousel 3' });
+        
+        if (heroImagesFromSettings.length > 0) {
+          setHeroImages(heroImagesFromSettings);
+        } else if (contentRes && contentRes.length > 0) {
           const heroContent = contentRes.find(item => item.section === 'hero');
           if (heroContent && heroContent.images && heroContent.images.length > 0) {
-            // Convert content images to hero images format
             const heroImagesFromContent = heroContent.images.map((img: string, index: number) => ({
               src: img,
               alt: heroContent.title || `Hero Image ${index + 1}`
             }));
-            // Use content images if available, otherwise fallback to default
-            setHeroImages(heroImagesFromContent.length > 0 ? heroImagesFromContent : heroImages);
+            setHeroImages(heroImagesFromContent.length > 0 ? heroImagesFromContent : defaultHeroImages);
           }
         }
       } catch (error) {
@@ -454,19 +459,19 @@ export function Home() {
                 {!isLoading && allProperties.length === 0 && (
                   // Fallback items with translations
                   [
-                    { name: 'constructionProjects', count: '72 Projects', img: getImageUrl(settings.home_project_card_1) || '/img/project-1.jpg' },
-                    { name: 'propertyDevelopment', count: '67 Projects', img: getImageUrl(settings.home_project_card_2) || '/img/project-2.jpg' },
-                    { name: 'realEstateSales', count: '53 Projects', img: getImageUrl(settings.home_project_card_3) || '/img/project-3.jpg' },
-                    { name: 'propertyRentals', count: '33 Projects', img: getImageUrl(settings.home_project_card_4) || '/img/project-4.jpg' },
-                    { name: 'consultationServices', count: '87 Projects', img: getImageUrl(settings.home_project_card_5) || '/img/project-5.jpg' },
-                    { name: 'projectManagement', count: '69 Projects', img: getImageUrl(settings.home_project_card_6) || '/img/project-6.jpg' }
-                  ].map((item, index) => (
-                    <div key={index} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.1 * index}s`}>
+                    { name: 'constructionProjects', count: dt(settings.home_project_card_1_count) || '72 Projects', img: getImageUrl(settings.home_project_card_1) || '/img/project-1.jpg' },
+                    { name: 'propertyDevelopment', count: dt(settings.home_project_card_2_count) || '67 Projects', img: getImageUrl(settings.home_project_card_2) || '/img/project-2.jpg' },
+                    { name: 'projectManagement', count: dt(settings.home_project_card_3_count) || '45 Projects', img: getImageUrl(settings.home_project_card_3) || '/img/project-3.jpg' },
+                    { name: 'realEstateSales', count: dt(settings.home_project_card_4_count) || '120 Properties', img: getImageUrl(settings.home_project_card_4) || '/img/project-4.jpg' },
+                    { name: 'propertyRentals', count: dt(settings.home_project_card_5_count) || '85 Properties', img: getImageUrl(settings.home_project_card_5) || '/img/project-5.jpg' },
+                    { name: 'consultationServices', count: dt(settings.home_project_card_6_count) || '200+ Clients', img: getImageUrl(settings.home_project_card_6) || '/img/project-6.jpg' },
+                  ].map((service, idx) => (
+                    <div key={idx} className="col-md-6 col-lg-4 wow fadeIn" data-wow-delay={`${0.1 * idx}s`}>
                       <div className="project-item position-relative overflow-hidden" style={{ height: '300px' }}>
-                        <img className="img-fluid w-100 h-100" src={item.img} alt={t(item.name)} style={{ objectFit: 'cover' }} />
+                        <img className="img-fluid w-100 h-100" src={service.img} alt={t(service.name)} style={{ objectFit: 'cover' }} />
                         <div className="project-overlay d-flex flex-column justify-content-end p-4 text-decoration-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
-                          <h4 className="text-white mb-1 fw-bold">{t(item.name)}</h4>
-                          <small className="text-white-50">{item.count}</small>
+                          <h4 className="text-white mb-1 fw-bold">{t(service.name)}</h4>
+                          <small className="text-white-50">{service.count}</small>
                         </div>
                       </div>
                     </div>

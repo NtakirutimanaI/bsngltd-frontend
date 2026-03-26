@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, RefreshCcw, Users, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, RefreshCcw, Users, MessageCircle } from 'lucide-react';
 import { fetchApi } from '@/app/api/client';
 import { useLanguage } from '@/app/context/LanguageContext';
 import { Link, useLocation } from 'react-router';
@@ -112,7 +112,7 @@ export function Contact() {
                 </div>
                 <div className="ms-4">
                   <h5 className="mb-1">{t('email')}</h5>
-                  <p className="mb-0 fw-bold">{dt(settings.contact_email) || 'info@bsng.rw'}</p>
+                  <p className="mb-0 fw-bold">{dt(settings.contact_email) || 'info.buildstronggenerations@gmail.com'}</p>
                 </div>
               </div>
               <div className="d-flex align-items-center mb-4 p-3 p-md-4 bg-light rounded wow fadeIn" data-wow-delay="0.4s">

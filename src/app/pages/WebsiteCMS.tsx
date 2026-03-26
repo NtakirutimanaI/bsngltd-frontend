@@ -409,15 +409,17 @@ export function WebsiteCMS() {
         setSettingsMap(prev => ({ ...prev, [key]: typeof newValue === 'boolean' ? newValue.toString() : newValue }));
     };
 
-    const handleImageUploaded = (key: string, url: string) => {
+    const handleImageUploaded = async (key: string, url: string) => {
         // Update both settings array and map immediately
         handleUpdateSetting(key, url);
+        try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
         setMessage({ type: 'success', text: `Image "${key}" uploaded & saved! It will appear on the website immediately.` });
         setTimeout(() => setMessage(null), 4000);
     };
 
-    const handleRecordImageUploaded = (id: string, url: string, field: string) => {
+    const handleRecordImageUploaded = async (id: string, url: string, field: string) => {
         setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: url } : r));
+        try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
         setMessage({ type: 'success', text: 'Image uploaded & saved! It will appear on the website immediately.' });
         setTimeout(() => setMessage(null), 4000);
     };
@@ -436,6 +438,9 @@ export function WebsiteCMS() {
                     })
                 });
             }
+
+            // Sync all changes above to Github to fulfill the user requirement
+            try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
 
             setMessage({ type: 'success', text: 'All text changes published successfully!' });
             setTimeout(() => setMessage(null), 3000);
@@ -756,6 +761,7 @@ export function WebsiteCMS() {
                                                                             method: 'PATCH',
                                                                             body: JSON.stringify(payload)
                                                                         });
+                                                                        try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
                                                                         setMessage({ type: 'success', text: 'Entry saved successfully!' });
                                                                         setTimeout(() => setMessage(null), 3000);
                                                                     } catch (e) {

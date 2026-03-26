@@ -66,7 +66,7 @@ export function PublicHeader() {
             </small>
             <small className="d-flex align-items-center gap-2 text-dark opacity-75">
               <Mail size={14} className="text-primary" />
-              {dt(getSetting('contact_email_1', 'info@bsng.rw'))}
+              {dt(getSetting('contact_email_1', 'info.buildstronggenerations@gmail.com'))}
             </small>
           </div>
           <div className="d-flex align-items-center gap-3">

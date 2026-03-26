@@ -35,7 +35,7 @@ export function Footer() {
             </p>
             <p className="d-flex align-items-center mb-3">
               <Mail className="text-primary me-3 w-5 h-5 flex-shrink-0" />
-              <span>{dt(getSetting('contact_email_1', 'info@bsng.rw'))}</span>
+              <span>{dt(getSetting('contact_email_1', 'info.buildstronggenerations@gmail.com'))}</span>
             </p>
             <div className="d-flex pt-2">
               <a className="btn btn-outline-primary btn-square border-2 me-2" href={getSetting('social_twitter', '#')} target={getSetting('social_twitter', '#') === '#' ? undefined : '_blank'} rel="noopener noreferrer"><Twitter className="w-4 h-4" /></a>

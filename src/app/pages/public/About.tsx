@@ -129,10 +129,10 @@ export function About() {
             </h1>
             <div className="row g-4">
               {[
-                { name: 'N. Jean Pierre', role: 'Managing Director', img: getImageUrl(settings.about_team_1) || '/img/team-1.jpg' },
-                { name: 'M. Claudine', role: 'Senior Architect', img: getImageUrl(settings.about_team_2) || '/img/team-2.jpg' },
-                { name: 'K. Eric', role: 'Project Manager', img: getImageUrl(settings.about_team_3) || '/img/team-3.jpg' },
-                { name: 'S. Alice', role: 'Site Engineer', img: getImageUrl(settings.about_team_4) || '/img/team-4.jpg' }
+                { name: dt(settings.about_team_1_name) || 'N. Jean Pierre', role: dt(settings.about_team_1_role) || 'Managing Director', img: getImageUrl(settings.about_team_1) || '/img/team-1.jpg' },
+                { name: dt(settings.about_team_2_name) || 'M. Claudine', role: dt(settings.about_team_2_role) || 'Senior Architect', img: getImageUrl(settings.about_team_2) || '/img/team-2.jpg' },
+                { name: dt(settings.about_team_3_name) || 'K. Eric', role: dt(settings.about_team_3_role) || 'Project Manager', img: getImageUrl(settings.about_team_3) || '/img/team-3.jpg' },
+                { name: dt(settings.about_team_4_name) || 'S. Alice', role: dt(settings.about_team_4_role) || 'Site Engineer', img: getImageUrl(settings.about_team_4) || '/img/team-4.jpg' }
               ].map((member, idx) => (
                 <div key={idx} className="col-md-6 col-lg-3 wow fadeIn" data-wow-delay={`${0.1 + idx * 0.2}s`}>
                   <div className="team-item position-relative overflow-hidden rounded shadow-sm">
