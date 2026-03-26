@@ -329,7 +329,7 @@ export function RootLayout() {
                 &copy; {new Date().getFullYear()} <NavLink to="/" className="text-primary fw-bold text-decoration-none">BSNG Construction</NavLink>, All Right Reserved.
               </div>
               <div className="col-12 col-sm-6 text-center text-sm-end text-muted smaller">
-                Designed By <a href="https://bsng.org" className="text-primary text-decoration-none fw-bold">BSNG Tech Team</a>
+                Designed By <a href="https://bsng.org" className="text-primary text-decoration-none fw-bold">MIS</a>
               </div>
             </div>
           </div>
