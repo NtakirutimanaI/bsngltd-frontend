@@ -86,22 +86,34 @@ export function Home() {
         settingsRes.forEach(item => { s[item.key] = item.value; });
         setSettings(s);
 
-        // Default to checking for settings first
-        const heroImagesFromSettings = [];
-        if (s.home_carousel_1) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_1), alt: 'Carousel 1' });
-        if (s.home_carousel_2) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_2), alt: 'Carousel 2' });
-        if (s.home_carousel_3) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_3), alt: 'Carousel 3' });
+        // Default to checking for content module first
+        let heroImagesFound = false;
         
-        if (heroImagesFromSettings.length > 0) {
-          setHeroImages(heroImagesFromSettings);
-        } else if (contentRes && contentRes.length > 0) {
+        if (contentRes && contentRes.length > 0) {
           const heroContent = contentRes.find(item => item.section === 'hero');
           if (heroContent && heroContent.images && heroContent.images.length > 0) {
             const heroImagesFromContent = heroContent.images.map((img: string, index: number) => ({
               src: img,
               alt: heroContent.title || `Hero Image ${index + 1}`
             }));
-            setHeroImages(heroImagesFromContent.length > 0 ? heroImagesFromContent : defaultHeroImages);
+            if (heroImagesFromContent.length > 0) {
+              setHeroImages(heroImagesFromContent);
+              heroImagesFound = true;
+            }
+          }
+        }
+
+        // If no content module hero images, check settings
+        if (!heroImagesFound) {
+          const heroImagesFromSettings = [];
+          if (s.home_carousel_1) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_1), alt: 'Carousel 1' });
+          if (s.home_carousel_2) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_2), alt: 'Carousel 2' });
+          if (s.home_carousel_3) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_3), alt: 'Carousel 3' });
+          
+          if (heroImagesFromSettings.length > 0) {
+            setHeroImages(heroImagesFromSettings);
+          } else {
+            setHeroImages(defaultHeroImages);
           }
         }
       } catch (error) {
@@ -188,14 +200,22 @@ export function Home() {
                         src={image.src}
                         alt={image.alt}
                         style={{ objectFit: 'cover' }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = `/img/hero-slider-${(index % 3) + 1}.jpg`;
+                        }}
                       />
                     ))}
                     {/* Placeholder to maintain height */}
                     <img
                       className="img-fluid w-100 opacity-0"
-                      src={heroImages[0].src}
+                      src={heroImages[0]?.src || '/img/hero-slider-1.jpg'}
                       alt="placeholder"
                       style={{ minHeight: '350px', objectFit: 'cover' }}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/img/hero-slider-1.jpg';
+                      }}
                     />
                   </div>
                 </div>
