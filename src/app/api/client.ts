@@ -3,7 +3,9 @@ export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export function getImageUrl(path?: string): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    if (path.startsWith('/img/')) return path; // local static images
+    // /img/custom/ paths are uploaded files stored on the backend server, not bundled static assets
+    if (path.startsWith('/img/custom/')) return `${BASE_URL}${path}`;
+    if (path.startsWith('/img/')) return path; // bundled static images (shipped with frontend)
     return `${BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
 }
 
