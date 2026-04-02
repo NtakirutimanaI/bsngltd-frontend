@@ -1,23 +1,13 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router";
 import { ScrollToTopOnNavigate } from "@/app/components/ScrollToTopOnNavigate";
 import {
-  Building2,
-  LayoutDashboard,
-  Users,
   Menu,
-  CalendarDays,
   LogOut,
   Moon,
   Sun,
   MessageSquare,
   Settings,
   User,
-  Banknote,
-  Shield,
-  Eye,
-  TrendingUp,
-  Bell,
-  Globe,
   ArrowUp
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -120,18 +110,18 @@ export function RootLayout() {
 
   // Restoring EXACT sidebar links from original project with HUB-TAB routing where needed
   const allNavItems = [
-    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, roles: ['all'] },
-    { name: "Portfolio Hub", path: "/dashboard/portfolio", icon: Building2, roles: ['all'] },
-    { name: "Workforce Center", path: "/dashboard/workforce", icon: Users, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
-    { name: "Finance Center", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Communication Hub", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
-    { name: "Insights & Reports", path: "/dashboard/insights", icon: TrendingUp, roles: ['super_admin', 'admin', 'manager', 'auditor'] },
-    { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
-    { name: "Administration Console", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
-    { name: "Booking Center", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
-    { name: "Notifications", path: "/dashboard/notifications", icon: Bell, roles: ['all'] },
-    { name: "System Settings", path: "/dashboard/settings", icon: Settings, roles: ['all'] },
+    { name: "Dashboard", path: "/dashboard", iconClass: "fa-solid fa-gauge-high", roles: ['all'] },
+    { name: "Portfolio Hub", path: "/dashboard/portfolio", iconClass: "fa-solid fa-briefcase", roles: ['all'] },
+    { name: "Workforce Center", path: "/dashboard/workforce", iconClass: "fa-solid fa-users-gear", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
+    { name: "Finance Center", path: "/dashboard/finance", iconClass: "fa-solid fa-money-bill-transfer", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
+    { name: "Communication Hub", path: "/dashboard/communications", iconClass: "fa-solid fa-comments", roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
+    { name: "Insights & Reports", path: "/dashboard/insights", iconClass: "fa-solid fa-chart-pie", roles: ['super_admin', 'admin', 'manager', 'auditor'] },
+    { name: "Content Management", path: "/dashboard/content", iconClass: "fa-solid fa-file-pen", roles: ['super_admin', 'admin', 'content_editor'] },
+    { name: "Administration Console", path: "/dashboard/admin", iconClass: "fa-solid fa-user-shield", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Booking Center", path: "/dashboard/bookings", iconClass: "fa-solid fa-calendar-check", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
+    { name: "Calendar", path: "/dashboard/calendar", iconClass: "fa-solid fa-calendar-days", roles: ['all'] },
+    { name: "Notifications", path: "/dashboard/notifications", iconClass: "fa-solid fa-bell", roles: ['all'] },
+    { name: "System Settings", path: "/dashboard/settings", iconClass: "fa-solid fa-gear", roles: ['all'] },
   ];
 
   const normalizedRole = roleName.toLowerCase().replace(/\s+/g, '_');
@@ -180,16 +170,20 @@ export function RootLayout() {
                 to={item.path}
                 end={item.path === "/dashboard"}
                 className={({ isActive }) =>
-                  `nav-item nav-link d-flex align-items-center mb-1 py-2 px-4 transition-all ${isActive ? "active bg-white shadow-sm" : ""}`
+                  `nav-item nav-link d-flex align-items-center mb-1 py-1 px-3 transition-all ${isActive ? "active bg-white shadow-sm" : ""}`
                 }
-                style={{ height: '48px' }}
+                style={{ minHeight: '52px' }}
               >
-                <div className={`d-flex align-items-center justify-content-center rounded-lg me-3 ${item.colorClass}`} style={{ width: '34px', height: '34px', minWidth: '34px' }}>
-                   <item.icon size={18} strokeWidth={2.5} />
+                <div className="d-flex align-items-center justify-content-center" style={{ width: '45px', minWidth: '45px' }}>
+                  <div className={`d-flex align-items-center justify-content-center rounded-xl shadow-sm ${item.colorClass}`} style={{ width: '36px', height: '36px' }}>
+                     <i className={`${item.iconClass}`} style={{ fontSize: '18px' }}></i>
+                  </div>
                 </div>
-                <span className="fw-bold text-dark" style={{ fontSize: '14px', lineHeight: '1' }}>{item.name}</span>
+                <div className="ms-4 d-flex align-items-center flex-grow-1 overflow-hidden">
+                  <span className="fw-bold text-dark text-nowrap" style={{ fontSize: '13px', lineHeight: '1', display: 'block' }}>{item.name}</span>
+                </div>
                 {item.name === "Notifications" && unreadCount > 0 && (
-                  <span className="ms-auto badge bg-danger rounded-pill d-flex align-items-center justify-content-center" style={{ fontSize: '10px', width: '20px', height: '20px' }}>{unreadCount}</span>
+                  <span className="ms-auto badge bg-danger rounded-pill d-flex align-items-center justify-content-center" style={{ fontSize: '9px', minWidth: '18px', height: '18px', padding: '0 4px' }}>{unreadCount}</span>
                 )}
               </NavLink>
             ))}

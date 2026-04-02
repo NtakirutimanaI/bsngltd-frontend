@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import {
-    Building2,
-    Home,
     Plus,
-    Download,
-    MapPin
+    Download
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useAuth } from "@/app/context/AuthContext";
@@ -78,21 +75,21 @@ export function Portfolio() {
                         className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'projects' ? 'active' : 'text-gray-500 hover:text-primary'}`}
                         style={{ borderRadius: '10px' }}
                     >
-                        <Building2 size={16} /> Active Projects
+                        <i className="fa-solid fa-building-columns"></i> Active Projects
                     </button>
                     <button
                         onClick={() => setActiveTab('properties')}
                         className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'properties' ? 'active' : 'text-gray-500 hover:text-primary'}`}
                         style={{ borderRadius: '10px' }}
                     >
-                        <Home size={16} /> Property Inventory
+                        <i className="fa-solid fa-house-chimney-window"></i> Property Inventory
                     </button>
                     <button
                         onClick={() => setActiveTab('sites')}
                         className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'sites' ? 'active' : 'text-gray-500 hover:text-primary'}`}
                         style={{ borderRadius: '10px' }}
                     >
-                        <MapPin size={16} /> Working Sites
+                        <i className="fa-solid fa-map-location-dot"></i> Working Sites
                     </button>
                 </div>
             </div>

@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-    Users,
-    CalendarDays,
-    CreditCard,
     Plus,
     Search,
     Filter,
@@ -13,7 +10,6 @@ import {
     Send,
     Smartphone,
     Wifi,
-    Building2,
     Download,
     AlertCircle,
     RotateCcw,
@@ -350,25 +346,25 @@ export function Workforce() {
             <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
                 <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl overflow-x-auto">
                     <button
-                        onClick={() => setActiveTab('directory')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'directory' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                        onClick={() => setActiveTab('personnel')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'personnel' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px' }}
                     >
-                        <Users size={16} /> Staff Directory
+                        <i className="fa-solid fa-users"></i> Personnel Roster
                     </button>
                     <button
                         onClick={() => setActiveTab('attendance')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'attendance' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'attendance' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px' }}
                     >
-                        <CalendarDays size={16} /> {isAdminOrManager ? 'Attendance' : 'My Attendance'}
+                        <i className="fa-solid fa-calendar-check"></i> Attendance Tracking
                     </button>
                     <button
                         onClick={() => setActiveTab('payroll')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-xs font-bold border-0 ${activeTab === 'payroll' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px', whiteSpace: 'nowrap' }}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'payroll' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        style={{ borderRadius: '10px' }}
                     >
-                        <CreditCard size={16} /> Payroll
+                        <i className="fa-solid fa-credit-card"></i> Payroll Processing
                     </button>
                     <button
                         onClick={() => setActiveTab('sites' as any)}

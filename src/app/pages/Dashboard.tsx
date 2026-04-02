@@ -1,9 +1,6 @@
 import {
-  Building2, Users, Home, DollarSign, AlertCircle, CheckCircle,
-  Clock, MessageSquare, Eye, Edit, Trash2,
-  CalendarCheck, X
+  X, Edit, Trash2, CalendarCheck, DollarSign, Eye, Clock, CheckCircle, AlertCircle
 } from "lucide-react";
-
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
@@ -16,7 +13,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { AddProjectModal } from '@/app/components/AddProjectModal';
 import { AddEmployeeModal } from '@/app/components/AddEmployeeModal';
-import { Button } from "@/app/components/ui/button";
 import "@/styles/dashboard-premium.css";
 
 
@@ -107,9 +103,6 @@ export function Dashboard() {
   const { theme } = useTheme();
   const navigate = useNavigate();
   const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
-  const [showQuickActions, setShowQuickActions] = useState(false);
-  const [openProjectMenu, setOpenProjectMenu] = useState<string | null>(null);
-  const [statusChanging, setStatusChanging] = useState<string | null>(null);
   const [editingProject, setEditingProject] = useState<any>(null);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
   const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
@@ -124,6 +117,14 @@ export function Dashboard() {
     { id: 4, text: "Schedule site visits", done: false },
     { id: 5, text: "Prepare board report", done: false },
   ]);
+
+  const addTodo = () => {
+    if (!todoInput.trim()) return;
+    setTodos(prev => [...prev, { id: Date.now(), text: todoInput.trim(), done: false }]);
+    setTodoInput("");
+  };
+  const toggleTodo = (id: number) => setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const removeTodo = (id: number) => setTodos(prev => prev.filter(t => t.id !== id));
 
   const isEmployee = roleName === 'employee';
   const isClient = roleName === 'client';
@@ -178,31 +179,31 @@ export function Dashboard() {
 
   // ---- Stats ----
   const adminStats = [
-    { name: "Active Projects", value: statsData?.adminStats[0]?.value || "0", Icon: Building2 },
-    { name: "Total Employees", value: statsData?.adminStats[1]?.value || "0", Icon: Users },
-    { name: "Properties", value: statsData?.adminStats[2]?.value || "0", Icon: Home },
-    { name: "Total Revenue", value: statsData?.adminStats[3]?.value || "RWF 0M", Icon: DollarSign },
+    { name: "Active Projects", value: statsData?.adminStats[0]?.value || "0", iconClass: "fa-solid fa-building-columns" },
+    { name: "Total Employees", value: statsData?.adminStats[1]?.value || "0", iconClass: "fa-solid fa-users-viewfinder" },
+    { name: "Properties", value: statsData?.adminStats[2]?.value || "0", iconClass: "fa-solid fa-house-chimney-window" },
+    { name: "Total Revenue", value: statsData?.adminStats[3]?.value || "RWF 0M", iconClass: "fa-solid fa-money-bill-trend-up" },
   ];
 
   const employeeStats = [
-    { name: "My Assignments", value: "4", Icon: Building2 },
-    { name: "Hours Worked", value: "38h", Icon: Clock },
-    { name: "Pending Tasks", value: "7", Icon: AlertCircle },
-    { name: "Next Payday", value: "Feb 28", Icon: DollarSign },
+    { name: "My Assignments", value: "4", iconClass: "fa-solid fa-list-check" },
+    { name: "Hours Worked", value: "38h", iconClass: "fa-solid fa-business-time" },
+    { name: "Pending Tasks", value: "7", iconClass: "fa-solid fa-hourglass-half" },
+    { name: "Next Payday", value: "Feb 28", iconClass: "fa-solid fa-wallet" },
   ];
 
   const clientStats = [
-    { name: "My Properties", value: "1", Icon: Home },
-    { name: "Payment Status", value: "Paid", Icon: CheckCircle },
-    { name: "Next Rent Due", value: "Mar 01", Icon: Clock },
-    { name: "Support Tickets", value: "0", Icon: MessageSquare },
+    { name: "My Properties", value: "1", iconClass: "fa-solid fa-house-user" },
+    { name: "Payment Status", value: "Paid", iconClass: "fa-solid fa-file-invoice-dollar" },
+    { name: "Next Rent Due", value: "Mar 01", iconClass: "fa-solid fa-calendar-day" },
+    { name: "Support Tickets", value: "0", iconClass: "fa-solid fa-headset" },
   ];
 
   const contractorStats = [
-    { name: "Active Contracts", value: "2", Icon: Building2 },
-    { name: "Completed Work", value: "85%", Icon: CheckCircle },
-    { name: "Pending Invoices", value: "1", Icon: DollarSign },
-    { name: "Deadlines", value: "3", Icon: Clock },
+    { name: "Active Contracts", value: "2", iconClass: "fa-solid fa-handshake-angle" },
+    { name: "Completed Work", value: "85%", iconClass: "fa-solid fa-circle-check" },
+    { name: "Pending Invoices", value: "1", iconClass: "fa-solid fa-receipt" },
+    { name: "Deadlines", value: "3", iconClass: "fa-solid fa-clock-rotate-left" },
   ];
 
   const getRoleStats = () => {
@@ -264,24 +265,6 @@ export function Dashboard() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "active": return <CheckCircle className="text-success" size={14} />;
-      case "planning": return <Clock className="text-primary" size={14} />;
-      case "on_hold": return <AlertCircle className="text-warning" size={14} />;
-      default: return null;
-    }
-  };
-
-  // ---- To-Do helpers ----
-  const addTodo = () => {
-    if (!todoInput.trim()) return;
-    setTodos(prev => [...prev, { id: Date.now(), text: todoInput.trim(), done: false }]);
-    setTodoInput("");
-  };
-  const toggleTodo = (id: number) => setTodos(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  const removeTodo = (id: number) => setTodos(prev => prev.filter(t => t.id !== id));
-
   const tooltipStyle = {
     backgroundColor: theme === 'dark' ? "#191c24" : "#fff",
     border: "1px solid #dee2e6",
@@ -319,13 +302,15 @@ export function Dashboard() {
                 return (
                   <div key={stat.name} className="col-sm-6 col-xl-3">
                     <ScrollReveal delay={index * 0.08}>
-                      <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
-                        <div className={`d-flex align-items-center justify-content-center rounded-2xl ${colorClass}`} style={{ width: '60px', height: '60px' }}>
-                           <stat.Icon size={32} strokeWidth={2.5} />
+                      <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
+                        <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
+                          <div className={`d-flex align-items-center justify-content-center rounded-2xl ${colorClass}`} style={{ width: '56px', height: '56px' }}>
+                             <i className={`${stat.iconClass}`} style={{ fontSize: '24px' }}></i>
+                          </div>
                         </div>
-                        <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
-                          <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>{stat.name}</p>
-                          <h4 className="mb-0 fw-bold text-dark mt-1">{stat.value}</h4>
+                        <div className="ms-3 d-flex flex-column justify-content-center">
+                          <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{stat.name}</p>
+                          <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{stat.value}</h4>
                         </div>
                       </div>
                     </ScrollReveal>
@@ -438,39 +423,11 @@ export function Dashboard() {
                             <td className="fw-medium">{project.name}</td>
                             <td className="text-muted small">#{project.id?.slice(-6) || 'N/A'}</td>
                             <td>
-                              {isAdminLike && statusChanging === project.id ? (
-                                <select
-                                  className="form-select form-select-sm"
-                                  style={{ width: '120px' }}
-                                  defaultValue={project.status}
-                                  onChange={async (e) => {
-                                    try {
-                                      if (project.id) {
-                                        await fetchApi(`/projects/${project.id}`, { method: 'PATCH', body: JSON.stringify({ status: e.target.value }) });
-                                      }
-                                      project.status = e.target.value;
-                                      setStatusChanging(null);
-                                    } catch (err) { console.error('Status update failed', err); }
-                                  }}
-                                  onBlur={() => setStatusChanging(null)}
-                                  autoFocus
-                                >
-                                  <option value="planning">Planning</option>
-                                  <option value="active">Active</option>
-                                  <option value="on_hold">On Hold</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="cancelled">Cancelled</option>
-                                </select>
-                              ) : (
                                 <span
                                   className={`small fw-medium text-capitalize ${getStatusColor(project.status)}`}
-                                  style={{ cursor: isAdminLike ? 'pointer' : 'default' }}
-                                  onClick={() => isAdminLike && setStatusChanging(project.id)}
-                                  title={isAdminLike ? 'Click to change status' : ''}
                                 >
                                   {project.status?.replace("_", " ")}
                                 </span>
-                              )}
                             </td>
                             <td>
                               <div className="d-flex align-items-center gap-2">

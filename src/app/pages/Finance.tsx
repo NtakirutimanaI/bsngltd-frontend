@@ -138,10 +138,6 @@ export function Finance() {
             finalAmount = amount / 1300;
             label = 'USD';
         }
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: label,
-            maximumFractionDigits: 0
         }).format(finalAmount);
     };
 
@@ -202,39 +198,45 @@ export function Finance() {
             <div className="row g-4 mb-4 mx-2 mx-md-4">
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.1}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
-                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-success-subtle text-success" style={{ width: '60px', height: '60px' }}>
-                                <TrendingUp size={32} strokeWidth={2.5} />
+                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
+                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
+                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-success-subtle text-success" style={{ width: '56px', height: '56px' }}>
+                                    <i className="fa-solid fa-money-bill-trend-up" style={{ fontSize: '24px' }}></i>
+                                </div>
                             </div>
-                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                            <div className="ms-3 d-flex flex-column justify-content-center">
                                 <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash In</p>
-                                <h4 className="mb-0 fw-bold text-dark mt-1">{formatAmount(totalIncome)}</h4>
+                                <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{formatAmount(totalIncome)}</h4>
                             </div>
                         </div>
                     </ScrollReveal>
                 </div>
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.2}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
-                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-danger-subtle text-danger" style={{ width: '60px', height: '60px' }}>
-                                <TrendingDown size={32} strokeWidth={2.5} />
+                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
+                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
+                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-danger-subtle text-danger" style={{ width: '56px', height: '56px' }}>
+                                    <i className="fa-solid fa-money-bill-transfer" style={{ fontSize: '24px' }}></i>
+                                </div>
                             </div>
-                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                            <div className="ms-3 d-flex flex-column justify-content-center">
                                 <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash Out</p>
-                                <h4 className="mb-0 fw-bold text-dark mt-1">{formatAmount(totalExpenses)}</h4>
+                                <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{formatAmount(totalExpenses)}</h4>
                             </div>
                         </div>
                     </ScrollReveal>
                 </div>
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.3}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
-                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-primary-subtle text-primary" style={{ width: '60px', height: '60px' }}>
-                                <DollarSign size={32} strokeWidth={2.5} />
+                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
+                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
+                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-primary-subtle text-primary" style={{ width: '56px', height: '56px' }}>
+                                    <i className="fa-solid fa-wallet" style={{ fontSize: '24px' }}></i>
+                                </div>
                             </div>
-                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                            <div className="ms-3 d-flex flex-column justify-content-center">
                                 <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Net Balance</p>
-                                <h4 className={`mb-0 fw-bold mt-1 ${totalIncome - totalExpenses >= 0 ? 'text-dark' : 'text-danger'}`}>
+                                <h4 className={`mb-0 fw-bold mt-1 ${totalIncome - totalExpenses >= 0 ? 'text-dark' : 'text-danger'}`} style={{ fontSize: '1.25rem' }}>
                                     {formatAmount(totalIncome - totalExpenses)}
                                 </h4>
                             </div>
