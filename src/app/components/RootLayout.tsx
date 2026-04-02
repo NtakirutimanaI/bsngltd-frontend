@@ -141,6 +141,23 @@ export function RootLayout() {
     if (item.roles.includes('all')) return true;
     if (normalizedRole === 'super_admin') return true;
     return item.roles.includes(normalizedRole);
+  }).map((item, idx) => {
+    // Generate distinct vibrant colors for a Flaticon look
+    const colors = [
+      'bg-blue-100 text-blue-600',
+      'bg-purple-100 text-purple-600',
+      'bg-green-100 text-green-600',
+      'bg-orange-100 text-orange-600',
+      'bg-pink-100 text-pink-600',
+      'bg-cyan-100 text-cyan-600',
+      'bg-indigo-100 text-indigo-600',
+      'bg-rose-100 text-rose-600',
+      'bg-amber-100 text-amber-600',
+      'bg-emerald-100 text-emerald-600',
+      'bg-violet-100 text-violet-600',
+      'bg-sky-100 text-sky-600'
+    ];
+    return { ...item, colorClass: colors[idx % colors.length] };
   });
 
   const unreadCount = messages.reduce((sum, m) => sum + (m.unread || 0), 0) + unreadContactMessages;
@@ -163,15 +180,16 @@ export function RootLayout() {
                 to={item.path}
                 end={item.path === "/dashboard"}
                 className={({ isActive }) =>
-                  `nav-item nav-link d-flex align-items-center mb-1 ${isActive ? "active" : ""}`
+                  `nav-item nav-link d-flex align-items-center mb-1 py-2 px-4 transition-all ${isActive ? "active bg-white shadow-sm" : ""}`
                 }
+                style={{ height: '48px' }}
               >
-                <i className="d-inline-flex align-items-center justify-content-center me-2">
-                   <item.icon size={21} />
-                </i>
-                <span className="fw-bold" style={{ fontSize: '16px' }}>{item.name}</span>
+                <div className={`d-flex align-items-center justify-content-center rounded-lg me-3 ${item.colorClass}`} style={{ width: '34px', height: '34px', minWidth: '34px' }}>
+                   <item.icon size={18} strokeWidth={2.5} />
+                </div>
+                <span className="fw-bold text-dark" style={{ fontSize: '14px', lineHeight: '1' }}>{item.name}</span>
                 {item.name === "Notifications" && unreadCount > 0 && (
-                  <span className="ms-auto badge bg-danger rounded-pill" style={{ fontSize: '9px' }}>{unreadCount}</span>
+                  <span className="ms-auto badge bg-danger rounded-pill d-flex align-items-center justify-content-center" style={{ fontSize: '10px', width: '20px', height: '20px' }}>{unreadCount}</span>
                 )}
               </NavLink>
             ))}

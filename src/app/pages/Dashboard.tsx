@@ -308,19 +308,30 @@ export function Dashboard() {
                   </div>
                 </div>
               ))
-            : stats.map((stat: any, index: number) => (
-                <div key={stat.name} className="col-sm-6 col-xl-3">
-                  <ScrollReveal delay={index * 0.08}>
-                    <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm">
-                      <stat.Icon size={48} className="text-primary" />
-                      <div className="ms-3">
-                        <p className="mb-2 text-muted small">{stat.name}</p>
-                        <h6 className="mb-0 fw-bold">{stat.value}</h6>
+            : stats.map((stat: any, index: number) => {
+                const colors = [
+                  'bg-blue-100 text-blue-600',
+                  'bg-emerald-100 text-emerald-600',
+                  'bg-amber-100 text-amber-600',
+                  'bg-purple-100 text-purple-600'
+                ];
+                const colorClass = colors[index % colors.length];
+                return (
+                  <div key={stat.name} className="col-sm-6 col-xl-3">
+                    <ScrollReveal delay={index * 0.08}>
+                      <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
+                        <div className={`d-flex align-items-center justify-content-center rounded-2xl ${colorClass}`} style={{ width: '60px', height: '60px' }}>
+                           <stat.Icon size={32} strokeWidth={2.5} />
+                        </div>
+                        <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                          <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>{stat.name}</p>
+                          <h4 className="mb-0 fw-bold text-dark mt-1">{stat.value}</h4>
+                        </div>
                       </div>
-                    </div>
-                  </ScrollReveal>
-                </div>
-              ))
+                    </ScrollReveal>
+                  </div>
+                );
+              })
           }
         </div>
       </div>

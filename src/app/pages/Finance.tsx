@@ -202,33 +202,39 @@ export function Finance() {
             <div className="row g-4 mb-4 mx-2 mx-md-4">
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.1}>
-                        <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm border-0 border-bottom border-success border-3">
-                            <TrendingUp size={32} strokeWidth={2.5} className="text-success" />
-                            <div className="ms-3 text-end">
-                                <p className="mb-1 text-muted small text-uppercase fw-bold opacity-75">Total Cash In</p>
-                                <h4 className="mb-0 fw-bold text-dark">{formatAmount(totalIncome)}</h4>
+                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
+                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-success-subtle text-success" style={{ width: '60px', height: '60px' }}>
+                                <TrendingUp size={32} strokeWidth={2.5} />
+                            </div>
+                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash In</p>
+                                <h4 className="mb-0 fw-bold text-dark mt-1">{formatAmount(totalIncome)}</h4>
                             </div>
                         </div>
                     </ScrollReveal>
                 </div>
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.2}>
-                        <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm border-0 border-bottom border-danger border-3">
-                            <TrendingDown size={32} strokeWidth={2.5} className="text-danger" />
-                            <div className="ms-3 text-end">
-                                <p className="mb-1 text-muted small text-uppercase fw-bold opacity-75">Total Cash Out</p>
-                                <h4 className="mb-0 fw-bold text-dark">{formatAmount(totalExpenses)}</h4>
+                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
+                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-danger-subtle text-danger" style={{ width: '60px', height: '60px' }}>
+                                <TrendingDown size={32} strokeWidth={2.5} />
+                            </div>
+                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash Out</p>
+                                <h4 className="mb-0 fw-bold text-dark mt-1">{formatAmount(totalExpenses)}</h4>
                             </div>
                         </div>
                     </ScrollReveal>
                 </div>
                 <div className="col-sm-6 col-xl-4">
                     <ScrollReveal delay={0.3}>
-                        <div className="bg-light rounded d-flex align-items-center justify-content-between p-4 shadow-sm border-0 border-bottom border-primary border-3">
-                            <DollarSign size={32} strokeWidth={2.5} className="text-primary" />
-                            <div className="ms-3 text-end">
-                                <p className="mb-1 text-muted small text-uppercase fw-bold opacity-75">Net Balance</p>
-                                <h4 className={`mb-0 fw-bold ${totalIncome - totalExpenses >= 0 ? 'text-dark' : 'text-danger'}`}>
+                        <div className="bg-white rounded-2xl d-flex align-items-center justify-content-between p-4 shadow-sm border border-light">
+                            <div className="d-flex align-items-center justify-content-center rounded-2xl bg-primary-subtle text-primary" style={{ width: '60px', height: '60px' }}>
+                                <DollarSign size={32} strokeWidth={2.5} />
+                            </div>
+                            <div className="ms-3 text-end d-flex flex-column justify-content-center" style={{ height: '60px' }}>
+                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Net Balance</p>
+                                <h4 className={`mb-0 fw-bold mt-1 ${totalIncome - totalExpenses >= 0 ? 'text-dark' : 'text-danger'}`}>
                                     {formatAmount(totalIncome - totalExpenses)}
                                 </h4>
                             </div>
