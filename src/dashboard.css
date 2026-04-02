@@ -148,18 +148,15 @@ body {
 }
 
 .sidebar .navbar .navbar-nav .nav-link i {
-    width: 40px;
-    height: 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #FFFFFF;
-    border-radius: 40px;
+    background: transparent;
 }
 
 .sidebar .navbar .navbar-nav .nav-link:hover i,
 .sidebar .navbar .navbar-nav .nav-link.active i {
-    background: var(--light);
+    background: transparent;
 }
 
 .sidebar .navbar .dropdown-toggle::after {

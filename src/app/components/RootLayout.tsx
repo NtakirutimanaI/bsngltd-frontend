@@ -112,10 +112,10 @@ export function RootLayout() {
   const allNavItems = [
     { name: "Dashboard", path: "/dashboard", iconClass: "fa-solid fa-gauge-high", roles: ['all'] },
     { name: "Portfolio Hub", path: "/dashboard/portfolio", iconClass: "fa-solid fa-briefcase", roles: ['all'] },
-    { name: "Workforce Center", path: "/dashboard/workforce", iconClass: "fa-solid fa-users-gear", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
+    { name: "Workforce Center", path: "/dashboard/workforce", iconClass: "fa-solid fa-users", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
     { name: "Finance Center", path: "/dashboard/finance", iconClass: "fa-solid fa-money-bill-transfer", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Communication Hub", path: "/dashboard/communications", iconClass: "fa-solid fa-comments", roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
-    { name: "Insights & Reports", path: "/dashboard/insights", iconClass: "fa-solid fa-chart-pie", roles: ['super_admin', 'admin', 'manager', 'auditor'] },
+    { name: "Insights & Reports", path: "/dashboard/insights", iconClass: "fa-solid fa-chart-line", roles: ['super_admin', 'admin', 'manager', 'auditor'] },
     { name: "Content Management", path: "/dashboard/content", iconClass: "fa-solid fa-file-pen", roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "Administration Console", path: "/dashboard/admin", iconClass: "fa-solid fa-user-shield", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
     { name: "Booking Center", path: "/dashboard/bookings", iconClass: "fa-solid fa-calendar-check", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
@@ -174,12 +174,10 @@ export function RootLayout() {
                 }
                 style={{ minHeight: '52px' }}
               >
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '45px', minWidth: '45px' }}>
-                  <div className={`d-flex align-items-center justify-content-center rounded-xl shadow-sm ${item.colorClass}`} style={{ width: '36px', height: '36px' }}>
-                     <i className={`${item.iconClass}`} style={{ fontSize: '18px' }}></i>
-                  </div>
+                <div className="d-flex align-items-center justify-content-center" style={{ width: '40px', minWidth: '40px' }}>
+                   <i className={`${item.iconClass} text-primary`} style={{ fontSize: '18px' }}></i>
                 </div>
-                <div className="ms-4 d-flex align-items-center flex-grow-1 overflow-hidden">
+                <div className="ms-3 d-flex align-items-center flex-grow-1 overflow-hidden">
                   <span className="fw-bold text-dark text-nowrap" style={{ fontSize: '13px', lineHeight: '1', display: 'block' }}>{item.name}</span>
                 </div>
                 {item.name === "Notifications" && unreadCount > 0 && (
