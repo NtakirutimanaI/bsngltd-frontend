@@ -12,10 +12,13 @@ export function About() {
   useEffect(() => {
     fetchApi<any[]>('/settings/public')
       .then(data => {
-        const s: any = {};
-        data.forEach(item => { s[item.key] = item.value; });
-        setSettings(s);
+        if (Array.isArray(data)) {
+          const s: any = {};
+          data.forEach(item => { s[item.key] = item.value; });
+          setSettings(s);
+        }
       })
+      .catch(err => console.error("Failed to fetch settings:", err))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -28,6 +31,8 @@ export function About() {
   }
 
   const aboutTitle = dt(settings.about_title) || t('about');
+  const aboutImage1 = getImageUrl(settings.about_image_1) || '/img/about-1.jpg';
+  const aboutImage2 = getImageUrl(settings.about_image_2) || '/img/about-2.jpg';
 
   return (
     <div className="container-fluid bg-white p-0">
@@ -51,10 +56,20 @@ export function About() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid" src={getImageUrl(settings.about_image_1) || '/img/about-1.jpg'} alt="About 1" />
+                  <img
+                    className="img-fluid rounded"
+                    src={aboutImage1}
+                    alt="About 1"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/img/about-1.jpg'; }}
+                  />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75" src={getImageUrl(settings.about_image_2) || '/img/about-2.jpg'} alt="About 2" />
+                  <img
+                    className="img-fluid h-75 rounded"
+                    src={aboutImage2}
+                    alt="About 2"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/img/about-2.jpg'; }}
+                  />
                   <div className="h-25 d-flex align-items-center text-center bg-primary px-4" style={{ background: '#009CFF' }}>
                     <h4 className="text-white lh-base mb-0">{t('buildingExcellenceSince2010')}</h4>
                   </div>

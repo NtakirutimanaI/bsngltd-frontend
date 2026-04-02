@@ -3,14 +3,10 @@ import { ScrollToTopOnNavigate } from "@/app/components/ScrollToTopOnNavigate";
 import {
   Building2,
   LayoutDashboard,
-  Home,
   Users,
   Menu,
   CalendarDays,
   LogOut,
-  Newspaper,
-  Search,
-  Plus,
   Moon,
   Sun,
   MessageSquare,
@@ -18,21 +14,10 @@ import {
   User,
   Banknote,
   Shield,
-  CalendarCheck,
-  Globe,
   Eye,
-  LineChart as LineChartIcon,
   TrendingUp,
-  FileText,
-  Briefcase,
-  DollarSign,
-  Heart,
-  Terminal,
-  FolderKanban,
   Bell,
-  Wrench,
-  Mail,
-  Info,
+  Globe,
   ArrowUp
 } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -52,7 +37,6 @@ import { Input } from "@/app/components/ui/input";
 import { Button } from "@/app/components/ui/button";
 import { fetchApi, getImageUrl } from "../api/client";
 import { formatDistanceToNow } from 'date-fns';
-import logo from '@/assets/logo.png';
 import { useTracker } from "../hooks/useTracker";
 
 export function RootLayout() {
@@ -138,25 +122,14 @@ export function RootLayout() {
   const allNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard, roles: ['all'] },
     { name: "Portfolio Hub", path: "/dashboard/portfolio", icon: Building2, roles: ['all'] },
-    { name: "Properties", path: "/dashboard/portfolio?tab=properties", icon: Home, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'client'] },
-    { name: "Project List", path: "/dashboard/portfolio?tab=projects", icon: FolderKanban, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Workforce", path: "/dashboard/workforce", icon: Users, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
-    { name: "Employees", path: "/dashboard/employees", icon: User, roles: ['super_admin', 'admin', 'manager', 'hr'] },
-    { name: "Finance Hub", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Salary Payments", path: "/dashboard/salary-payments", icon: DollarSign, roles: ['super_admin', 'admin', 'manager', 'accountant', 'hr'] },
-    { name: "Attendance", path: "/dashboard/attendance", icon: CalendarCheck, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
+    { name: "Workforce Center", path: "/dashboard/workforce", icon: Users, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
+    { name: "Finance Center", path: "/dashboard/finance", icon: Banknote, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
+    { name: "Communication Hub", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
+    { name: "Insights & Reports", path: "/dashboard/insights", icon: TrendingUp, roles: ['super_admin', 'admin', 'manager', 'auditor'] },
+    { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
+    { name: "Administration Console", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
     { name: "Booking Center", path: "/dashboard/bookings", icon: Eye, roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Calendar", path: "/dashboard/calendar", icon: CalendarDays, roles: ['all'] },
-    { name: "Communications", path: "/dashboard/communications", icon: MessageSquare, roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
-    { name: "Content Management", path: "/dashboard/content", icon: Globe, roles: ['super_admin', 'admin', 'content_editor'] },
-    { name: "Services Hub", path: "/dashboard/content?tab=services", icon: Wrench, roles: ['super_admin', 'admin'] },
-    { name: "Inquiries", path: "/dashboard/communications?tab=website", icon: Mail, roles: ['super_admin', 'admin', 'manager', 'hr'] },
-    { name: "Insights Hub", path: "/dashboard/insights", icon: TrendingUp, roles: ['super_admin', 'admin', 'manager', 'auditor'] },
-    { name: "Report Center", path: "/dashboard/insights?tab=business", icon: FileText, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'auditor'] },
-    { name: "Analytics", path: "/dashboard/analytics", icon: LineChartIcon, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'content_editor'] },
-    { name: "Administration Department", path: "/dashboard/admin", icon: Shield, roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
-    { name: "Manage Users", path: "/dashboard/admin?tab=users", icon: Users, roles: ['super_admin', 'admin'] },
-    { name: "Partners & Sponsors", path: "/dashboard/admin?tab=sponsors", icon: Heart, roles: ['super_admin', 'admin'] },
     { name: "Notifications", path: "/dashboard/notifications", icon: Bell, roles: ['all'] },
     { name: "System Settings", path: "/dashboard/settings", icon: Settings, roles: ['all'] },
   ];

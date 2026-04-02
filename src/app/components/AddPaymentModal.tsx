@@ -13,6 +13,7 @@ interface AddPaymentModalProps {
 export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalProps) {
   const { currency, setCurrency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sites, setSites] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     code: "",
     amount: "",
@@ -21,8 +22,22 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
     payer: "",
     payee: "",
     project: "",
+    siteId: "",
     description: "",
   });
+
+  useState(() => {
+    loadSites();
+  });
+
+  const loadSites = async () => {
+    try {
+      const data = await fetchApi<any[]>('/sites');
+      setSites(data);
+    } catch (err) {
+      console.error("Failed to load sites", err);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +55,7 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
           description: formData.description,
           payer: formData.payer,
           payee: formData.payee,
+          siteId: formData.siteId || null,
         }),
       });
       if (onSuccess) onSuccess();
@@ -152,7 +168,7 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
             />
           </div>
 
-          <div className="col-12">
+          <div className="col-md-6">
             <label className="form-label small fw-medium mb-1">
               Related Project
             </label>
@@ -163,6 +179,23 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
               className="form-control form-control-sm"
               placeholder="e.g., PRJ-001"
             />
+          </div>
+          <div className="col-md-6">
+            <label className="form-label small fw-medium mb-1">
+              Working Site
+            </label>
+            <select
+              value={formData.siteId}
+              onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+              className="form-select form-select-sm"
+            >
+              <option value="">No Specific Site</option>
+              {sites.map(site => (
+                <option key={site.id} value={site.id}>
+                  {site.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

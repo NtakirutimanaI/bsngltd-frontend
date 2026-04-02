@@ -11,7 +11,8 @@ import {
     Receipt,
     History,
     Download,
-    CreditCard
+    CreditCard,
+    MapPin
 } from "lucide-react";
 import { AddPaymentModal } from "@/app/components/AddPaymentModal";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
@@ -320,6 +321,7 @@ export function Finance() {
                                 <tr className="text-dark">
                                     <th className="ps-4">Reference</th>
                                     <th>{activeTab === 'ledger' ? 'Description' : 'Employee'}</th>
+                                    <th>Site</th>
                                     <th>Type / Period</th>
                                     <th>Amount</th>
                                     <th>Method</th>
@@ -339,6 +341,12 @@ export function Finance() {
                                             <td className="py-2">
                                                 <div className="text-dark small fw-medium" style={{ fontSize: '11px' }}>{t.description}</div>
                                                 <div className="smaller text-muted" style={{ fontSize: '10px' }}>{t.payer} → {t.payee}</div>
+                                            </td>
+                                            <td className="py-2">
+                                                <div className="d-flex align-items-center gap-1">
+                                                    <MapPin size={10} className="text-muted" />
+                                                    <span className="small text-muted" style={{ fontSize: '10px' }}>{(t as any).site?.name || 'General'}</span>
+                                                </div>
                                             </td>
                                             <td className="py-2"><span className={`badge px-2 py-1 ${getTypeColor(t.type)}`} style={{ fontSize: '10px' }}>{t.type.replace('_', ' ').toUpperCase()}</span></td>
                                             <td className="fw-bold py-2" style={{ fontSize: '12px' }}>{formatAmount(t.amount)}</td>

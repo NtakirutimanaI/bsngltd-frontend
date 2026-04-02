@@ -52,12 +52,6 @@ export function Home() {
   const [heroImages, setHeroImages] = useState(defaultHeroImages);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [latestUpdates, setLatestUpdates] = useState<LatestUpdate[]>([]);
@@ -70,10 +64,9 @@ export function Home() {
     const fetchData = async () => {
       try {
         const cacheBuster = `t=${Date.now()}`;
-        const [propRes, settingsRes, contentRes, updatesRes, eventsRes] = await Promise.all([
+        const [propRes, settingsRes, updatesRes, eventsRes] = await Promise.all([
           fetchApi<any>(`/properties?limit=6&${cacheBuster}`),
           fetchApi<any[]>(`/settings/public?${cacheBuster}`),
-          fetchApi<any[]>(`/content/public?section=hero&${cacheBuster}`),
           fetchApi<any>(`/updates?limit=3&${cacheBuster}`),
           fetchApi<any[]>(`/events?public=true&${cacheBuster}`)
         ]);
@@ -86,45 +79,39 @@ export function Home() {
         settingsRes.forEach(item => { s[item.key] = item.value; });
         setSettings(s);
 
-        // Default to checking for content module first
-        let heroImagesFound = false;
+        // Restore to local hero images as they were "yesterday before changes"
+        // We prioritize these to return the site to its intended state
+        const heroImagesFromSettings = [];
+        if (s.home_carousel_1) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_1), alt: 'Carousel 1' });
+        if (s.home_carousel_2) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_2), alt: 'Carousel 2' });
+        if (s.home_carousel_3) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_3), alt: 'Carousel 3' });
         
-        if (contentRes && contentRes.length > 0) {
-          const heroContent = contentRes.find(item => item.section === 'hero');
-          if (heroContent && heroContent.images && heroContent.images.length > 0) {
-            const heroImagesFromContent = heroContent.images.map((img: string, index: number) => ({
-              src: img,
-              alt: heroContent.title || `Hero Image ${index + 1}`
-            }));
-            if (heroImagesFromContent.length > 0) {
-              setHeroImages(heroImagesFromContent);
-              heroImagesFound = true;
-            }
-          }
-        }
-
-        // If no content module hero images, check settings
-        if (!heroImagesFound) {
-          const heroImagesFromSettings = [];
-          if (s.home_carousel_1) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_1), alt: 'Carousel 1' });
-          if (s.home_carousel_2) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_2), alt: 'Carousel 2' });
-          if (s.home_carousel_3) heroImagesFromSettings.push({ src: getImageUrl(s.home_carousel_3), alt: 'Carousel 3' });
-          
-          if (heroImagesFromSettings.length > 0) {
-            setHeroImages(heroImagesFromSettings);
-          } else {
-            setHeroImages(defaultHeroImages);
-          }
+        if (heroImagesFromSettings.length > 0) {
+          setHeroImages(heroImagesFromSettings);
+        } else {
+          setHeroImages(defaultHeroImages);
         }
       } catch (error) {
         console.error("Failed to fetch home data", error);
+        setHeroImages(defaultHeroImages);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [language]);
+
+  // Handle slide auto-advance
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroImages.length]);
+ // Fix: depend on heroImages length to ensure slider works after fetch
 
   const formatPrice = (price?: number) => {
     if (!price) return '';
@@ -220,20 +207,22 @@ export function Home() {
                   </div>
                 </div>
 
-                {/* Slider Indicators */}
-                <div className="position-absolute d-flex flex-column gap-3" style={{ right: '6%', zIndex: 2 }}>
+                {/* Slider Indicators - Restored to match original design look */}
+                <div className="position-absolute d-flex flex-column gap-3" style={{ right: '5%', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}>
                   {heroImages.map((_, index) => (
                     <div
-                      key={index}
+                      key={`indicator-${index}`}
                       onClick={() => setCurrentSlide(index)}
-                      className="cursor-pointer transition-all duration-300"
+                      className="cursor-pointer transition-all duration-500"
                       style={{
                         width: '12px',
                         height: index === currentSlide ? '30px' : '12px',
                         borderRadius: '1px',
                         backgroundColor: index === currentSlide ? 'white' : 'transparent',
-                        border: '1px solid white'
+                        border: '2px solid white',
+                        boxShadow: '0 0 5px rgba(0,0,0,0.2)'
                       }}
+                      title={`Go to slide ${index + 1}`}
                     />
                   ))}
                 </div>

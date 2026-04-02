@@ -14,6 +14,7 @@ interface AddEmployeeModalProps {
 export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: AddEmployeeModalProps) {
   const { currency, setCurrency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sites, setSites] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     fullName: "",
     employeeId: "",
@@ -27,7 +28,21 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
     bankAccount: "",
     momoNumber: "",
     paymentPreference: "bank",
+    siteId: "",
   });
+
+  useEffect(() => {
+    loadSites();
+  }, []);
+
+  const loadSites = async () => {
+    try {
+      const data = await fetchApi<any[]>('/sites');
+      setSites(data);
+    } catch (err) {
+      console.error("Failed to load sites", err);
+    }
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -44,6 +59,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
         bankAccount: initialData.bankAccount || "",
         momoNumber: initialData.momoNumber || "",
         paymentPreference: initialData.paymentPreference || "bank",
+        siteId: initialData.siteId || "",
       });
     } else {
       setFormData({
@@ -59,6 +75,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
         bankAccount: "",
         momoNumber: "",
         paymentPreference: "bank",
+        siteId: "",
       });
     }
   }, [initialData, isOpen]);
@@ -84,6 +101,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
           baseSalary: Number(formData.baseSalary),
           status: initialData ? initialData.status : 'active',
           attendance: initialData ? initialData.attendance : 0,
+          siteId: formData.siteId || null,
         }),
       });
       if (onSuccess) onSuccess();
@@ -235,6 +253,24 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
               className="form-control form-control-sm"
               placeholder="e.g., 1200000"
             />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label small fw-medium mb-1">
+              Working Site (Location)
+            </label>
+            <select
+              value={formData.siteId}
+              onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+              className="form-select form-select-sm"
+            >
+              <option value="">No Specific Site</option>
+              {sites.map(site => (
+                <option key={site.id} value={site.id}>
+                  {site.name} ({site.code})
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="col-md-6">
