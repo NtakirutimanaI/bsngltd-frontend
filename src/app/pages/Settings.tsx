@@ -1,14 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import {
-  User,
-  Mail,
-  Phone,
-  Lock,
-  Globe,
-  Bell,
-  Shield,
-  Building,
   Save,
   Loader2,
   RefreshCw,
@@ -229,12 +221,12 @@ export function Settings() {
   })();
 
   const tabs = [
-    { id: "profile", name: "Profile Settings", icon: User },
+    { id: "profile", name: "Profile Settings", iconClass: "fa-solid fa-user" },
     ...(isAdmin ? [
-      { id: "company", name: "Company", icon: Building },
-      { id: "notifications", name: "Notifications", icon: Bell },
-      { id: "security", name: "Security", icon: Shield },
-      { id: "api", name: "API & Integrations", icon: Globe },
+      { id: "company", name: "Company", iconClass: "fa-solid fa-building" },
+      { id: "notifications", name: "Notifications", iconClass: "fa-solid fa-bell" },
+      { id: "security", name: "Security", iconClass: "fa-solid fa-shield-halved" },
+      { id: "api", name: "API & Integrations", iconClass: "fa-solid fa-network-wired" },
     ] : [])
   ];
 
@@ -254,13 +246,15 @@ export function Settings() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab.id
-                  ? "bg-blue-100 text-teal-700"
-                  : "text-gray-700 hover:bg-gray-100"
+                className={`w-full d-flex align-items-center px-3 py-3 rounded-lg transition-colors border-0 ${activeTab === tab.id
+                  ? "bg-blue-100 text-primary"
+                  : "bg-transparent text-gray-700 hover:bg-gray-100"
                   }`}
               >
-                <tab.icon className="h-5 w-5" />
-                <span className="font-medium">{tab.name}</span>
+                <div className="d-flex align-items-center justify-content-center" style={{ width: '40px', minWidth: '40px' }}>
+                   <i className={`${tab.iconClass}`} style={{ fontSize: '16px' }}></i>
+                </div>
+                <span className="fw-medium ms-2" style={{ fontSize: '13px' }}>{tab.name}</span>
               </button>
             ))}
           </div>
@@ -308,13 +302,16 @@ export function Settings() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address
                     </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <div className="position-relative">
+                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
+                        <i className="fa-solid fa-envelope text-muted" style={{ fontSize: '14px' }}></i>
+                      </div>
                       <input
                         type="email"
                         value={profileData.email}
                         onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="form-control"
+                        style={{ paddingLeft: '40px' }}
                       />
                     </div>
                   </div>
@@ -323,13 +320,16 @@ export function Settings() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number
                     </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <div className="position-relative">
+                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
+                        <i className="fa-solid fa-phone text-muted" style={{ fontSize: '14px' }}></i>
+                      </div>
                       <input
                         type="tel"
                         value={profileData.phone}
                         onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="form-control"
+                        style={{ paddingLeft: '40px' }}
                       />
                     </div>
                   </div>
@@ -338,12 +338,15 @@ export function Settings() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Language
                     </label>
-                    <div className="relative">
-                      <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <div className="position-relative">
+                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
+                        <i className="fa-solid fa-globe text-muted" style={{ fontSize: '14px' }}></i>
+                      </div>
                       <select
                         value={profileData.language}
                         onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                        className="form-select"
+                        style={{ paddingLeft: '40px' }}
                       >
                         <option value="en">English</option>
                         <option value="fr">French</option>
@@ -589,13 +592,16 @@ export function Settings() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Confirm New Password
                         </label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <div className="position-relative">
+                          <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
+                            <i className="fa-solid fa-lock text-muted" style={{ fontSize: '14px' }}></i>
+                          </div>
                           <input
                             type="password"
                             value={passwordData.confirmPassword}
                             onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="form-control"
+                            style={{ paddingLeft: '40px' }}
                           />
                         </div>
                       </div>
