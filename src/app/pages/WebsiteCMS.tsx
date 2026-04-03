@@ -420,7 +420,7 @@ export function WebsiteCMS() {
     const handleRecordImageUploaded = async (id: string, url: string, field: string) => {
         setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: url } : r));
         try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
-        setMessage({ type: 'success', text: 'Image uploaded & saved! It will appear on the website immediately.' });
+        setMessage({ type: 'success', text: 'Image uploaded & saved successfully!' });
         setTimeout(() => setMessage(null), 4000);
     };
 
@@ -442,7 +442,7 @@ export function WebsiteCMS() {
             // Sync all changes above to Github to fulfill the user requirement
             try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
 
-            setMessage({ type: 'success', text: 'All text changes published successfully!' });
+            setMessage({ type: 'success', text: 'Texts and content changed successfully!' });
             setTimeout(() => setMessage(null), 3000);
         } catch (error) {
             console.error("Failed to save settings:", error);
@@ -939,7 +939,7 @@ export function WebsiteCMS() {
                                                                                     setting.key.includes('youtube') ? <YoutubeIcon size={16} className="text-danger" /> :
                                                                                         <Layout size={16} className="text-muted" />}
                                                     <label className="text-sm fw-bold text-dark uppercase tracking-wider mb-0">
-                                                        {setting.key.split('_').slice(1).join(' ')}
+                                                        {setting.key.split('_').slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                                     </label>
                                                 </div>
 

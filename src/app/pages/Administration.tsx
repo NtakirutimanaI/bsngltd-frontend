@@ -1,4 +1,5 @@
-import { useState } from "react";
+import {  } from "react";
+import { useSearchParams } from "react-router";
 import {
     Shield,
     Settings as SettingsIcon,
@@ -20,7 +21,7 @@ import { Sponsors } from "./Sponsors";
 import { DeveloperCore } from "./DeveloperCore";
 import { ContactMessages } from "./ContactMessages";
 
-import { useSearchParams } from "react-router";
+
 
 export function Administration() {
     const { user } = useAuth();

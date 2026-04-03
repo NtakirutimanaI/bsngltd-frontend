@@ -205,7 +205,7 @@ export function ManageContent() {
     };
 
     return (
-        <div className="container-fluid bg-white min-vh-100 px-2 px-md-4 pt-4 pb-4">
+        <div className="container-fluid bg-transparent min-vh-100 px-2 px-md-4 pt-4 pb-4">
             {/* Header */}
             <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
                 <div>

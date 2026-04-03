@@ -56,6 +56,7 @@ export function Home() {
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [latestUpdates, setLatestUpdates] = useState<LatestUpdate[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [settings, setSettings] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
   const { t, dt, language } = useLanguage();
@@ -64,16 +65,18 @@ export function Home() {
     const fetchData = async () => {
       try {
         const cacheBuster = `t=${Date.now()}`;
-        const [propRes, settingsRes, updatesRes, eventsRes] = await Promise.all([
+        const [propRes, settingsRes, updatesRes, eventsRes, servicesRes] = await Promise.all([
           fetchApi<any>(`/properties?limit=6&${cacheBuster}`),
           fetchApi<any[]>(`/settings/public?${cacheBuster}`),
           fetchApi<any>(`/updates?limit=3&${cacheBuster}`),
-          fetchApi<any[]>(`/events?public=true&${cacheBuster}`)
+          fetchApi<any[]>(`/events?public=true&${cacheBuster}`),
+          fetchApi<any[]>(`/services?${cacheBuster}`)
         ]);
 
         setAllProperties(Array.isArray(propRes) ? propRes : (propRes.data || []));
         setLatestUpdates(Array.isArray(updatesRes) ? updatesRes : (updatesRes.data || []));
         setUpcomingEvents(eventsRes || []);
+        setServices((servicesRes || []).filter((s: any) => s.isActive).sort((a: any, b: any) => a.order - b.order));
 
         const s: any = {};
         settingsRes.forEach(item => { s[item.key] = item.value; });
@@ -232,38 +235,60 @@ export function Home() {
 
           {/* Features Row - Restored as requested ("Keep everything") */}
           <div className="row g-4 mt-5 animated fadeIn" style={{ zIndex: 1 }}>
-            <div className="col-md-6 col-lg-3">
-              <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
-                <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
-                  <Building2 className="text-white w-5 h-5" />
-                </div>
-                <h5 className="mb-0 lh-base">{t('residentialConstruction')}</h5>
-              </div>
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
-                <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
-                  <Building2 className="text-white w-5 h-5" />
-                </div>
-                <h5 className="mb-0 lh-base">{t('commercialConstruction')}</h5>
-              </div>
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
-                <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
-                  <HardHat className="text-white w-5 h-5" />
-                </div>
-                <h5 className="mb-0 lh-base">{t('projectManagement')}</h5>
-              </div>
-            </div>
-            <div className="col-md-6 col-lg-3">
-              <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
-                <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
-                  <Wallet className="text-white w-5 h-5" />
-                </div>
-                <h5 className="mb-0 lh-base">{t('fairPrices')}</h5>
-              </div>
-            </div>
+            {services.length > 0 ? (
+              services.slice(0, 4).map((service) => {
+                const getIcon = (val: string) => {
+                  switch(val?.toLowerCase()) {
+                    case 'hardhat': return <HardHat className="text-white w-5 h-5" />;
+                    case 'wallet': return <Wallet className="text-white w-5 h-5" />;
+                    default: return <Building2 className="text-white w-5 h-5" />;
+                  }
+                };
+
+                return (
+                  <div key={service.id} className="col-md-6 col-lg-3">
+                    <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
+                      <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
+                        {getIcon(service.icon)}
+                      </div>
+                      <h5 className="mb-0 lh-base">{dt(service.title) || dt(service.name)}</h5>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              [1, 2, 3, 4].map((i) => {
+                const iconKey = `home_feature_${i}_icon` as keyof typeof settings;
+                const titleKey = `home_feature_${i}_title` as keyof typeof settings;
+                const iconValue = settings[iconKey] || (i <= 2 ? 'building' : i === 3 ? 'hardhat' : 'wallet');
+                
+                const getIcon = (val: string) => {
+                  switch(val) {
+                    case 'hardhat': return <HardHat className="text-white w-5 h-5" />;
+                    case 'wallet': return <Wallet className="text-white w-5 h-5" />;
+                    default: return <Building2 className="text-white w-5 h-5" />;
+                  }
+                };
+
+                const fallbackTitles: Record<number, string> = {
+                  1: 'residentialConstruction',
+                  2: 'commercialConstruction',
+                  3: 'projectManagement',
+                  4: 'fairPrices'
+                };
+
+                return (
+                  <div key={i} className="col-md-6 col-lg-3">
+                    <div className="d-flex align-items-center bg-white p-3 rounded shadow-sm border-bottom border-primary border-3 h-100">
+                      <div className="flex-shrink-0 btn-square bg-primary me-3 rounded-circle">
+                        {getIcon(iconValue)}
+                      </div>
+                      <h5 className="mb-0 lh-base">{dt(settings[titleKey]) || t(fallbackTitles[i])}</h5>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
@@ -536,28 +561,24 @@ export function Home() {
               </div>
               <div className="col-lg-7">
                 <div className="row g-4">
-                  <div className="col-md-6 wow fadeIn" data-wow-delay="0.2s">
-                    <div className="service-item h-100 d-flex flex-column justify-content-center bg-primary p-4 rounded shadow">
-                      <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={getImageUrl(settings.service_image_1) || '/img/service-1.jpg'} alt="Service 1" />
-                        <div className="position-absolute bottom-0 start-0 p-3 bg-primary bg-opacity-75">
-                          <h4 className="text-white mb-0">{t('residentialConstruction')}</h4>
-                        </div>
+                  {(services.length > 0 ? services.slice(0, 4) : [1, 2]).map((service, index) => (
+                    <div key={service.id || index} className="col-md-6 wow fadeIn" data-wow-delay={`${0.2 * (index + 1)}s`}>
+                      <div className={`service-item h-100 d-flex flex-column justify-content-center ${index % 2 === 0 ? 'bg-primary' : 'bg-light border'} p-4 rounded shadow-sm`}>
+                        <div className="service-img position-relative mb-4 overflow-hidden rounded" style={{ height: '240px' }}>
+                          <img 
+                            className="img-fluid w-100 h-100 transition-transform duration-500 hover:scale-110" 
+                            src={service.image ? getImageUrl(service.image) : `/img/service-${index + 1}.jpg`} 
+                            alt={dt(service.title) || 'Service'} 
+                            style={{ objectFit: 'cover' }}
+                          />
+                          <div className={`position-absolute bottom-0 start-0 p-3 ${index % 2 === 0 ? 'bg-primary bg-opacity-75' : 'bg-light bg-opacity-75 border'}`}>
+                            <h4 className={`${index % 2 === 0 ? 'text-white' : 'text-dark'} mb-0`}>{dt(service.title) || t(index === 0 ? 'residentialConstruction' : 'commercialConstruction')}</h4>
+                          </div>
+                   </div>
+                        <p className={`${index % 2 === 0 ? 'text-white-50' : 'text-muted'} mb-0`}>{dt(service.description) || t(index === 0 ? 'residentialConstructionDesc' : 'commercialConstructionDesc')}</p>
                       </div>
-                      <p className="text-white-50 mb-0">{t('residentialConstructionDesc')}</p>
                     </div>
-                  </div>
-                  <div className="col-md-6 wow fadeIn" data-wow-delay="0.4s">
-                    <div className="service-item h-100 d-flex flex-column justify-content-center bg-light p-4 rounded shadow-sm border">
-                      <div className="service-img position-relative mb-4 overflow-hidden rounded">
-                        <img className="img-fluid w-100 transition-transform duration-500 hover:scale-110" src={getImageUrl(settings.service_image_2) || '/img/service-2.jpg'} alt="Service 2" />
-                        <div className="position-absolute bottom-0 start-0 p-3 bg-light bg-opacity-75 border">
-                          <h4 className="text-dark mb-0">{t('commercialConstruction')}</h4>
-                        </div>
-                      </div>
-                      <p className="text-muted mb-0">{t('commercialConstructionDesc')}</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

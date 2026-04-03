@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import {
     Plus,
     Search,
@@ -14,6 +15,9 @@ import {
     AlertCircle,
     RotateCcw,
     RefreshCw,
+    Building2,
+    CalendarDays,
+    Users,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { PaginationSelector } from "@/app/components/ui/pagination-selector";
@@ -102,7 +106,7 @@ const MONTHS = [
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-import { useSearchParams } from "react-router";
+
 
 export function Workforce() {
     const { user } = useAuth();
@@ -346,11 +350,11 @@ export function Workforce() {
             <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
                 <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl overflow-x-auto">
                     <button
-                        onClick={() => setActiveTab('personnel')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'personnel' ? 'active' : 'text-gray-500 hover:text-primary'}`}
+                        onClick={() => setActiveTab('directory')}
+                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'directory' ? 'active' : 'text-gray-500 hover:text-primary'}`}
                         style={{ borderRadius: '10px' }}
                     >
-                        <i className="fa-solid fa-users"></i> Personnel Roster
+                        <Users size={16} /> Personnel Roster
                     </button>
                     <button
                         onClick={() => setActiveTab('attendance')}

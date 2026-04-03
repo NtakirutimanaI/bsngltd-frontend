@@ -1,10 +1,9 @@
-
+import { useSearchParams } from "react-router";
 import { Mail, MessageSquare, Sparkles } from "lucide-react";
 import { Messages } from "./Messages";
 import { ContactMessages } from "./ContactMessages";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 
-import { useSearchParams } from "react-router";
 
 export function Communications() {
     const [searchParams, setSearchParams] = useSearchParams();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "@/app/components/Modal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { Coins, Plus, RotateCcw } from "lucide-react";
@@ -26,9 +26,9 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
     description: "",
   });
 
-  useState(() => {
+  useEffect(() => {
     loadSites();
-  });
+  }, []);
 
   const loadSites = async () => {
     try {

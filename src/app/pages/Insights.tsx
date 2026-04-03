@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 import {
     TrendingUp,
@@ -15,7 +16,6 @@ import { Reports } from "./Reports";
 import { WebsiteAnalytics } from "./WebsiteAnalytics";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
 
-import { useSearchParams } from "react-router";
 
 export function Insights() {
     const { user } = useAuth();

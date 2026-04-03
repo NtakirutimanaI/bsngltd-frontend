@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 import {
     Plus,
@@ -16,7 +17,7 @@ import { AddProjectModal } from "@/app/components/AddProjectModal";
 import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { AddSiteModal } from "@/app/components/AddSiteModal";
 
-import { useSearchParams } from "react-router";
+
 
 export function Portfolio() {
     const { user } = useAuth();

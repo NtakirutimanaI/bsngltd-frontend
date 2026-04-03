@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     Search,
     Plus,
@@ -6,9 +6,11 @@ import {
     Trash2,
     Layout,
     RefreshCcw,
+    Info,
+    Camera
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
-import { fetchApi } from '../api/client';
+import { fetchApi, getImageUrl } from '../api/client';
 import { Modal } from '@/app/components/Modal';
 
 interface Service {
@@ -30,6 +32,9 @@ export function ManageServices() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const fetchServices = async () => {
         setIsLoading(true);
@@ -40,6 +45,36 @@ export function ManageServices() {
             console.error("Failed to fetch services", err);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const showMessage = (type: 'success' | 'error', text: string) => {
+        setMessage({ type, text });
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const handleUploadImage = async (file: File, serviceId: string) => {
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+            const res = await fetchApi<{ url: string }>(`/services/${serviceId}/upload-image`, {
+                method: 'POST',
+                body: formData,
+            });
+            if (res?.url) {
+                showMessage('success', 'Image changed successfully!');
+                fetchServices();
+                // Update the editing service in state to show new image in modal
+                if (editingService && editingService.id === serviceId) {
+                    setEditingService({ ...editingService, image: res.url });
+                }
+            }
+        } catch (err) {
+            console.error("Upload failed", err);
+            showMessage('error', 'Failed to upload image.');
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -97,8 +132,10 @@ export function ManageServices() {
             setIsModalOpen(false);
             setEditingService(null);
             fetchServices();
+            showMessage('success', 'Texts changed successfully!');
         } catch (err) {
             console.error("Failed to save service", err);
+            showMessage('error', 'Failed to save service changes.');
         }
     };
 
@@ -109,6 +146,27 @@ export function ManageServices() {
 
     return (
         <div className="container-fluid bg-light min-vh-100 px-2 px-md-4 pt-4 pb-4">
+            {/* Success/Error Message */}
+            {message && (
+                <ScrollReveal className={`fixed top-4 right-4 z-50 p-0 rounded-xl shadow-lg border ${message.type === 'success' ? 'bg-white text-dark border-primary' : 'bg-danger text-white border-danger'
+                    }`}>
+                    <div className="p-4 flex items-center gap-3" style={{ minWidth: '300px' }}>
+                        {message.type === 'success' ? (
+                            <div className="bg-primary text-white p-2 rounded-lg">
+                                <RefreshCcw className={uploading ? 'animate-spin' : ''} size={18} />
+                            </div>
+                        ) : (
+                            <div className="bg-white text-danger p-2 rounded-lg">
+                                <Info size={18} />
+                            </div>
+                        )}
+                        <div>
+                            <div className="fw-bold small uppercase tracking-wider">{message.type === 'success' ? 'Success' : 'Error'}</div>
+                            <div className="small opacity-80">{message.text}</div>
+                        </div>
+                    </div>
+                </ScrollReveal>
+            )}
             {/* Header */}
             <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
                 <div>
@@ -241,103 +299,149 @@ export function ManageServices() {
 
             {/* Modal */}
             <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setEditingService(null); }} title={editingService ? 'Edit Service' : 'Add New Service'} size="md" draggable={true}>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-6">
+                    {/* Image Section (Only for existing services) */}
+                    {editingService && (
+                        <div className="bg-light p-4 rounded-xl border border-dashed border-gray-300">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block">Service Image</label>
+                            <div className="d-flex align-items-center gap-4">
+                                <div className="w-24 h-24 rounded-lg overflow-hidden border-2 border-white shadow-sm bg-white">
+                                    <img
+                                        src={getImageUrl(editingService.image) || '/img/service-1.jpg'}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => { (e.target as HTMLImageElement).src = '/img/service-1.jpg'; }}
+                                    />
+                                </div>
+                                <div className="flex-grow">
+                                    <h4 className="text-sm fw-bold text-dark mb-1">Visual Content</h4>
+                                    <p className="text-[11px] text-muted mb-3 leading-tight">Recommended size: 800x600px (JPG/PNG)</p>
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={uploading}
+                                        className="btn btn-primary btn-sm d-flex align-items-center gap-2 px-3 fw-bold"
+                                        style={{ height: '32px', fontSize: '11px' }}
+                                    >
+                                        {uploading ? (
+                                            <><RefreshCcw className="animate-spin" size={14} /> Uploading...</>
+                                        ) : (
+                                            <><Camera size={14} /> Replace Image</>
+                                        )}
+                                    </button>
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) handleUploadImage(e.target.files[0], editingService.id);
+                                            e.target.value = '';
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Internal Name (Key)</label>
+                                <input
+                                    name="name"
+                                    defaultValue={editingService?.name}
+                                    required
+                                    placeholder="e.g. brokerage"
+                                    className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Public Title</label>
+                                <input
+                                    name="title"
+                                    defaultValue={editingService?.title}
+                                    required
+                                    placeholder="Brokerage Services"
+                                    className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Internal Name (Key)</label>
-                            <input
-                                name="name"
-                                defaultValue={editingService?.name}
+                            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Description</label>
+                            <textarea
+                                name="description"
+                                defaultValue={editingService?.description}
                                 required
-                                placeholder="e.g. brokerage"
+                                rows={3}
                                 className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                             />
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Public Title</label>
-                            <input
-                                name="title"
-                                defaultValue={editingService?.title}
-                                required
-                                placeholder="Brokerage Services"
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                            />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Display Order</label>
+                                <input
+                                    type="number"
+                                    name="order"
+                                    defaultValue={editingService?.order || 0}
+                                    required
+                                    className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Animation Delay (s)</label>
+                                <input
+                                    name="delay"
+                                    defaultValue={editingService?.delay || '0.1s'}
+                                    required
+                                    className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Description</label>
-                        <textarea
-                            name="description"
-                            defaultValue={editingService?.description}
-                            required
-                            rows={3}
-                            className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Display Order</label>
-                            <input
-                                type="number"
-                                name="order"
-                                defaultValue={editingService?.order || 0}
-                                required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                            />
+                        <div className="flex items-center gap-6 pt-2">
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    name="isActive"
+                                    defaultChecked={editingService ? editingService.isActive : true}
+                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                />
+                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Active Service</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    name="isDark"
+                                    defaultChecked={editingService?.isDark}
+                                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                />
+                                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Dark Theme</span>
+                            </label>
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Animation Delay (s)</label>
-                            <input
-                                name="delay"
-                                defaultValue={editingService?.delay || '0.1s'}
-                                required
-                                className="w-full px-3 py-2 bg-transparent border border-gray-200 dark:border-gray-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                            />
+
+                        <div className="d-flex gap-3 pt-4 border-top mt-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(false)}
+                                className="btn btn-light flex-grow-1 fw-bold text-muted border shadow-sm"
+                                style={{ borderRadius: '10px', height: '42px' }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="btn btn-primary flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-center gap-2"
+                                style={{ borderRadius: '10px', height: '42px' }}
+                            >
+                                {editingService ? <RefreshCcw size={18} /> : <Plus size={18} />}
+                                {editingService ? "Update Texts" : "Create Service"}
+                            </button>
                         </div>
-                    </div>
-
-                    <div className="flex items-center gap-6 pt-2">
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                name="isActive"
-                                defaultChecked={editingService ? editingService.isActive : true}
-                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                            />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Active Service</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                name="isDark"
-                                defaultChecked={editingService?.isDark}
-                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                            />
-                            <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">Dark Theme</span>
-                        </label>
-                    </div>
-
-                    <div className="d-flex gap-3 pt-4 border-top mt-4">
-                        <button
-                            type="button"
-                            onClick={() => setIsModalOpen(false)}
-                            className="btn btn-light flex-grow-1 fw-bold text-muted border shadow-sm"
-                            style={{ borderRadius: '10px', height: '42px' }}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="btn btn-primary flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-center gap-2"
-                            style={{ borderRadius: '10px', height: '42px' }}
-                        >
-                            {editingService ? <RefreshCcw size={18} /> : <Plus size={18} />}
-                            {editingService ? "Update" : "Create"}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </Modal>
         </div>
     );

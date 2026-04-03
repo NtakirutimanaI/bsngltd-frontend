@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { Globe, Rss, Briefcase, Layout } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { WebsiteCMS } from "./WebsiteCMS";
 import { ManageUpdates } from "./ManageUpdates";
 import { ManageServices } from "./ManageServices";
 
-import { useSearchParams } from "react-router";
 
 export function ContentManagement() {
     const [searchParams, setSearchParams] = useSearchParams();

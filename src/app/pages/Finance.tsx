@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import {
     DollarSign,
     Search,
@@ -54,8 +55,6 @@ const MONTHS = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
 ];
-
-import { useSearchParams } from "react-router";
 
 export function Finance() {
     const { user } = useAuth();
@@ -138,7 +137,7 @@ export function Finance() {
             finalAmount = amount / 1300;
             label = 'USD';
         }
-        }).format(finalAmount);
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: label }).format(finalAmount);
     };
 
     const getTypeColor = (type: string) => {
@@ -390,7 +389,7 @@ export function Finance() {
                                 )}
                                 {(activeTab === 'ledger' ? transactions.length : salaryHistory.length) === 0 && (
                                     <tr>
-                                        <td colSpan={6} className="text-center py-4 text-muted">
+                                        <td colSpan={7} className="text-center py-4 text-muted">
                                             <Receipt size={32} className="mb-2 opacity-25" />
                                             <div style={{ fontSize: '12px' }}>No records found for selected criteria</div>
                                         </td>
