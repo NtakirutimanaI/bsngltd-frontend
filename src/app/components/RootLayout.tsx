@@ -125,10 +125,10 @@ export function RootLayout() {
     { name: "Finance Center", path: "/dashboard/finance", iconClass: "fa-solid fa-money-bill-transfer", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Communication", path: "/dashboard/communications", iconClass: "fa-solid fa-comments", roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
     { name: "Insights & Reports", path: "/dashboard/insights", iconClass: "fa-solid fa-chart-line", roles: ['super_admin', 'admin', 'manager', 'auditor'] },
-    { name: "Content Management", path: "/dashboard/content", iconClass: "fa-solid fa-file-pen", roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "Booking Center", path: "/dashboard/bookings", iconClass: "fa-solid fa-calendar-check", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
     { name: "Calendar", path: "/dashboard/calendar", iconClass: "fa-solid fa-calendar-days", roles: ['all'] },
     { name: "Notifications", path: "/dashboard/notifications", iconClass: "fa-solid fa-bell", roles: ['all'] },
+    { name: "Content Management", path: "/dashboard/content", iconClass: "fa-solid fa-file-pen", roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "System Settings", path: "/dashboard/settings", iconClass: "fa-solid fa-gear", roles: ['all'] },
   ];
 
