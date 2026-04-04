@@ -301,6 +301,7 @@ export function WebsiteCMS() {
     const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isPublishingImages, setIsPublishingImages] = useState(false);
     const [activePage, setActivePage] = useState("home");
     const [activeLang, setActiveLang] = useState<string>("en");
     const [activeView, setActiveView] = useState<'images' | 'text'>('images');
@@ -424,6 +425,33 @@ export function WebsiteCMS() {
         try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
         setMessage({ type: 'success', text: 'Image uploaded & saved successfully!' });
         setTimeout(() => setMessage(null), 4000);
+    };
+
+    const saveAndPublishImages = async () => {
+        try {
+            setIsPublishingImages(true);
+            const pageImageKeys = (PAGE_IMAGES[activePage] || []).map(img => img.key);
+            const imageSettings = settings.filter(s => pageImageKeys.includes(s.key));
+
+            // Save each image URL to the DB so it's permanently stored
+            for (const setting of imageSettings) {
+                await fetchApi(`/settings/${setting.key}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ value: setting.value, isPublic: setting.isPublic })
+                });
+            }
+
+            // Push to GitHub so images survive deployments / server restarts
+            try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch (err) { }
+
+            setMessage({ type: 'success', text: `Images saved & published to public website!` });
+            setTimeout(() => setMessage(null), 4000);
+        } catch (error) {
+            console.error('Failed to save images:', error);
+            setMessage({ type: 'error', text: 'Failed to save images. Please try again.' });
+        } finally {
+            setIsPublishingImages(false);
+        }
     };
 
     const saveSettings = async () => {
@@ -598,16 +626,29 @@ export function WebsiteCMS() {
                                 >
                                     <RefreshCcw size={12} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
                                 </button>
-                                {/* Publish */}
-                                {!isRecordPage && (
+                                {/* Save & Publish (Images) / Publish (Text) */}
+                                {!isRecordPage && activeView === 'images' && (
+                                    <button
+                                        onClick={saveAndPublishImages}
+                                        disabled={isPublishingImages}
+                                        className="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
+                                        style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                        title="Permanently save all images to database and publish to public website"
+                                    >
+                                        {isPublishingImages ? <RefreshCcw className="animate-spin" size={12} /> : <Save size={12} />}
+                                        {isPublishingImages ? 'Publishing...' : 'Save & Publish'}
+                                    </button>
+                                )}
+                                {!isRecordPage && activeView === 'text' && (
                                     <button
                                         onClick={saveSettings}
                                         disabled={isSaving}
                                         className="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
                                         style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                        title="Save all text content and publish to public website"
                                     >
                                         {isSaving ? <RefreshCcw className="animate-spin" size={12} /> : <Save size={12} />}
-                                        Publish
+                                        {isSaving ? 'Publishing...' : 'Publish'}
                                     </button>
                                 )}
                             </div>
