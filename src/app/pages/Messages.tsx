@@ -221,7 +221,7 @@ export function Messages() {
                                 <input
                                     placeholder="Search teammates..."
                                     className="form-control form-control-sm border-gray-50 bg-white/60"
-                                    style={{ borderRadius: '8px', fontSize: '11px', paddingLeft: '32px', height: '32px' }}
+                                    style={{ borderRadius: '8px', fontSize: '11px', paddingLeft: '36px', height: '32px' }}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
