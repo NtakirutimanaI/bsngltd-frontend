@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 
 export function ScrollToTopOnNavigate() {
-    const { key } = useLocation();
+    const { pathname } = useLocation();
 
     useEffect(() => {
         // Scroll the window to top for pages using the window scroll
@@ -13,7 +13,7 @@ export function ScrollToTopOnNavigate() {
         if (mainContent) {
             mainContent.scrollTo(0, 0);
         }
-    }, [key]);
+    }, [pathname]);
 
     return null;
 }

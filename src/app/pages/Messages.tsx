@@ -69,10 +69,6 @@ export function Messages() {
     }, [selectedChat, user, selectedSite]);
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    useEffect(() => {
         const interval = setInterval(() => {
             if (user && selectedChat) loadMessages(selectedChat.id, 1, true);
         }, 5000);
@@ -131,8 +127,24 @@ export function Messages() {
                 createdAt: m.createdAt,
                 isMe: m.senderId === user?.id
             }));
+            
             if (pageNum === 1) {
-                setMessages(formattedMessages);
+                setMessages(prev => {
+                    const hasChanged = prev.length !== formattedMessages.length || 
+                                     (prev.length > 0 && prev[prev.length-1].id !== formattedMessages[formattedMessages.length-1].id);
+                    
+                    if (!hasChanged) return prev;
+
+                    // If we have new messages, check if we should scroll
+                    const container = scrollContainerRef.current;
+                    if (container) {
+                        const isAtBottom = Math.abs(container.scrollHeight - container.clientHeight - container.scrollTop) < 50;
+                        if (isAtBottom || prev.length === 0) {
+                            setTimeout(scrollToBottom, 50);
+                        }
+                    }
+                    return formattedMessages;
+                });
             } else {
                 setMessages(prev => [...formattedMessages, ...prev]);
             }
