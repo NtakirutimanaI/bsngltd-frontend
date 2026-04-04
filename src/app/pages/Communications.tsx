@@ -1,11 +1,12 @@
 import { useSearchParams } from "react-router";
-import { Mail, MessageSquare, ChevronRight } from "lucide-react";
+import { Mail, MessageSquare, ChevronRight, Bell } from "lucide-react";
 import { Messages } from "./Messages";
 import { ContactMessages } from "./ContactMessages";
+import { Notifications } from "./Notifications";
 
 export function Communications() {
     const [searchParams, setSearchParams] = useSearchParams();
-    const activeTab = (searchParams.get('tab') as 'website' | 'internal') || 'website';
+    const activeTab = (searchParams.get('tab') as 'website' | 'internal' | 'notifications') || 'website';
 
     const setActiveTab = (tab: any) => {
         setSearchParams({ tab });
@@ -13,7 +14,8 @@ export function Communications() {
 
     const categories = [
         { id: 'website', name: 'Website Enquiries', icon: Mail, color: 'text-blue-500', description: 'Public contact forms' },
-        { id: 'internal', name: 'Internal Team Chats', icon: MessageSquare, color: 'text-indigo-500', description: 'Secure collaboration' }
+        { id: 'internal', name: 'Internal Team Chats', icon: MessageSquare, color: 'text-indigo-500', description: 'Secure collaboration' },
+        { id: 'notifications', name: 'System Notifications', icon: Bell, color: 'text-amber-500', description: 'Alerts & activity logs' }
     ];
 
     return (
@@ -73,6 +75,11 @@ export function Communications() {
                         {activeTab === 'internal' && (
                             <div className="fade-in-up h-100">
                                 <Messages />
+                            </div>
+                        )}
+                        {activeTab === 'notifications' && (
+                            <div className="fade-in-up h-100">
+                                <Notifications />
                             </div>
                         )}
                     </div>
