@@ -400,11 +400,17 @@
 }
 
 /* ================================================================
-   SIDEBAR — already handled by RootLayout, reinforce key styles
+   SIDEBAR — already handled by RootLayout inline styles
    ================================================================ */
 .sidebar .navbar-nav .nav-link {
   font-size: 0.82rem !important;
   font-weight: 600 !important;
+}
+
+/* Ensure every sidebar row is a strict flex row with no inherited offsets */
+.sidebar .navbar-nav > a {
+  display: flex !important;
+  align-items: center !important;
 }
 
 /* ================================================================

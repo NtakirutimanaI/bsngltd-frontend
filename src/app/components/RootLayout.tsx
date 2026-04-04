@@ -168,32 +168,147 @@ export function RootLayout() {
       {/* Sidebar Start */}
       <div className={`sidebar pe-4 pb-3 ${sidebarOpen ? "open" : ""}`}>
         <nav className="navbar bg-light navbar-light">
-          <NavLink to="/dashboard" className="navbar-brand mx-4 mt-4 mb-0 pb-0 text-decoration-none">
+          <NavLink to="/dashboard" className="navbar-brand mx-4 mt-4 mb-3 pb-0 text-decoration-none">
             <h3 className="text-primary mb-0"><i className="fa fa-hashtag me-2"></i>BSNG</h3>
           </NavLink>
 
-          <div className="navbar-nav w-100 flex-column pt-0" style={{ marginTop: '-10px' }}>
-            {navigation.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                end={item.path === "/dashboard"}
-                className={({ isActive }) =>
-                  `nav-item nav-link d-flex align-items-center mb-1 py-1 px-3 transition-all ${isActive ? "active bg-white shadow-sm" : ""}`
-                }
-                style={{ minHeight: '52px' }}
-              >
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '40px', minWidth: '40px' }}>
-                   <i className={`${item.iconClass} text-primary`} style={{ fontSize: '18px' }}></i>
-                </div>
-                <div className="ms-3 d-flex align-items-center flex-grow-1 overflow-hidden">
-                  <span className="fw-bold text-dark text-nowrap" style={{ fontSize: '13px', lineHeight: '1', display: 'block' }}>{item.name}</span>
-                </div>
-                {item.name === "Notifications" && unreadCount > 0 && (
-                  <span className="ms-auto badge bg-danger rounded-pill d-flex align-items-center justify-content-center" style={{ fontSize: '9px', minWidth: '18px', height: '18px', padding: '0 4px' }}>{unreadCount}</span>
-                )}
-              </NavLink>
-            ))}
+          <div className="navbar-nav w-100 flex-column" style={{ gap: '3px', paddingLeft: '12px', paddingRight: '12px' }}>
+            {navigation.map((item, idx) => {
+              const isNotifications = item.name === "Notifications";
+              const subtitleMap: Record<string, string> = {
+                "Dashboard": "Overview",
+                "Sites & Projects": "Site manager",
+                "Manage Users": "User control",
+                "Site Attendance": "Attendance tracker",
+                "Finance Center": "Payments & budget",
+                "Communication": "Messages & inbox",
+                "Insights & Reports": "Analytics",
+                "Content Management": "CMS & media",
+                "Administration Console": "Admin hub",
+                "Booking Center": "Reservations",
+                "Calendar": "Schedule",
+                "Notifications": "Alerts",
+                "System Settings": "Configuration",
+              };
+              const subtitle = subtitleMap[item.name] || "";
+
+              // Deterministic icon bg + text colors — no Tailwind needed
+              const iconPalette = [
+                { bg: '#EFF6FF', color: '#2563EB' }, // blue
+                { bg: '#F5F3FF', color: '#7C3AED' }, // purple
+                { bg: '#F0FDF4', color: '#16A34A' }, // green
+                { bg: '#FFF7ED', color: '#EA580C' }, // orange
+                { bg: '#FFF0F6', color: '#DB2777' }, // pink
+                { bg: '#ECFEFF', color: '#0891B2' }, // cyan
+                { bg: '#EEF2FF', color: '#4F46E5' }, // indigo
+                { bg: '#FFF1F2', color: '#E11D48' }, // rose
+                { bg: '#FFFBEB', color: '#D97706' }, // amber
+                { bg: '#ECFDF5', color: '#059669' }, // emerald
+                { bg: '#F5F3FF', color: '#6D28D9' }, // violet
+                { bg: '#F0F9FF', color: '#0284C7' }, // sky
+              ];
+              const palette = iconPalette[idx % iconPalette.length];
+
+              return (
+                <NavLink
+                  key={item.name}
+                  to={item.path}
+                  end={item.path === "/dashboard"}
+                  className="nav-link text-decoration-none"
+                  style={({ isActive }) => ({
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '7px 8px',         /* identical on every row — active or not */
+                    borderRadius: '12px',
+                    border: '1px solid',        /* always 1px border — color changes, size never does */
+                    borderColor: isActive ? '#009CFF' : 'transparent',
+                    background: isActive ? '#009CFF' : '#ffffff',
+                    transition: 'background 0.2s, border-color 0.2s',
+                    minHeight: '50px',
+                    boxSizing: 'border-box',
+                  })}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {/* Icon box — forced to 6px from left edge on every row */}
+                      <div style={{
+                        marginLeft: '6px',
+                        width: '36px',
+                        height: '36px',
+                        minWidth: '36px',
+                        maxWidth: '36px',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: isActive ? 'rgba(255,255,255,0.20)' : palette.bg,
+                        flexShrink: 0,
+                      }}>
+                        <i
+                          className={item.iconClass}
+                          style={{
+                            fontSize: '14px',
+                            width: '14px',
+                            textAlign: 'center',
+                            color: isActive ? '#ffffff' : palette.color,
+                          }}
+                        />
+                      </div>
+
+                      {/* Text block — always starts 10px after icon box */}
+                      <div style={{
+                        marginLeft: '10px',
+                        flexGrow: 1,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                      }}>
+                        <div style={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          lineHeight: '1.3',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          color: isActive ? '#ffffff' : '#111827',
+                        }}>
+                          {item.name}
+                        </div>
+                        <div style={{
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          lineHeight: '1.2',
+                          color: isActive ? 'rgba(255,255,255,0.70)' : '#9CA3AF',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {subtitle}
+                        </div>
+                      </div>
+
+                      {/* Badge — only for Notifications */}
+                      {isNotifications && unreadCount > 0 && (
+                        <span style={{
+                          marginLeft: '6px',
+                          flexShrink: 0,
+                          fontSize: '9px',
+                          fontWeight: 800,
+                          minWidth: '18px',
+                          height: '18px',
+                          padding: '0 5px',
+                          borderRadius: '9999px',
+                          background: isActive ? 'rgba(255,255,255,0.30)' : '#EF4444',
+                          color: '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                          {unreadCount}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
           </div>
         </nav>
       </div>
