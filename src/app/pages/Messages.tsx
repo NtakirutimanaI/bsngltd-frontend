@@ -2,8 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Search, Send, User, MoreVertical, Paperclip, Smile, Plus, MessageSquare } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
 import { fetchApi } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { formatDistanceToNow } from 'date-fns';
@@ -49,7 +47,6 @@ export function Messages() {
     const [messageText, setMessageText] = useState("");
     const [chats, setChats] = useState<Chat[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
-    const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -64,67 +61,49 @@ export function Messages() {
     };
 
     useEffect(() => {
-        if (user) {
-            loadConversations();
-        }
+        if (user) loadConversations();
     }, [user, selectedSite]);
 
     useEffect(() => {
-        if (selectedChat && user) {
-            setPage(1);
-            loadMessages(selectedChat.id, 1);
-        }
+        if (selectedChat && user) loadMessages(selectedChat.id, 1);
     }, [selectedChat, user, selectedSite]);
 
     useEffect(() => {
-        if (page === 1) {
-            scrollToBottom();
-        }
-    }, [messages, page]);
+        scrollToBottom();
+    }, [messages]);
 
-    // Polling for new messages
     useEffect(() => {
         const interval = setInterval(() => {
-            if (user) {
-                loadConversations();
-                if (selectedChat && page === 1) {
-                    // Only poll if we are on the first page to avoid jumping
-                    loadMessages(selectedChat.id, 1, true);
-                }
-            }
+            if (user && selectedChat) loadMessages(selectedChat.id, 1, true);
         }, 5000);
         return () => clearInterval(interval);
     }, [user, selectedChat, selectedSite]);
 
-    // Search users effect
     useEffect(() => {
         if (debouncedSearchTerm.length < 2) {
             setSearchResults([]);
             setIsSearching(false);
             return;
         }
-
         const performSearch = async () => {
             setIsSearching(true);
             try {
                 const data = await fetchApi<UserSearchResult[]>(`/users/search?q=${debouncedSearchTerm}`);
-                setSearchResults(data.filter(u => u.id !== user?.id));
+                setSearchResults((data || []).filter(u => u.id !== user?.id));
             } catch (error) {
                 console.error("Search failed:", error);
-                setSearchResults([]);
             } finally {
                 setIsSearching(false);
             }
         };
-
         performSearch();
-    }, [debouncedSearchTerm, user, selectedSite]);
+    }, [debouncedSearchTerm, user]);
 
     const loadConversations = async () => {
         try {
             const siteParam = selectedSite?.id ? `&siteId=${selectedSite.id}` : '';
             const data = await fetchApi<any[]>(`/messages/conversations?userId=${user?.id}${siteParam}`);
-            const formattedChats = data.map(c => ({
+            const formattedChats = (data || []).map(c => ({
                 id: c.id,
                 name: c.name,
                 lastMessage: c.lastMessage,
@@ -134,9 +113,7 @@ export function Messages() {
                 avatar: c.avatar
             }));
             setChats(formattedChats);
-            if (formattedChats.length > 0 && !selectedChat) {
-                setSelectedChat(formattedChats[0]);
-            }
+            if (formattedChats.length > 0 && !selectedChat) setSelectedChat(formattedChats[0]);
         } catch (error) {
             console.error("Failed to load conversations:", error);
         }
@@ -146,8 +123,7 @@ export function Messages() {
         try {
             const siteParam = selectedSite?.id ? `&siteId=${selectedSite.id}` : '';
             const response = await fetchApi<PaginatedResponse<any>>(`/messages/chat/${otherUserId}?userId=${user?.id}&page=${pageNum}&limit=50${siteParam}`);
-
-            const formattedMessages = response.data.map(m => ({
+            const formattedMessages = (response?.data || []).map(m => ({
                 id: m.id,
                 senderId: m.senderId,
                 receiverId: m.receiverId,
@@ -155,15 +131,12 @@ export function Messages() {
                 createdAt: m.createdAt,
                 isMe: m.senderId === user?.id
             }));
-
             if (pageNum === 1) {
                 setMessages(formattedMessages);
-                if (!isPolling) scrollToBottom();
             } else {
                 setMessages(prev => [...formattedMessages, ...prev]);
             }
-
-            setHasMore(response.page < response.lastPage);
+            setHasMore(response?.page < response?.lastPage);
         } catch (error) {
             console.error("Failed to load messages:", error);
         } finally {
@@ -171,31 +144,21 @@ export function Messages() {
         }
     };
 
-    const loadMoreMessages = () => {
-        if (selectedChat && hasMore && !isLoadingMore) {
-            setIsLoadingMore(true);
-            const nextPage = page + 1;
-            setPage(nextPage);
-            loadMessages(selectedChat.id, nextPage);
-        }
-    };
-
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!messageText.trim() || !selectedChat || !user) return;
-
+        const content = messageText.trim();
+        if (!content || !selectedChat || !user) return;
         try {
+            setMessageText("");
             await fetchApi("/messages", {
                 method: "POST",
                 body: JSON.stringify({
                     senderId: user.id,
                     receiverId: selectedChat.id,
-                    content: messageText,
+                    content,
                     siteId: selectedSite?.id || null
                 })
             });
-            setMessageText("");
-            setPage(1);
             loadMessages(selectedChat.id, 1);
             loadConversations();
         } catch (error) {
@@ -203,227 +166,164 @@ export function Messages() {
         }
     };
 
-    const handleSearch = (val: string) => {
-        setSearchTerm(val);
-    };
-
     const startChat = (targetUser: UserSearchResult) => {
         const existingChat = chats.find(c => c.id === targetUser.id);
         if (existingChat) {
             setSelectedChat(existingChat);
         } else {
-            const newChat: Chat = {
+            setSelectedChat({
                 id: targetUser.id,
                 name: targetUser.fullName,
-                lastMessage: "No messages yet",
+                lastMessage: "Start a conversation",
                 time: "Now",
                 unread: 0,
                 status: "online"
-            };
-            setSelectedChat(newChat);
+            });
         }
         setSearchTerm("");
         setSearchResults([]);
-        setIsSearching(false);
     };
 
     return (
-        <div className="min-h-[60vh] h-[calc(100vh-120px)] flex flex-col gap-4 relative">
-            <ScrollReveal className="relative z-10 shrink-0 mb-4">
-                <div className="bg-light rounded p-4 shadow-sm d-flex flex-column flex-md-row justify-content-between align-items-center gap-4">
-                    <div className="d-flex align-items-center gap-4">
-                        <div className="p-3 bg-primary rounded-circle text-white shadow-sm d-flex align-items-center justify-content-center" style={{ width: 60, height: 60 }}>
-                            <MessageSquare size={28} strokeWidth={2} />
-                        </div>
-                        <div>
-                            <h4 className="fw-bold mb-1">Internal Team Chats</h4>
-                            <p className="text-muted small mb-0">Secure collaboration workspace</p>
-                        </div>
+        <div className="messages-hub h-100 p-0">
+            {/* High Density Header */}
+            <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm d-flex align-items-center justify-content-between" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-center gap-2">
+                    <div className="bg-primary rounded-lg p-2 text-white shadow-sm d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px' }}>
+                        <MessageSquare size={16} />
+                    </div>
+                    <div>
+                        <h2 className="fw-bold mb-0" style={{ fontSize: '13px' }}>Internal Team Chats</h2>
+                        <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Secure collaboration workspace</p>
                     </div>
                 </div>
-            </ScrollReveal>
+            </div>
 
-            <div className="flex-grow-1 d-flex flex-column flex-md-row gap-4 overflow-hidden position-relative z-10 pb-4">
-                {/* Chat List */}
-                <div className="w-100 bg-light rounded shadow-sm d-flex flex-column overflow-hidden shrink-0" style={{ maxWidth: '320px' }}>
-                    <div className="p-3 border-bottom position-relative bg-white">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            <Input
-                                placeholder="Find team members..."
-                                className="pl-9 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm dark:text-white placeholder:text-gray-400 shadow-sm"
-                                value={searchTerm}
-                                onChange={(e) => handleSearch(e.target.value)}
-                            />
+            <div className="row g-3 h-[calc(100vh-160px)] overflow-hidden">
+                {/* Conversations List */}
+                <div className="col-lg-4 col-xl-3 h-100">
+                    <div className="glass-card h-100 p-0 rounded-xl border border-white shadow-sm d-flex flex-column overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.4)' }}>
+                        <div className="p-2 border-bottom border-gray-100">
+                            <div className="position-relative">
+                                <Search size={12} className="position-absolute text-muted" style={{ left: '10px', top: '10px' }} />
+                                <input
+                                    placeholder="Search teammates..."
+                                    className="form-control form-control-sm border-gray-50 bg-white/60"
+                                    style={{ borderRadius: '8px', fontSize: '11px', paddingLeft: '32px', height: '32px' }}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                                {(searchResults.length > 0 || isSearching) && (
+                                    <div className="position-absolute w-100 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden" style={{ top: '100%' }}>
+                                        {isSearching ? <div className="p-2 text-center smaller text-muted">Searching...</div> :
+                                            searchResults.map(res => (
+                                                <div key={res.id} onClick={() => startChat(res)} className="p-2 d-flex align-items-center gap-2 hover:bg-light cursor-pointer border-bottom border-gray-50">
+                                                    <Avatar style={{ width: '24px', height: '24px' }}><AvatarFallback style={{ fontSize: '9px' }}>{res.fullName.charAt(0)}</AvatarFallback></Avatar>
+                                                    <div className="overflow-hidden">
+                                                        <div className="fw-bold truncate" style={{ fontSize: '11px' }}>{res.fullName}</div>
+                                                        <div className="text-muted truncate" style={{ fontSize: '9px' }}>{res.email}</div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        {(searchResults.length > 0 || (isSearching && debouncedSearchTerm.length >= 2)) && (
-                            <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto mx-4">
-                                {isSearching ? (
-                                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">Searching...</div>
-                                ) : searchResults.length > 0 ? (
-                                    searchResults.map((res) => (
-                                        <button
-                                            key={res.id}
-                                            onClick={() => startChat(res)}
-                                            className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left"
-                                        >
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="bg-blue-100 text-blue-600 text-xs">
-                                                    {res.fullName.charAt(0)}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <div className="text-xs font-semibold dark:text-white">{res.fullName}</div>
-                                                <div className="text-[9px] text-gray-500">{res.email}</div>
-                                            </div>
-                                        </button>
-                                    ))
-                                ) : (
-                                    <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">No users found</div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                    <div className="flex-1 overflow-y-auto">
-                        {chats.length > 0 ? chats.map((chat) => (
-                            <button
-                                key={chat.id}
-                                onClick={() => setSelectedChat(chat)}
-                                className={`w-[calc(100%-16px)] mx-2 my-1 p-3 flex items-center gap-3 transition-all duration-200 rounded-xl ${selectedChat?.id === chat.id ? "bg-indigo-50 dark:bg-indigo-900/20 shadow-sm border border-indigo-100 dark:border-indigo-800" : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent"
-                                    }`}
-                            >
-                                <div className="relative flex-shrink-0">
-                                    <Avatar className="h-10 w-10 border border-gray-100 dark:border-gray-700 shadow-sm">
-                                        <AvatarImage src={chat.avatar} />
-                                        <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold">
-                                            {chat.name.charAt(0)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    {chat.status === "online" && (
-                                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 border-2 border-white dark:border-gray-900 rounded-full shadow-sm" />
-                                    )}
-                                </div>
-                                <div className="flex-1 min-w-0 text-left">
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className={`font-bold text-sm truncate ${selectedChat?.id === chat.id ? "text-indigo-900 dark:text-indigo-100" : "text-gray-900 dark:text-white"}`}>{chat.name}</span>
-                                        <span className="text-[10px] text-gray-400 font-medium">{chat.time}</span>
+
+                        <div className="directory-scroll-container overflow-y-auto flex-grow-1 p-1">
+                            {chats.map(chat => (
+                                <div
+                                    key={chat.id}
+                                    onClick={() => setSelectedChat(chat)}
+                                    className={`site-row p-2 mb-1 rounded-xl transition-all border cursor-pointer d-flex align-items-center gap-2 ${selectedChat?.id === chat.id ? 'active-chat shadow-md' : 'bg-white/60 border-transparent hover:bg-white hover:border-gray-50'}`}
+                                    style={selectedChat?.id === chat.id ? { background: '#009CFF', color: 'white' } : {}}
+                                >
+                                    <div className="position-relative flex-shrink-0">
+                                        <Avatar style={{ width: '32px', height: '32px' }}>
+                                            <AvatarImage src={chat.avatar} />
+                                            <AvatarFallback className={selectedChat?.id === chat.id ? 'bg-white/20 text-white' : 'bg-primary-50 text-primary'}>{chat.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
                                     </div>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{chat.lastMessage}</p>
-                                </div>
-                                {chat.unread > 0 && (
-                                    <div className="w-5 h-5 bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">
-                                        {chat.unread}
+                                    <div className="flex-grow-1 overflow-hidden text-start">
+                                        <div className="d-flex align-items-center justify-content-between">
+                                            <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{chat.name}</h6>
+                                            <span className={`smaller ${selectedChat?.id === chat.id ? 'text-white/70' : 'text-muted'}`} style={{ fontSize: '9px' }}>{chat.time}</span>
+                                        </div>
+                                        <p className="mb-0 text-truncate opacity-80" style={{ fontSize: '10px' }}>{chat.lastMessage}</p>
                                     </div>
-                                )}
-                            </button>
-                        )) : (
-                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                                <p className="text-sm">No conversations yet.</p>
-                                <p className="text-xs mt-1">Search for a user to start chatting.</p>
-                            </div>
-                        )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-grow-1 bg-light rounded shadow-sm d-flex flex-column overflow-hidden">
-                    {selectedChat ? (
-                        <>
-                            {/* Header */}
-                            <div className="p-3 border-bottom d-flex align-items-center justify-content-between bg-white z-20 shadow-sm">
-                                <div className="d-flex align-items-center gap-3">
-                                    <Avatar className="h-10 w-10 shadow-sm border border-gray-100 dark:border-gray-700">
-                                        <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700 font-bold">
-                                            {selectedChat.name.charAt(0)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <h3 className="font-bold text-gray-900 dark:text-white leading-none mb-1.5">{selectedChat.name}</h3>
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-sm"></span>
-                                            <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Active Now</span>
+                <div className="col-lg-8 col-xl-9 h-100">
+                    <div className="glass-card h-100 p-0 rounded-xl border border-white shadow-sm d-flex flex-column overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.4)' }}>
+                        {selectedChat ? (
+                            <>
+                                <div className="p-2 border-bottom border-gray-100 bg-white/60 d-flex align-items-center justify-content-between">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <Avatar style={{ width: '30px', height: '30px' }}><AvatarFallback>{selectedChat.name.charAt(0)}</AvatarFallback></Avatar>
+                                        <div>
+                                            <h4 className="fw-bold mb-0" style={{ fontSize: '12px' }}>{selectedChat.name}</h4>
+                                            <span className="text-muted" style={{ fontSize: '9px' }}>Active Now</span>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-inner">
-                                    <Button variant="ghost" size="sm" className="rounded-lg text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"><User className="h-4 w-4" /></Button>
-                                    <Button variant="ghost" size="sm" className="rounded-lg text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"><MoreVertical className="h-4 w-4" /></Button>
-                                </div>
-                            </div>
-
-                            {/* Messages Area */}
-                            <div
-                                className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50 dark:bg-slate-900/50"
-                                ref={scrollContainerRef}
-                            >
-                                {hasMore && (
-                                    <div className="flex justify-center py-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={loadMoreMessages}
-                                            disabled={isLoadingMore}
-                                            className="text-xs font-semibold text-gray-500 bg-white dark:bg-gray-800 rounded-full shadow-sm border border-gray-200 dark:border-gray-700"
-                                        >
-                                            {isLoadingMore ? "Loading..." : "Load Previous Messages"}
-                                        </Button>
+                                    <div className="d-flex gap-1">
+                                        <button className="btn btn-icon-sm btn-light-hover rounded-lg"><User size={12} className="text-muted" /></button>
+                                        <button className="btn btn-icon-sm btn-light-hover rounded-lg"><MoreVertical size={12} className="text-muted" /></button>
                                     </div>
-                                )}
-                                {messages.map((msg) => (
-                                    <div key={msg.id} className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}>
-                                        <div className={`max-w-[75%] group flex flex-col ${msg.isMe ? "items-end" : "items-start"}`}>
-                                            <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm leading-relaxed ${msg.isMe
-                                                ? "bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-tr-sm"
-                                                : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-sm border border-gray-100 dark:border-gray-700"
-                                                }`}>
+                                </div>
+
+                                <div className="flex-grow-1 overflow-y-auto p-3 d-flex flex-column gap-2" ref={scrollContainerRef}>
+                                    {messages.map((msg, i) => (
+                                        <div key={msg.id} className={`d-flex ${msg.isMe ? 'justify-content-end' : 'justify-content-start'}`}>
+                                            <div className={`max-w-[80%] p-2 px-3 rounded-2xl shadow-xs border ${msg.isMe ? 'bg-primary text-white border-primary rounded-tr-none' : 'bg-white text-dark border-gray-100 rounded-tl-none'}`} style={{ fontSize: '11px', lineHeight: '1.4' }}>
                                                 {msg.content}
+                                                <div className={`text-[8px] mt-1 text-end ${msg.isMe ? 'text-white/70' : 'text-muted'}`}>
+                                                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
                                             </div>
-                                            <span className={`text-[10px] font-medium text-gray-400 mt-1.5 block mx-1`}>
-                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
                                         </div>
-                                    </div>
-                                ))}
-                                <div ref={messagesEndRef} />
-                            </div>
-
-                            {/* Input Area */}
-                            <form onSubmit={handleSendMessage} className="p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 z-20">
-                                <div className="flex items-center gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 pr-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
-                                    <Button variant="ghost" size="icon" type="button" className="h-10 w-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Paperclip className="h-5 w-5 text-gray-400" /></Button>
-                                    <Input
-                                        value={messageText}
-                                        onChange={(e) => setMessageText(e.target.value)}
-                                        placeholder="Write a message..."
-                                        className="flex-1 h-10 border-none bg-transparent focus-visible:ring-0 dark:text-white placeholder:text-gray-400 text-sm px-2"
-                                    />
-                                    <Button variant="ghost" size="icon" type="button" className="h-10 w-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"><Smile className="h-5 w-5 text-gray-400" /></Button>
-                                    <Button size="icon" className="shrink-0 btn btn-primary rounded-circle shadow-sm" style={{ width: 40, height: 40 }}>
-                                        <Send size={16} className="ms-1" />
-                                    </Button>
+                                    ))}
+                                    <div ref={messagesEndRef} />
                                 </div>
-                            </form>
-                        </>
-                    ) : (
-                        <div className="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-muted p-5 bg-white border-top border-transparent position-relative overflow-hidden">
-                            <div className="p-4 bg-light rounded-circle mb-4 shadow-sm border">
-                                <MessageSquare size={40} className="text-primary" strokeWidth={1.5} />
+
+                                <div className="p-2 bg-white/80 border-top border-gray-100">
+                                    <form onSubmit={handleSendMessage} className="d-flex align-items-center gap-2 p-1 border border-gray-200 rounded-2xl bg-white focus-within:border-primary transition-all">
+                                        <button type="button" className="btn btn-icon-sm btn-light-hover rounded-circle"><Paperclip size={14} className="text-muted" /></button>
+                                        <input 
+                                            className="form-control form-control-sm border-0 shadow-none bg-transparent flex-grow-1"
+                                            placeholder="Write message..."
+                                            style={{ fontSize: '11px', height: '32px' }}
+                                            value={messageText}
+                                            onChange={(e) => setMessageText(e.target.value)}
+                                        />
+                                        <button type="submit" className="btn btn-primary rounded-circle d-flex align-items-center justify-content-center p-0 shadow-sm" style={{ width: '32px', height: '32px' }}>
+                                            <Send size={12} className="ms-0.5" />
+                                        </button>
+                                    </form>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="h-100 d-flex flex-column align-items-center justify-content-center text-center opacity-40">
+                                <MessageSquare size={48} className="mb-3" />
+                                <p className="fw-bold smaller">Select a collaborator to begin.</p>
                             </div>
-                            <h4 className="fw-bold mb-2">Your Workspace</h4>
-                            <p className="small text-center max-w-sm mb-4">
-                                Select a team member from the sidebar to start collaborating securely.
-                            </p>
-                            <Button
-                                className="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm"
-                                onClick={() => document.querySelector<HTMLInputElement>('input[placeholder*="Find team"]')?.focus()}
-                            >
-                                <Plus size={18} className="me-2" />
-                                Start New Chat
-                            </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
+
+            <style>{`
+                .active-chat { background: #009CFF !important; border-color: #009CFF !important; color: white !important; }
+                .btn-icon-sm { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0; }
+                .btn-light-hover:hover { background: #f8fafc; }
+                .directory-scroll-container::-webkit-scrollbar { width: 4px; }
+                .directory-scroll-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+            `}</style>
         </div>
     );
 }
