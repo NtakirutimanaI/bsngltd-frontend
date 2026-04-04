@@ -316,8 +316,8 @@ export function Settings() {
                             type="text"
                             value={profileData.fullName}
                             onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                            className="form-control form-control-sm ps-5 border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                            className="form-control form-control-sm border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
                           />
                         </div>
                       </div>
@@ -329,8 +329,8 @@ export function Settings() {
                             type="email"
                             value={profileData.email}
                             onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                            className="form-control form-control-sm ps-5 border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                            className="form-control form-control-sm border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
                           />
                         </div>
                       </div>
@@ -342,20 +342,20 @@ export function Settings() {
                             type="tel"
                             value={profileData.phone}
                             onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                            className="form-control form-control-sm ps-5 border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                            className="form-control form-control-sm border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
                           />
                         </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Language</label>
                         <div className="position-relative">
-                          <Languages size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <Languages size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px', zIndex: 10 }} />
                           <select
                             value={profileData.language}
                             onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-                            className="form-select form-select-sm ps-5 border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                            className="form-select form-select-sm border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
                           >
                             <option value="en">English (US)</option>
                             <option value="fr">French (FR)</option>
@@ -459,7 +459,7 @@ export function Settings() {
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Current Password</label>
                         <div className="position-relative">
                           <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
-                          <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="form-control form-control-sm ps-5 border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                          <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }} />
                         </div>
                       </div>
                       <div className="col-md-6">
