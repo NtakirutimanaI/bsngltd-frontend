@@ -430,8 +430,16 @@ export function WebsiteCMS() {
         try {
             setIsSaving(true);
             const pageSettings = settings.filter(s => s.group === activePage);
+            
+            // Crucial: Only save TEXT settings! Exclude all media to prevent stale local image state 
+            // from mistakenly overwriting a newly uploaded image URL on "Publish".
+            const textSettingsOnly = pageSettings.filter(s =>
+                !s.key.includes('image') && !s.key.includes('bg') && !s.key.includes('img') &&
+                !s.key.includes('logo') && !s.key.includes('favicon') && !s.key.includes('carousel') &&
+                !s.key.includes('project_card') && !s.key.includes('team_')
+            );
 
-            for (const setting of pageSettings) {
+            for (const setting of textSettingsOnly) {
                 await fetchApi(`/settings/${setting.key}`, {
                     method: 'PUT',
                     body: JSON.stringify({

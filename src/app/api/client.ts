@@ -3,8 +3,9 @@ export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export function getImageUrl(path?: string): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    // /img/custom/ paths are now pushed permanently into frontend/public via sync-github!
-    if (path.startsWith('/img/custom/')) return path;
+    // /img/custom/ paths are uploaded files stored on the backend server, natively served by main.ts
+    // Git currently permanently tracks the backend /uploads directory so data won't wipe!
+    if (path.startsWith('/img/custom/')) return `${BASE_URL}${path}`;
     if (path.startsWith('/img/')) return path; // bundled static images (shipped with frontend)
     return `${BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
 }
