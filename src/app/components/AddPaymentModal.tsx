@@ -32,7 +32,8 @@ export function AddPaymentModal({ isOpen, onClose, onSuccess }: AddPaymentModalP
 
   const loadSites = async () => {
     try {
-      const data = await fetchApi<any[]>('/sites');
+      const res = await fetchApi<any>('/sites?limit=100');
+      const data = Array.isArray(res) ? res : (res.data || []);
       setSites(data);
     } catch (err) {
       console.error("Failed to load sites", err);

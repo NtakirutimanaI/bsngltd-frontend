@@ -3,8 +3,8 @@ export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export function getImageUrl(path?: string): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    // /img/custom/ paths are uploaded files stored on the backend server, not bundled static assets
-    if (path.startsWith('/img/custom/')) return `${BASE_URL}${path}`;
+    // /img/custom/ paths are now pushed permanently into frontend/public via sync-github!
+    if (path.startsWith('/img/custom/')) return path;
     if (path.startsWith('/img/')) return path; // bundled static images (shipped with frontend)
     return `${BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
 }
@@ -13,10 +13,12 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
     const url = `${BASE_URL}${endpoint}`;
 
     const token = localStorage.getItem('bsng_token');
+    const siteId = localStorage.getItem('selectedSiteId');
     const isFormData = options.body instanceof FormData;
 
     const headers: Record<string, string> = {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...(siteId ? { 'X-Site-Id': siteId } : {}),
         ...(options.headers as Record<string, string>),
     };
 
@@ -31,7 +33,16 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): 
     });
 
     if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
+        const errorText = await response.text();
+        let message = `API Error: ${response.statusText}`;
+        try {
+            const errorJson = JSON.parse(errorText);
+            message = errorJson.message || message;
+        } catch (e) {
+            // Not JSON
+            message = errorText || message;
+        }
+        throw new Error(message);
     }
 
     const text = await response.text();

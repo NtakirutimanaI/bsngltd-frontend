@@ -17,8 +17,6 @@ export function PaginationSelector({
   onPageSizeChange,
   totalItems
 }: PaginationSelectorProps) {
-  const pageSizes = [5, 10, 15, 20, 50];
-
   const startItem = (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalItems || 0);
 
@@ -59,8 +57,10 @@ export function PaginationSelector({
             }}
             className="page-size-select"
           >
-            {pageSizes.map(size => (
-              <option key={size} value={size}>{size}</option>
+            {[5, 10, 20, 1000].map(size => (
+              <option key={size} value={size}>
+                {size === 1000 ? "All" : size}
+              </option>
             ))}
           </select>
         </div>

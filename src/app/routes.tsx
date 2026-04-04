@@ -36,6 +36,8 @@ import { Bookings } from "@/app/pages/Bookings";
 import { Communications } from "@/app/pages/Communications";
 import { Analytics } from "@/app/pages/Analytics";
 import { SalaryPayments } from "@/app/pages/SalaryPayments";
+import { ManageSites } from "@/app/pages/ManageSites";
+import { ManageUsers } from "@/app/pages/ManageUsers";
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -68,7 +70,9 @@ export const router = createBrowserRouter([
         Component: RootLayout,
         children: [
           { index: true, Component: Dashboard },
-          { path: "portfolio", Component: Portfolio },
+          { path: "projects", Component: Portfolio },
+          { path: "sites", Component: ManageSites },
+          { path: "users", Component: ManageUsers },
           { path: "workforce", Component: Workforce },
           { path: "employees", Component: Employees },
           { path: "finance", Component: Finance },

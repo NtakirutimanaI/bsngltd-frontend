@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Mail, Search, RefreshCcw, Trash2, CheckCircle, Clock } from "lucide-react";
+import { Mail, Search, RefreshCcw, Trash2, CheckCircle, Eye, Reply, X, Send, MoreVertical } from "lucide-react";
 import { fetchApi } from "../api/client";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { formatDistanceToNow } from "date-fns";
+import { useSite } from "@/app/context/SiteContext";
 
 interface ContactMessage {
     id: string;
@@ -14,6 +15,7 @@ interface ContactMessage {
     subject: string;
     message: string;
     status: string;
+    profileImage?: string;
     createdAt: string;
 }
 
@@ -24,11 +26,39 @@ export function ContactMessages() {
     const [hasMore, setHasMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'read' | 'deleted'>('all');
+    const { selectedSite } = useSite();
+
+    const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+    const [replyText, setReplyText] = useState("");
+    const [isSendingReply, setIsSendingReply] = useState(false);
+
+    const handleReplySubmit = async () => {
+        if (!selectedMessage || !replyText.trim()) return;
+        setIsSendingReply(true);
+        try {
+            await fetchApi(`/messages/contact/${selectedMessage.id}/reply`, {
+                method: 'POST',
+                body: JSON.stringify({ reply: replyText })
+            });
+            handleStatusChange(selectedMessage.id, 'read');
+            setIsReplyModalOpen(false);
+            setReplyText("");
+            alert("Reply sent successfully!");
+        } catch (error) {
+            console.error("Failed to send reply:", error);
+            alert("Failed to send reply. Please try again.");
+        } finally {
+            setIsSendingReply(false);
+        }
+    };
 
     const loadMessages = async (pageNum: number = 1, currentStatus: string = statusFilter) => {
         setIsLoading(true);
         try {
-            const response = await fetchApi<any>(`/messages/contact?page=${pageNum}&limit=20&status=${currentStatus}`);
+            const siteParam = selectedSite?.id ? `&siteId=${selectedSite.id}` : '';
+            const response = await fetchApi<any>(`/messages/contact?page=${pageNum}&limit=20&status=${currentStatus}${siteParam}`);
             if (pageNum === 1) {
                 setMessages(response.data);
             } else {
@@ -45,7 +75,7 @@ export function ContactMessages() {
     useEffect(() => {
         setPage(1);
         loadMessages(1, statusFilter);
-    }, [statusFilter]);
+    }, [statusFilter, selectedSite]);
 
     const handleStatusChange = async (id: string, status: string) => {
         try {
@@ -85,51 +115,58 @@ export function ContactMessages() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
             <ScrollReveal className="relative z-10">
-                <div className="d-flex flex-col md:flex-row justify-content-between align-items-md-center gap-4 mb-6">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                     <div className="d-flex align-items-center gap-3">
                         <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
                             <Mail size={24} strokeWidth={2} />
                         </div>
                         <div>
-                            <h2 className="h4 fw-bold mb-1 text-gray-900 dark:text-white">Website Enquiries</h2>
-                            <p className="text-gray-500 dark:text-gray-400 small mb-0">Manage messages from the public contact form</p>
+                            <h2 className="h5 fw-bold mb-0 text-gray-900 dark:text-white">Website Enquiries</h2>
+                            <p className="text-gray-500 dark:text-gray-400 mb-0" style={{ fontSize: '11px' }}>Manage messages from the public contact form</p>
                         </div>
                     </div>
-                    <Button onClick={() => loadMessages(1)} disabled={isLoading} variant="outline" className="d-flex align-items-center gap-2 rounded-xl border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-blue-600 transition-colors bg-white dark:bg-gray-900 dark:text-gray-300 shadow-sm">
-                        <RefreshCcw size={16} className={isLoading ? "animate-spin text-blue-600" : ""} />
+                    <Button onClick={() => loadMessages(1)} disabled={isLoading} variant="outline" className="btn btn-light bg-light border-0 rounded-xl shadow-sm d-flex align-items-center gap-2 hover:bg-gray-200 transition-all text-sm font-bold h-9 px-3">
+                        <RefreshCcw size={14} className={isLoading ? "animate-spin text-primary" : "text-muted"} />
                         Refresh
                     </Button>
                 </div>
 
-                <div className="d-flex flex-col lg:flex-row gap-4 mb-6 align-items-lg-center justify-content-between">
-                    <div className="d-flex gap-2 flex-wrap">
+                <div className="d-flex flex-column flex-lg-row gap-3 mb-4 align-items-lg-center justify-content-between border-bottom pb-3">
+                    <div className="d-flex gap-2 overflow-x-auto pb-1 hide-scrollbar" style={{ WebkitOverflowScrolling: 'touch', minWidth: '0' }}>
                         {[
                             { id: 'all', label: 'All Messages', icon: null },
-                            { id: 'new', label: 'Unread', icon: <span className="w-2 h-2 rounded-full bg-blue-500"></span> },
-                            { id: 'read', label: 'Read', icon: <CheckCircle size={14} /> },
-                            { id: 'deleted', label: 'Deleted', icon: <Trash2 size={14} /> }
+                            { id: 'new', label: 'Unread', icon: <span className="w-1 h-1 rounded-full bg-blue-500"></span> },
+                            { id: 'read', label: 'Read', icon: <CheckCircle size={10} /> },
+                            { id: 'deleted', label: 'Deleted', icon: <Trash2 size={10} /> }
                         ].map(filter => (
                             <button
                                 key={filter.id}
                                 onClick={() => setStatusFilter(filter.id as any)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 d-flex align-items-center gap-2 ${statusFilter === filter.id
-                                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-md'
-                                    : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200/60 dark:border-gray-700/60'
+                                className={`px-2 py-1 rounded-pill fw-bold transition-all whitespace-nowrap d-flex align-items-center gap-1.5 ${statusFilter === filter.id
+                                    ? 'bg-dark text-white shadow-sm'
+                                    : 'bg-light text-muted hover:bg-gray-200 border-0'
                                     }`}
+                                style={{ fontSize: '9px', letterSpacing: '0.5px' }}
                             >
                                 {filter.icon}
-                                {filter.label}
+                                <span className="text-uppercase">{filter.label}</span>
                             </button>
                         ))}
                     </div>
 
-                    <div className="relative w-full lg:w-80 group">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors" size={18} />
+                    <div className="position-relative" style={{ width: '240px', flexShrink: 0 }}>
+                        <style>{`
+                            .contact-search-input {
+                                padding-left: 38px !important;
+                            }
+                        `}</style>
+                        <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />
                         <Input
-                            placeholder="Search by name, email..."
+                            placeholder="Find messages..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 py-2.5 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:border-blue-500 focus:ring-blue-500/20 rounded-xl transition-all shadow-sm w-full dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            className="form-control form-control-sm rounded-pill bg-gray-50 border-gray-200 focus:bg-white transition-all shadow-sm w-100 contact-search-input"
+                            style={{ fontSize: '11px', height: '36px' }}
                         />
                     </div>
                 </div>
@@ -151,74 +188,92 @@ export function ContactMessages() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {filteredMessages.map(msg => (
-                            <div key={msg.id} className={`p-5 rounded-2xl border transition-all duration-300 hover:shadow-md ${msg.status === 'new'
-                                ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30 shadow-sm'
-                                : msg.status === 'deleted'
-                                    ? 'bg-gray-50/50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-800 opacity-75 grayscale-[0.5]'
-                                    : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 shadow-sm hover:border-blue-100 dark:hover:border-blue-900/50'
-                                }`}>
-                                <div className="d-flex flex-col md:flex-row justify-content-between align-items-start gap-4">
-                                    <div className="d-flex align-items-start gap-4 flex-grow-1">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-teal-100 text-blue-700 d-flex align-items-center justify-content-center font-bold text-lg shadow-inner flex-shrink-0">
-                                            {msg.name.charAt(0).toUpperCase()}
-                                        </div>
-                                        <div>
-                                            <div className="d-flex align-items-center gap-2 mb-1">
-                                                <h5 className="font-bold text-gray-900 dark:text-white mb-0">{msg.subject}</h5>
-                                                {msg.status === 'new' && (
-                                                    <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-wider">New</span>
-                                                )}
-                                                {msg.status === 'deleted' && (
-                                                    <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-wider">Deleted</span>
-                                                )}
-                                            </div>
-                                            <div className="text-sm text-gray-500 d-flex flex-wrap align-items-center gap-2 mb-3">
-                                                <span className="fw-semibold text-gray-700 dark:text-gray-300">{msg.name}</span>
-                                                <span className="text-gray-300 dark:text-gray-600">•</span>
-                                                <a href={`mailto:${msg.email}`} className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition-colors">{msg.email}</a>
-                                                {msg.phone && (
-                                                    <>
-                                                        <span className="text-gray-300 dark:text-gray-600">•</span>
-                                                        <span className="text-gray-600 dark:text-gray-400">{msg.phone}</span>
-                                                    </>
-                                                )}
-                                            </div>
-                                            <div className="bg-gray-50/80 dark:bg-gray-900/50 p-4 rounded-xl text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed border border-gray-100/50 dark:border-gray-700/50 relative">
-                                                {msg.status === 'new' && <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-400 dark:bg-blue-500 rounded-l-xl"></div>}
-                                                {msg.message}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="d-flex flex-col align-items-end gap-3 flex-shrink-0 md:pl-4 md:border-l md:border-gray-100 w-full md:w-auto">
-                                        <span className="text-xs text-gray-400 dark:text-gray-500 d-flex align-items-center gap-1.5 font-medium bg-gray-50 dark:bg-gray-900 px-2.5 py-1 rounded-full">
-                                            <Clock size={12} />
-                                            {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
-                                        </span>
-                                        <div className="d-flex gap-2 w-full md:w-auto mt-auto">
-                                            {msg.status === 'new' ? (
-                                                <Button size="sm" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex-1 md:flex-auto rounded-lg" onClick={() => handleStatusChange(msg.id, 'read')}>
-                                                    <CheckCircle size={14} className="mr-1.5" />
-                                                    Mark Read
-                                                </Button>
-                                            ) : msg.status === 'read' ? (
-                                                <div className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-gray-500 dark:text-gray-400 text-sm font-medium d-flex align-items-center gap-1.5 flex-1 md:flex-auto justify-content-center">
-                                                    <CheckCircle size={14} /> Read
+                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm auto-width-table">
+                            <table className="table table-hover mb-0 align-middle" style={{ tableLayout: 'fixed' }}>
+                                <thead className="bg-light">
+                                    <tr style={{ fontSize: '10px' }} className="text-muted text-uppercase fw-bold">
+                                        <th className="px-3 py-2 text-center" style={{ width: '40px' }}>#</th>
+                                        <th className="px-3 py-2" style={{ width: '200px' }}>Sender</th>
+                                        <th className="px-3 py-2">Subject & Message</th>
+                                        <th className="px-3 py-2 text-end" style={{ width: '110px' }}>Time</th>
+                                        <th className="px-3 py-2 text-center" style={{ width: '70px' }}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredMessages.map((msg, index) => (
+                                        <tr key={msg.id} className={`${msg.status === 'new' ? 'bg-blue-50/30' : msg.status === 'deleted' ? 'bg-gray-50 opacity-50' : 'bg-white'} transition-all`}>
+                                            <td className="px-3 py-2 text-center text-muted fw-bold" style={{ fontSize: '11px' }}>
+                                                {index + 1}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                                <div className="d-flex align-items-center gap-2">
+                                                    {msg.profileImage || (msg as any).user?.profileImage || (msg as any).avatar ? (
+                                                        <img 
+                                                            src={msg.profileImage || (msg as any).user?.profileImage || (msg as any).avatar} 
+                                                            alt={msg.name} 
+                                                            className="rounded-circle object-cover border border-gray-200" 
+                                                            style={{ width: '24px', height: '24px' }}
+                                                            onError={(e) => {
+                                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('d-none');
+                                                                (e.target as HTMLImageElement).nextElementSibling?.classList.add('d-flex');
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div className={`rounded-circle bg-primary text-white ${msg.profileImage || (msg as any).user?.profileImage || (msg as any).avatar ? 'd-none' : 'd-flex'} align-items-center justify-content-center fw-bold`} style={{ width: '24px', height: '24px', fontSize: '10px' }}>
+                                                        {msg.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div className="overflow-hidden">
+                                                        <div className="fw-bold text-dark text-truncate" style={{ fontSize: '12px', maxWidth: '120px' }}>{msg.name}</div>
+                                                        <div className="text-muted text-truncate" style={{ fontSize: '10px', maxWidth: '120px' }}>{msg.email}</div>
+                                                    </div>
                                                 </div>
-                                            ) : null}
-
-                                            {msg.status !== 'deleted' && (
-                                                <Button size="sm" variant="ghost" className="text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors border border-transparent hover:border-rose-100 rounded-lg flex-1 md:flex-none" onClick={() => handleDelete(msg.id)}>
-                                                    <Trash2 size={16} />
-                                                    <span className="md:hidden ml-1">Delete</span>
-                                                </Button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                                            </td>
+                                            <td className="px-3 py-2 text-truncate">
+                                                <div className="d-flex align-items-center gap-2 w-100">
+                                                    {msg.status === 'new' && <span className="p-1 rounded-circle bg-blue-500 flex-shrink-0" style={{ width: '6px', height: '6px' }} />}
+                                                    <div className="fw-semibold text-dark text-truncate flex-shrink-0" style={{ fontSize: '12px', maxWidth: '180px' }}>{msg.subject}</div>
+                                                    <span className="text-muted mx-1 flex-shrink-0">-</span>
+                                                    <div className="text-muted text-truncate flex-grow-1" style={{ fontSize: '11px' }}>{msg.message}</div>
+                                                </div>
+                                            </td>
+                                            <td className="px-3 py-2 text-end text-muted whitespace-nowrap" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
+                                                {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
+                                            </td>
+                                            <td className="px-3 py-2">
+                                                <div className="dropdown d-flex justify-content-center">
+                                                    <button className="btn btn-link text-muted p-0 m-0 border-0 shadow-none dropdown-toggle-hide-arrow d-flex align-items-center justify-content-center hover:text-dark hover:bg-gray-100 rounded-circle transition-colors" style={{ width: '28px', height: '28px', textDecoration: 'none' }} type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                                        <MoreVertical size={18} />
+                                                    </button>
+                                                    <ul className="dropdown-menu dropdown-menu-end shadow border border-gray-200 py-1 bg-white" style={{ minWidth: '130px', zIndex: 1050 }}>
+                                                        <li>
+                                                            <button className="dropdown-item d-flex align-items-center gap-2 fw-semibold text-gray-800 hover:bg-gray-50 transition-colors" style={{ fontSize: '11px', padding: '6px 12px' }} onClick={() => { setSelectedMessage(msg); setIsViewModalOpen(true); if(msg.status === 'new') handleStatusChange(msg.id, 'read'); }}>
+                                                                <Eye size={12} className="text-primary" /> View Details
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button className="dropdown-item d-flex align-items-center gap-2 fw-semibold text-gray-800 hover:bg-gray-50 transition-colors" style={{ fontSize: '11px', padding: '6px 12px' }} onClick={() => { setSelectedMessage(msg); setIsReplyModalOpen(true); }}>
+                                                                <Reply size={12} className="text-success" /> Send Reply
+                                                            </button>
+                                                        </li>
+                                                        {msg.status !== 'deleted' && (
+                                                            <li><hr className="dropdown-divider my-1 border-gray-100" /></li>
+                                                        )}
+                                                        {msg.status !== 'deleted' && (
+                                                            <li>
+                                                                <button className="dropdown-item d-flex align-items-center gap-2 fw-semibold text-danger hover:bg-rose-50 transition-colors" style={{ fontSize: '11px', padding: '6px 12px' }} onClick={() => handleDelete(msg.id)}>
+                                                                    <Trash2 size={12} /> Delete Message
+                                                                </button>
+                                                            </li>
+                                                        )}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
                         {hasMore && (
                             <div className="text-center mt-8 pt-4 pb-2">
@@ -234,6 +289,101 @@ export function ContactMessages() {
                     </div>
                 )}
             </ScrollReveal>
+
+            {/* View Message Modal */}
+            {isViewModalOpen && selectedMessage && (
+                <div className="fixed inset-0 z-[9999] d-flex align-items-center justify-content-center bg-dark/40 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-2xl shadow-lg w-100 overflow-hidden fade-in-up border border-gray-100 relative max-w-md my-auto">
+                        <div className="p-3 px-4 border-bottom border-gray-100 d-flex justify-content-between align-items-center bg-gray-50/50">
+                            <div className="d-flex align-items-center gap-3">
+                                <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold shadow-sm" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
+                                    {selectedMessage.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '14px' }}>{selectedMessage.name}</h4>
+                                    <a href={`mailto:${selectedMessage.email}`} className="text-muted hover:text-blue-600 transition-colors" style={{ fontSize: '11px' }}>{selectedMessage.email}</a>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsViewModalOpen(false)} className="btn btn-light bg-light rounded-circle p-1.5 border-0 hover:bg-gray-200 transition-colors">
+                                <X size={16} className="text-muted" />
+                            </button>
+                        </div>
+                        <div className="p-4 overflow-y-auto" style={{ maxHeight: '50vh' }}>
+                            <div className="mb-3">
+                                <span className="badge bg-blue-50 text-blue-700 px-2 py-0.5 rounded-pill mb-2 fw-semibold" style={{ fontSize: '10px' }}>Subject</span>
+                                <h3 className="fw-bold text-dark mb-0" style={{ fontSize: '15px' }}>{selectedMessage.subject}</h3>
+                            </div>
+                            
+                            <div className="bg-gray-50/80 p-3 rounded-xl border border-gray-100/60 shadow-inner">
+                                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed mb-0" style={{ fontSize: '13px' }}>
+                                    {selectedMessage.message}
+                                </p>
+                            </div>
+                            <div className="mt-3 text-end">
+                                <p className="text-muted mb-0 fw-bold" style={{ fontSize: '10px' }}>
+                                    Received {formatDistanceToNow(new Date(selectedMessage.createdAt), { addSuffix: true })}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="p-3 px-4 border-top border-gray-100 bg-gray-50/50 d-flex justify-content-end gap-2">
+                            <button onClick={() => setIsViewModalOpen(false)} className="btn btn-sm btn-light border-gray-200 text-dark fw-bold px-3" style={{ fontSize: '12px' }}>Close</button>
+                            <button onClick={() => { setIsViewModalOpen(false); setIsReplyModalOpen(true); }} className="btn btn-sm btn-primary d-flex align-items-center gap-1.5 fw-bold px-3 shadow-sm" style={{ fontSize: '12px' }}>
+                                <Reply size={14} /> Reply directly
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reply Modal */}
+            {isReplyModalOpen && selectedMessage && (
+                <div className="fixed inset-0 z-[9999] d-flex align-items-center justify-content-center bg-dark/50 backdrop-blur-md p-4">
+                    <div className="bg-white rounded-2xl shadow-xl w-100 overflow-hidden fade-in-up border border-gray-100 relative max-w-md my-auto">
+                        <div className="p-3 px-4 border-bottom border-gray-100 d-flex justify-content-between align-items-center bg-blue-50/30">
+                            <div className="d-flex align-items-center gap-2">
+                                <Reply className="text-blue-600" size={16} />
+                                <h4 className="fw-bold mb-0 text-dark" style={{ fontSize: '14px' }}>Reply to {selectedMessage.name}</h4>
+                            </div>
+                            <button onClick={() => setIsReplyModalOpen(false)} className="btn btn-light bg-white rounded-circle p-1.5 border border-gray-200 hover:bg-gray-100 transition-colors">
+                                <X size={16} className="text-muted" />
+                            </button>
+                        </div>
+                        <div className="p-3 px-4 bg-gray-50/50 border-bottom border-gray-100">
+                            <div className="d-flex align-items-center gap-2" style={{ fontSize: '12px' }}>
+                                <span className="fw-bold text-gray-500">To:</span>
+                                <span className="bg-white px-2 py-0.5 rounded border border-gray-200 text-dark fw-semibold shadow-sm">{selectedMessage.email}</span>
+                            </div>
+                        </div>
+                        <div className="p-4">
+                            <div className="mb-2 d-flex justify-content-between align-items-end">
+                                <label className="fw-bold text-dark mb-0" style={{ fontSize: '13px' }}>Your Message</label>
+                            </div>
+                            <textarea 
+                                className="form-control bg-gray-50/50 border-gray-200 rounded-xl focus:bg-white focus:border-blue-500 transition-all p-3 shadow-sm"
+                                rows={4}
+                                placeholder="Type your response here..."
+                                style={{ fontSize: '12px', resize: 'none' }}
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                            />
+                        </div>
+                        <div className="p-3 px-4 border-top border-gray-100 bg-gray-50/50 d-flex justify-content-end gap-2 align-items-center">
+                            <button onClick={() => setIsReplyModalOpen(false)} className="btn btn-sm btn-link text-muted text-decoration-none fw-bold hover:text-dark">Cancel</button>
+                            <button 
+                                onClick={handleReplySubmit} 
+                                disabled={isSendingReply || !replyText.trim()} 
+                                className="btn btn-sm btn-primary d-flex align-items-center gap-1.5 fw-bold px-4 py-1.5 rounded-xl shadow-sm"
+                            >
+                                {isSendingReply ? (
+                                    <><RefreshCcw size={14} className="animate-spin" /> Sending...</>
+                                ) : (
+                                    <><Send size={14} /> Send Reply</>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -45,18 +45,25 @@ export function AddSiteModal({ isOpen, onClose, onSuccess, initialData }: AddSit
     setIsSubmitting(true);
     try {
       const url = initialData ? `/sites/${initialData.id}` : '/sites';
-      const method = initialData ? 'PUT' : 'POST';
+      const method = initialData ? 'PATCH' : 'POST';
+
+      // Sanitize body for backend
+      const sanitizedBody = {
+          ...formData,
+          managerId: formData.managerId || null
+      };
 
       await fetchApi(url, {
         method,
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedBody),
       });
       toast.success(`Site ${initialData ? 'updated' : 'created'} successfully`);
       if (onSuccess) onSuccess();
       onClose();
-    } catch (error) {
-      console.error(`Failed to ${initialData ? 'update' : 'create'} site`, error);
-      toast.error(`Failed to ${initialData ? 'update' : 'create'} site`);
+    } catch (error: any) {
+      const isEdit = !!initialData;
+      console.error(`Failed to ${isEdit ? 'update' : 'create'} site`, error);
+      toast.error(`Failed to ${isEdit ? 'update' : 'create'} site: ${error.message || 'Check all fields'}`);
     } finally {
       setIsSubmitting(false);
     }

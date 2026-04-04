@@ -44,7 +44,7 @@ export function Portfolio() {
             {/* Header */}
             <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
                 <div>
-                    <h1 className="h5 fw-bold text-dark mb-0">Portfolio Hub</h1>
+                    <h1 className="h5 fw-bold text-dark mb-0">Projects Hub</h1>
                     <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage real estate assets, construction projects, and working sites</p>
                 </div>
                 <div className="d-flex gap-2">

@@ -37,7 +37,8 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
 
   const loadSites = async () => {
     try {
-      const data = await fetchApi<any[]>('/sites');
+      const res = await fetchApi<any>('/sites?limit=100');
+      const data = Array.isArray(res) ? res : (res.data || []);
       setSites(data);
     } catch (err) {
       console.error("Failed to load sites", err);
@@ -83,6 +84,11 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    if (!formData.siteId) {
+      alert("Please assign a project site for this employee to enable attendance marking.");
+      setIsSubmitting(false);
+      return;
+    }
     try {
       const url = initialData ? `/employees/${initialData.id}` : '/employees';
       const method = initialData ? 'PUT' : 'POST';
@@ -257,7 +263,7 @@ export function AddEmployeeModal({ isOpen, onClose, onSuccess, initialData }: Ad
 
           <div className="col-md-6">
             <label className="form-label small fw-medium mb-1">
-              Working Site (Location)
+              Working Site (Location) *
             </label>
             <select
               value={formData.siteId}

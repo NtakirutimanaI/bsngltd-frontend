@@ -387,7 +387,7 @@ export function Dashboard() {
               <h6 className="mb-0">
                 {isEmployee || isContractor ? "My Assigned Projects" : isClient ? "My Active Projects" : "Recent Projects"}
               </h6>
-              <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/portfolio'); }}>Show All</a>
+              <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/projects'); }}>Show All</a>
             </div>
             <div className="table-responsive">
               <table className="table text-start align-middle table-bordered table-hover mb-0">
@@ -449,7 +449,7 @@ export function Dashboard() {
                               <div className="d-flex gap-1">
                                 <button
                                   className="btn btn-sm btn-primary"
-                                  onClick={() => navigate(`/dashboard/portfolio?id=${project.id}`)}
+                                  onClick={() => navigate(`/dashboard/projects?id=${project.id}`)}
                                 >Detail</button>
                                 {isAdminLike && (
                                   <>

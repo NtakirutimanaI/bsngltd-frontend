@@ -205,9 +205,9 @@ export function ManageContent() {
     };
 
     return (
-        <div className="container-fluid bg-transparent min-vh-100 px-2 px-md-4 pt-4 pb-4">
+        <div className="container-fluid bg-transparent min-vh-100 px-2 px-md-4 pt-2 pb-2">
             {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
                 <div>
                     <h1 className="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
                         <FileText size={20} className="text-primary" />
@@ -237,7 +237,7 @@ export function ManageContent() {
             </ScrollReveal>
 
             {/* Category Filters */}
-            <div className="bg-light rounded p-4 mb-4 shadow-sm">
+            <div className="bg-light rounded p-2 px-3 mb-3 shadow-sm">
                 <div className="p-0">
                     <div className="nav nav-pills gap-2 flex-nowrap overflow-auto pb-1">
                         <button
@@ -274,7 +274,7 @@ export function ManageContent() {
             </div>
 
             {/* Search Bar */}
-            <div className="bg-light rounded p-4 mb-4 shadow-sm">
+            <div className="bg-light rounded p-2 px-3 mb-3 shadow-sm">
                 <div className="p-0">
                     <div className="position-relative d-flex align-items-center gap-3">
                         <div className="position-relative flex-grow-1">
@@ -284,8 +284,8 @@ export function ManageContent() {
                                 placeholder="Find sections by title, description or code..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="form-control form-control-lg ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
-                                style={{ fontSize: '14px', borderRadius: '10px', height: '45px' }}
+                                className="form-control form-control-sm ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
+                                style={{ fontSize: '14px', borderRadius: '10px', height: '38px' }}
                             />
                             {searchTerm && (
                                 <button
@@ -303,18 +303,20 @@ export function ManageContent() {
                 </div>
             </div>
 
+            </div>
+
             {/* Content Grid */}
-            <div className="bg-light rounded p-4 shadow-sm mb-4">
+            <div className="bg-light rounded p-3 shadow-sm mb-3">
                 {isLoading ? (
-                    <div className="text-center py-12">
+                    <div className="text-center py-8">
                         <div className="spinner-border text-primary" role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>
                         <p className="text-muted mt-3 small">Retrieving content data...</p>
                     </div>
                 ) : filteredContent.length === 0 ? (
-                    <div className="text-center py-12 bg-white">
-                        <div className="w-16 h-16 bg-light rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border">
+                    <div className="text-center py-8 bg-white">
+                        <div className="w-16 h-16 bg-light rounded-circle d-flex align-items-center justify-center mx-auto mb-3 border">
                             <FileText size={32} className="text-muted" />
                         </div>
                         <h6 className="fw-bold text-dark">No Results Found</h6>
@@ -326,32 +328,33 @@ export function ManageContent() {
                         <table className="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th className="ps-4 py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Section</th>
-                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Title & Subtitle</th>
-                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Description</th>
-                                    <th className="py-3 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em' }}>Visibility</th>
-                                    <th className="pe-4 py-3 border-0 text-dark small text-uppercase fw-bold text-end" style={{ letterSpacing: '0.02em' }}>Actions</th>
+                                    <th className="ps-3 py-2 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em', fontSize: '11px' }}>Section</th>
+                                    <th className="py-2 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em', fontSize: '11px' }}>Title & Subtitle</th>
+                                    <th className="py-2 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em', fontSize: '11px' }}>Description</th>
+                                    <th className="py-2 border-0 text-dark small text-uppercase fw-bold" style={{ letterSpacing: '0.02em', fontSize: '11px' }}>Visibility</th>
+                                    <th className="pe-3 py-2 border-0 text-dark small text-uppercase fw-bold text-end" style={{ letterSpacing: '0.02em', fontSize: '11px' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="border-0">
                                 {filteredContent.map((item) => (
                                     <tr key={item.id} className="border-bottom border-light/50">
-                                        <td className="ps-4 py-3">
-                                            <span className="badge bg-primary-subtle text-primary border border-primary/10 px-2 py-1.5 rounded-pill text-uppercase" style={{ fontSize: '9px', fontWeight: 800 }}>
+                                        <td className="ps-3 py-2">
+                                            <span className="badge bg-primary-subtle text-primary border border-primary/10 px-2 py-1 rounded-pill text-uppercase" style={{ fontSize: '9px', fontWeight: 800 }}>
                                                 {item.section}
                                             </span>
                                         </td>
-                                        <td className="py-3">
+                                        <td className="py-2">
                                             <div className="fw-bold text-dark mb-0.5" style={{ fontSize: '13px' }}>{item.title}</div>
                                             {item.subtitle && <div className="text-muted" style={{ fontSize: '11px' }}>{item.subtitle}</div>}
                                         </td>
-                                        <td className="py-3">
+                                        <td className="py-2">
                                             <div className="text-muted text-truncate" style={{ fontSize: '12px', maxWidth: '250px' }}>
                                                 {item.description}
                                             </div>
                                         </td>
-                                        <td className="py-3">
-                                            <div className="form-check form-switch cursor-pointer">
+                                        </td>
+                                        <td className="py-2">
+                                            <div className="form-check form-switch cursor-pointer mb-0">
                                                 <input
                                                     className="form-check-input cursor-pointer"
                                                     type="checkbox"
@@ -359,25 +362,25 @@ export function ManageContent() {
                                                     checked={item.isActive}
                                                     onChange={() => toggleContentStatus(item.id, item.isActive)}
                                                 />
-                                                <span className={`small fw-bold ms-2 ${item.isActive ? 'text-success' : 'text-muted'}`}>
+                                                <span className={`small fw-bold ms-2 ${item.isActive ? 'text-success' : 'text-muted'}`} style={{ fontSize: '10px' }}>
                                                     {item.isActive ? 'VISIBLE' : 'HIDDEN'}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-3 pe-4 text-end">
-                                            <div className="d-flex justify-content-end gap-2">
+                                        <td className="py-2 pe-3 text-end">
+                                            <div className="d-flex justify-content-end gap-1.5">
                                                 <button
                                                     onClick={() => setEditingContent(item)}
-                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-primary hover:bg-primary hover:text-white transition-all"
-                                                    style={{ borderRadius: '8px' }}
+                                                    className="btn btn-light btn-sm border shadow-sm p-1.5 text-primary hover:bg-primary hover:text-white transition-all"
+                                                    style={{ borderRadius: '6px' }}
                                                     title="Edit Entry"
                                                 >
                                                     <Edit size={14} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(item.id, item.title)}
-                                                    className="btn btn-light btn-sm border shadow-sm p-2 text-danger hover:bg-danger hover:text-white transition-all"
-                                                    style={{ borderRadius: '8px' }}
+                                                    className="btn btn-light btn-sm border shadow-sm p-1.5 text-danger hover:bg-danger hover:text-white transition-all"
+                                                    style={{ borderRadius: '6px' }}
                                                     title="Delete Entry"
                                                 >
                                                     <Trash2 size={14} />
@@ -394,7 +397,7 @@ export function ManageContent() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="px-2 px-md-4 py-3">
+                <div className="px-2 px-md-3 py-2">
                     <PaginationSelector
                         currentPage={currentPage}
                         totalPages={totalPages}

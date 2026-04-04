@@ -7,14 +7,12 @@ import {
     Edit2,
     Trash2,
     Eye,
-    Save,
     Send,
     Smartphone,
     Wifi,
     Download,
     AlertCircle,
     RotateCcw,
-    RefreshCw,
     Building2,
     CalendarDays,
     Users,
@@ -26,6 +24,7 @@ import { fetchApi } from '../api/client';
 import { useAuth } from "@/app/context/AuthContext";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { toast } from "sonner";
+import { Badge } from "@/app/components/ui/badge";
 import { AddEmployeeModal } from "@/app/components/AddEmployeeModal";
 import { SitesTab } from "./workforce/SitesTab";
 import { ContractsTab } from "./workforce/ContractsTab";
@@ -314,36 +313,51 @@ export function Workforce() {
         <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
             <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
-            {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
-                <div>
-                    <h1 className="h5 fw-bold text-dark mb-0">Workforce Center</h1>
-                    <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Manage employees, attendance, and payroll in one place</p>
-                </div>
-                <div className="d-flex gap-2">
-                    {activeTab === 'directory' && isAdminOrManager && (
-                        <button
-                            onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
-                            className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
-                        >
-                            <Plus size={14} /> <span>Add Staff</span>
-                        </button>
-                    )}
-                    {activeTab === 'attendance' && isAdminOrManager && (
-                        <button
-                            onClick={saveAttendance}
-                            disabled={isSavingAttendance}
-                            className="btn btn-primary px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg d-flex align-items-center gap-2 border-0"
-                        >
-                            {isSavingAttendance ? <RefreshCw size={16} className="animate-spin" /> : <Save size={16} />}
-                            <span>{isSavingAttendance ? 'Saving...' : 'Save Records'}</span>
-                        </button>
-                    )}
-                    <button
-                        className="btn btn-light p-2 border rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95 bg-white shadow-sm"
-                     onClick={() => setIsExportModalOpen(true)}>
-                        <Download size={16} />
-                    </button>
+            {/* Compact Stat Cards Replacement for Header */}
+            <ScrollReveal className="row mb-3 px-2 px-md-4 pt-1">
+                <div className="col-12">
+                   <div className="d-flex align-items-center gap-3">
+                        {/* Stat Card 1: Total Staff */}
+                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                            <div className="bg-primary bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                <Users size={18} />
+                            </div>
+                            <div>
+                                <div className="fw-bold text-dark h5 mb-0">{totalItems}</div>
+                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>TOTAL STAFF</div>
+                            </div>
+                        </div>
+
+                        {/* Stat Card 2: Attendance */}
+                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                            <div className="bg-success bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                <Check size={18} />
+                            </div>
+                            <div>
+                                <div className="fw-bold text-dark h5 mb-0">{Math.round(employees.reduce((s,e)=>s+(Number(e.status==='active')),0)/ (employees.length||1)*100)}%</div>
+                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>AVG ATTENDANCE</div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="ms-auto d-flex gap-2">
+                             {activeTab === 'directory' && isAdminOrManager && (
+                                <button
+                                    onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
+                                    style={{ fontSize: '11px' }}
+                                >
+                                    <Plus size={14} className="me-1" /> Add Staff
+                                </button>
+                            )}
+                            <button
+                                className="bg-white hover:bg-gray-50 text-gray-600 p-2 rounded-lg border shadow-sm transition-all hover:scale-105 active:scale-95 d-flex align-items-center justify-content-center"
+                                onClick={() => setIsExportModalOpen(true)}
+                            >
+                                <Download size={16} />
+                            </button>
+                        </div>
+                   </div>
                 </div>
             </ScrollReveal>
 
@@ -479,8 +493,11 @@ export function Workforce() {
                                                             {emp.name.charAt(0)}
                                                         </div>
                                                         <div>
-                                                            <div className="fw-bold text-dark">{emp.name}</div>
-                                                            <div className="text-muted small">ID: {emp.employeeId}</div>
+                                                            <div className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
+                                                                {emp.name}
+                                                                <Badge className="bg-blue-50 text-blue-600 border-0 px-1 py-0" style={{ fontSize: '8px' }}>EMPLOYEE</Badge>
+                                                            </div>
+                                                            <div className="text-muted smaller" style={{ fontSize: '10px' }}>ID: {emp.employeeId}</div>
                                                         </div>
                                                     </div>
                                                 </td>

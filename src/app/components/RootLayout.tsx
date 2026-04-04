@@ -28,12 +28,20 @@ import { Button } from "@/app/components/ui/button";
 import { fetchApi, getImageUrl } from "../api/client";
 import { formatDistanceToNow } from 'date-fns';
 import { useTracker } from "../hooks/useTracker";
+import { useSite } from "../context/SiteContext";
+import { 
+  Building2, 
+  MapPin, 
+  ChevronDown, 
+  PlusCircle 
+} from "lucide-react";
 
 export function RootLayout() {
   useTracker();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { selectedSite, setSelectedSite, sites } = useSite();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
@@ -99,7 +107,7 @@ export function RootLayout() {
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      navigate(`/dashboard/portfolio?search=${searchTerm}`);
+      navigate(`/dashboard/projects?search=${searchTerm}`);
     }
   };
 
@@ -111,10 +119,11 @@ export function RootLayout() {
   // Restoring EXACT sidebar links from original project with HUB-TAB routing where needed
   const allNavItems = [
     { name: "Dashboard", path: "/dashboard", iconClass: "fa-solid fa-gauge-high", roles: ['all'] },
-    { name: "Portfolio Hub", path: "/dashboard/portfolio", iconClass: "fa-solid fa-briefcase", roles: ['all'] },
-    { name: "Workforce Center", path: "/dashboard/workforce", iconClass: "fa-solid fa-users", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'employee'] },
+    { name: "Sites & Projects", path: "/dashboard/sites", iconClass: "fa-solid fa-map-location-dot", roles: ['super_admin', 'admin', 'manager'] },
+    { name: "Manage Users", path: "/dashboard/users", iconClass: "fa-solid fa-users-gear", roles: ['super_admin', 'admin'] },
+    { name: "Site Attendance", path: "/dashboard/attendance", iconClass: "fa-solid fa-calendar-check", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
     { name: "Finance Center", path: "/dashboard/finance", iconClass: "fa-solid fa-money-bill-transfer", roles: ['super_admin', 'admin', 'manager', 'site_manager'] },
-    { name: "Communication Hub", path: "/dashboard/communications", iconClass: "fa-solid fa-comments", roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
+    { name: "Communication", path: "/dashboard/communications", iconClass: "fa-solid fa-comments", roles: ['super_admin', 'admin', 'manager', 'hr', 'content_editor'] },
     { name: "Insights & Reports", path: "/dashboard/insights", iconClass: "fa-solid fa-chart-line", roles: ['super_admin', 'admin', 'manager', 'auditor'] },
     { name: "Content Management", path: "/dashboard/content", iconClass: "fa-solid fa-file-pen", roles: ['super_admin', 'admin', 'content_editor'] },
     { name: "Administration Console", path: "/dashboard/admin", iconClass: "fa-solid fa-user-shield", roles: ['super_admin', 'admin', 'manager', 'site_manager', 'hr'] },
@@ -207,12 +216,66 @@ export function RootLayout() {
             <Input
               type="search"
               placeholder="Search..."
-              className="form-control border-0"
+              className="form-control border-0 bg-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearch}
+              style={{ width: '200px' }}
             />
           </form>
+
+          {/* Site Switcher */}
+          {!location.pathname.includes('/dashboard/content') && (
+            <div className="ms-4 d-none d-lg-block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="d-flex align-items-center gap-2 border-0 bg-white shadow-sm rounded-xl px-4 py-2 hover:bg-gray-50 transition-all border border-gray-100">
+                    <div className="h-8 w-8 bg-blue-100 text-blue-600 rounded-lg d-flex align-items-center justify-content-center">
+                      <Building2 size={16} />
+                    </div>
+                    <div className="text-start">
+                      <div className="text-xs text-muted fw-bold uppercase px-1" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Current Site</div>
+                      <div className="fw-bold text-dark px-1 truncate" style={{ maxWidth: '140px', fontSize: '13px' }}>
+                        {selectedSite ? selectedSite.name : "Select a Site"}
+                      </div>
+                    </div>
+                    <ChevronDown size={14} className="text-muted ms-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64 border-0 shadow-lg rounded-xl p-2 bg-white">
+                  <DropdownMenuLabel className="small fw-bold text-muted px-3 py-2 uppercase tracking-wider">Switch Working Site</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="my-1" />
+                  <div className="max-h-60 overflow-auto py-1">
+                    {sites.length === 0 ? (
+                      <div className="p-4 text-center">
+                         <p className="small text-muted mb-2">No sites available</p>
+                         <Button size="sm" variant="link" onClick={() => navigate('/dashboard/sites')} className="fw-bold p-0">Create First Site</Button>
+                      </div>
+                    ) : (
+                      sites.map(site => (
+                        <DropdownMenuItem 
+                          key={site.id} 
+                          onClick={() => setSelectedSite(site)}
+                          className={`d-flex align-items-center gap-3 p-3 rounded-lg mb-1 cursor-pointer transition-all ${selectedSite?.id === site.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50'}`}
+                        >
+                          <MapPin size={16} className={selectedSite?.id === site.id ? 'text-blue-600' : 'text-gray-400'} />
+                          <div className="flex-grow-1 overflow-hidden">
+                            <div className="fw-bold small truncate">{site.name}</div>
+                            <div className="smaller text-muted truncate">{site.location}</div>
+                          </div>
+                          {selectedSite?.id === site.id && <div className="h-2 w-2 bg-blue-600 rounded-circle shadow-sm" />}
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </div>
+                  <DropdownMenuSeparator className="my-1" />
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/sites')} className="d-flex align-items-center gap-2 p-3 text-primary fw-bold cursor-pointer hover:bg-blue-50 rounded-lg">
+                    <PlusCircle size={16} /> Manage All Sites
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
           <div className="navbar-nav align-items-center ms-auto gap-3">
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-circle">
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

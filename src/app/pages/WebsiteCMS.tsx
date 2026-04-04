@@ -153,7 +153,8 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                 <button
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
-                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-2"
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5"
+                    style={{ fontSize: '11px', fontWeight: 'bold' }}
                 >
                     {uploading ? (
                         <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
@@ -268,7 +269,8 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
                 <button
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
-                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-2"
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5"
+                    style={{ fontSize: '11px', fontWeight: 'bold' }}
                 >
                     {uploading ? (
                         <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
@@ -480,142 +482,182 @@ export function WebsiteCMS() {
     }
 
     return (
-        <div className="space-y-6">
-            <ScrollReveal>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                    <div>
-                        <h1 className="h4 fw-bold text-dark">Website CMS</h1>
-                        <p className="text-muted small mt-1">Manage public website content, images, and section visibility</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => {
-                                if (isRecordPage) loadRecords();
-                                else loadSettings();
-                            }}
-                            className="btn btn-light btn-sm d-flex align-items-center gap-2 border px-3"
-                            style={{ height: '38px', borderRadius: '5px' }}
-                        >
-                            <RefreshCcw size={14} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
-                            Refresh
-                        </button>
-                        {activeView === 'text' && (
-                            <div className="bg-light p-1 rounded border d-flex mr-4">
-                                {languages.map(lang => (
-                                    <button
-                                        key={lang.id}
-                                        onClick={() => setActiveLang(lang.id)}
-                                        className={`px-3 py-1.5 rounded text-[11px] font-bold transition-all border-0 ${activeLang === lang.id ? 'bg-primary text-white' : 'text-muted bg-transparent hover:bg-white'}`}
-                                    >
-                                        {lang.id.toUpperCase()}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                        <button
-                            onClick={saveSettings}
-                            disabled={isSaving}
-                            className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 rounded shadow-sm text-sm font-bold"
-                            style={{ height: '38px' }}
-                        >
-                            {isSaving ? <RefreshCcw className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
-                            Publish Changes
-                        </button>
-                    </div>
-                </div>
-            </ScrollReveal>
+        <div className="container-fluid py-0" style={{ background: 'transparent' }}>
 
+            {/* Message toast */}
             {message && (
-                <ScrollReveal>
-                    <div className={`p-4 rounded-xl flex items-center gap-3 ${message.type === 'success' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200'}`}>
-                        <CheckCircle2 size={20} />
-                        <span className="font-medium">{message.text}</span>
-                    </div>
-                </ScrollReveal>
+                <div className={`d-flex align-items-center gap-2 px-3 py-2 mb-2 rounded-xl border ${message.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`} style={{ fontSize: '12px' }}>
+                    <CheckCircle2 size={14} />
+                    <span className="fw-bold">{message.text}</span>
+                </div>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Page Selector Sidebar */}
-                <ScrollReveal delay={0.1} className="lg:col-span-1">
-                    <div className="bg-light rounded p-2 shadow-sm border h-fit sticky top-24">
+            <div className="row g-0" style={{ minHeight: '70vh' }}>
+                {/* ===== LEFT SIDEBAR — Finance Center style ===== */}
+                <div className="col-lg-3 border-end border-gray-100 pe-0">
+
+                    {/* Sidebar Header Card */}
+                    <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm mx-2" style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(10px)' }}>
+                        <div className="d-flex align-items-center gap-2 pb-2 border-bottom border-gray-100">
+                            <div className="bg-primary rounded-lg p-2 text-white shadow-sm">
+                                <Globe size={14} />
+                            </div>
+                            <div className="overflow-hidden">
+                                <h2 className="fw-bold mb-0 text-truncate" style={{ fontSize: '13px' }}>Website CMS</h2>
+                                <p className="smaller text-muted mb-0" style={{ fontSize: '10px' }}>Website content editor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Page Navigation Items */}
+                    <div className="directory-scroll-container px-2">
                         {pages.map((page) => {
-                            const isRecordPage = page.id === 'properties' || page.id === 'updates';
+                            const isRecordPageItem = page.id === 'properties' || page.id === 'updates';
                             let countStr = "";
-                            if (isRecordPage) {
-                                if (activePage === page.id) countStr = `${records.length} items`;
+                            if (isRecordPageItem) {
+                                if (activePage === page.id) countStr = `${records.length}`;
                             } else if (PAGE_IMAGES[page.id]) {
-                                countStr = `${PAGE_IMAGES[page.id].length} img`;
+                                countStr = `${PAGE_IMAGES[page.id].length}`;
                             }
+                            const isActive = activePage === page.id;
 
                             return (
-                                <button
+                                <div
                                     key={page.id}
                                     onClick={() => setActivePage(page.id)}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded text-start transition-all border-0 mb-1 ${activePage === page.id
-                                        ? "bg-white text-primary fw-bold border-start border-primary"
-                                        : "text-muted hover:bg-white"
-                                        }`}
+                                    className={`site-row p-1 mb-1 rounded-xl transition-all border cursor-pointer ${isActive ? 'active-site shadow-md' : 'bg-white text-dark border-gray-100 hover:bg-light'}`}
+                                    style={isActive ? { background: '#009CFF', borderColor: '#009CFF', color: 'white' } : {}}
                                 >
-                                    <page.icon size={18} />
-                                    <span className="text-sm">{page.name}</span>
-                                    {countStr && (
-                                        <span className={`ms-auto text-[9px] font-bold px-2 py-0.5 rounded-pill ${activePage === page.id ? 'bg-primary text-white' : 'bg-secondary text-white opacity-50'}`}>
-                                            {countStr}
-                                        </span>
-                                    )}
-                                </button>
+                                    <div className="px-2 py-1.5 d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center gap-2 overflow-hidden flex-grow-1">
+                                            <div className={`rounded-lg p-1.5 d-flex align-items-center justify-content-center ${isActive ? 'bg-white/20' : 'bg-blue-50'}`} style={{ width: '30px', height: '30px', minWidth: '30px' }}>
+                                                <page.icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
+                                            </div>
+                                            <div className="overflow-hidden text-start">
+                                                <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{page.name}</h6>
+                                                <div className={`smaller ${isActive ? 'text-white/80' : 'text-muted'}`} style={{ fontSize: '9px' }}>
+                                                    {isRecordPageItem ? 'Database entries' : `${PAGE_IMAGES[page.id]?.length || 0} images`}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {countStr && (
+                                            <span className={`text-[9px] fw-bold px-1.5 py-0.5 rounded-pill ${isActive ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`}>
+                                                {countStr}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                             );
                         })}
                     </div>
-                </ScrollReveal>
+                </div>
 
-                {/* Content Editor */}
-                <div className="lg:col-span-3 space-y-6">
-                    {/* View Toggle */}
-                    <ScrollReveal delay={0.15}>
-                        <div className="bg-light rounded p-2 shadow-sm border flex gap-2">
+                {/* ===== MAIN CONTENT AREA ===== */}
+                <div className="col-lg-9 ps-0">
+
+                    {/* Content Header Bar — Finance style */}
+                    <ScrollReveal>
+                        <div className="d-flex align-items-center justify-content-between gap-2 mb-2 py-2 px-3 bg-white rounded-xl border border-gray-100 shadow-sm mx-2">
+                            <div>
+                                <h1 className="h6 fw-bold text-dark mb-0 leading-tight capitalize">
+                                    {pages.find(p => p.id === activePage)?.name || 'Page Editor'}
+                                </h1>
+                                <p className="text-muted mb-0" style={{ fontSize: '10px' }}>
+                                    {isRecordPage ? 'Database record editor' : 'Media & text content manager'}
+                                </p>
+                            </div>
+                            <div className="d-flex align-items-center gap-2">
+                                {/* Language switcher — only when text view */}
+                                {activeView === 'text' && (
+                                    <div className="bg-light p-1 rounded-lg border d-flex gap-1">
+                                        {languages.map(lang => (
+                                            <button
+                                                key={lang.id}
+                                                onClick={() => setActiveLang(lang.id)}
+                                                className={`px-2 py-0.5 rounded text-[10px] fw-bold border-0 transition-all ${activeLang === lang.id ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-white'}`}
+                                            >
+                                                {lang.id.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                                {/* Refresh */}
+                                <button
+                                    onClick={() => { if (isRecordPage) loadRecords(); else loadSettings(); }}
+                                    className="btn btn-light btn-sm border d-flex align-items-center gap-1 px-2"
+                                    style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                    title="Refresh"
+                                >
+                                    <RefreshCcw size={12} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
+                                </button>
+                                {/* Publish */}
+                                {!isRecordPage && (
+                                    <button
+                                        onClick={saveSettings}
+                                        disabled={isSaving}
+                                        className="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
+                                        style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                    >
+                                        {isSaving ? <RefreshCcw className="animate-spin" size={12} /> : <Save size={12} />}
+                                        Publish
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* View Toggle — Images vs Text */}
+                    <ScrollReveal delay={0.1}>
+                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-1 d-flex gap-1 mb-2 mx-2">
                             <button
                                 onClick={() => setActiveView('images')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition-all border-0 ${activeView === 'images'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-muted hover:bg-white'
-                                    }`}
+                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'images' ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-light'}`}
+                                style={{ fontSize: '11px' }}
                             >
-                                <ImageIcon size={16} /> Image Management ({(activePage === 'properties' || activePage === 'updates') ? records.length : currentPageImages.length})
+                                <ImageIcon size={12} />
+                                Image Management
+                                <span className={`px-1.5 py-0 rounded-pill ${activeView === 'images' ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`} style={{ fontSize: '9px', fontWeight: 800 }}>
+                                    {isRecordPage ? records.length : currentPageImages.length}
+                                </span>
                             </button>
                             <button
                                 onClick={() => setActiveView('text')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition-all border-0 ${activeView === 'text'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-muted hover:bg-white'
-                                    }`}
+                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'text' ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-light'}`}
+                                style={{ fontSize: '11px' }}
                             >
-                                <Type size={16} /> Text Content ({(activePage === 'properties' || activePage === 'updates') ? records.length : textSettings.length})
+                                <Type size={12} />
+                                Text Content
+                                <span className={`px-1.5 py-0 rounded-pill ${activeView === 'text' ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`} style={{ fontSize: '9px', fontWeight: 800 }}>
+                                    {isRecordPage ? records.length : textSettings.length}
+                                </span>
                             </button>
                         </div>
                     </ScrollReveal>
 
                     {/* IMAGE VIEW */}
                     {activeView === 'images' && (
-                        <ScrollReveal delay={0.2}>
-                            <div className="bg-light rounded shadow-sm border overflow-hidden">
-                                <div className="bg-white px-4 py-3 border-b">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-8 w-8 bg-light rounded flex items-center justify-center">
-                                            <ImageIcon className="text-primary" size={16} />
+                        <ScrollReveal delay={0.2} className="mx-2">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="bg-light/50 px-3 py-2 border-b d-flex align-items-center justify-content-between gap-2">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
+                                            <ImageIcon className="text-primary" size={12} />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold text-dark mb-0 capitalize">
+                                            <h3 className="text-sm fw-bold text-dark mb-0 capitalize">
                                                 {activePage.replace('_', ' ')} — Images
                                             </h3>
-                                            <p className="text-[11px] text-muted mb-0">Click any image icon or "Replace Image" to upload a new version</p>
+                                            <p className="text-muted mb-0" style={{ fontSize: '10px' }}>Hover an image and click the camera icon to replace it</p>
                                         </div>
                                     </div>
+                                    <span className="fw-bold px-2 py-0.5 bg-primary/10 text-primary rounded-pill" style={{ fontSize: '9px' }}>
+                                        {isRecordPage ? records.length : currentPageImages.length} images
+                                    </span>
                                 </div>
 
-                                <div className="p-4">
+                                <div className="p-3">
                                     {currentPageImages.length > 0 && !isRecordPage ? (
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                                             {currentPageImages.map((imgDef) => (
                                                 <ImageUploadCard
                                                     key={imgDef.key + activePage}
@@ -635,16 +677,16 @@ export function WebsiteCMS() {
                                             <div>
                                                 {activePage === 'properties' ? (
                                                     records.map((record) => (
-                                                        <div key={record.id} className="mb-6">
-                                                            <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700">
-                                                                <Building2 className="text-blue-600" size={16} />
+                                                        <div key={record.id} className="mb-4">
+                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                                                <Building2 className="text-blue-600" size={14} />
                                                                 <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
                                                                     {(() => { try { if (record.title?.startsWith('{')) { const o = JSON.parse(record.title); return o.en || o.rw || Object.values(o)[0]; } } catch { } return record.title; })() || 'Untitled'}
                                                                 </span>
                                                                 {record.code && <span className="text-[10px] text-gray-400">({record.code})</span>}
                                                                 <span className="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-bold">3 images</span>
                                                             </div>
-                                                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                                                                 <RecordImageCard
                                                                     record={record}
                                                                     type="properties"
@@ -670,7 +712,7 @@ export function WebsiteCMS() {
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                                                         {records.map((record) => (
                                                             <RecordImageCard
                                                                 key={record.id}
@@ -688,7 +730,7 @@ export function WebsiteCMS() {
                                             <div className="text-center py-12">
                                                 <ImageIcon className="mx-auto text-gray-300 mb-4" size={48} />
                                                 <p className="text-gray-500">No {activePage} records found.</p>
-                                                <p className="text-gray-400 text-sm">Add some {activePage} first from the {activePage === 'properties' ? 'Portfolio' : 'Content'} page.</p>
+                                                <p className="text-gray-400 text-sm">Add some {activePage} first from the {activePage === 'properties' ? 'Projects' : 'Content'} page.</p>
                                             </div>
                                         )
                                     ) : (
@@ -704,26 +746,29 @@ export function WebsiteCMS() {
 
                     {/* TEXT VIEW */}
                     {activeView === 'text' && (
-                        <ScrollReveal delay={0.2}>
-                            <div className="bg-light rounded shadow-sm border overflow-hidden">
-                                <div className="bg-white px-4 py-3 border-b d-flex justify-content-between align-items-center">
-                                    <div className="d-flex align-items-center gap-4">
-                                        <h3 className="text-sm font-bold text-dark mb-0 capitalize">
+                        <ScrollReveal delay={0.2} className="mx-2">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="bg-light/50 px-3 py-2 border-b d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
+                                            <Type size={12} className="text-primary" />
+                                        </div>
+                                        <h3 className="text-sm fw-bold text-dark mb-0 capitalize">
                                             {activePage.replace('_', ' ')} Content
                                         </h3>
-                                        <div className="d-flex align-items-center gap-1.5 px-3 py-1 bg-light text-primary rounded-pill border">
-                                            <Globe size={12} />
-                                            <span className="text-[10px] font-bold uppercase tracking-wider">{languages.find(l => l.id === activeLang)?.name}</span>
+                                        <div className="d-flex align-items-center gap-1 px-2 py-0.5 bg-white text-primary rounded-pill border" style={{ fontSize: '10px' }}>
+                                            <Globe size={10} />
+                                            <span className="fw-bold uppercase">{languages.find(l => l.id === activeLang)?.name}</span>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-bold px-2 py-0.5 bg-primary text-white rounded">
+                                    <span className="fw-bold px-2 py-0.5 bg-primary text-white rounded-pill" style={{ fontSize: '9px' }}>
                                         {isRecordPage ? records.length : textSettings.length} Items
                                     </span>
                                 </div>
 
-                                <div className="p-4">
+                                <div className="p-3">
                                     {isRecordPage && (
-                                        <div className="space-y-6">
+                                        <div className="space-y-4">
                                             {recordsLoading ? (
                                                 <div className="text-center py-12">
                                                     <RefreshCcw className="animate-spin mx-auto text-primary mb-3" size={28} />
@@ -731,8 +776,8 @@ export function WebsiteCMS() {
                                                 </div>
                                             ) : records.length > 0 ? (
                                                 records.map((record: any) => (
-                                                    <div key={record.id} className="p-4 border rounded bg-white shadow-sm space-y-4">
-                                                        <div className="d-flex align-items-center justify-content-between border-bottom pb-3">
+                                                    <div key={record.id} className="p-3 border rounded bg-white shadow-sm space-y-3">
+                                                        <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
                                                             <div className="d-flex align-items-center gap-2">
                                                                 <div className="w-8 h-8 rounded bg-light d-flex align-items-center justify-center">
                                                                     {activePage === 'properties' ? <Building2 size={14} className="text-primary" /> : <Newspaper size={14} className="text-primary" />}
@@ -742,8 +787,8 @@ export function WebsiteCMS() {
                                                                 </span>
                                                             </div>
                                                             <button
-                                                                className="btn btn-primary btn-sm px-3 fw-bold"
-                                                                style={{ fontSize: '11px' }}
+                                                                className="btn btn-primary btn-sm px-2 py-1 fw-bold"
+                                                                style={{ fontSize: '10px' }}
                                                                 onClick={async () => {
                                                                     try {
                                                                         const upRecord = records.find(r => r.id === record.id);
@@ -773,8 +818,8 @@ export function WebsiteCMS() {
                                                             </button>
                                                         </div>
 
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            <div className="space-y-1.5">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            <div className="space-y-1">
                                                                 <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
                                                                 <Input
                                                                     value={getLocalizedValue(record.title || '', activeLang)}
@@ -788,13 +833,13 @@ export function WebsiteCMS() {
                                                                             return { ...r, title: JSON.stringify(obj) };
                                                                         }));
                                                                     }}
-                                                                    className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                    className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                     placeholder="Enter title..."
                                                                 />
                                                             </div>
 
                                                             {activePage === 'properties' ? (
-                                                                <div className="space-y-1.5">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Location ({activeLang.toUpperCase()})</label>
                                                                     <Input
                                                                         value={getLocalizedValue(record.location || '', activeLang)}
@@ -808,12 +853,12 @@ export function WebsiteCMS() {
                                                                                 return { ...r, location: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="Enter location..."
                                                                     />
                                                                 </div>
                                                             ) : (
-                                                                <div className="space-y-1.5">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Excerpt ({activeLang.toUpperCase()})</label>
                                                                     <Input
                                                                         value={getLocalizedValue(record.excerpt || '', activeLang)}
@@ -827,7 +872,7 @@ export function WebsiteCMS() {
                                                                                 return { ...r, excerpt: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="Brief summary..."
                                                                     />
                                                                 </div>
@@ -835,8 +880,8 @@ export function WebsiteCMS() {
                                                         </div>
 
                                                         {activePage === 'properties' && (
-                                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                                                <div className="space-y-1.5">
+                                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Price (RWF)</label>
                                                                     <Input
                                                                         type="number"
@@ -845,11 +890,11 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, price: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="e.g. 85000000"
                                                                     />
                                                                 </div>
-                                                                <div className="space-y-1.5">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Size (sqft)</label>
                                                                     <Input
                                                                         type="number"
@@ -858,11 +903,11 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, size: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="e.g. 120"
                                                                     />
                                                                 </div>
-                                                                <div className="space-y-1.5">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Beds</label>
                                                                     <Input
                                                                         type="number"
@@ -871,11 +916,11 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bedrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="3"
                                                                     />
                                                                 </div>
-                                                                <div className="space-y-1.5">
+                                                                <div className="space-y-1">
                                                                     <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Baths</label>
                                                                     <Input
                                                                         type="number"
@@ -884,14 +929,14 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bathrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-10"
+                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
                                                                         placeholder="2"
                                                                     />
                                                                 </div>
                                                             </div>
                                                         )}
 
-                                                        <div className="space-y-1.5 pt-2">
+                                                        <div className="space-y-1 pt-2">
                                                             <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">
                                                                 {activePage === 'properties' ? 'Description' : 'Content'} ({activeLang.toUpperCase()})
                                                             </label>
@@ -909,7 +954,7 @@ export function WebsiteCMS() {
                                                                         return { ...r, [field]: JSON.stringify(obj) };
                                                                     }));
                                                                 }}
-                                                                className="bg-light border-0 focus:bg-white text-sm min-h-[120px]"
+                                                                className="bg-light border-0 focus:bg-white text-sm min-h-[90px]"
                                                                 placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
                                                             />
                                                         </div>
@@ -925,36 +970,36 @@ export function WebsiteCMS() {
 
                                     {/* Handle Settings (General) */}
                                     {!isRecordPage && textSettings.map((setting) => (
-                                        <div key={setting.key} className="p-4 border rounded bg-white shadow-sm space-y-4 mb-4">
-                                            <div className="d-flex align-items-center justify-content-between">
-                                                <div className="d-flex align-items-center gap-2">
-                                                    {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={16} className="text-primary" /> :
-                                                        setting.key.includes('phone') ? <Phone size={16} className="text-dark" /> :
-                                                            setting.key.includes('email') ? <Mail size={16} className="text-dark" /> :
-                                                                setting.key.includes('address') ? <MapPin size={16} className="text-dark" /> :
-                                                                    setting.key.includes('facebook') ? <FacebookIcon size={16} className="text-primary" /> :
-                                                                        setting.key.includes('twitter') ? <TwitterIcon size={16} className="text-primary" /> :
-                                                                            setting.key.includes('instagram') ? <InstagramIcon size={16} className="text-primary" /> :
-                                                                                setting.key.includes('linkedin') ? <LinkedinIcon size={16} className="text-primary" /> :
-                                                                                    setting.key.includes('youtube') ? <YoutubeIcon size={16} className="text-danger" /> :
-                                                                                        <Layout size={16} className="text-muted" />}
-                                                    <label className="text-sm fw-bold text-dark uppercase tracking-wider mb-0">
+                                        <div key={setting.key} className="px-3 py-2 border rounded-lg bg-white shadow-sm mb-2">
+                                            <div className="d-flex align-items-center justify-content-between mb-1">
+                                                <div className="d-flex align-items-center gap-1.5">
+                                                    {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={12} className="text-primary" /> :
+                                                        setting.key.includes('phone') ? <Phone size={12} className="text-dark" /> :
+                                                            setting.key.includes('email') ? <Mail size={12} className="text-dark" /> :
+                                                                setting.key.includes('address') ? <MapPin size={12} className="text-dark" /> :
+                                                                    setting.key.includes('facebook') ? <FacebookIcon size={12} className="text-primary" /> :
+                                                                        setting.key.includes('twitter') ? <TwitterIcon size={12} className="text-primary" /> :
+                                                                            setting.key.includes('instagram') ? <InstagramIcon size={12} className="text-primary" /> :
+                                                                                setting.key.includes('linkedin') ? <LinkedinIcon size={12} className="text-primary" /> :
+                                                                                    setting.key.includes('youtube') ? <YoutubeIcon size={12} className="text-danger" /> :
+                                                                                        <Layout size={12} className="text-muted" />}
+                                                    <label className="fw-bold text-dark uppercase mb-0" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
                                                         {setting.key.split('_').slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                                     </label>
                                                 </div>
 
                                                 {setting.key.includes('visible') ? (
-                                                    <div className="d-flex align-items-center gap-2 bg-light px-3 py-1.5 rounded-pill border">
-                                                        <span className="text-[10px] fw-bold text-muted uppercase">Section Visibility</span>
+                                                    <div className="d-flex align-items-center gap-1.5 bg-light px-2 py-0.5 rounded-pill border">
+                                                        <span className="fw-bold text-muted uppercase" style={{ fontSize: '9px' }}>Visibility</span>
                                                         <Switch
                                                             checked={setting.value === 'true'}
                                                             onCheckedChange={(checked) => handleUpdateSetting(setting.key, checked)}
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        {setting.isPublic ? <Eye size={14} className="text-success" /> : <EyeOff size={14} className="text-muted" />}
-                                                        <span className="text-[10px] fw-bold uppercase text-muted">Publicly Visible</span>
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        {setting.isPublic ? <Eye size={11} className="text-success" /> : <EyeOff size={11} className="text-muted" />}
+                                                        <span className="fw-bold uppercase text-muted" style={{ fontSize: '9px' }}>Publicly Visible</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -964,22 +1009,21 @@ export function WebsiteCMS() {
                                                     <Textarea
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                        rows={3}
-                                                        className="w-full bg-light border-0 focus:bg-white rounded p-3 text-sm"
+                                                        rows={2}
+                                                        className="w-full bg-light border-0 focus:bg-white rounded px-2 py-1"
+                                                        style={{ fontSize: '12px' }}
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
                                                 ) : (
                                                     <Input
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                        className="w-full bg-light border-0 focus:bg-white rounded h-10 text-sm px-3"
+                                                        className="w-full bg-light border-0 focus:bg-white rounded h-8 px-2"
+                                                        style={{ fontSize: '12px' }}
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
                                                 )
                                             )}
-                                            <p className="text-[11px] text-muted italic pl-1 mb-0">
-                                                {setting.description}
-                                            </p>
                                         </div>
                                     ))}
 
@@ -999,16 +1043,16 @@ export function WebsiteCMS() {
                     )}
 
 
-                    <ScrollReveal delay={0.3} className="bg-light border rounded p-4">
-                        <div className="d-flex gap-4">
-                            <div className="h-10 w-10 bg-white border rounded-circle d-flex align-items-center justify-center shrink-0">
-                                <SettingsIcon className="text-primary" size={20} />
+                    <ScrollReveal delay={0.3} className="mx-2">
+                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 d-flex gap-3 align-items-start">
+                            <div className="bg-primary/10 rounded-lg p-2 d-flex align-items-center justify-content-center flex-shrink-0">
+                                <SettingsIcon className="text-primary" size={16} />
                             </div>
                             <div>
-                                <h4 className="fw-bold text-dark mb-1 text-sm uppercase">How Website CMS Works</h4>
-                                <p className="text-xs text-muted leading-relaxed mb-0">
-                                    Use the <strong>"Image Management"</strong> tab to browse and replace visuals on specific pages. Images are updated instantly across the site when uploaded.
-                                    The <strong>"Text Content"</strong> tab allows you to localize headlines and descriptions for all supported languages. Remember to click <strong>"Publish Changes"</strong> or <strong>"Save This Entry"</strong> to make your text updates public.
+                                <h4 className="fw-bold text-dark mb-1" style={{ fontSize: '12px' }}>How Website CMS Works</h4>
+                                <p className="text-muted mb-0 leading-relaxed" style={{ fontSize: '11px' }}>
+                                    Use <strong>"Image Management"</strong> to browse and replace visuals on specific pages — images update instantly across the site when uploaded.
+                                    Use <strong>"Text Content"</strong> to localise headlines and descriptions in all supported languages. Click <strong>"Publish"</strong> to push text updates live.
                                 </p>
                             </div>
                         </div>

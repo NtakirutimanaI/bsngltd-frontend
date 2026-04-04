@@ -3,14 +3,10 @@ import { useSearchParams } from "react-router";
 import {
     DollarSign,
     Search,
-    Filter,
-    Plus,
     TrendingUp,
     TrendingDown,
     ArrowUpRight,
     ArrowDownLeft,
-    Receipt,
-    History,
     Download,
     CreditCard,
     MapPin
@@ -23,6 +19,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { toast } from "sonner";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
+import { useSite } from "@/app/context/SiteContext";
 
 // Types
 interface Transaction {
@@ -59,20 +56,19 @@ const MONTHS = [
 export function Finance() {
     const { user } = useAuth();
     const { currency } = useCurrency();
+    const { selectedSite } = useSite();
     const [searchParams, setSearchParams] = useSearchParams();
-    const activeTab = (searchParams.get('tab') as 'ledger' | 'payroll_history') || 'ledger';
+    const activeCategory = (searchParams.get('category') as 'expenses' | 'incomes' | 'payroll') || 'expenses';
 
-    const setActiveTab = (tab: any) => {
-        setSearchParams({ tab });
+    const setActiveCategory = (category: any) => {
+        setSearchParams({ category });
+        setCurrentPage(1);
     };
 
-    
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-// Auth
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase().replace(/\s+/g, '_');
     const isAdminOrManager = ['super_admin', 'admin', 'manager', 'site_manager'].includes(roleName);
 
-    // Hub State
     const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -82,28 +78,29 @@ export function Finance() {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Ledger State
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [filterStatus, setFilterStatus] = useState("all");
-
-    // Salary History State
     const [salaryHistory, setSalaryHistory] = useState<SalaryHistoryRecord[]>([]);
 
     useEffect(() => {
-        if (activeTab === 'ledger') {
-            loadTransactions();
-        } else {
+        if (activeCategory === 'payroll') {
             loadSalaryHistory();
+        } else {
+            loadTransactions();
         }
-    }, [activeTab, filterStatus, selectedMonth, selectedYear, currentPage, pageSize]);
+    }, [activeCategory, selectedMonth, selectedYear, currentPage, pageSize, selectedSite]);
 
     const loadTransactions = async () => {
         setIsLoading(true);
         try {
+            let filterType = '';
+            if (activeCategory === 'incomes') filterType = 'client_payment';
+            if (activeCategory === 'expenses') filterType = 'expense,supplier,contractor,salary'; // Simplified: everything except income is cost
+
             const query = new URLSearchParams({
                 search: searchTerm,
-                status: filterStatus,
+                type: filterType,
+                siteId: selectedSite?.id || '',
                 page: currentPage.toString(),
                 limit: pageSize.toString()
             }).toString();
@@ -121,8 +118,17 @@ export function Finance() {
     const loadSalaryHistory = async () => {
         setIsLoading(true);
         try {
-            const res = await fetchApi<any>(`/employees/salary/history?month=${selectedMonth}&year=${selectedYear}&status=${filterStatus}`);
+            const query = new URLSearchParams({
+                month: selectedMonth.toString(),
+                year: selectedYear.toString(),
+                siteId: selectedSite?.id || '',
+                page: currentPage.toString(),
+                limit: pageSize.toString()
+            }).toString();
+            const res = await fetchApi<any>(`/employees/salary/history?${query}`);
             setSalaryHistory(res.data || []);
+            setTotalPages(res.lastPage || 1);
+            setTotalItems(res.total || 0);
         } catch (err) {
             toast.error("Failed to load salary history");
         } finally {
@@ -140,290 +146,254 @@ export function Finance() {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: label }).format(finalAmount);
     };
 
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case "client_payment": return "bg-success-subtle text-success";
-            case "salary": return "bg-primary-subtle text-primary";
-            case "contractor": return "bg-info-subtle text-info";
-            case "supplier": return "bg-warning-subtle text-warning";
-            case "expense": return "bg-secondary-subtle text-secondary";
-            default: return "bg-light text-dark";
-        }
-    };
-
-    const totalIncome = transactions
-        .filter(t => t.type === 'client_payment' && t.status === 'completed')
-        .reduce((sum, t) => sum + t.amount, 0);
-
-    const totalExpenses = transactions
-        .filter(t => t.type !== 'client_payment' && t.status === 'completed')
-        .reduce((sum, t) => sum + t.amount, 0);
+    const categories = [
+        { id: 'expenses', name: 'Operational Expenses', icon: TrendingDown, color: 'text-danger', description: 'Costs, supplies & bills' },
+        { id: 'incomes', name: 'Company Incomes', icon: TrendingUp, color: 'text-success', description: 'Client payments & revenue' },
+        { id: 'payroll', name: 'Workforce Payroll', icon: CreditCard, color: 'text-primary', description: 'Salary disbursement logs' }
+    ];
 
     return (
-        <div className="container-fluid px-2 px-md-4 pt-1 pb-2">
+        <div className="container-fluid py-0 min-vh-100" style={{ background: 'transparent' }}>
             <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
+            
+            <div className="row g-4 pt-2">
+                {/* Category sub-sidebar */}
+                <div className="col-lg-3 px-lg-4 border-end border-gray-100">
+                    <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                        <div className="d-flex align-items-center gap-2 mb-0 pb-2 border-bottom border-gray-100">
+                            <div className="bg-primary rounded-lg p-2 text-white shadow-sm">
+                                <DollarSign size={16} />
+                            </div>
+                            <div className="overflow-hidden">
+                                <h2 className="fw-bold mb-0 text-truncate" style={{ fontSize: '13px' }}>Finance Center</h2>
+                                <p className="smaller text-muted mb-0" style={{ fontSize: '11px' }}>Streamlined financial auditing</p>
+                            </div>
+                        </div>
+                    </div>
 
-            {/* Loading Overlay */}
-            {isLoading && (
-                <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white/50 z-50">
-                    <div className="spinner-border text-blue-600" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                    <div className="directory-scroll-container">
+                        {categories.map((cat) => (
+                            <div 
+                                key={cat.id} 
+                                onClick={() => setActiveCategory(cat.id)}
+                                className={`site-row p-1 mb-1.5 rounded-xl transition-all border cursor-pointer ${activeCategory === cat.id ? 'active-site shadow-md' : 'bg-white text-dark border-gray-100 hover:bg-light'}`}
+                                style={activeCategory === cat.id ? { 
+                                    background: '#009CFF',
+                                    borderColor: '#009CFF',
+                                    color: 'white'
+                                } : {}}
+                            >
+                                <div className="px-3 py-2 d-flex align-items-center justify-content-between">
+                                    <div className="d-flex align-items-center gap-3 overflow-hidden flex-grow-1">
+                                        <div className={`rounded-lg p-2 d-flex align-items-center justify-content-center ${activeCategory === cat.id ? 'bg-white/20' : 'bg-blue-50'}`} style={{ width: '34px', height: '34px' }}>
+                                            <cat.icon size={16} className={activeCategory === cat.id ? 'text-white' : cat.color} />
+                                        </div>
+                                        <div className="overflow-hidden text-start">
+                                            <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{cat.name}</h6>
+                                            <div className={`smaller ${activeCategory === cat.id ? 'text-white/80' : 'text-muted'}`} style={{ fontSize: '9px' }}>{cat.description}</div>
+                                        </div>
+                                    </div>
+                                    {activeCategory === cat.id && <ChevronRight size={14} />}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
-            )}
 
-            {/* Header */}
-            <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
-                <div>
-                    <h1 className="h5 fw-bold text-dark mb-0">Finance Hub</h1>
-                    <p className="text-muted mb-0" style={{ fontSize: '12px' }}>Unified view of all company transactions and payroll history</p>
-                </div>
-                <div className="d-flex gap-2">
-                    {activeTab === 'ledger' && isAdminOrManager && (
-                        <button
-                            onClick={() => setIsAddModalOpen(true)}
-                            className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
-                        >
-                            <Plus size={14} /> <span>New Transaction</span>
-                        </button>
+                {/* Main Content Area */}
+                <div className="col-lg-9 px-lg-4">
+                    <ScrollReveal>
+                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3 py-2.5 px-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                            <div className="py-1">
+                                <h1 className="h6 fw-bold text-dark mb-0 leading-tight">
+                                    {categories.find(c => c.id === activeCategory)?.name || 'Finance Ledger'}
+                                </h1>
+                                <p className="text-muted mb-0" style={{ fontSize: '10px' }}>Site-aware transactional tracking</p>
+                            </div>
+                            
+                            <div className="d-flex gap-2">
+                                {isAdminOrManager && activeCategory !== 'payroll' && (
+                                    <button
+                                        onClick={() => setIsAddModalOpen(true)}
+                                        className="btn btn-primary px-3 py-1 bg-primary text-white rounded-xl text-xs font-bold shadow-sm d-flex align-items-center gap-2 border-0 hover:scale-105 transition-all"
+                                        style={{ height: '38px' }}
+                                    >
+                                        <PlusCircle size={14} /> New Record
+                                    </button>
+                                )}
+                                <button className="btn btn-light bg-light p-1 rounded-xl d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }} onClick={() => setIsExportModalOpen(true)}>
+                                    <Download size={16} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Summary Cards Row */}
+                        <div className="row g-3 mb-4">
+                            <div className="col-md-6 col-lg-4">
+                                <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-xs d-flex align-items-center gap-3 h-100">
+                                    <div className={`rounded-xl d-flex align-items-center justify-content-center ${activeCategory === 'incomes' ? 'bg-success/10 text-success' : activeCategory === 'expenses' ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'}`} style={{ width: '48px', height: '48px', minWidth: '48px' }}>
+                                        <DollarSign size={24} />
+                                    </div>
+                                    <div className="overflow-hidden">
+                                        <p className="smaller text-muted mb-0 uppercase fw-bold" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Total {activeCategory.replace('_', ' ')} Value</p>
+                                        <h4 className="fw-bold text-dark mb-0" style={{ fontSize: '1.25rem' }}>
+                                            {formatAmount((activeCategory === 'payroll' ? salaryHistory : transactions).reduce((sum: number, t: any) => sum + (t.amount || 0), 0))}
+                                        </h4>
+                                        <div className="d-flex align-items-center gap-1">
+                                            <div className="h-1 w-1 rounded-circle bg-success" />
+                                            <span className="smaller text-success fw-bold" style={{ fontSize: '9px' }}>AUDITED TOTAL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-6 col-lg-4">
+                                <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-xs h-100 d-flex flex-column justify-content-center">
+                                    <p className="smaller text-muted mb-0 uppercase fw-bold" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Registry Volume</p>
+                                    <div className="d-flex align-items-baseline gap-1">
+                                        <h4 className="fw-bold text-dark mb-0" style={{ fontSize: '1.25rem' }}>{totalItems}</h4>
+                                        <span className="text-muted smaller">Records Found</span>
+                                    </div>
+                                    <p className="mb-0 text-muted" style={{ fontSize: '9px' }}>Current Filter Period applied</p>
+                                </div>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    <div className="marking-content mt-2">
+                        <ScrollReveal className="fade-in">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="p-3 border-b border-gray-100 d-flex align-items-center justify-content-between bg-light/50">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="position-relative">
+                                            <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />
+                                            <input 
+                                                type="text" 
+                                                className="form-control form-control-sm search-input rounded-lg bg-white border-gray-200" 
+                                                placeholder="Find entry..." 
+                                                style={{ fontSize: '11px', width: '200px' }}
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="d-flex gap-2">
+                                        {activeCategory === 'payroll' && (
+                                            <>
+                                                <select className="form-select form-select-sm rounded-lg border-gray-200 fw-bold" style={{ fontSize: '11px', width: '110px' }} value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))}>
+                                                    {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+                                                </select>
+                                                <select className="form-select form-select-sm rounded-lg border-gray-200 fw-bold" style={{ fontSize: '11px', width: '80px' }} value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))}>
+                                                    {[2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
+                                                </select>
+                                            </>
+                                        )}
+                                        <Badge className="bg-blue-500 text-white border-0 shadow-sm px-2 py-1" style={{ fontSize: '10px' }}>{totalItems} ENTRIES</Badge>
+                                    </div>
+                                </div>
+
+                                <div className="table-responsive">
+                                    <table className="table table-hover align-middle mb-0">
+                                        <thead className="bg-gray-50/80">
+                                            <tr className="smaller text-muted text-uppercase fw-bold" style={{ fontSize: '9px' }}>
+                                                <th className="ps-4 py-2">Reference / ID</th>
+                                                <th className="py-2">{activeCategory === 'payroll' ? 'Site Staff' : 'Entity Description'}</th>
+                                                <th className="py-2">Site / Project</th>
+                                                <th className="text-center py-2">{activeCategory === 'payroll' ? 'Review Month' : 'Classification'}</th>
+                                                <th className="text-end py-2">Record Amount</th>
+                                                <th className="pe-4 text-end py-2">Audit Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {isLoading ? (
+                                                <tr><td colSpan={6} className="text-center py-5 text-muted small">Synchronizing ledger...</td></tr>
+                                            ) : (activeCategory === 'payroll' ? salaryHistory : transactions).length === 0 ? (
+                                                <tr><td colSpan={6} className="text-center py-5 text-muted small italic">No financial records found in this category.</td></tr>
+                                            ) : (
+                                                (activeCategory === 'payroll' ? salaryHistory : transactions).map((item: any) => (
+                                                    <tr key={item.id} className="border-t border-gray-100 transition-all hover:bg-blue-50/30">
+                                                        <td className="ps-4 py-1.5">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <div className={`rounded-lg d-flex align-items-center justify-content-center shadow-xs ${activeCategory === 'incomes' ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'}`} style={{ width: '24px', height: '24px' }}>
+                                                                    {activeCategory === 'incomes' ? <ArrowDownLeft size={10} /> : <ArrowUpRight size={10} />}
+                                                                </div>
+                                                                <div className="fw-bold text-dark" style={{ fontSize: '10px' }}>{item.code || item.transactionId || 'REF-N/A'}</div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-1.5 text-start">
+                                                            <div className="fw-bold text-dark" style={{ fontSize: '10px', lineHeight: '1.1' }}>{item.description || item.employee?.name || 'N/A'}</div>
+                                                            <div className="text-muted" style={{ fontSize: '8px' }}>{item.payee || item.employee?.employeeId || 'System Record'}</div>
+                                                        </td>
+                                                        <td className="py-1.5 text-start">
+                                                            <div className="d-flex align-items-center gap-1">
+                                                                <MapPin size={9} className="text-muted" />
+                                                                <span className="small text-muted" style={{ fontSize: '9px' }}>{item.site?.name || 'General OpEx'}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-1.5 text-center">
+                                                            {activeCategory === 'payroll' ? (
+                                                                <Badge className="bg-light text-dark border-0 fw-bold px-1.5 py-0.5" style={{ fontSize: '9px' }}>{MONTHS[item.salaryMonth - 1]} {item.salaryYear}</Badge>
+                                                            ) : (
+                                                                <Badge className="bg-blue-50 text-blue-700 border-0 fw-bold px-1.5 py-0.5 uppercase tracking-tighter" style={{ fontSize: '8px' }}>{item.type?.replace('_', ' ') || 'OTHER'}</Badge>
+                                                            )}
+                                                        </td>
+                                                        <td className="py-1.5 text-end fw-bold text-dark" style={{ fontSize: '11px' }}>
+                                                            {formatAmount(item.amount)}
+                                                        </td>
+                                                        <td className="pe-4 text-end py-1.5">
+                                                            <Badge className={`${item.status === 'completed' || item.status === 'paid' ? 'bg-success text-white' : 'bg-warning text-dark'} border-0 px-1.5 py-0.5 fw-bold`} style={{ fontSize: '8px' }}>
+                                                                {item.status?.toUpperCase()}
+                                                            </Badge>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </ScrollReveal>
+                    </div>
+
+                    {/* Pagination Selector */}
+                    {totalPages > 1 && (
+                        <div className="mt-4 pb-4">
+                            <PaginationSelector
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                pageSize={pageSize}
+                                totalItems={totalItems}
+                                onPageChange={setCurrentPage}
+                                onPageSizeChange={(newSize) => {
+                                    setPageSize(newSize);
+                                    setCurrentPage(1);
+                                }}
+                            />
+                        </div>
                     )}
-                    <button className="btn btn-light p-2 border rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95 bg-white shadow-sm" onClick={() => setIsExportModalOpen(true)}>
-                        <Download size={16} />
-                    </button>
-                </div>
-            </ScrollReveal>
-
-            {/* Quick Stats */}
-            <div className="row g-4 mb-4 mx-2 mx-md-4">
-                <div className="col-sm-6 col-xl-4">
-                    <ScrollReveal delay={0.1}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
-                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
-                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-success-subtle text-success" style={{ width: '56px', height: '56px' }}>
-                                    <i className="fa-solid fa-money-bill-trend-up" style={{ fontSize: '24px' }}></i>
-                                </div>
-                            </div>
-                            <div className="ms-3 d-flex flex-column justify-content-center">
-                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash In</p>
-                                <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{formatAmount(totalIncome)}</h4>
-                            </div>
-                        </div>
-                    </ScrollReveal>
-                </div>
-                <div className="col-sm-6 col-xl-4">
-                    <ScrollReveal delay={0.2}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
-                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
-                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-danger-subtle text-danger" style={{ width: '56px', height: '56px' }}>
-                                    <i className="fa-solid fa-money-bill-transfer" style={{ fontSize: '24px' }}></i>
-                                </div>
-                            </div>
-                            <div className="ms-3 d-flex flex-column justify-content-center">
-                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Total Cash Out</p>
-                                <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{formatAmount(totalExpenses)}</h4>
-                            </div>
-                        </div>
-                    </ScrollReveal>
-                </div>
-                <div className="col-sm-6 col-xl-4">
-                    <ScrollReveal delay={0.3}>
-                        <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
-                            <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
-                                <div className="d-flex align-items-center justify-content-center rounded-2xl bg-primary-subtle text-primary" style={{ width: '56px', height: '56px' }}>
-                                    <i className="fa-solid fa-wallet" style={{ fontSize: '24px' }}></i>
-                                </div>
-                            </div>
-                            <div className="ms-3 d-flex flex-column justify-content-center">
-                                <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Net Balance</p>
-                                <h4 className={`mb-0 fw-bold mt-1 ${totalIncome - totalExpenses >= 0 ? 'text-dark' : 'text-danger'}`} style={{ fontSize: '1.25rem' }}>
-                                    {formatAmount(totalIncome - totalExpenses)}
-                                </h4>
-                            </div>
-                        </div>
-                    </ScrollReveal>
                 </div>
             </div>
 
-            {/* Hub Tabs */}
-            <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
-                <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl">
-                    <button
-                        onClick={() => setActiveTab('ledger')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'ledger' ? 'active' : 'text-gray-500 hover:text-primary hover:bg-light'}`}
-                        style={{
-                            borderRadius: '10px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            letterSpacing: '0.5px'
-                        }}
-                    >
-                        <Receipt size={16} /> General Ledger
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('payroll_history')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all ${activeTab === 'payroll_history' ? 'active' : 'text-gray-500 hover:text-primary hover:bg-light'}`}
-                        style={{
-                            borderRadius: '10px',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                            letterSpacing: '0.5px'
-                        }}
-                    >
-                        <History size={16} /> Payroll History
-                    </button>
-                </div>
-            </div>
-
-            {/* Filter Bar */}
-            <ScrollReveal className="mb-4">
-                <div className="bg-light rounded p-4 shadow-sm mx-2 mx-md-4 border">
-                    <div className="row g-2 align-items-center">
-                        <div className="col-md-4">
-                            <div className="position-relative">
-                                <Search className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" size={14} />
-                                <input
-                                    type="text"
-                                    className="form-control ps-3 pe-5 bg-white"
-                                    placeholder="Search transactions..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    style={{ borderRadius: '5px', fontSize: '13px' }}
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-8 d-flex justify-content-md-end gap-2">
-                            {activeTab === 'payroll_history' && (
-                                <>
-                                    <select className="form-select border-1 bg-white w-auto" value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} style={{ borderRadius: '5px', fontSize: '13px' }}>
-                                        {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-                                    </select>
-                                    <select className="form-select border-1 bg-white w-auto" value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} style={{ borderRadius: '5px', fontSize: '13px' }}>
-                                        {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
-                                    </select>
-                                </>
-                            )}
-                            <select className="form-select border-1 bg-white w-auto" value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ borderRadius: '5px', fontSize: '13px' }}>
-                                <option value="all">All Status</option>
-                                <option value="completed">Completed</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                            <button className="btn btn-primary d-flex align-items-center justify-content-center p-2" style={{ borderRadius: '5px' }}>
-                                <Filter size={16} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </ScrollReveal>
-
-            {/* Content Table */}
-            <ScrollReveal delay={0.4}>
-                <div className="bg-light rounded p-4 shadow-sm mx-2 mx-md-4">
-                    <div className="d-flex align-items-center justify-content-between mb-4">
-                        <h6 className="mb-0 fw-bold">{activeTab === 'ledger' ? 'General Ledger' : 'Payroll History'}</h6>
-                        <span className="text-muted small">Showing {activeTab === 'ledger' ? transactions.length : salaryHistory.length} records</span>
-                    </div>
-                    <div className="table-responsive">
-                        <table className="table text-start align-middle table-bordered table-hover mb-0">
-                            <thead className="bg-white">
-                                <tr className="text-dark">
-                                    <th className="ps-4">Reference</th>
-                                    <th>{activeTab === 'ledger' ? 'Description' : 'Employee'}</th>
-                                    <th>Site</th>
-                                    <th>Type / Period</th>
-                                    <th>Amount</th>
-                                    <th>Method</th>
-                                    <th className="pe-4 text-end">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {activeTab === 'ledger' ? (
-                                    transactions.map(t => (
-                                        <tr key={t.id}>
-                                            <td className="ps-4 py-2">
-                                                <div className="d-flex align-items-center gap-2">
-                                                    {t.type === 'client_payment' ? <ArrowDownLeft className="text-success" size={12} /> : <ArrowUpRight className="text-danger" size={12} />}
-                                                    <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>{t.code}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-2">
-                                                <div className="text-dark small fw-medium" style={{ fontSize: '11px' }}>{t.description}</div>
-                                                <div className="smaller text-muted" style={{ fontSize: '10px' }}>{t.payer} → {t.payee}</div>
-                                            </td>
-                                            <td className="py-2">
-                                                <div className="d-flex align-items-center gap-1">
-                                                    <MapPin size={10} className="text-muted" />
-                                                    <span className="small text-muted" style={{ fontSize: '10px' }}>{(t as any).site?.name || 'General'}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-2"><span className={`badge px-2 py-1 ${getTypeColor(t.type)}`} style={{ fontSize: '10px' }}>{t.type.replace('_', ' ').toUpperCase()}</span></td>
-                                            <td className="fw-bold py-2" style={{ fontSize: '12px' }}>{formatAmount(t.amount)}</td>
-                                            <td className="text-muted small text-capitalize py-2" style={{ fontSize: '10px' }}>{t.method.replace('_', ' ')}</td>
-                                            <td className="pe-4 text-end py-2">
-                                                <span className={`badge rounded-pill px-2 py-1 ${t.status === 'completed' ? 'bg-success text-white' : 'bg-warning text-dark'}`} style={{ fontSize: '10px' }}>
-                                                    {t.status}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    salaryHistory.map(h => (
-                                        <tr key={h.id}>
-                                            <td className="ps-4 py-2">
-                                                <div className="d-flex align-items-center gap-2">
-                                                    <CreditCard className="text-primary" size={12} />
-                                                    <span className="fw-bold text-dark" style={{ fontSize: '12px' }}>{h.transactionId || 'SAL-REF'}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-2">
-                                                <div className="text-dark small fw-bold" style={{ fontSize: '11px' }}>{h.employee?.name}</div>
-                                                <div className="smaller text-muted" style={{ fontSize: '10px' }}>ID: {h.employee?.employeeId}</div>
-                                            </td>
-                                            <td className="py-2"><span className="badge bg-light text-dark" style={{ fontSize: '10px' }}>{MONTHS[h.salaryMonth - 1]} {h.salaryYear}</span></td>
-                                            <td className="fw-bold text-primary py-2" style={{ fontSize: '12px' }}>{formatAmount(h.amount)}</td>
-                                            <td className="text-muted small text-capitalize py-2" style={{ fontSize: '10px' }}>{h.paymentMethod?.replace('_', ' ')}</td>
-                                            <td className="pe-4 text-end py-2">
-                                                <span className="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style={{ fontSize: '10px' }}>Paid</span>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                                {(activeTab === 'ledger' ? transactions.length : salaryHistory.length) === 0 && (
-                                    <tr>
-                                        <td colSpan={7} className="text-center py-4 text-muted">
-                                            <Receipt size={32} className="mb-2 opacity-25" />
-                                            <div style={{ fontSize: '12px' }}>No records found for selected criteria</div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </ScrollReveal>
-
-            {/* Pagination for Transactions */}
-            {activeTab === 'ledger' && totalPages > 1 && (
-                <div className="px-2 px-md-4 py-3">
-                    <PaginationSelector
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        pageSize={pageSize}
-                        totalItems={totalItems}
-                        onPageChange={setCurrentPage}
-                        onPageSizeChange={(newSize) => {
-                            setPageSize(newSize);
-                            setCurrentPage(1); // Reset to first page when changing page size
-                        }}
-                    />
-                </div>
-            )}
-
-            {/* Modals */}
             <AddPaymentModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSuccess={() => loadTransactions()}
             />
+
+            <style>{`
+                .active-site { border-color: #009CFF !important; }
+                .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .smaller { font-size: 11px; }
+                .search-input { padding-left: 38px !important; }
+                .site-row:hover { border-color: #009CFF !important; background-color: #f8fbff !important; }
+                .directory-scroll-container::-webkit-scrollbar { width: 4px; }
+                .directory-scroll-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+                .shadow-xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+            `}</style>
         </div>
     );
 }
+
+// Add these imports at the top
+import { ChevronRight, PlusCircle } from "lucide-react";
+import { Badge } from "@/app/components/ui/badge";

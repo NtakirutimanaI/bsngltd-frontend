@@ -3,17 +3,21 @@ import { Modal } from "@/app/components/Modal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { Coins } from "lucide-react";
 import { fetchApi } from '../api/client';
+import { toast } from "sonner";
 
 interface AddProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   initialData?: any;
+  sites?: any[]; // Allow passing sites list if already fetched
 }
 
-export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: AddProjectModalProps) {
+export function AddProjectModal({ isOpen, onClose, onSuccess, initialData, sites: externalSites }: AddProjectModalProps) {
   const { currency, setCurrency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sites, setSites] = useState<any[]>(externalSites || []);
+
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -26,7 +30,21 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
     manager: "",
     client: "",
     description: "",
+    siteId: "",
+    imageUrl: "",
+    gallery: [] as string[],
   });
+
+  useEffect(() => {
+    if (isOpen && (!externalSites || externalSites.length === 0)) {
+      fetchApi<any>('/sites?limit=100')
+        .then(res => {
+          const data = Array.isArray(res) ? res : (res.data || []);
+          setSites(data);
+        })
+        .catch(err => console.error(err));
+    }
+  }, [isOpen, externalSites]);
 
   useEffect(() => {
     if (initialData) {
@@ -42,6 +60,9 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
         manager: initialData.manager || "",
         client: initialData.client || "",
         description: initialData.description || "",
+        siteId: initialData.siteId || "",
+        imageUrl: initialData.imageUrl || "",
+        gallery: initialData.gallery || [],
       });
     } else {
       setFormData({
@@ -56,6 +77,9 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
         manager: "",
         client: "",
         description: "",
+        siteId: "",
+        imageUrl: "",
+        gallery: [],
       });
     }
   }, [initialData, isOpen]);
@@ -64,31 +88,56 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const url = initialData ? `/projects/${initialData.id}` : '/projects';
-      const method = initialData ? 'PUT' : 'POST';
+      const isEdit = initialData && initialData.id;
+      const url = isEdit ? `/projects/${initialData.id}` : '/projects';
+      const method = isEdit ? 'PATCH' : 'POST';
+
+      // Sanitize body for backend (PostgreSQL UUID/Int constraints)
+      const sanitizedBody = {
+          ...formData,
+          siteId: formData.siteId || null,
+          progress: isEdit ? (initialData.progress ?? 0) : 0,
+          actualCost: isEdit ? (initialData.actualCost ?? '0') : '0',
+          gallery: (formData.gallery || []).filter(url => url && url.trim() !== ''),
+      };
 
       await fetchApi(url, {
         method,
-        body: JSON.stringify({
-          ...formData,
-          progress: initialData ? initialData.progress : 0,
-          actualCost: initialData ? initialData.actualCost : '0',
-        }),
+        body: JSON.stringify(sanitizedBody),
       });
       if (onSuccess) onSuccess();
+      toast.success(`Project ${isEdit ? 'updated' : 'created'} successfully`);
       onClose();
-    } catch (error) {
-      console.error(`Failed to ${initialData ? 'update' : 'create'} project`, error);
-      alert(`Failed to ${initialData ? 'update' : 'create'} project`);
+    } catch (error: any) {
+      const isEdit = initialData && initialData.id;
+      console.error(`Failed to ${isEdit ? 'update' : 'create'} project`, error);
+      toast.error(`Failed to ${isEdit ? 'update' : 'create'} project: ${error.message || 'Check all fields'}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Edit Project" : "Add New Project"} size="md" draggable={true}>
+    <Modal isOpen={isOpen} onClose={onClose} title={initialData && initialData.id ? "Edit Project" : "Add New Project"} size="md" draggable={true}>
       <form onSubmit={handleSubmit} className="d-flex flex-column gap-2">
         <div className="row g-2">
+          <div className="col-md-12 text-start">
+            <label className="form-label small fw-medium mb-1">
+              Associated Site *
+            </label>
+            <select
+              required
+              value={formData.siteId}
+              onChange={(e) => setFormData({ ...formData, siteId: e.target.value })}
+              className="form-select form-select-sm"
+            >
+              <option value="">Select a Site</option>
+              {sites.map(s => (
+                <option key={s.id} value={s.id}>{s.name} ({s.location})</option>
+              ))}
+            </select>
+          </div>
+
           <div className="col-md-6">
             <label className="form-label small fw-medium mb-1">
               Project Name *
@@ -103,7 +152,7 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
             />
           </div>
 
-          <div className="col-md-6">
+          <div className="col-md-6 text-start">
             <label className="form-label small fw-medium mb-1">
               Project Code *
             </label>
@@ -249,6 +298,57 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
           />
         </div>
 
+        <div className="border-top pt-2 mt-2">
+          <label className="form-label small fw-bold text-primary mb-1 d-block" style={{ fontSize: '10px' }}>MEDIA & IMAGERY (OPTIONAL)</label>
+          <div className="row g-2">
+            <div className="col-12">
+              <label className="form-label smaller fw-medium mb-1">Primary Project Image URL</label>
+              <input
+                type="url"
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                className="form-control form-control-sm"
+                placeholder="https://example.com/main-image.jpg"
+              />
+            </div>
+            <div className="col-12">
+              <label className="form-label smaller fw-medium mb-1">Project Gallery (Other Images)</label>
+              {formData.gallery.map((img, index) => (
+                <div key={index} className="d-flex gap-2 mb-1">
+                  <input
+                    type="url"
+                    value={img}
+                    onChange={(e) => {
+                      const newGallery = [...formData.gallery];
+                      newGallery[index] = e.target.value;
+                      setFormData({ ...formData, gallery: newGallery });
+                    }}
+                    className="form-control form-control-sm"
+                    placeholder="https://example.com/gallery-image.jpg"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const newGallery = formData.gallery.filter((_, i) => i !== index);
+                      setFormData({ ...formData, gallery: newGallery });
+                    }}
+                    className="btn btn-sm btn-outline-danger px-2 py-0"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <button 
+                type="button" 
+                onClick={() => setFormData({ ...formData, gallery: [...formData.gallery, ""] })}
+                className="btn btn-sm btn-outline-primary text-xs py-0 mt-1"
+              >
+                + Add Another Image
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="d-flex align-items-center justify-content-end gap-2 pt-3 border-top mt-2">
           <button
             type="button"
@@ -299,7 +399,7 @@ export function AddProjectModal({ isOpen, onClose, onSuccess, initialData }: Add
               if (!isSubmitting) e.currentTarget.style.background = '#009CFF';
             }}
           >
-            {isSubmitting ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Project" : "Create Project")}
+            {isSubmitting ? (initialData && initialData.id ? "Updating..." : "Creating...") : (initialData && initialData.id ? "Update Project" : "Create Project")}
           </button>
         </div>
       </form>

@@ -1,692 +1,456 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/app/context/AuthContext';
-import { fetchApi } from '@/app/api/client';
-import { Modal } from '@/app/components/Modal';
-import { PaginationSelector } from '@/app/components/ui/pagination-selector';
+import { useState, useEffect } from "react";
+import { Users, MapPin, Shield, Eye, UserPlus, ShieldCheck, Briefcase, HeartHandshake, Building2, PlusCircle, UserCircle, Edit2, Trash2, MoreVertical, Globe, Calendar, Mail, Phone, UserCircle as UserIcon } from "lucide-react";
+import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { fetchApi } from "../api/client";
+import { AddUserModal } from "../components/AddUserModal";
+import { toast } from "sonner";
 import {
-    Users, UserPlus, Search, Edit2, Trash2, X, Eye, EyeOff,
-    Shield, UserCog, Briefcase, Heart, Globe,
-    RefreshCw, CheckCircle, XCircle
-} from 'lucide-react';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
+import { Badge } from "@/app/components/ui/badge";
+import { Modal } from "@/app/components/Modal";
 
-interface Role {
+interface UserCategory {
     id: string;
     name: string;
+    key: string;
+    icon: any;
     description: string;
-    level: number;
+    count: number;
 }
 
-interface User {
-    id: string;
-    username: string;
-    email: string;
-    fullName: string;
-    phone?: string;
-    role: Role;
-    userRole: string;
-    isActive: boolean;
-    createdAt: string;
-    country?: string;
-}
+export function ManageUsers() {
+    const [categories, setCategories] = useState<UserCategory[]>([
+        { id: '1', name: 'Administration', key: 'admin', icon: ShieldCheck, description: 'Super Admin, Admin & Site Managers', count: 0 },
+        { id: '2', name: 'Employees', key: 'employee', icon: Briefcase, description: 'Site staff and construction workers', count: 0 },
+        { id: '3', name: 'Sponsors', key: 'sponsor', icon: HeartHandshake, description: 'Project financial backers / Donors', count: 0 },
+        { id: '4', name: 'Organizations', key: 'org', icon: Building2, description: 'Partner companies and clients', count: 0 },
+        { id: '5', name: 'General Users', key: 'user', icon: UserCircle, description: 'Public accounts and observers', count: 0 },
+    ]);
 
-interface UserFormData {
-    username: string;
-    email: string;
-    fullName: string;
-    phone: string;
-    password: string;
-    roleId: string;
-    userRole: string;
-    isActive: boolean;
-    country: string;
-}
+    const [selectedCategory, setSelectedCategory] = useState<UserCategory>(categories[0]);
+    const [users, setUsers] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+    const [userToEdit, setUserToEdit] = useState<any>(null);
+    const [selectedUserForDetail, setSelectedUserForDetail] = useState<any>(null);
 
-const USER_CATEGORIES = [
-    { key: 'all', label: 'All Users', icon: Users, color: '#009CFF' },
-    {
-        key: 'administration', label: 'Administration', icon: Shield, color: '#ef4444',
-        roles: ['super_admin', 'admin']
-    },
-    {
-        key: 'employees', label: 'Employees', icon: Briefcase, color: '#3b82f6',
-        roles: ['employee', 'manager', 'site_manager', 'editor', 'content_editor', 'hr', 'accountant']
-    },
-    {
-        key: 'partners', label: 'Partners & Investors', icon: Heart, color: '#8b5cf6',
-        roles: ['partner', 'investor', 'donor', 'contractor', 'consultant']
-    },
-    {
-        key: 'general', label: 'General Users', icon: Globe, color: '#10b981',
-        roles: ['client', 'general_user', 'beneficiary', 'volunteer', 'guest', 'auditor']
-    },
-];
-
-const ALL_USER_ROLES = [
-    { value: 'super_admin', label: 'Super Admin', group: 'Administration' },
-    { value: 'admin', label: 'Admin', group: 'Administration' },
-    { value: 'manager', label: 'Manager', group: 'Employees' },
-    { value: 'site_manager', label: 'Site Manager', group: 'Employees' },
-    { value: 'editor', label: 'Editor', group: 'Employees' },
-    { value: 'content_editor', label: 'Content Editor', group: 'Employees' },
-    { value: 'employee', label: 'Employee', group: 'Employees' },
-    { value: 'hr', label: 'HR', group: 'Employees' },
-    { value: 'accountant', label: 'Accountant', group: 'Employees' },
-    { value: 'partner', label: 'Partner', group: 'Partners & Investors' },
-    { value: 'investor', label: 'Investor', group: 'Partners & Investors' },
-    { value: 'donor', label: 'Donor', group: 'Partners & Investors' },
-    { value: 'contractor', label: 'Contractor', group: 'Partners & Investors' },
-    { value: 'consultant', label: 'Consultant', group: 'Partners & Investors' },
-    { value: 'client', label: 'Client', group: 'General Users' },
-    { value: 'general_user', label: 'General User', group: 'General Users' },
-    { value: 'beneficiary', label: 'Beneficiary', group: 'General Users' },
-    { value: 'volunteer', label: 'Volunteer', group: 'General Users' },
-    { value: 'auditor', label: 'Auditor', group: 'General Users' },
-    { value: 'guest', label: 'Guest', group: 'General Users' },
-];
-
-function getRoleBadgeColor(userRole: string): string {
-    const map: Record<string, string> = {
-        super_admin: '#ef4444', admin: '#009CFF', manager: '#eab308',
-        site_manager: '#84cc16', editor: '#06b6d4', content_editor: '#10b981', employee: '#3b82f6',
-        hr: '#8b5cf6', accountant: '#a855f7', partner: '#ec4899',
-        investor: '#f43f5e', donor: '#d946ef', contractor: '#14b8a6',
-        consultant: '#0ea5e9', client: '#10b981', general_user: '#6b7280',
-        beneficiary: '#22c55e', volunteer: '#f59e0b', auditor: '#64748b',
-        guest: '#94a3b8',
-    };
-    return map[userRole] || '#6b7280';
-}
-
-export function ManageUsers({ hideHeader = false }: { hideHeader?: boolean }) {
-    const { user: currentUser } = useAuth();
-    const [users, setUsers] = useState<User[]>([]);
-    const [roles, setRoles] = useState<Role[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [editingUser, setEditingUser] = useState<User | null>(null);
-    const [showPassword, setShowPassword] = useState(false);
-    const [activeCategory, setActiveCategory] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const [totalUsers, setTotalUsers] = useState(0);
-    const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-    const [viewUser, setViewUser] = useState<User | null>(null);
-
-    const [formData, setFormData] = useState<UserFormData>({
-        username: '', email: '', fullName: '', phone: '',
-        password: '', roleId: '', userRole: 'general_user',
-        isActive: true, country: '',
-    });
-
-    const roleName = ((typeof currentUser?.role === 'object' && currentUser.role !== null)
-        ? currentUser.role.name : currentUser?.role || 'guest').toLowerCase();
-    const canManageUsers = ['super_admin', 'admin', 'manager', 'hr'].includes(roleName);
-
-    useEffect(() => {
-        if (canManageUsers) { fetchRoles(); }
-    }, [canManageUsers]);
-
-    useEffect(() => {
-        if (canManageUsers) { fetchUsers(); }
-    }, [canManageUsers, currentPage, pageSize, activeCategory, searchQuery]);
-
-    useEffect(() => {
-        if (statusMsg) {
-            const t = setTimeout(() => setStatusMsg(null), 4000);
-            return () => clearTimeout(t);
+    const getRolesByCategory = (key: string) => {
+        switch(key) {
+            case 'admin': return ['super_admin', 'admin', 'manager', 'site_manager', 'auditor', 'hr', 'accountant'];
+            case 'employee': return ['employee'];
+            case 'sponsor': return ['sponsor', 'donor'];
+            case 'org': return ['client', 'partner'];
+            case 'user': return ['general_user', 'guest', 'editor'];
+            default: return [];
         }
-    }, [statusMsg]);
+    };
 
-    const fetchUsers = async () => {
+    const [total, setTotal] = useState(0);
+    const loadUsers = async () => {
+        setIsLoading(true);
         try {
-            setLoading(true);
-            const cat = USER_CATEGORIES.find(c => c.key === activeCategory);
-            let url = `/users?page=${currentPage}&limit=${pageSize}`;
-            if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
-            if (cat && cat.roles) {
-                // Fetch all for category, filter client-side for multi-role categories
-                url = `/users?page=1&limit=500`;
-                if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
-            }
-            const response = await fetchApi<{ data: User[]; total: number }>(url);
-            let data = response.data;
-            if (cat && cat.roles) {
-                data = data.filter(u => cat.roles!.includes(u.userRole));
-            }
-            setTotalUsers(cat && cat.roles ? data.length : response.total);
-            if (cat && cat.roles) {
-                const start = (currentPage - 1) * pageSize;
-                data = data.slice(start, start + pageSize);
-            }
-            setUsers(data);
+            const res = await fetchApi<any>(`/users?limit=1000&search=${searchTerm}`);
+            const allUsers = res.data || res;
+            
+            // Update category counts dynamically based on fetched data
+            setCategories((prev: UserCategory[]) => prev.map((cat: UserCategory) => {
+                const roles = getRolesByCategory(cat.key);
+                const count = allUsers.filter((u: any) => roles.includes(u.userRole)).length;
+                return { ...cat, count };
+            }));
+
+            const roles = getRolesByCategory(selectedCategory.key);
+            const filteredUsers = allUsers.filter((u: any) => 
+                roles.includes(u.userRole)
+            );
+
+            setUsers(filteredUsers);
+            setTotal(filteredUsers.length);
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error("Failed to load users", error);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
-    const fetchRoles = async () => {
+    const handleDeleteUser = async (user: any) => {
+        if (!confirm(`Are you sure you want to delete ${user.fullName}?`)) return;
         try {
-            const response = await fetchApi<Role[]>('/roles');
-            setRoles(response);
-        } catch (error) {
-            console.error('Error fetching roles:', error);
+            await fetchApi(`/users/${user.id}`, { method: 'DELETE' });
+            toast.success("User removed successfully");
+            loadUsers();
+        } catch (err) {
+            toast.error("Failed to delete user account");
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const payload: any = {
-                username: formData.username, email: formData.email,
-                fullName: formData.fullName, phone: formData.phone || undefined,
-                roleId: formData.roleId || undefined, userRole: formData.userRole,
-                isActive: formData.isActive, country: formData.country || undefined,
-            };
-            if (formData.password) payload.password = formData.password;
+    useEffect(() => {
+        loadUsers();
+    }, [selectedCategory, searchTerm]);
 
-            if (editingUser) {
-                await fetchApi(`/users/${editingUser.id}`, { method: 'PATCH', body: JSON.stringify(payload) });
-                setStatusMsg({ type: 'success', text: `User "${formData.fullName}" updated successfully!` });
-            } else {
-                await fetchApi('/users', { method: 'POST', body: JSON.stringify(payload) });
-                setStatusMsg({ type: 'success', text: `User "${formData.fullName}" created successfully!` });
-            }
-            setShowModal(false);
-            resetForm();
-            fetchUsers();
-        } catch (error: any) {
-            setStatusMsg({ type: 'error', text: error?.message || 'Failed to save user.' });
+    const getStatusColor = (status: string) => {
+        switch(status.toLowerCase()) {
+            case 'active': return 'bg-success';
+            case 'inactive': return 'bg-secondary';
+            case 'suspended': return 'bg-danger';
+            default: return 'bg-info';
         }
     };
-
-    const handleEdit = (user: User) => {
-        setEditingUser(user);
-        setFormData({
-            username: user.username, email: user.email, fullName: user.fullName,
-            phone: user.phone || '', password: '', roleId: user.role?.id || '',
-            userRole: user.userRole, isActive: user.isActive, country: user.country || '',
-        });
-        setShowModal(true);
-    };
-
-    const handleDelete = async (userId: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete user "${name}"? This action cannot be undone.`)) return;
-        try {
-            await fetchApi(`/users/${userId}`, { method: 'DELETE' });
-            setStatusMsg({ type: 'success', text: `User "${name}" deleted.` });
-            fetchUsers();
-        } catch (error: any) {
-            setStatusMsg({ type: 'error', text: error?.message || 'Failed to delete user.' });
-        }
-    };
-
-    const handleToggleActive = async (user: User) => {
-        try {
-            await fetchApi(`/users/${user.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ isActive: !user.isActive }),
-            });
-            setStatusMsg({ type: 'success', text: `User "${user.fullName}" ${!user.isActive ? 'activated' : 'deactivated'}.` });
-            fetchUsers();
-        } catch (error: any) {
-            setStatusMsg({ type: 'error', text: error?.message || 'Failed to update status.' });
-        }
-    };
-
-    const resetForm = () => {
-        setFormData({
-            username: '', email: '', fullName: '', phone: '',
-            password: '', roleId: '', userRole: 'general_user',
-            isActive: true, country: '',
-        });
-        setEditingUser(null);
-        setShowPassword(false);
-    };
-
-    const totalPages = Math.ceil(totalUsers / pageSize);
-
-    if (!canManageUsers) {
-        return (
-            <div style={{ padding: 40, textAlign: 'center' }}>
-                <Shield size={48} style={{ color: '#ef4444', marginBottom: 16 }} />
-                <h3 style={{ color: '#1f2937', marginBottom: 8 }}>Access Denied</h3>
-                <p style={{ color: '#6b7280' }}>You don't have permission to access user management.</p>
-            </div>
-        );
-    }
-
 
     return (
-        <div className={`container-fluid ${hideHeader ? 'p-0' : 'px-2 px-md-4 pt-1 pb-2'}`}>
-            {/* Status Toast */}
-            {statusMsg && (
-                <div style={{
-                    position: 'fixed', top: 24, right: 24, zIndex: 9999,
-                    background: statusMsg.type === 'success' ? '#059669' : '#dc2626',
-                    color: 'white', padding: '14px 24px', borderRadius: 12,
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)', display: 'flex',
-                    alignItems: 'center', gap: 10, fontSize: 14, fontWeight: 500,
-                    animation: 'slideIn .3s ease',
-                }}>
-                    {statusMsg.type === 'success' ? <CheckCircle size={18} /> : <XCircle size={18} />}
-                    {statusMsg.text}
-                </div>
-            )}
-
-            {/* Header */}
-            {!hideHeader && (
-                <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-4 px-2 px-md-4 pt-1">
-                    <div>
-                        <h1 className="h5 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                            <UserCog size={20} className="text-primary" />
-                            User Management
-                        </h1>
-                        <p className="text-muted mb-0" style={{ fontSize: '12px' }}>
-                            Manage all system users, roles, and permissions
-                        </p>
-                    </div>
-                    <div className="d-flex gap-3">
-                        <button
-                            onClick={() => fetchUsers()}
-                            className="btn btn-light btn-sm px-4 py-2 rounded-xl text-xs font-bold shadow-sm d-flex align-items-center gap-2"
-                        >
-                            <RefreshCw size={14} /> Refresh
-                        </button>
-                        <button
-                            onClick={() => { resetForm(); setShowModal(true); }}
-                            className="btn btn-primary btn-sm px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
-                        >
-                            <UserPlus size={14} /> Add New User
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Category Tabs */}
-            <div className={`bg-light rounded mb-4 p-2 ${hideHeader ? '' : 'mx-2 mx-md-4'}`} style={{ border: '1px solid #dee2e6' }}>
-                <div className="nav nav-pills p-1 gap-2 flex-nowrap overflow-auto">
-                    {USER_CATEGORIES.map(cat => {
-                        const Icon = cat.icon;
-                        const isActive = activeCategory === cat.key;
-                        return (
-                            <button key={cat.key} onClick={() => { setActiveCategory(cat.key); setCurrentPage(1); }}
-                                className={`nav-link flex-shrink-0 d-flex align-items-center gap-1.5 py-2 transition-all ${isActive ? 'active' : ''}`}
-                                style={{
-                                    borderRadius: '8px', border: 'none',
-                                    fontWeight: 600, fontSize: '12px',
-                                    padding: '8px 16px', minWidth: 'fit-content'
-                                }}>
-                                <Icon size={14} />
-                                <span className="d-none d-md-inline">{cat.label}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Search Bar */}
-            <div className={`bg-light rounded mb-4 p-4 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`}>
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                    <h6 className="mb-0 fw-bold">Recent Users</h6>
-                    <div className="text-muted small" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
-                        {totalUsers} user{totalUsers !== 1 ? 's' : ''} found
-                    </div>
-                </div>
-                <div className="position-relative d-flex align-items-center gap-2">
-                    <Search className="position-absolute end-0 translate-middle-y me-3 text-muted" size={14} />
-                    <input
-                        type="text" placeholder="Search by name, email, or username..."
-                        value={searchQuery}
-                        onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                        className="form-control ps-3 pe-5 bg-white border-1"
-                        style={{ fontSize: '13px', borderRadius: '5px' }}
-                    />
-                    {searchQuery && (
-                        <button onClick={() => setSearchQuery('')} className="btn btn-light btn-sm p-1" style={{ borderRadius: '6px' }}>
-                            <X size={12} />
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            {/* Users Table */}
-            <div className={`bg-light rounded p-4 shadow-sm ${hideHeader ? '' : 'mx-2 mx-md-4'}`}>
-                {loading ? (
-                    <div className="text-center py-5">
-                        <RefreshCw size={32} className="text-primary animate-spin mb-3" />
-                        <p className="text-muted" style={{ fontSize: '14px' }}>Loading users...</p>
-                    </div>
-                ) : users.length === 0 ? (
-                    <div className="text-center py-5 text-muted">
-                        <Users size={48} className="mb-3 opacity-25" />
-                        <p className="fw-bold mb-1">No users found</p>
-                        <p className="small">Try adjusting your search or filter criteria</p>
-                    </div>
-                ) : (
-                    <div className="table-responsive">
-                        <table className="table text-start align-middle table-bordered table-hover mb-0">
-                            <thead className="bg-white">
-                                <tr className="text-dark">
-                                    <th className="ps-4">Full Name</th>
-                                    <th>Email</th>
-                                    <th>Username</th>
-                                    <th>User Role</th>
-                                    <th>System Role</th>
-                                    <th>Status</th>
-                                    <th>Joined</th>
-                                    <th className="text-end pe-4">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map((user) => (
-                                    <tr key={user.id} className="transition-all">
-                                        <td className="ps-4 py-2">
-                                            <div className="d-flex align-items-center gap-2">
-                                                <div style={{
-                                                    width: 28, height: 28, borderRadius: '50%',
-                                                    background: `linear-gradient(135deg, ${getRoleBadgeColor(user.userRole)}40, ${getRoleBadgeColor(user.userRole)}20)`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    color: getRoleBadgeColor(user.userRole), fontWeight: 700, fontSize: '12px',
-                                                    flexShrink: 0,
-                                                }}>
-                                                    {user.fullName?.charAt(0)?.toUpperCase() || 'U'}
-                                                </div>
-                                                <div>
-                                                    <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '12px' }}>{user.fullName}</div>
-                                                    {user.phone && <div style={{ fontSize: '10px', color: '#9ca3af' }}>{user.phone}</div>}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="py-2" style={{ color: '#6b7280', fontSize: '11px' }}>{user.email}</td>
-                                        <td className="py-2">
-                                            <span style={{
-                                                background: '#f3f4f6', padding: '2px 6px', borderRadius: 4,
-                                                fontSize: '10px', color: '#374151', fontWeight: 500,
-                                            }}>{user.username}</span>
-                                        </td>
-                                        <td className="py-2">
-                                            <span style={{
-                                                background: `${getRoleBadgeColor(user.userRole)}18`,
-                                                color: getRoleBadgeColor(user.userRole),
-                                                padding: '2px 8px', borderRadius: 12, fontSize: '10px',
-                                                fontWeight: 600, textTransform: 'capitalize',
-                                                border: `1px solid ${getRoleBadgeColor(user.userRole)}30`,
-                                            }}>
-                                                {user.userRole?.replace(/_/g, ' ')}
-                                            </span>
-                                        </td>
-                                        <td className="py-2">
-                                            <span style={{
-                                                background: '#e0e7ff', color: '#4338ca',
-                                                padding: '2px 6px', borderRadius: 12, fontSize: '10px', fontWeight: 500,
-                                            }}>
-                                                {user.role?.name?.replace(/_/g, ' ') || '—'}
-                                            </span>
-                                        </td>
-                                        <td className="py-2">
-                                            <button onClick={() => handleToggleActive(user)} style={{
-                                                display: 'flex', alignItems: 'center', gap: 4, padding: '2px 8px',
-                                                borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: '10px', fontWeight: 600,
-                                                background: user.isActive ? '#dcfce7' : '#fee2e2',
-                                                color: user.isActive ? '#16a34a' : '#dc2626',
-                                            }}>
-                                                {user.isActive ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                                                {user.isActive ? 'Active' : 'Inactive'}
-                                            </button>
-                                        </td>
-                                        <td className="py-2" style={{ color: '#9ca3af', fontSize: '10px' }}>
-                                            {new Date(user.createdAt).toLocaleDateString('en-US', {
-                                                year: 'numeric', month: 'short', day: 'numeric',
-                                            })}
-                                        </td>
-                                        <td className="py-2 pe-4 text-end">
-                                            <div className="d-flex justify-content-end gap-1">
-                                                <button onClick={() => setViewUser(user)} title="View" style={{
-                                                    background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6,
-                                                    padding: '4px 6px', cursor: 'pointer', color: '#16a34a',
-                                                }}><Eye size={12} /></button>
-                                                <button onClick={() => handleEdit(user)} title="Edit" style={{
-                                                    background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 6,
-                                                    padding: '4px 6px', cursor: 'pointer', color: '#2563eb',
-                                                }}><Edit2 size={12} /></button>
-                                                <button onClick={() => handleDelete(user.id, user.fullName)} title="Delete"
-                                                    disabled={user.id === currentUser?.id} style={{
-                                                        background: user.id === currentUser?.id ? '#f9fafb' : '#fef2f2',
-                                                        border: `1px solid ${user.id === currentUser?.id ? '#e5e7eb' : '#fecaca'}`,
-                                                        borderRadius: 6, padding: '4px 6px', cursor: user.id === currentUser?.id ? 'not-allowed' : 'pointer',
-                                                        color: user.id === currentUser?.id ? '#d1d5db' : '#dc2626',
-                                                        opacity: user.id === currentUser?.id ? 0.5 : 1,
-                                                    }}><Trash2 size={12} /></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="d-flex justify-content-between align-items-center py-2 px-4" style={{ borderTop: '1px solid #f3f4f6' }}>
-                        <span className="text-muted" style={{ fontSize: '11px' }}>
-                            Page {currentPage} of {totalPages} · {totalUsers} total
-                        </span>
-                        <div className="d-flex gap-1">
-                            <PaginationSelector
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                pageSize={pageSize}
-                                totalItems={totalUsers}
-                                onPageChange={setCurrentPage}
-                                onPageSizeChange={(newSize) => {
-                                    setPageSize(newSize);
-                                    setCurrentPage(1); // Reset to first page when changing page size
-                                }}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* View User Modal */}
-            <Modal isOpen={!!viewUser} onClose={() => setViewUser(null)} title="User Details" size="sm" draggable={true}>
-                {viewUser && (
-                    <div className="flex flex-col gap-4">
-                        <div style={{
-                            background: 'linear-gradient(135deg, #1e293b, #475569)',
-                            padding: '16px 20px', color: 'white', textAlign: 'center',
-                            borderRadius: '12px',
-                        }}>
-                            <div style={{
-                                width: 40, height: 40, borderRadius: '50%', margin: '0 auto 8px',
-                                background: `linear-gradient(135deg, ${getRoleBadgeColor(viewUser.userRole)}, ${getRoleBadgeColor(viewUser.userRole)}aa)`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: 16, fontWeight: 800, border: '2px solid rgba(255,255,255,0.3)',
-                                color: 'white'
-                            }}>{viewUser.fullName?.charAt(0)?.toUpperCase()}</div>
-                            <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: 'white' }}>{viewUser.fullName}</h3>
-                            <p style={{ margin: '2px 0 0', color: '#94a3b8', fontSize: '11px' }}>@{viewUser.username}</p>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            {[
-                                ['Email', viewUser.email],
-                                ['Phone', viewUser.phone || '—'],
-                                ['User Role', viewUser.userRole?.replace(/_/g, ' ')],
-                                ['System Role', viewUser.role?.name?.replace(/_/g, ' ') || '—'],
-                                ['Status', viewUser.isActive ? 'Active' : 'Inactive'],
-                                ['Country', viewUser.country || '—'],
-                                ['Joined', new Date(viewUser.createdAt).toLocaleDateString()],
-                            ].map(([label, value]) => (
-                                <div key={label} style={{
-                                    display: 'flex', justifyContent: 'space-between', padding: '8px 0',
-                                    borderBottom: '1px solid #f3f4f6', fontSize: '12px',
-                                }}>
-                                    <span style={{ color: '#6b7280', fontWeight: 500 }}>{label}</span>
-                                    <span className="dark:text-white" style={{ color: '#1f2937', fontWeight: 600, textTransform: 'capitalize' }}>{value}</span>
-                                </div>
-                            ))}
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
-                            <button onClick={() => setViewUser(null)} style={{
-                                background: '#f3f4f6', border: 'none', padding: '6px 16px',
-                                borderRadius: 6, cursor: 'pointer', fontWeight: 600, color: '#374151', fontSize: '12px'
-                            }}>Close</button>
-                            <button onClick={() => { handleEdit(viewUser); setViewUser(null); }} style={{
-                                background: '#009CFF', border: 'none', padding: '6px 16px',
-                                borderRadius: 6, cursor: 'pointer', fontWeight: 600, color: 'white', fontSize: '12px'
-                            }}>Edit User</button>
-                        </div>
-                    </div>
-                )}
-            </Modal>
-
-            {/* Add/Edit User Modal */}
-            <Modal isOpen={showModal} onClose={() => { setShowModal(false); resetForm(); }} title={editingUser ? 'Edit User' : 'Add New User'} size="md" draggable={true}>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px' }}>
-                        {/* Full Name */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>
-                                Full Name <span style={{ color: '#ef4444' }}>*</span>
-                            </label>
-                            <input type="text" required value={formData.fullName}
-                                onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                                style={inputStyle} placeholder="John Doe" />
-                        </div>
-                        {/* Username */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>
-                                Username <span style={{ color: '#ef4444' }}>*</span>
-                            </label>
-                            <input type="text" required value={formData.username}
-                                onChange={e => setFormData({ ...formData, username: e.target.value })}
-                                style={inputStyle} placeholder="johndoe" />
-                        </div>
-                        {/* Email */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>
-                                Email <span style={{ color: '#ef4444' }}>*</span>
-                            </label>
-                            <input type="email" required value={formData.email}
-                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                style={inputStyle} placeholder="john@example.com" />
-                        </div>
-                        {/* Phone */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>Phone</label>
-                            <input type="tel" value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                style={inputStyle} placeholder="+250 7XX XXX XXX" />
-                        </div>
-                        {/* Password */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>
-                                Password {!editingUser && <span style={{ color: '#ef4444' }}>*</span>}
-                            </label>
-                            <div style={{ position: 'relative' }}>
-                                <input type={showPassword ? 'text' : 'password'} required={!editingUser}
-                                    value={formData.password}
-                                    onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                    style={{ ...inputStyle, paddingRight: 40 }}
-                                    placeholder={editingUser ? 'Leave blank to keep current' : 'Min 6 characters'} />
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{
-                                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                                    background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af',
-                                }}>
-                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
+        <div className="container-fluid py-4 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+            <ScrollReveal className="row mb-3 px-lg-4">
+                <div className="col-12">
+                   <div className="d-flex align-items-center gap-3">
+                        {/* Stat Card 1: Categories */}
+                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                            <div className="bg-primary bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                <ShieldCheck size={18} />
+                            </div>
+                            <div>
+                                <div className="fw-bold text-dark h5 mb-0">{categories.length}</div>
+                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>CATEGORIES</div>
                             </div>
                         </div>
-                        {/* Country */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>Country</label>
-                            <input type="text" value={formData.country}
-                                onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                style={inputStyle} placeholder="Rwanda" />
+
+                        {/* Stat Card 2: Total Users */}
+                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                            <div className="bg-orange-500 bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                <Users size={18} />
+                            </div>
+                            <div>
+                                <div className="fw-bold text-dark h5 mb-0">{total}</div>
+                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>TOTAL USERS</div>
+                            </div>
                         </div>
-                        {/* User Role (Classification) */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>
-                                User Classification <span style={{ color: '#ef4444' }}>*</span>
-                            </label>
-                            <select required value={formData.userRole}
-                                onChange={e => setFormData({ ...formData, userRole: e.target.value })}
-                                style={inputStyle}>
-                                {['Administration', 'Employees', 'Partners & Investors', 'General Users'].map(group => (
-                                    <optgroup key={group} label={group}>
-                                        {ALL_USER_ROLES.filter(r => r.group === group).map(r => (
-                                            <option key={r.value} value={r.value}>{r.label}</option>
-                                        ))}
-                                    </optgroup>
-                                ))}
-                            </select>
-                        </div>
-                        {/* System Role */}
-                        <div>
-                            <label className="dark:text-gray-300" style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: 3 }}>System Role</label>
-                            <select value={formData.roleId}
-                                onChange={e => setFormData({ ...formData, roleId: e.target.value })}
-                                style={inputStyle}>
-                                <option value="">Select System Role</option>
-                                {roles.map(role => (
-                                    <option key={role.id} value={role.id}>
-                                        {role.name.replace(/_/g, ' ')}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        {/* Status */}
-                        <div style={{ gridColumn: '1 / -1' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-                                <div style={{
-                                    width: 36, height: 20, borderRadius: 10, padding: 2,
-                                    background: formData.isActive ? '#22c55e' : '#d1d5db',
-                                    transition: 'background .2s', cursor: 'pointer',
-                                }} onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}>
-                                    <div style={{
-                                        width: 16, height: 16, borderRadius: '50%', background: 'white',
-                                        transform: formData.isActive ? 'translateX(16px)' : 'translateX(0)',
-                                        transition: 'transform .2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                                    }} />
+                   </div>
+                </div>
+            </ScrollReveal>
+
+            <div className="row g-4 pt-2">
+                {/* Sidebar: Categories (Precision Width Adjustment) */}
+                <div className="col-auto px-lg-3" style={{ width: 'calc(16.66% + 2px)', minWidth: '182px' }}>
+                    <div className="glass-card p-1.5 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                        <div className="d-flex justify-content-between align-items-center mb-0 pb-1.5 border-bottom border-gray-100 px-1">
+                            <div className="d-flex align-items-center gap-2 px-1">
+                                <div className="bg-blue-600 rounded-lg p-1.5 text-white shadow-sm">
+                                    <ShieldCheck size={14} />
                                 </div>
-                                <span className="dark:text-gray-300" style={{ fontSize: '12px' }}>User is {formData.isActive ? 'Active' : 'Inactive'}</span>
-                            </label>
+                                <div className="overflow-hidden">
+                                    <p className="smaller text-muted mb-0 text-truncate" style={{ fontSize: '10px' }}>Group-based access</p>
+                                </div>
+                            </div>
+                             <button 
+                                onClick={() => { setUserToEdit(null); setIsUserModalOpen(true); }}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
+                                style={{ fontSize: '9px' }}
+                            >
+                                <PlusCircle size={10} className="me-1" /> New Invite
+                            </button>
                         </div>
                     </div>
 
-                    <div className="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
-                        <button
-                            type="button"
-                            onClick={() => { setShowModal(false); resetForm(); }}
-                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95 bg-white dark:bg-gray-800"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
-                        >
-                            {editingUser ? 'Update User' : 'Create User'}
-                        </button>
+                    <div className="flex-column gap-2 d-flex">
+                        {categories.map((cat: UserCategory) => {
+                            const Icon = cat.icon;
+                            return (
+                                <div 
+                                    key={cat.id} 
+                                    onClick={() => setSelectedCategory(cat)}
+                                    className={`bg-white border-0 shadow-sm rounded-xl overflow-hidden site-row transition-all mb-2 border ${selectedCategory.id === cat.id ? 'border-primary' : 'border-gray-100'} hover:shadow-md cursor-pointer`}
+                                >
+                                    <div className="p-2 px-3 d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center gap-2 overflow-hidden flex-grow-1">
+                                            <div className={`icon-box ${selectedCategory.id === cat.id ? 'bg-primary text-white' : 'bg-blue-50 text-blue-600'} rounded-lg p-2 flex-shrink-0 transition-all`}>
+                                                <Icon size={16} />
+                                            </div>
+                                            <div className="overflow-hidden">
+                                                <div className="d-flex flex-column gap-0">
+                                                    <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{cat.name}</h6>
+                                                    <Badge className="bg-light text-muted p-0 px-1 border-0 mt-1" style={{ fontSize: '7px', width: 'fit-content' }}>{cat.count} USERS</Badge>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {selectedCategory.id === cat.id && (
+                                            <div className="ms-2">
+                                                <div className="h-1.5 w-1.5 bg-success rounded-circle shadow-sm" style={{ width: '6px', height: '6px' }} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                </form>
+                </div>
+
+                {/* Main Content: User List (Fitted) */}
+                <div className="col px-lg-4 border-start border-gray-100">
+                    <div className="rounded-xl mb-3 border border-white shadow-sm h-100" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', overflow: 'hidden' }}>
+                        <div className="p-2 border-bottom border-gray-100 mb-0 d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center gap-2">
+                                <div className="bg-orange-500 rounded-lg p-2 text-white shadow-sm">
+                                    <UserPlus size={16} />
+                                </div>
+                                <div>
+                                    <h2 className="fw-bold mb-0" style={{ fontSize: '13px' }}>{selectedCategory.name} Directory</h2>
+                                    <p className="smaller text-muted mb-0" style={{ fontSize: '11px' }}>Managing access levels for this group</p>
+                                </div>
+                            </div>
+                             <button 
+                                onClick={() => { setUserToEdit(null); setIsUserModalOpen(true); }}
+                                className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
+                                style={{ fontSize: '9px' }}
+                            >
+                                <UserPlus size={10} className="me-1" /> Add {selectedCategory.name.slice(0, -1)}
+                            </button>
+                        </div>
+                    <div className="directory-scroll-container px-1" style={{ maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' }}>
+                            {isLoading ? (
+                                <div className="text-center py-5 text-muted small">Loading directory...</div>
+                            ) : users.length === 0 ? (
+                                <div className="text-center py-5 bg-white rounded shadow-sm border border-dashed border-gray-200">
+                                    <Users className="text-muted mb-2 opacity-25" size={40} />
+                                    <h3 className="smaller fw-bold text-muted">No users in this category</h3>
+                                    <p className="smaller text-muted">Click the add button to invite your first member.</p>
+                                </div>
+                            ) : (
+                                <div className="flex-column gap-2 d-flex pt-1 pb-3">
+                                    {users.map((user: any) => (
+                                        <div key={user.id} className="bg-white border-0 shadow-sm rounded-xl overflow-hidden site-row transition-all mb-1.5 border border-gray-100 hover:shadow-md">
+                                            <div className="p-1 px-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                <div className="d-flex align-items-center gap-2 overflow-hidden flex-grow-1" style={{ minWidth: '180px' }}>
+                                                    <div className="bg-orange-50 text-orange-600 rounded-circle p-1.5 flex-shrink-0 border border-orange-100">
+                                                        <UserCircle size={16} />
+                                                    </div>
+                                                    <div className="overflow-hidden text-start py-0.5">
+                                                        <div className="d-flex align-items-center gap-2">
+                                                            <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '13px' }}>{user.fullName}</h6>
+                                                            <Badge className={`${getStatusColor(user.isActive ? 'active' : 'suspended')} px-1 py-0 border-0`} style={{ fontSize: '8px' }}>{user.isActive ? 'ACTIVE' : 'SUSPENDED'}</Badge>
+                                                        </div>
+                                                        <div className="smaller text-muted d-flex align-items-center gap-1" style={{ fontSize: '10px' }}>
+                                                            <span className="text-primary fw-bold" style={{ fontSize: '9px' }}>{user.email}</span>
+                                                            <span>•</span>
+                                                            <span className="text-secondary fw-bold" style={{ fontSize: '9px' }}>{user.userRole.replace('_', ' ').toUpperCase()}</span>
+                                                            {user.site ? (
+                                                                <>
+                                                                    <span>•</span>
+                                                                    <span className="text-success fw-bold p-1 bg-success/10 rounded-lg px-2 border border-success/20" style={{ fontSize: '9px' }}>
+                                                                        <MapPin size={9} className="me-1 mb-0.5" />
+                                                                        S/ {user.site.name.toUpperCase()} (#{user.site.code})
+                                                                    </span>
+                                                                </>
+                                                            ) : (
+                                                                ['super_admin', 'admin', 'manager', 'site_manager', 'hr', 'accountant', 'employee'].includes(user.userRole) && (
+                                                                    <>
+                                                                        <span>•</span>
+                                                                        <span className="text-danger fw-bold p-1 bg-danger/10 rounded-lg px-2 border border-danger/20" style={{ fontSize: '9px' }}>
+                                                                            <MapPin size={9} className="me-1 mb-0.5" />
+                                                                            SITE UNASSIGNED
+                                                                        </span>
+                                                                    </>
+                                                                )
+                                                            )}
+                                                            <span>•</span>
+                                                            <span className="text-truncate px-1" style={{ fontSize: '9px' }}>{new Date(user.createdAt).toLocaleDateString()}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="d-flex align-items-center gap-1 flex-shrink-0 ms-2 py-1">
+                                                    <button 
+                                                        className="btn btn-light rounded-lg py-0.5 px-2 fw-bold border shadow-sm h-fit-content d-flex align-items-center"
+                                                        style={{ fontSize: '10px', height: '24px' }}
+                                                        onClick={() => setSelectedUserForDetail(user)}
+                                                    >
+                                                        <Eye size={11} className="me-1 border-0" />
+                                                        View Profile
+                                                    </button>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger className="btn btn-link text-muted p-0.5 hover:bg-gray-100 rounded-circle border-0">
+                                                            <MoreVertical size={13} />
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="shadow border-0 rounded-lg">
+                                                            <DropdownMenuItem onClick={() => { setUserToEdit(user); setIsUserModalOpen(true); }} className="text-xs">
+                                                                <Edit2 size={11} className="me-2 text-primary" /> Edit Permissions
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem onClick={() => handleDeleteUser(user)} className="text-danger text-xs">
+                                                                <Trash2 size={11} className="me-2" /> Delete User
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <AddUserModal
+                isOpen={isUserModalOpen}
+                onClose={() => setIsUserModalOpen(false)}
+                onSuccess={() => loadUsers()}
+                initialData={userToEdit}
+            />
+
+            {/* View Profile Modal */}
+            <Modal isOpen={!!selectedUserForDetail} onClose={() => setSelectedUserForDetail(null)} title="User Profile Hub" size="md" draggable={true}>
+                {selectedUserForDetail && (
+                    <div className="p-2">
+                        <div className="bg-primary rounded-xl p-3 text-white mb-4 d-flex align-items-center gap-3 shadow-lg" style={{ background: '#009CFF' }}>
+                            <div className="bg-white/20 p-3 rounded-xl">
+                                <UserCircle size={32} />
+                            </div>
+                            <div className="text-start">
+                                <h4 className="fw-bold mb-0 text-white">{selectedUserForDetail.fullName}</h4>
+                                <div className="d-flex align-items-center gap-2 mt-1">
+                                    <Badge className="bg-white text-primary border-0 font-bold px-2" style={{ fontSize: '9px' }}>{selectedUserForDetail.userRole.toUpperCase()}</Badge>
+                                    <Badge className={`${selectedUserForDetail.isActive ? 'bg-success' : 'bg-danger'} text-white border-0 px-2`} style={{ fontSize: '9px' }}>{selectedUserForDetail.isActive ? 'ACTIVE' : 'SUSPENDED'}</Badge>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row g-4 text-start">
+                            <div className="col-md-6 border-end">
+                                <h6 className="fw-bold mb-3 text-primary" style={{ fontSize: '10px' }}>BASIC INFORMATION</h6>
+                                <div className="d-flex flex-column gap-3">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <UserCircle size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Full Name</div>
+                                            <div className="fw-bold text-dark small">{selectedUserForDetail.fullName}</div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Mail size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Email Address</div>
+                                            <div className="fw-bold text-dark small">{selectedUserForDetail.email}</div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Phone size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Phone / WhatsApp</div>
+                                            <div className="fw-bold text-dark small">{selectedUserForDetail.phone || '+250 -- --- ----'}</div>
+                                        </div>
+                                    </div>
+                                    {selectedUserForDetail.age && (
+                                        <div className="d-flex align-items-center gap-3">
+                                            <div className="bg-light p-2 rounded-lg text-muted"> <Users size={16} /> </div>
+                                            <div>
+                                                <div className="small text-muted" style={{ fontSize: '9px' }}>Age</div>
+                                                <div className="fw-bold text-dark small">{selectedUserForDetail.age} Years Old</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <MapPin size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Physical Address</div>
+                                            <div className="fw-bold text-dark small">{selectedUserForDetail.address || 'Address Not Set'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Side: System Info */}
+                            <div className="col-md-6">
+                                <h6 className="fw-bold mb-3 text-primary" style={{ fontSize: '10px' }}>GEOGRAPHIC & SYSTEM SETTINGS</h6>
+                                <div className="d-grid gap-2">
+                                    {selectedUserForDetail.site && (
+                                        <div className="d-flex align-items-center gap-3">
+                                            <div className="bg-success-subtle p-2 rounded-lg text-success">
+                                                <Building2 size={16} />
+                                            </div>
+                                            <div>
+                                                <div className="small text-muted" style={{ fontSize: '9px' }}>Employment Location</div>
+                                                <div className="fw-bold text-success small">{selectedUserForDetail.site.name.toUpperCase()}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Globe size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Country / Region</div>
+                                            <div className="fw-bold text-dark small">{selectedUserForDetail.country || 'RWANDA (RW)'}</div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Shield size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Account Status</div>
+                                            <div className="fw-bold text-dark small">
+                                                {selectedUserForDetail.isActive ? (
+                                                    <span className="text-success">● FULL ACCESS - ACTIVE</span>
+                                                ) : (
+                                                    <span className="text-danger">● ACCESS SUSPENDED</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Globe size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Platform Language & TZ</div>
+                                            <div className="fw-bold text-dark small uppercase">
+                                                {selectedUserForDetail.language?.toUpperCase() || 'ENGLISH (EN)'} • {selectedUserForDetail.timezone || 'UTC'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="bg-light p-2 rounded-lg text-muted"> <Calendar size={16} /> </div>
+                                        <div>
+                                            <div className="small text-muted" style={{ fontSize: '9px' }}>Member Since</div>
+                                            <div className="fw-bold text-dark small">
+                                                {new Date(selectedUserForDetail.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-2 p-2 bg-blue-50/50 rounded-lg border border-blue-100">
+                                    <div className="small text-blue-600 fw-bold" style={{ fontSize: '9px' }}>SECURITY OVERVIEW</div>
+                                    <p className="smaller text-muted mb-0" style={{ fontSize: '9px' }}>Password status verified. Multi-factor authentication is {selectedUserForDetail.googleId ? 'Linked' : 'Not Linked'}.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="d-flex justify-content-end gap-2 pt-4 border-top mt-4">
+                            <button
+                                className="btn btn-light px-4 py-1.5 border fw-bold text-muted shadow-sm rounded-lg text-xs"
+                                onClick={() => setSelectedUserForDetail(null)}
+                            >
+                                Close Overview
+                            </button>
+                            <button
+                                onClick={() => { setUserToEdit(selectedUserForDetail); setSelectedUserForDetail(null); setIsUserModalOpen(true); }}
+                                className="btn btn-primary px-4 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-2 rounded-lg text-xs border-0"
+                                style={{ background: '#009CFF' }}
+                            >
+                                <ShieldCheck size={12} /> Edit Permissions
+                            </button>
+                        </div>
+                    </div>
+                )}
             </Modal>
 
             <style>{`
-        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
+                .site-row:hover { background-color: #f8fbff !important; border-color: #009CFF !important; }
+                .rounded-xl { border-radius: 1rem !important; }
+                .icon-box { transition: all 0.3s ease; }
+                .smaller { font-size: 11px; }
+                .search-input { padding-left: 35px !important; }
+                .search-input::placeholder { text-indent: 5px; }
+            `}</style>
         </div>
     );
 }
-
-const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '4px 8px', borderRadius: 6,
-    border: '1px solid #e5e7eb', fontSize: '12px', color: '#1f2937',
-    outline: 'none', transition: 'border-color .2s', background: '#fafafa',
-    boxSizing: 'border-box',
-};

@@ -8,6 +8,7 @@ import { fetchApi } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { formatDistanceToNow } from 'date-fns';
 import { useDebounce } from "@/app/hooks/useDebounce";
+import { useSite } from "../context/SiteContext";
 
 interface Message {
     id: string;
@@ -43,6 +44,7 @@ interface UserSearchResult {
 
 export function Messages() {
     const { user } = useAuth();
+    const { selectedSite } = useSite();
     const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
     const [messageText, setMessageText] = useState("");
     const [chats, setChats] = useState<Chat[]>([]);
@@ -65,14 +67,14 @@ export function Messages() {
         if (user) {
             loadConversations();
         }
-    }, [user]);
+    }, [user, selectedSite]);
 
     useEffect(() => {
         if (selectedChat && user) {
             setPage(1);
             loadMessages(selectedChat.id, 1);
         }
-    }, [selectedChat, user]);
+    }, [selectedChat, user, selectedSite]);
 
     useEffect(() => {
         if (page === 1) {
@@ -92,7 +94,7 @@ export function Messages() {
             }
         }, 5000);
         return () => clearInterval(interval);
-    }, [user, selectedChat]);
+    }, [user, selectedChat, selectedSite]);
 
     // Search users effect
     useEffect(() => {
@@ -116,11 +118,12 @@ export function Messages() {
         };
 
         performSearch();
-    }, [debouncedSearchTerm, user]);
+    }, [debouncedSearchTerm, user, selectedSite]);
 
     const loadConversations = async () => {
         try {
-            const data = await fetchApi<any[]>(`/messages/conversations?userId=${user?.id}`);
+            const siteParam = selectedSite?.id ? `&siteId=${selectedSite.id}` : '';
+            const data = await fetchApi<any[]>(`/messages/conversations?userId=${user?.id}${siteParam}`);
             const formattedChats = data.map(c => ({
                 id: c.id,
                 name: c.name,
@@ -141,7 +144,8 @@ export function Messages() {
 
     const loadMessages = async (otherUserId: string, pageNum: number = 1, isPolling: boolean = false) => {
         try {
-            const response = await fetchApi<PaginatedResponse<any>>(`/messages/chat/${otherUserId}?userId=${user?.id}&page=${pageNum}&limit=50`);
+            const siteParam = selectedSite?.id ? `&siteId=${selectedSite.id}` : '';
+            const response = await fetchApi<PaginatedResponse<any>>(`/messages/chat/${otherUserId}?userId=${user?.id}&page=${pageNum}&limit=50${siteParam}`);
 
             const formattedMessages = response.data.map(m => ({
                 id: m.id,
@@ -186,7 +190,8 @@ export function Messages() {
                 body: JSON.stringify({
                     senderId: user.id,
                     receiverId: selectedChat.id,
-                    content: messageText
+                    content: messageText,
+                    siteId: selectedSite?.id || null
                 })
             });
             setMessageText("");

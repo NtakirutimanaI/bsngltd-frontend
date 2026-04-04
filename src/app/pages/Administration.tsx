@@ -23,6 +23,7 @@ import { ContactMessages } from "./ContactMessages";
 
 
 
+
 export function Administration() {
     const { user } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -98,9 +99,10 @@ export function Administration() {
             <div className="admin-content-panel h-100 px-0">
                 {activeTab === 'users' && (
                     <div className="fade-in">
-                        <ManageUsers hideHeader={true} />
+                        <ManageUsers />
                     </div>
                 )}
+
                 {activeTab === 'settings' && (
                     <div className="fade-in">
                         <Settings />
