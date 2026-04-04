@@ -68,287 +68,137 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   ];
 
   const exportReport = (type: string) => {
-    // Mock export functionality
-    alert(`Exporting ${type} report...`);
+    toast.success(`Exporting ${type} report...`);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
 
-      {/* Header */}
-      {!hideHeader && (
-        <ScrollReveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="h3 fw-bold text-gray-900 mb-1">Reports & Analytics</h1>
-            <p className="text-gray-600 mt-1">Comprehensive business insights and performance metrics</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsExportModalOpen(true)}
-              className="p-2 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
-            >
-              <Download className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => exportReport("PDF")}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all hover:scale-105 active:scale-95"
-            >
-              <Download className="h-4 w-4" />
-              Export PDF
-            </button>
-            <button
-              onClick={() => exportReport("Excel")}
-              className="flex items-center gap-2 px-5 py-2 bg-[#009CFF] text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95"
-            >
-              <FileText className="h-4 w-4" />
-              Export Excel
-            </button>
-          </div>
-        </ScrollReveal>
-      )}
-
-      {/* KPI Cards */}
-      <div className="row g-4 mb-4">
-        <ScrollReveal delay={0.1} className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <DollarSign className="h-10 w-10 text-primary" />
-            <div className="ms-3 text-end">
-              <p className="mb-2 text-xs text-muted">Revenue (2024)</p>
-              <h6 className="mb-0 font-bold">RWF 445M</h6>
+      {/* KPI Cards - High Density */}
+      <div className="row g-3 mb-2">
+        {[
+          { label: "Revenue (2024)", value: "RWF 445M", icon: DollarSign, color: "text-blue-500", bg: "bg-blue-50" },
+          { label: "Fixed Projects", value: "15", icon: Building2, color: "text-indigo-500", bg: "bg-indigo-50" },
+          { label: "Productivity", value: "94%", icon: Users, color: "text-emerald-500", bg: "bg-emerald-50" },
+          { label: "Margin", value: "42.5%", icon: BarChart3, color: "text-violet-500", bg: "bg-violet-50" },
+        ].map((kpi, i) => (
+          <ScrollReveal key={i} delay={i * 0.05} className="col-sm-6 col-xl-3">
+            <div className="glass-card p-2 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)' }}>
+              <div className={`${kpi.bg} rounded-lg d-flex align-items-center justify-content-center shadow-xs`} style={{ width: '36px', height: '36px', minWidth: '36px' }}>
+                <kpi.icon size={16} className={kpi.color} />
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-muted mb-0 font-medium" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{kpi.label}</p>
+                <h6 className="fw-bold mb-0 text-dark" style={{ fontSize: '14px' }}>{kpi.value}</h6>
+              </div>
             </div>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal delay={0.2} className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <Building2 className="h-10 w-10 text-primary" />
-            <div className="ms-3 text-end">
-              <p className="mb-2 text-xs text-muted">Fixed Projects</p>
-              <h6 className="mb-0 font-bold">15</h6>
-            </div>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal delay={0.3} className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <Users className="h-10 w-10 text-primary" />
-            <div className="ms-3 text-end">
-              <p className="mb-2 text-xs text-muted">Productivity</p>
-              <h6 className="mb-0 font-bold">94%</h6>
-            </div>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal delay={0.4} className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <BarChart3 className="h-10 w-10 text-primary" />
-            <div className="ms-3 text-end">
-              <p className="mb-2 text-xs text-muted">Margin</p>
-              <h6 className="mb-0 font-bold">42.5%</h6>
-            </div>
-          </div>
-        </ScrollReveal>
+          </ScrollReveal>
+        ))}
       </div>
 
-      {/* Revenue Trends */}
-      <ScrollReveal delay={0.5} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <div className="flex items-center justify-between mb-4">
+      {/* Revenue Trends - Compact */}
+      <ScrollReveal delay={0.3} className="glass-card rounded-xl shadow-sm border border-white p-3" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+        <div className="d-flex align-items-center justify-content-between mb-3">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">Quarterly Performance</h3>
-            <p className="text-xs text-gray-600 mt-0.5">Revenue, expenses, and profit trends</p>
+            <h3 className="fw-bold text-dark mb-0" style={{ fontSize: '13px' }}>Quarterly Performance</h3>
+            <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Revenue, expenses, and profit trends</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="px-2 py-1 bg-blue-100 text-blue-700 rounded-lg text-xs font-medium">
-              6 Months
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-xs font-medium">
-              1 Year
-            </button>
-            <button className="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-lg text-xs font-medium">
-              All Time
-            </button>
+          <div className="d-flex gap-1">
+            <button className="btn btn-sm py-0 px-2" style={{ fontSize: '10px', height: '24px', background: '#009CFF', color: '#fff', borderRadius: '6px' }}>All Time</button>
+            <button className="btn btn-sm py-0 px-2 border" style={{ fontSize: '10px', height: '24px', borderRadius: '6px' }}>6 Months</button>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={quarterlyRevenue}>
-            <defs>
-              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#009CFF" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#009CFF" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#374151" : "#e5e7eb"} />
-            <XAxis dataKey="quarter" stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} />
-            <YAxis stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                border: theme === 'dark' ? "1px solid #374151" : "1px solid #e5e7eb",
-                borderRadius: "8px",
-                color: theme === 'dark' ? "#fff" : "#000"
-              }}
-              itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
-            />
-            <Legend />
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke="#009CFF"
-              fillOpacity={1}
-              fill="url(#colorRevenue)"
-              name="Revenue (M)"
-            />
-            <Area
-              type="monotone"
-              dataKey="expenses"
-              stroke="#009CFF"
-              fillOpacity={1}
-              fill="url(#colorExpenses)"
-              name="Expenses (M)"
-            />
-            <Area
-              type="monotone"
-              dataKey="profit"
-              stroke="#3b82f6"
-              fillOpacity={1}
-              fill="url(#colorProfit)"
-              name="Profit (M)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+        <div style={{ height: '180px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={quarterlyRevenue}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#009CFF" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis dataKey="quarter" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+              <Tooltip 
+                 contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '11px' }}
+              />
+              <Area type="monotone" dataKey="revenue" stroke="#009CFF" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" name="Revenue" />
+              <Area type="monotone" dataKey="profit" stroke="#3b82f6" strokeWidth={2} fill="transparent" name="Profit" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </ScrollReveal>
 
-      {/* Two Column Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Project Types Distribution */}
-        <ScrollReveal delay={0.6} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Project Distribution by Type</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie
-                data={projectTypeData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {projectTypeData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                  border: theme === 'dark' ? "1px solid #374151" : "1px solid #e5e7eb",
-                  color: theme === 'dark' ? "#fff" : "#000"
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+      {/* Grid for smaller charts */}
+      <div className="row g-3">
+        <ScrollReveal delay={0.4} className="col-lg-6">
+          <div className="glass-card rounded-xl shadow-sm border border-white p-3 h-100" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+            <h3 className="fw-bold text-dark mb-3" style={{ fontSize: '13px' }}>Project Type Distribution</h3>
+            <div style={{ height: '160px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={projectTypeData} cx="50%" cy="50%" innerRadius={40} outerRadius={60} paddingAngle={5} dataKey="value">
+                    {projectTypeData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-2 d-flex flex-wrap gap-3 justify-content-center">
+               {projectTypeData.map((d, i) => (
+                 <div key={i} className="d-flex align-items-center gap-1">
+                    <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: d.color }}></div>
+                    <span style={{ fontSize: '10px' }} className="text-muted">{d.name}</span>
+                 </div>
+               ))}
+            </div>
+          </div>
         </ScrollReveal>
 
-        {/* Department Expenses */}
-        <ScrollReveal delay={0.7} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Department Expenses</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={departmentExpenses}>
-              <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#374151" : "#e5e7eb"} />
-              <XAxis dataKey="department" stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} angle={-45} textAnchor="end" height={80} />
-              <YAxis stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                  border: theme === 'dark' ? "1px solid #374151" : "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  color: theme === 'dark' ? "#fff" : "#000"
-                }}
-                itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
-              />
-              <Bar dataKey="amount" fill="#009CFF" radius={[8, 8, 0, 0]} name="Amount (M)" />
-            </BarChart>
-          </ResponsiveContainer>
+        <ScrollReveal delay={0.5} className="col-lg-6">
+          <div className="glass-card rounded-xl shadow-sm border border-white p-3 h-100" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+            <h3 className="fw-bold text-dark mb-3" style={{ fontSize: '13px' }}>Monthly Project Status</h3>
+            <div style={{ height: '160px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyProjects}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+                  <Tooltip contentStyle={{ borderRadius: '10px', fontSize: '11px' }} />
+                  <Bar dataKey="active" fill="#009CFF" radius={[4, 4, 0, 0]} barSize={12} />
+                  <Bar dataKey="completed" fill="#10b981" radius={[4, 4, 0, 0]} barSize={12} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-2 text-center">
+               <span style={{ fontSize: '10px' }} className="text-muted">Total active projects: 10</span>
+            </div>
+          </div>
         </ScrollReveal>
       </div>
 
-      {/* Project Status Timeline */}
-      <ScrollReveal delay={0.8} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Monthly Project Status Timeline
-        </h3>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={monthlyProjects}>
-            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? "#374151" : "#e5e7eb"} />
-            <XAxis dataKey="month" stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} />
-            <YAxis stroke={theme === 'dark' ? "#9ca3af" : "#6b7280"} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: theme === 'dark' ? "#1f2937" : "#fff",
-                border: theme === 'dark' ? "1px solid #374151" : "1px solid #e5e7eb",
-                borderRadius: "8px",
-                color: theme === 'dark' ? "#fff" : "#000"
-              }}
-              itemStyle={{ color: theme === 'dark' ? "#e5e7eb" : undefined }}
-            />
-            <Legend />
-            <Bar dataKey="completed" stackId="a" fill="#009CFF" name="Completed" radius={[8, 8, 0, 0]} />
-            <Bar dataKey="active" stackId="a" fill="#3b82f6" name="Active" />
-            <Bar dataKey="planning" stackId="a" fill="#10b981" name="Planning" />
-          </BarChart>
-        </ResponsiveContainer>
-      </ScrollReveal>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <ScrollReveal delay={0.9} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-blue-600" />
+      {/* Summary Row - High Density */}
+      <div className="row g-3">
+        {[
+          { icon: TrendingUp, label: "Client Satisfaction", value: "4.8/5.0", footer: "Based on 156 reviews" },
+          { icon: Calendar, label: "Avg Duration", value: "8.5 months", footer: "15% faster than avg" },
+          { icon: DollarSign, label: "Budget Adherence", value: "96%", footer: "On-budget completion" }
+        ].map((item, i) => (
+          <ScrollReveal key={i} delay={0.6 + (i*0.1)} className="col-md-4">
+            <div className="glass-card p-3 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.5)' }}>
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <div className="bg-blue-50 rounded-lg p-1.5 text-blue-600 d-flex align-items-center justify-content-center">
+                  <item.icon size={12} />
+                </div>
+                <span className="text-muted fw-medium" style={{ fontSize: '10px', textTransform: 'uppercase' }}>{item.label}</span>
+              </div>
+              <h4 className="fw-bold mb-1 text-dark" style={{ fontSize: '16px' }}>{item.value}</h4>
+              <p className="text-muted mb-0" style={{ fontSize: '10px' }}>{item.footer}</p>
             </div>
-            <div>
-              <p className="text-xs text-gray-600">Client Satisfaction</p>
-              <p className="text-xl font-bold text-gray-900">4.8/5.0</p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-600">Based on 156 project reviews</p>
-        </ScrollReveal>
-
-        <ScrollReveal delay={1.0} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Calendar className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-600">Avg Project Duration</p>
-              <p className="text-xl font-bold text-gray-900">8.5 months</p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-600">15% faster than industry average</p>
-        </ScrollReveal>
-
-        <ScrollReveal delay={1.1} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-600">Budget Adherence</p>
-              <p className="text-xl font-bold text-gray-900">96%</p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-600">Projects completed within budget</p>
-        </ScrollReveal>
+          </ScrollReveal>
+        ))}
       </div>
     </div>
   );

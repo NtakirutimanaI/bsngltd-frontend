@@ -56,8 +56,10 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="d-flex items-center justify-center min-vh-50">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
             </div>
         );
     }
@@ -74,187 +76,146 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
     })) || [];
 
     return (
-        <div className="space-y-6">
-            {!hideHeader && (
-                <ScrollReveal>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h1 className="h3 fw-bold text-gray-900 dark:text-white mb-1">Website Analytics</h1>
-                            <p className="text-gray-500 dark:text-gray-400 mt-1">Track your visitors, locations, and monetization status.</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-bold flex items-center gap-2">
-                                <Activity className="h-4 w-4" />
-                                Live Tracking Active
-                            </div>
-                        </div>
-                    </div>
-                </ScrollReveal>
-            )}
-
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="space-y-4">
+            {/* Stats Overview - High Density */}
+            <div className="row g-3 mb-2">
                 {[
-                    { label: "Daily Visitors", value: data?.overview.daily, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-blue-600", bg: "bg-blue-50" },
-                    { label: "Monthly Visitors", value: data?.overview.monthly, icon: Globe, color: "text-blue-600", bg: "bg-green-50" },
-                    { label: "Ad Revenue (Est.)", value: "$124.50", icon: DollarSign, color: "text-purple-600", bg: "bg-purple-50" },
+                    { label: "Daily Visitors", value: data?.overview.daily, icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+                    { label: "Weekly Visitors", value: data?.overview.weekly, icon: TrendingUp, color: "text-indigo-500", bg: "bg-indigo-50" },
+                    { label: "Monthly Visitors", value: data?.overview.monthly, icon: Globe, color: "text-emerald-500", bg: "bg-emerald-50" },
+                    { label: "Ad Revenue (Est.)", value: "$124.50", icon: DollarSign, color: "text-purple-500", bg: "bg-purple-50" },
                 ].map((stat, i) => (
-                    <ScrollReveal key={i} delay={i * 0.1} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className={`${stat.bg} dark:bg-gray-700 p-3 rounded-xl`}>
-                                <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    <ScrollReveal key={i} delay={i * 0.05} className="col-sm-6 col-xl-3">
+                        <div className="glass-card p-2 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(10px)' }}>
+                            <div className={`${stat.bg} rounded-lg d-flex align-items-center justify-content-center shadow-xs`} style={{ width: '36px', height: '36px', minWidth: '36px' }}>
+                                <stat.icon size={16} className={stat.color} />
                             </div>
-                            <span className="text-green-500 text-xs font-bold flex items-center gap-1 bg-green-50 dark:bg-green-900/30 px-2 py-1 rounded-full">
-                                <ArrowUpRight className="h-3 w-3" />
-                                +12%
-                            </span>
-                        </div>
-                        <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">{stat.label}</h3>
-                        <div className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                            {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+                            <div className="overflow-hidden flex-grow-1">
+                                <p className="text-muted mb-0 font-medium" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{stat.label}</p>
+                                <h6 className="fw-bold mb-0 text-dark" style={{ fontSize: '14px' }}>
+                                    {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
+                                </h6>
+                            </div>
+                            <div className="bg-green-50 px-1 py-0.5 rounded flex items-center gap-0.5" style={{ fontSize: '9px', color: '#10b981', fontWeight: 700 }}>
+                                <ArrowUpRight size={8} /> 12%
+                            </div>
                         </div>
                     </ScrollReveal>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Main Visitor Chart */}
-                <ScrollReveal delay={0.4} className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
-                            <BarChart3 className="h-5 w-5 text-blue-500" />
-                            Visitor Statistics
-                        </h3>
-                    </div>
-                    <div className="h-[350px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData}>
-                                <defs>
-                                    <linearGradient id="colorVis" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#009CFF" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 12 }} />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                />
-                                <Area type="monotone" dataKey="visitors" stroke="#009CFF" strokeWidth={3} fillOpacity={1} fill="url(#colorVis)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
+            <div className="row g-3">
+                {/* Visitor Chart - Compact */}
+                <ScrollReveal delay={0.3} className="col-lg-8">
+                    <div className="glass-card rounded-xl shadow-sm border border-white p-3" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+                        <div className="d-flex align-items-center justify-content-between mb-3">
+                            <h3 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
+                                <BarChart3 size={14} className="text-blue-500" />
+                                Visitor Statistics
+                            </h3>
+                        </div>
+                        <div style={{ height: '220px' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData}>
+                                    <defs>
+                                        <linearGradient id="colorVis" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#009CFF" stopOpacity={0.15} />
+                                            <stop offset="95%" stopColor="#009CFF" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#999' }} />
+                                    <Tooltip contentStyle={{ borderRadius: '10px', border: 'none', fontSize: '11px' }} />
+                                    <Area type="monotone" dataKey="visitors" stroke="#009CFF" strokeWidth={2} fillOpacity={1} fill="url(#colorVis)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 </ScrollReveal>
 
-                {/* Country Distribution */}
-                <ScrollReveal delay={0.5} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h3 className="text-lg font-bold mb-6 dark:text-white flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-blue-500" />
-                        Top Locations
-                    </h3>
-                    <div className="h-[250px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={countryData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {countryData.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                    <div className="mt-4 space-y-3">
-                        {countryData.map((item, i) => (
-                            <div key={i} className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
-                                    <span className="text-gray-600 dark:text-gray-400">{item.name}</span>
+                {/* Country List - Compact */}
+                <ScrollReveal delay={0.4} className="col-lg-4">
+                    <div className="glass-card rounded-xl shadow-sm border border-white p-3 h-100" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+                        <h3 className="fw-bold text-dark mb-3 d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
+                            <MapPin size={14} className="text-red-500" />
+                            Top Locations
+                        </h3>
+                        <div className="space-y-2">
+                            {countryData.slice(0, 5).map((item, i) => (
+                                <div key={i} className="d-flex align-items-center justify-content-between p-2 rounded-lg bg-white/40 border border-white/50">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="rounded-circle" style={{ width: '6px', height: '6px', backgroundColor: COLORS[i % COLORS.length] }}></div>
+                                        <span className="text-muted" style={{ fontSize: '11px' }}>{item.name}</span>
+                                    </div>
+                                    <span className="fw-bold text-dark" style={{ fontSize: '11px' }}>{item.value}</span>
                                 </div>
-                                <span className="font-bold dark:text-white">{item.value} visits</span>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </ScrollReveal>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Top Active Members */}
-                <ScrollReveal delay={0.6} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h3 className="text-lg font-bold mb-6 dark:text-white flex items-center gap-2">
-                        <Navigation className="h-5 w-5 text-green-500" />
-                        Most Frequent Visitors (Members)
-                    </h3>
-                    <div className="space-y-4">
-                        {data?.topMembers && data.topMembers.length > 0 ? (
-                            data.topMembers.map((member, i) => (
-                                <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center font-bold">
+            <div className="row g-3">
+                {/* Active Members - High Density */}
+                <ScrollReveal delay={0.5} className="col-lg-6">
+                    <div className="glass-card rounded-xl shadow-sm border border-white p-3 h-100" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+                        <h3 className="fw-bold text-dark mb-3 d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
+                            <Navigation size={14} className="text-emerald-500" />
+                            Frequent Visitors (Members)
+                        </h3>
+                        <div className="space-y-2">
+                            {data?.topMembers?.map((member, i) => (
+                                <div key={i} className="d-flex align-items-center justify-content-between p-2 rounded-xl bg-white/40 hover:bg-white/60 transition-all border border-white/50">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="rounded-lg bg-blue-50 text-blue-600 fw-bold d-flex align-items-center justify-content-center" style={{ width: '28px', height: '28px', fontSize: '11px' }}>
                                             {member.name.charAt(0)}
                                         </div>
-                                        <div>
-                                            <div className="text-sm font-bold dark:text-white">{member.name}</div>
-                                            <div className="text-xs text-gray-500">{member.email}</div>
+                                        <div className="overflow-hidden">
+                                            <div className="fw-bold text-dark text-truncate" style={{ fontSize: '11px' }}>{member.name}</div>
+                                            <div className="text-muted text-truncate" style={{ fontSize: '9px' }}>{member.email}</div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="text-sm font-bold text-blue-600">{member.visits}</div>
-                                        <div className="text-[10px] text-gray-400 uppercase font-bold">Visits</div>
+                                    <div className="text-end">
+                                        <div className="fw-bold text-blue-600" style={{ fontSize: '11px' }}>{member.visits}</div>
+                                        <div className="text-muted" style={{ fontSize: '8px', textTransform: 'uppercase' }}>Visits</div>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <p className="text-center text-gray-500 py-10">No member data available yet.</p>
-                        )}
+                            )) || <p className="text-center text-muted py-4 small">No data</p>}
+                        </div>
                     </div>
                 </ScrollReveal>
 
-                {/* Google Ads Monetization Status */}
-                <ScrollReveal delay={0.7} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
-                            <DollarSign className="h-5 w-5 text-purple-500" />
-                            Monetization (Google Addons)
-                        </h3>
-                        <span className="px-2 py-1 bg-green-100 text-blue-600 text-[10px] font-bold rounded uppercase">Active</span>
-                    </div>
-
-                    <div className="p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center space-y-4 py-8">
-                        <div className="h-16 w-16 bg-purple-50 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-                            <Percent className="h-8 w-8 text-purple-600" />
+                {/* Monetization - High Density */}
+                <ScrollReveal delay={0.6} className="col-lg-6">
+                    <div className="glass-card rounded-xl shadow-sm border border-white p-3 h-100" style={{ background: 'rgba(255, 255, 255, 0.6)' }}>
+                        <div className="d-flex align-items-center justify-content-between mb-3">
+                            <h3 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
+                                <DollarSign size={14} className="text-purple-500" />
+                                Monetization
+                            </h3>
+                            <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded fw-bold" style={{ fontSize: '9px', textTransform: 'uppercase' }}>Active</span>
                         </div>
-                        <div>
-                            <h4 className="font-bold dark:text-white">Earnings per Click/View</h4>
-                            <p className="text-sm text-gray-500 max-w-xs">You are earning on every visitor interaction. Ads are automatically served to users.</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4 w-full pt-4">
-                            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
-                                <div className="text-xs text-gray-500 mb-1">eCPM</div>
-                                <div className="text-xl font-bold dark:text-white">$4.20</div>
+                        <div className="p-3 rounded-xl border border-dashed border-gray-200 bg-white/30 d-flex flex-column align-items-center text-center">
+                            <div className="bg-purple-50 rounded-full p-2 mb-2 text-purple-600">
+                                <Percent size={18} />
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl">
-                                <div className="text-xs text-gray-500 mb-1">CTR</div>
-                                <div className="text-xl font-bold dark:text-white">2.8%</div>
+                            <h4 className="fw-bold text-dark mb-1" style={{ fontSize: '13px' }}>Ad Earnings Status</h4>
+                            <p className="text-muted mb-3" style={{ fontSize: '10px' }}>Earning on every visitor interaction.</p>
+                            <div className="row g-2 w-100">
+                                <div className="col-6">
+                                    <div className="bg-white/50 p-2 rounded-lg border border-white/60">
+                                        <div className="text-muted mb-0" style={{ fontSize: '9px' }}>eCPM</div>
+                                        <div className="fw-bold text-dark" style={{ fontSize: '14px' }}>$4.20</div>
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="bg-white/50 p-2 rounded-lg border border-white/60">
+                                        <div className="text-muted mb-0" style={{ fontSize: '9px' }}>CTR</div>
+                                        <div className="fw-bold text-dark" style={{ fontSize: '14px' }}>2.8%</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Example Ad Preview */}
-                    <div className="mt-6 p-4 rounded-lg bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                        <div className="text-[10px] text-gray-400 font-bold uppercase mb-2">Google Ad Preview (Admin only view)</div>
-                        <div className="h-20 bg-white dark:bg-gray-800 rounded flex items-center justify-center shadow-inner">
-                            <span className="text-gray-400 text-xs italic">Advertisement Banner Mockup</span>
                         </div>
                     </div>
                 </ScrollReveal>
