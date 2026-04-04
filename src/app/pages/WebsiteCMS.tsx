@@ -480,7 +480,7 @@ export function WebsiteCMS() {
             // Sync all changes above to Github to fulfill the user requirement
             try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
 
-            setMessage({ type: 'success', text: 'Texts and content changed successfully!' });
+            setMessage({ type: 'success', text: 'Texts saved & published to public website successfully!' });
             setTimeout(() => setMessage(null), 3000);
         } catch (error) {
             console.error("Failed to save settings:", error);
@@ -645,10 +645,10 @@ export function WebsiteCMS() {
                                         disabled={isSaving}
                                         className="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
                                         style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
-                                        title="Save all text content and publish to public website"
+                                        title="Permanently save all texts to database and publish to public website"
                                     >
                                         {isSaving ? <RefreshCcw className="animate-spin" size={12} /> : <Save size={12} />}
-                                        {isSaving ? 'Publishing...' : 'Publish'}
+                                        {isSaving ? 'Publishing...' : 'Save & Publish'}
                                     </button>
                                 )}
                             </div>
