@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useAuth } from "@/app/context/AuthContext";
+import { useSite } from "@/app/context/SiteContext";
 
 // Components
 import { Reports } from "./Reports";
@@ -21,6 +22,7 @@ import { ExportReportModal } from "@/app/components/ExportReportModal";
 
 export function Insights() {
     const { user } = useAuth();
+    const { selectedSite } = useSite();
     const [searchParams, setSearchParams] = useSearchParams();
     const activeTab = (searchParams.get('tab') as 'business' | 'website') || 'business';
 

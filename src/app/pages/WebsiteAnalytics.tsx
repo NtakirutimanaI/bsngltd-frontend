@@ -25,6 +25,7 @@ import {
     Pie,
     Cell
 } from "recharts";
+import { useSite } from "../context/SiteContext";
 
 interface AnalyticsData {
     overview: {
@@ -37,10 +38,12 @@ interface AnalyticsData {
 }
 
 export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean }) {
+    const { selectedSite } = useSite();
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        setIsLoading(true);
         fetchApi<AnalyticsData>("/statistics/analytics")
             .then(res => {
                 setData(res);
@@ -50,7 +53,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                 console.error("Failed to fetch analytics", err);
                 setIsLoading(false);
             });
-    }, []);
+    }, [selectedSite?.id]);
 
     const COLORS = ["#009CFF", "#3b82f6", "#10b981", "#8b5cf6", "#f43f5e"];
 
@@ -111,7 +114,7 @@ export function WebsiteAnalytics({ hideHeader = false }: { hideHeader?: boolean 
                         <div className="d-flex align-items-center justify-content-between mb-3">
                             <h3 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2" style={{ fontSize: '13px' }}>
                                 <BarChart3 size={14} className="text-blue-500" />
-                                Visitor Statistics
+                                Statistics for {selectedSite?.name || 'All Sites'}
                             </h3>
                         </div>
                         <div style={{ height: '220px' }}>

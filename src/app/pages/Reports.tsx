@@ -28,9 +28,11 @@ import {
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useTheme } from "@/app/context/ThemeContext";
 import { ExportReportModal } from "@/app/components/ExportReportModal";
+import { useSite } from "@/app/context/SiteContext";
 
 export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
   const { theme } = useTheme();
+  const { selectedSite } = useSite();
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const quarterlyRevenue = [
@@ -102,7 +104,7 @@ export function Reports({ hideHeader = false }: { hideHeader?: boolean }) {
         <div className="d-flex align-items-center justify-content-between mb-3">
           <div>
             <h3 className="fw-bold text-dark mb-0" style={{ fontSize: '13px' }}>Quarterly Performance</h3>
-            <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Revenue, expenses, and profit trends</p>
+            <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Revenue, expenses, and trends for {selectedSite?.name || 'All Sites'}</p>
           </div>
           <div className="d-flex gap-1">
             <button className="btn btn-sm py-0 px-2" style={{ fontSize: '10px', height: '24px', background: '#009CFF', color: '#fff', borderRadius: '6px' }}>All Time</button>
