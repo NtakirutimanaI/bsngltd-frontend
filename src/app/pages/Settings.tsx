@@ -6,7 +6,19 @@ import {
   RefreshCw,
   Copy,
   CheckCircle,
-  ExternalLink
+  ExternalLink,
+  ChevronRight,
+  Settings as SettingsIcon,
+  User,
+  Building2,
+  Bell,
+  ShieldHalf,
+  Network,
+  Globe,
+  Lock,
+  Mail,
+  Phone,
+  Languages
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi, getImageUrl } from "../api/client";
@@ -73,7 +85,6 @@ export function Settings() {
     try {
       const settings = await fetchApi<any[]>("/settings");
 
-      // Map setting values to company data state
       const findVal = (key: string) => {
         const s = settings.find(i => i.key === key);
         if (!s) return "";
@@ -158,7 +169,7 @@ export function Settings() {
       await fetchApi("/auth/reset-password", {
         method: "POST",
         body: JSON.stringify({
-          token: "direct_reset", // Backend would need to support direct reset for logged in user or use current password
+          token: "direct_reset", 
           password: passwordData.newPassword
         })
       });
@@ -206,525 +217,332 @@ export function Settings() {
     toast.success("Notification preferences updated locally");
   };
 
-  // Determine if the user has an administrator role using the same logic as RootLayout
   const isAdmin = (() => {
     if (!user) return false;
-
     const roleName = (typeof user?.role === 'object' && user.role !== null)
       ? (user.role as any).name
       : (user?.role || 'guest');
-
     const normalizedRole = roleName.toString().toLowerCase().replace(/\s+/g, '_');
-
-    // Allow broader access temporarily for testing/visibility
     return ['super_admin', 'admin', 'manager', 'site_manager', 'content_editor'].includes(normalizedRole);
   })();
 
-  const tabs = [
-    { id: "profile", name: "Profile Settings", iconClass: "fa-solid fa-user" },
+  const categories = [
+    { id: "profile", name: "Profile Settings", icon: User, color: 'text-blue-500', description: 'Account & personal info' },
     ...(isAdmin ? [
-      { id: "company", name: "Company", iconClass: "fa-solid fa-building" },
-      { id: "notifications", name: "Notifications", iconClass: "fa-solid fa-bell" },
-      { id: "security", name: "Security", iconClass: "fa-solid fa-shield-halved" },
-      { id: "api", name: "API & Integrations", iconClass: "fa-solid fa-network-wired" },
+      { id: "company", name: "Company", icon: Building2, color: 'text-indigo-500', description: 'Business & site info' },
+      { id: "notifications", name: "Notifications", icon: Bell, color: 'text-emerald-500', description: 'Alerts & messaging' },
+      { id: "security", name: "Security", icon: ShieldHalf, color: 'text-rose-500', description: 'Privacy & access' },
+      { id: "api", name: "API & Integrations", icon: Network, color: 'text-violet-500', description: 'Endpoints & tokens' },
     ] : [])
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <ScrollReveal>
-        <h1 className="h3 fw-bold text-gray-900 mb-1">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your account and application preferences</p>
-      </ScrollReveal>
+    <div className="container-fluid py-0 min-vh-100" style={{ background: 'transparent' }}>
+      <div className="row g-4 pt-2">
+        {/* Category sub-sidebar */}
+        <div className="col-lg-3 px-lg-4 border-end border-gray-100">
+          <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+            <div className="d-flex align-items-center gap-2 mb-0 pb-2 border-bottom border-gray-100">
+              <div className="bg-primary rounded-lg p-2 text-white shadow-sm d-flex align-items-center justify-content-center">
+                <SettingsIcon size={16} />
+              </div>
+              <div className="overflow-hidden">
+                <h2 className="fw-bold mb-0 text-truncate" style={{ fontSize: '13px' }}>Settings Center</h2>
+                <p className="smaller text-muted mb-0" style={{ fontSize: '11px' }}>Manage preferences</p>
+              </div>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar Tabs */}
-        <ScrollReveal delay={0.1} className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full d-flex align-items-center px-3 py-3 rounded-lg transition-colors border-0 ${activeTab === tab.id
-                  ? "bg-blue-100 text-primary"
-                  : "bg-transparent text-gray-700 hover:bg-gray-100"
-                  }`}
+          <div className="directory-scroll-container">
+            {categories.map((cat) => (
+              <div 
+                key={cat.id} 
+                onClick={() => setActiveTab(cat.id)}
+                className={`site-row p-1 mb-1.5 rounded-xl transition-all border cursor-pointer ${activeTab === cat.id ? 'active-site shadow-md' : 'bg-white text-dark border-gray-100 hover:bg-light'}`}
+                style={activeTab === cat.id ? { 
+                  background: '#009CFF',
+                  borderColor: '#009CFF',
+                  color: 'white'
+                } : {}}
               >
-                <div className="d-flex align-items-center justify-content-center" style={{ width: '40px', minWidth: '40px' }}>
-                   <i className={`${tab.iconClass}`} style={{ fontSize: '16px' }}></i>
+                <div className="px-3 py-2 d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center gap-3 overflow-hidden flex-grow-1">
+                    <div className={`rounded-lg p-2 d-flex align-items-center justify-content-center ${activeTab === cat.id ? 'bg-white/20' : 'bg-blue-50'}`} style={{ width: '34px', height: '34px' }}>
+                      <cat.icon size={16} className={activeTab === cat.id ? 'text-white' : cat.color} />
+                    </div>
+                    <div className="overflow-hidden text-start">
+                      <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{cat.name}</h6>
+                      <div className={`smaller ${activeTab === cat.id ? 'text-white/80' : 'text-muted'}`} style={{ fontSize: '9px' }}>{cat.description}</div>
+                    </div>
+                  </div>
+                  {activeTab === cat.id && <ChevronRight size={14} />}
                 </div>
-                <span className="fw-medium ms-2" style={{ fontSize: '13px' }}>{tab.name}</span>
-              </button>
+              </div>
             ))}
           </div>
-        </ScrollReveal>
+        </div>
 
-        {/* Content */}
-        <div className="lg:col-span-3">
-          {activeTab === "profile" && (
-            <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h3>
-              <form onSubmit={handleUpdateProfile} className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white text-3xl font-bold overflow-hidden" style={{ backgroundImage: 'linear-gradient(to right bottom, #14b8a6, #009CFF)' }}>
-                    {profileData.avatar ? (
-                      <img src={getImageUrl(profileData.avatar)} alt="Avatar" className="h-full w-full object-cover" />
-                    ) : (
-                      profileData.fullName.charAt(0) || "A"
-                    )}
-                  </div>
-                  <div>
-                    <input type="file" ref={fileInputRef} className="hidden" accept="image/jpeg,image/png,image/gif" onChange={handleAvatarUpload} />
-                    <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors" style={{ backgroundColor: '#009CFF' }}>
-                      Change Avatar
-                    </button>
-                    <p className="text-sm text-gray-600 mt-2">
-                      JPG, GIF or PNG. Max size of 800KB
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={profileData.fullName}
-                      onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address
-                    </label>
-                    <div className="position-relative">
-                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
-                        <i className="fa-solid fa-envelope text-muted" style={{ fontSize: '14px' }}></i>
+        {/* Content Area */}
+        <div className="col-lg-9 px-lg-4">
+          <div className="admin-content-panel h-100 px-0 mt-2">
+            {activeTab === "profile" && (
+              <ScrollReveal delay={0.1} className="fade-in-up">
+                <div className="glass-card p-4 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.8)' }}>
+                  <h3 className="fw-bold text-dark mb-4" style={{ fontSize: '14px' }}>Profile Information</h3>
+                  <form onSubmit={handleUpdateProfile} className="space-y-4">
+                    <div className="d-flex align-items-center gap-4 mb-4">
+                      <div className="h-16 w-16 rounded-circle shadow-sm border-2 border-white overflow-hidden bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style={{ fontSize: '20px' }}>
+                        {profileData.avatar ? (
+                          <img src={getImageUrl(profileData.avatar)} alt="Avatar" className="h-full w-full object-cover" />
+                        ) : (
+                          profileData.fullName.charAt(0) || "U"
+                        )}
                       </div>
-                      <input
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                        className="form-control"
-                        style={{ paddingLeft: '40px' }}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <div className="position-relative">
-                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
-                        <i className="fa-solid fa-phone text-muted" style={{ fontSize: '14px' }}></i>
-                      </div>
-                      <input
-                        type="tel"
-                        value={profileData.phone}
-                        onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                        className="form-control"
-                        style={{ paddingLeft: '40px' }}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Language
-                    </label>
-                    <div className="position-relative">
-                      <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
-                        <i className="fa-solid fa-globe text-muted" style={{ fontSize: '14px' }}></i>
-                      </div>
-                      <select
-                        value={profileData.language}
-                        onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-                        className="form-select"
-                        style={{ paddingLeft: '40px' }}
-                      >
-                        <option value="en">English</option>
-                        <option value="fr">French</option>
-                        <option value="rw">Kinyarwanda</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                  Save Changes
-                </button>
-              </form>
-            </ScrollReveal>
-          )}
-
-          {isAdmin && activeTab === "company" && (
-            <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Company Information</h3>
-              <form onSubmit={handleSaveCompany} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      value={companyData.name}
-                      onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Contact Email
-                    </label>
-                    <input
-                      type="email"
-                      value={companyData.email}
-                      onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="text"
-                      value={companyData.phone}
-                      onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Official Address
-                    </label>
-                    <input
-                      type="text"
-                      value={companyData.address}
-                      onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Website Status
-                    </label>
-                    <select
-                      value={companyData.websiteStatus}
-                      onChange={(e) => setCompanyData({ ...companyData, websiteStatus: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                    >
-                      <option value="active">Active (Public)</option>
-                      <option value="maintenance">Maintenance Mode</option>
-                      <option value="inactive">Inactive (Disabled)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
-                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700 flex items-start gap-2 max-w-md">
-                    <RefreshCw size={14} className="mt-0.5" />
-                    <div> These settings affect the public website globally.</div>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                    Save Company Info
-                  </button>
-                </div>
-              </form>
-            </ScrollReveal>
-          )}
-
-          {isAdmin && activeTab === "notifications" && (
-            <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Notification Preferences</h3>
-              <form onSubmit={handleSaveNotifications} className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Project Updates</p>
-                      <p className="text-sm text-gray-600">
-                        Get notified about project status changes
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Payment Notifications</p>
-                      <p className="text-sm text-gray-600">
-                        Alerts for payments received and sent
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Employee Updates</p>
-                      <p className="text-sm text-gray-600">
-                        New employee joins or attendance alerts
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Budget Alerts</p>
-                      <p className="text-sm text-gray-600">
-                        Notifications when projects exceed budget thresholds
-                      </p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">Email Notifications</p>
-                      <p className="text-sm text-gray-600">Receive email summaries daily</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">SMS Notifications</p>
-                      <p className="text-sm text-gray-600">Urgent alerts via SMS</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Save className="h-5 w-5" />
-                  Save Preferences
-                </button>
-              </form>
-            </ScrollReveal>
-          )}
-
-          {isAdmin && activeTab === "security" && (
-            <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Security Settings</h3>
-              <div className="space-y-6">
-                <form onSubmit={handleUpdatePassword} className="space-y-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-4">Change Password</h4>
-                    <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Current Password
-                        </label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                          <input
-                            type="password"
-                            value={passwordData.currentPassword}
-                            onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
+                        <input type="file" ref={fileInputRef} className="d-none" accept="image/*" onChange={handleAvatarUpload} />
+                        <button type="button" onClick={() => fileInputRef.current?.click()} className="btn btn-sm text-white px-3" style={{ background: '#009CFF', fontSize: '11px', borderRadius: '8px' }}>
+                          Update Photo
+                        </button>
+                        <p className="text-muted mb-0 mt-1" style={{ fontSize: '10px' }}>Max size 800KB. JPG or PNG.</p>
                       </div>
+                    </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          New Password
-                        </label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                          <input
-                            type="password"
-                            value={passwordData.newPassword}
-                            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Confirm New Password
-                        </label>
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Full Name</label>
                         <div className="position-relative">
-                          <div className="position-absolute start-0 top-50 translate-middle-y d-flex align-items-center justify-content-center" style={{ width: '40px' }}>
-                            <i className="fa-solid fa-lock text-muted" style={{ fontSize: '14px' }}></i>
-                          </div>
+                          <User size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
                           <input
-                            type="password"
-                            value={passwordData.confirmPassword}
-                            onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                            className="form-control"
-                            style={{ paddingLeft: '40px' }}
+                            type="text"
+                            value={profileData.fullName}
+                            onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                            className="form-control form-control-sm ps-5 border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
                           />
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-6 border-t border-gray-200">
-                    <h4 className="font-medium text-gray-900 mb-4">Two-Factor Authentication</h4>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-gray-900">Enable 2FA for additional security</p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Protect your account with an extra layer of security
-                        </p>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Email Address</label>
+                        <div className="position-relative">
+                          <Mail size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <input
+                            type="email"
+                            value={profileData.email}
+                            onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                            className="form-control form-control-sm ps-5 border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                          />
+                        </div>
                       </div>
-                      <button type="button" className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                        Enable
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Phone Number</label>
+                        <div className="position-relative">
+                          <Phone size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <input
+                            type="tel"
+                            value={profileData.phone}
+                            onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                            className="form-control form-control-sm ps-5 border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Language</label>
+                        <div className="position-relative">
+                          <Languages size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <select
+                            value={profileData.language}
+                            onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
+                            className="form-select form-select-sm ps-5 border-gray-200"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
+                          >
+                            <option value="en">English (US)</option>
+                            <option value="fr">French (FR)</option>
+                            <option value="rw">Kinyarwanda</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button type="submit" disabled={loading} className="btn text-white w-auto px-4 mt-3 d-flex align-items-center gap-2" style={{ background: '#009CFF', borderRadius: '10px', fontSize: '12px', fontWeight: 600 }}>
+                      {loading ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                      Save Profile
+                    </button>
+                  </form>
+                </div>
+              </ScrollReveal>
+            )}
+
+            {isAdmin && activeTab === "company" && (
+              <ScrollReveal delay={0.1} className="fade-in-up">
+                <div className="glass-card p-4 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.8)' }}>
+                  <h3 className="fw-bold text-dark mb-4" style={{ fontSize: '14px' }}>Company Information</h3>
+                  <form onSubmit={handleSaveCompany} className="space-y-4">
+                    <div className="row g-3">
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Company Name</label>
+                        <input type="text" value={companyData.name} onChange={(e) => setCompanyData({ ...companyData, name: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Support Email</label>
+                        <input type="email" value={companyData.email} onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Phone</label>
+                        <input type="text" value={companyData.phone} onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Status</label>
+                        <select value={companyData.websiteStatus} onChange={(e) => setCompanyData({ ...companyData, websiteStatus: e.target.value })} className="form-select form-select-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }}>
+                          <option value="active">Active (Production)</option>
+                          <option value="maintenance">Maintenance Mode</option>
+                          <option value="inactive">Internal Use Only</option>
+                        </select>
+                      </div>
+                      <div className="col-12">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Headquarters Address</label>
+                        <textarea value={companyData.address} onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })} className="form-control form-control-sm border-gray-200" rows={2} style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between pt-3">
+                      <div className="d-flex align-items-center gap-2 p-2 bg-blue-50 rounded-lg border border-blue-100" style={{ fontSize: '10px' }}>
+                        <RefreshCw size={12} className="text-blue-500" />
+                        <span className="text-blue-700">Syncs with public footer & contact page.</span>
+                      </div>
+                      <button type="submit" disabled={loading} className="btn text-white px-4 d-flex align-items-center gap-2" style={{ background: '#009CFF', borderRadius: '10px', fontSize: '12px', fontWeight: 600 }}>
+                        {loading ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                        Update Global Settings
                       </button>
                     </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                    Update Password
-                  </button>
-                </form>
-              </div>
-            </ScrollReveal>
-          )}
-
-          {isAdmin && activeTab === "api" && (
-            <ScrollReveal delay={0.2} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="d-flex justify-content-between align-items-center mb-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">API Access & Integration</h3>
-                  <p className="text-sm text-gray-600 mt-1">Share secure endpoints for employee registration and data collection.</p>
+                  </form>
                 </div>
-                <button className="px-4 py-2 rounded-lg hover:opacity-90 transition-colors text-sm font-medium" style={{ backgroundColor: '#d4efea', color: '#009CFF' }}>
-                  Generate New Token
-                </button>
-              </div>
+              </ScrollReveal>
+            )}
 
-              <div className="space-y-6">
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-                    <Globe size={16} /> Public Registration Link
-                  </h4>
-                  <p className="text-sm text-gray-600 mb-3">Share this link with new employees to allow them to self-register their details safely.</p>
-                  <div className="flex gap-2">
-                    <code className="flex-1 bg-white px-3 py-2 rounded border border-gray-300 text-sm font-mono text-gray-600 overflow-hidden text-ellipsis whitespace-nowrap">
-                      {window.location.origin}/register?ref=admin_invite
-                    </code>
-                    <button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/register?ref=admin_invite`); alert("Link copied!") }} className="px-3 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 text-gray-600">
-                      Copy
+            {isAdmin && activeTab === "notifications" && (
+              <ScrollReveal delay={0.1} className="fade-in-up">
+                <div className="glass-card p-4 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.8)' }}>
+                  <h3 className="fw-bold text-dark mb-4" style={{ fontSize: '14px' }}>Notification Preferences</h3>
+                  <div className="space-y-3">
+                    {[
+                      { title: "Project Updates", desc: "Status changes and milestones" },
+                      { title: "Payment Alerts", desc: "Sent and received disbursements" },
+                      { title: "Employee Hub", desc: "New joins and daily attendance" },
+                      { title: "Budget Thresholds", desc: "Warnings for over-budget projects" }
+                    ].map((pref, i) => (
+                      <div key={i} className="d-flex align-items-center justify-content-between p-2 rounded-lg bg-light/50 border border-gray-100">
+                        <div>
+                          <div className="fw-bold text-dark" style={{ fontSize: '12px' }}>{pref.title}</div>
+                          <div className="text-muted" style={{ fontSize: '10px' }}>{pref.desc}</div>
+                        </div>
+                        <div className="form-check form-switch mb-0">
+                          <input className="form-check-input" type="checkbox" defaultChecked />
+                        </div>
+                      </div>
+                    ))}
+                    <button onClick={handleSaveNotifications} className="btn text-white px-4 mt-3 d-flex align-items-center gap-2" style={{ background: '#009CFF', borderRadius: '10px', fontSize: '12px', fontWeight: 600 }}>
+                      <Save size={14} /> Save Preferences
                     </button>
                   </div>
                 </div>
+              </ScrollReveal>
+            )}
 
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-4">Core API Endpoints</h4>
-                  <div className="max-h-96 overflow-y-auto pr-2 custom-scrollbar">
-                    <div className="space-y-3">
-                      {[
-                        { method: 'POST', endpoint: '/auth/login', desc: 'Secure user authentication' },
-                        { method: 'POST', endpoint: '/auth/register', desc: 'Register new system users' },
-                        { method: 'GET', endpoint: '/users', desc: 'Manage system users (Admin)' },
-                        { method: 'GET', endpoint: '/projects', desc: 'Full project portfolio management' },
-                        { method: 'GET', endpoint: '/properties', desc: 'Property listings and status' },
-                        { method: 'GET', endpoint: '/employees', desc: 'HR and personnel management' },
-                        { method: 'POST', endpoint: '/employees/attendance', desc: 'Record daily site attendance' },
-                        { method: 'GET', endpoint: '/employees/payroll/calculate', desc: 'Monthly salary engine' },
-                        { method: 'POST', endpoint: '/payments', desc: 'Financial records and disbursements' },
-                        { method: 'GET', endpoint: '/updates', desc: 'News and announcements CMS' },
-                        { method: 'GET', endpoint: '/settings/public', desc: 'Public site configuration' }
-                      ].map((api, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${api.method === 'GET' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
-                                {api.method}
-                              </span>
-                              <code className="text-sm font-mono text-gray-800">{api.endpoint}</code>
-                            </div>
-                            <span className="text-xs text-gray-500 mt-1">{api.desc}</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => { navigator.clipboard.writeText(api.endpoint); toast.success("Endpoint copied") }} className="text-gray-400 hover:text-blue-600">
-                              <Copy size={14} />
-                            </button>
-                            <a href="#" className="text-gray-400 hover:text-blue-600">
-                              <ExternalLink size={14} />
-                            </a>
-                          </div>
+            {isAdmin && activeTab === "security" && (
+              <ScrollReveal delay={0.1} className="fade-in-up">
+                <div className="glass-card p-4 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.8)' }}>
+                  <h3 className="fw-bold text-dark mb-4" style={{ fontSize: '14px' }}>Access & Security</h3>
+                  <form onSubmit={handleUpdatePassword} className="space-y-4">
+                    <div className="row g-3 px-1">
+                      <div className="col-12">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Current Password</label>
+                        <div className="position-relative">
+                          <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="form-control form-control-sm ps-5 border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
                         </div>
-                      ))}
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>New Password</label>
+                        <input type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Confirm Password</label>
+                        <input type="password" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                      </div>
                     </div>
-                  </div>
+                    <div className="d-flex align-items-center justify-content-between pt-3">
+                      <div className="d-flex align-items-center gap-2 text-warning" style={{ fontSize: '10px' }}>
+                        <ShieldHalf size={12} />
+                        <span>Recommended: Enable 2FA for extra safety.</span>
+                      </div>
+                      <button type="submit" disabled={loading} className="btn text-white px-4 d-flex align-items-center gap-2" style={{ background: '#009CFF', borderRadius: '10px', fontSize: '12px', fontWeight: 600 }}>
+                        {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                        Update Password
+                      </button>
+                    </div>
+                  </form>
                 </div>
+              </ScrollReveal>
+            )}
 
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">Integration Tokens</h4>
-                    <span className="badge bg-success-subtle text-success px-2 py-0.5 rounded text-[10px] flex items-center gap-1">
-                      <CheckCircle size={10} /> Active
-                    </span>
+            {isAdmin && activeTab === "api" && (
+              <ScrollReveal delay={0.1} className="fade-in-up">
+                <div className="glass-card p-4 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.8)' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h3 className="fw-bold text-dark mb-0" style={{ fontSize: '14px' }}>Developer Hub</h3>
+                    <button className="btn btn-sm btn-light border" style={{ fontSize: '10px', borderRadius: '8px' }}>Generate Secret Key</button>
                   </div>
-                  <p className="text-sm text-gray-600 mb-4">Use these tokens to authenticate third-party applications.</p>
-                  <div className="p-3 bg-yellow-50 border border-yellow-100 rounded-lg text-sm text-yellow-800 flex items-start gap-2">
-                    <Shield size={16} className="mt-0.5" />
-                    <div>
-                      <strong>Security Warning:</strong> Never share your secret API keys. Rotate them immediately if you suspect a leak.
+                  
+                  <div className="bg-light/40 p-3 rounded-lg border border-gray-100 mb-4">
+                    <div className="d-flex align-items-center gap-2 text-dark fw-bold mb-2" style={{ fontSize: '12px' }}>
+                      <Globe size={14} className="text-blue-500" /> System Registration API
+                    </div>
+                    <div className="input-group input-group-sm">
+                      <input type="text" readOnly value={`${window.location.origin}/register?ref=bsng_admin`} className="form-control bg-white border-gray-200 font-mono" style={{ fontSize: '10px' }} />
+                      <button className="btn btn-outline-secondary" style={{ fontSize: '10px' }} onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/register?ref=bsng_admin`); toast.success("Copied!"); }}>Copy</button>
                     </div>
                   </div>
+
+                  <div className="max-h-60 overflow-auto pr-1">
+                    {[
+                      { method: 'POST', endpoint: '/employees/attendance', desc: 'Secure site entry log' },
+                      { method: 'GET', endpoint: '/finance/stats', desc: 'Financial health metrics' },
+                      { method: 'PATCH', endpoint: '/projects/:id/media', desc: 'Bulk asset management' }
+                    ].map((api, i) => (
+                      <div key={i} className="d-flex align-items-center justify-content-between p-2 mb-2 rounded-lg border border-gray-100 hover:bg-light/30">
+                        <div>
+                          <div className="d-flex align-items-center gap-2">
+                             <span className="badge p-1 px-1.5" style={{ background: api.method === 'GET' ? '#eff6ff' : '#ecfdf5', color: api.method === 'GET' ? '#2563eb' : '#059669', fontSize: '9px' }}>{api.method}</span>
+                             <code className="text-dark font-mono" style={{ fontSize: '10px' }}>{api.endpoint}</code>
+                          </div>
+                          <div className="text-muted mt-0.5" style={{ fontSize: '9px' }}>{api.desc}</div>
+                        </div>
+                        <button className="btn btn-sm p-1 text-muted hover:text-blue-500" onClick={() => toast.success("Endpoint copied")}>
+                          <Copy size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </ScrollReveal>
-          )}
+              </ScrollReveal>
+            )}
+          </div>
         </div>
       </div>
+
+      <style>{`
+        .active-site { border-color: #009CFF !important; }
+        .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .smaller { font-size: 11px; }
+        .site-row:hover { border-color: #009CFF !important; background-color: #f8fbff !important; }
+        .directory-scroll-container::-webkit-scrollbar { width: 4px; }
+        .directory-scroll-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+      `}</style>
     </div>
   );
 }
