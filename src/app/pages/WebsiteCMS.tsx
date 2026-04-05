@@ -61,22 +61,25 @@ const PAGE_IMAGES: Record<string, { key: string; label: string; fallback: string
         { key: 'global_newsletter_bg', label: 'Newsletter Background', fallback: '/img/newsletter.jpg', description: 'Newsletter CTA section background' },
     ],
     about: [
-        { key: 'about_image_1', label: 'About Image 1', fallback: '/img/about-1.jpg', description: 'About page left image' },
-        { key: 'about_image_2', label: 'About Image 2', fallback: '/img/about-2.jpg', description: 'About page right image' },
+        { key: 'about_image_1', label: 'About Story (Left)', fallback: '/img/about-1.jpg', description: 'Small image on the left in the about page story section' },
+        { key: 'about_image_2', label: 'About Story (Right)', fallback: '/img/about-2.jpg', description: 'Main horizontal image in the about page story section' },
         { key: 'about_team_1', label: 'Team Member 1', fallback: '/img/team-1.jpg', description: 'Managing Director photo' },
         { key: 'about_team_2', label: 'Team Member 2', fallback: '/img/team-2.jpg', description: 'Senior Architect photo' },
         { key: 'about_team_3', label: 'Team Member 3', fallback: '/img/team-3.jpg', description: 'Project Manager photo' },
         { key: 'about_team_4', label: 'Team Member 4', fallback: '/img/team-4.jpg', description: 'Site Engineer photo' },
     ],
     services: [
-        { key: 'service_image_1', label: 'Service Image 1', fallback: '/img/service-1.jpg', description: 'Residential construction service' },
-        { key: 'service_image_2', label: 'Service Image 2', fallback: '/img/service-2.jpg', description: 'Commercial construction service' },
-        { key: 'service_image_3', label: 'Service Image 3', fallback: '/img/service-3.jpg', description: 'Property development service' },
-        { key: 'service_image_4', label: 'Service Image 4', fallback: '/img/service-4.jpg', description: 'Renovation & remodeling service' },
-        { key: 'global_newsletter_bg', label: 'Newsletter Background', fallback: '/img/newsletter.jpg', description: 'Newsletter CTA section background' },
+        { key: 'service_hero_bg', label: 'Services Hero BG', fallback: '/img/hero-bg.jpg', description: 'Background for services page' },
+        { key: 'service_image_1', label: 'Residential Icon', fallback: '/img/service-1.jpg', description: 'Residential construction service visual' },
+        { key: 'service_image_2', label: 'Commercial Icon', fallback: '/img/service-2.jpg', description: 'Commercial construction service visual' },
+        { key: 'service_image_3', label: 'Development Icon', fallback: '/img/service-3.jpg', description: 'Property development service visual' },
+        { key: 'service_image_4', label: 'Renovation Icon', fallback: '/img/service-4.jpg', description: 'Renovation & remodeling service visual' },
     ],
     global: [
+        { key: 'header_logo', label: 'Company Logo', fallback: '/img/logo.png', description: 'Main website logo in the navigation bar' },
+        { key: 'favicon', label: 'Favicon', fallback: '/favicon.ico', description: 'Browser tab icon' },
         { key: 'global_newsletter_bg', label: 'Newsletter Background', fallback: '/img/newsletter.jpg', description: 'Shared newsletter section background' },
+        { key: 'footer_bg', label: 'Footer Background', fallback: '/img/footer-bg.jpg', description: 'Global footer section background' },
     ],
 };
 
@@ -1088,26 +1091,48 @@ export function WebsiteCMS() {
                                             <p className="text-sm text-muted dark:text-gray-400 mb-4 mx-auto max-w-sm">We can automatically initialize common home page text fields if they are missing from your database.</p>
                                             <button 
                                                 onClick={async () => {
-                                                    const keys = [
-                                                        { k: 'home_about_title', d: 'About Section Title', v: 'BUILDING Strong Generations' },
-                                                        { k: 'home_about_desc1', d: 'Primary Description', v: 'Founded in 2005, BSNG Ltd has grown from a small construction firm...' },
-                                                        { k: 'home_about_desc2', d: 'Secondary Description', v: 'With over 20 years of experience, we\'ve completed more than 250 projects...' },
-                                                        { k: 'home_experience_title', d: 'Experience Tagline', v: 'Building Excellence Since 2010' }
-                                                    ];
-                                                    for (const key of keys) {
+                                                    const keysConfig: Record<string, {k: string, d: string, v: string}[]> = {
+                                                        home: [
+                                                            { k: 'home_about_title', d: 'About Section Title', v: 'BUILDING Strong Generations' },
+                                                            { k: 'home_about_desc1', d: 'Primary Description', v: 'Founded in 2005, BSNG Ltd has grown from a small construction firm...' },
+                                                            { k: 'home_about_desc2', d: 'Secondary Description', v: 'With over 20 years of experience, we\'ve completed more than 250 projects...' },
+                                                            { k: 'home_experience_title', d: 'Experience Tagline', v: 'Building Excellence Since 2010' },
+                                                            { k: 'home_hero_title', d: 'Hero Title', v: 'Building Your Future With Excellence' },
+                                                            { k: 'home_hero_subtitle', d: 'Hero Subtitle', v: 'Build Strong For The Next Generations' }
+                                                        ],
+                                                        about: [
+                                                            { k: 'about_title', d: 'About Page Title', v: 'About Our Company' },
+                                                            { k: 'about_company_history', d: 'Company History', v: 'Founded in 2005, BSNG Ltd began as a local construction company...' },
+                                                            { k: 'about_vision', d: 'Company Vision', v: 'To lead the construction industry with sustainable and innovative urban solutions.' },
+                                                            { k: 'about_team_visible', d: 'Show Team Section', v: 'true' }
+                                                        ],
+                                                        services: [
+                                                            { k: 'services_title', d: 'Services Section Title', v: 'Our Professional Expertise' },
+                                                            { k: 'services_desc', d: 'Services Subtitle', v: 'Comprehensive construction solutions tailored to your unique vision.' }
+                                                        ],
+                                                        global: [
+                                                            { k: 'footer_company_name', d: 'Company Name', v: 'BSNG Ltd' },
+                                                            { k: 'footer_about_text', d: 'Footer Short About', v: 'Leading construction and property development firm in Rwanda.' },
+                                                            { k: 'contact_email', d: 'Support Email', v: 'info@bsng.rw' },
+                                                            { k: 'contact_phone', d: 'Contact Phone', v: '+250 737 213 060' },
+                                                            { k: 'contact_address', d: 'HQ Address', v: 'Kigali, Rwanda' }
+                                                        ]
+                                                    };
+                                                    const groupKeys = keysConfig[activePage] || [];
+                                                    for (const key of groupKeys) {
                                                         try {
                                                             await fetchApi('/settings', {
                                                                 method: 'POST',
-                                                                body: JSON.stringify({ key: key.k, value: key.v, group: 'home', description: key.d, isPublic: true })
+                                                                body: JSON.stringify({ key: key.k, value: key.v, group: activePage, description: key.d, isPublic: true })
                                                             });
                                                         } catch(e) {}
                                                     }
                                                     loadSettings();
-                                                    toast.success("Home page text fields initialized!");
+                                                    toast.success(`${activePage.toUpperCase()} text fields initialized!`);
                                                 }}
                                                 className="btn btn-primary px-4 fw-bold"
                                             >
-                                                Initialize Home Text Fields
+                                                Initialize {activePage} Text Fields
                                             </button>
                                         </div>
                                     )}
