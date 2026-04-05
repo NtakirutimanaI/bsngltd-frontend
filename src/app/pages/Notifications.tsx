@@ -8,7 +8,8 @@ import {
     Inbox,
     CheckCircle2,
     XCircle,
-    MoreVertical
+    MoreVertical,
+    RefreshCcw
 } from "lucide-react";
 import { useNotifications, Notification } from "@/app/context/NotificationContext";
 import { useNavigate } from "react-router";
@@ -48,15 +49,23 @@ export function Notifications({ hideHeader = false }: { hideHeader?: boolean }) 
                         </h3>
                         <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Stay updated with system events</p>
                     </div>
-                    {unreadCount > 0 && (
-                        <button 
-                            onClick={markAllAsRead}
-                            className="btn btn-sm d-flex align-items-center gap-1 py-1 px-2"
-                            style={{ fontSize: '10px', background: '#e0f2fe', color: '#009CFF', borderRadius: '6px', border: 'none' }}
-                        >
-                            <Check size={12} /> Mark all read
+                    <div className="d-flex align-items-center gap-2">
+                        {unreadCount > 0 && (
+                            <button 
+                                onClick={markAllAsRead}
+                                className="btn btn-sm d-flex align-items-center gap-1 py-1 px-2"
+                                style={{ fontSize: '10px', background: '#e0f2fe', color: '#009CFF', borderRadius: '6px', border: 'none' }}
+                            >
+                                <Check size={12} /> Mark all read
+                            </button>
+                        )}
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                            style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
+                            <RefreshCcw size={13} /> Refresh
                         </button>
-                    )}
+                    </div>
                 </div>
             )}
 

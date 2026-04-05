@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Send, User, MoreVertical, Paperclip, Smile, Plus, MessageSquare } from "lucide-react";
+import { Search, Send, User, MoreVertical, Paperclip, Smile, Plus, MessageSquare, RefreshCcw } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar";
 import { fetchApi } from "../api/client";
@@ -209,6 +209,12 @@ export function Messages() {
                         <p className="text-muted mb-0" style={{ fontSize: '11px' }}>Secure collaboration workspace</p>
                     </div>
                 </div>
+                <button
+                    onClick={() => { loadConversations(); if(selectedChat) loadMessages(selectedChat.id, 1); }}
+                    className="btn btn-sm d-flex align-items-center gap-2 text-white me-2"
+                    style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
+                    <RefreshCcw size={13} /> Refresh
+                </button>
             </div>
 
             <div className="row g-3 h-[calc(100vh-160px)] overflow-hidden">

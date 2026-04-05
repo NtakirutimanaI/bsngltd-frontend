@@ -125,10 +125,12 @@ export function ContactMessages() {
                             <p className="text-gray-500 dark:text-gray-400 mb-0" style={{ fontSize: '11px' }}>Manage messages from the public contact form</p>
                         </div>
                     </div>
-                    <Button onClick={() => loadMessages(1)} disabled={isLoading} variant="outline" className="btn btn-light bg-light border-0 rounded-xl shadow-sm d-flex align-items-center gap-2 hover:bg-gray-200 transition-all text-sm font-bold h-9 px-3">
-                        <RefreshCcw size={14} className={isLoading ? "animate-spin text-primary" : "text-muted"} />
-                        Refresh
-                    </Button>
+                    <button
+                        onClick={() => loadMessages(1)}
+                        className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                        style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
+                        <RefreshCcw size={13} className={isLoading ? "animate-spin" : ""} /> Refresh
+                    </button>
                 </div>
 
                 <div className="d-flex flex-column flex-lg-row gap-3 mb-4 align-items-lg-center justify-content-between border-bottom pb-3">
