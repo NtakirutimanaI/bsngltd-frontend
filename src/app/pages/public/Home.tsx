@@ -417,10 +417,20 @@ export function Home() {
             <div className="col-lg-6">
               <div className="row">
                 <div className="col-6 wow fadeIn" data-wow-delay="0.1s">
-                  <img className="img-fluid rounded shadow" src={getImageUrl(settings.about_image_1) || '/img/about-1.jpg'} alt="About 1" />
+                  <img 
+                    className="img-fluid rounded shadow" 
+                    src={getImageUrl(settings.home_about_img_1) || '/img/about-1.jpg'} 
+                    alt="About 1" 
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/img/about-1.jpg'; }}
+                  />
                 </div>
                 <div className="col-6 wow fadeIn" data-wow-delay="0.3s">
-                  <img className="img-fluid h-75 rounded shadow mb-3" src={getImageUrl(settings.about_image_2) || '/img/about-2.jpg'} alt="About 2" />
+                  <img 
+                    className="img-fluid h-75 rounded shadow mb-3" 
+                    src={getImageUrl(settings.home_about_img_2) || '/img/about-2.jpg'} 
+                    alt="About 2" 
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/img/about-2.jpg'; }}
+                  />
                   <div className="h-25 d-flex align-items-center text-center bg-primary px-4 rounded shadow">
                     <h4 className="text-white lh-base mb-0 fw-bold">{t('buildingExcellenceSince2010')}</h4>
                   </div>
