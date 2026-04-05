@@ -135,15 +135,25 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center">
                     <button
-                        onClick={() => fileRef.current?.click()}
-                        className="btn btn-light rounded-circle p-3 shadow-lg"
+                        onClick={() => {
+                            if (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') {
+                                toast.error("This core background image is locked and cannot be changed.");
+                                return;
+                            }
+                            fileRef.current?.click();
+                        }}
+                        className={`btn ${imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg' ? 'btn-danger' : 'btn-light'} rounded-circle p-3 shadow-lg`}
                         disabled={uploading}
                     >
-                        {uploading ? <RefreshCcw className="animate-spin" size={20} /> : <Camera size={20} />}
+                        {uploading ? <RefreshCcw className="animate-spin" size={20} /> : (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg' ? <ImageIcon size={20} /> : <Camera size={20} />)}
                     </button>
                 </div>
                 {/* Status badge */}
-                {currentValue && currentValue !== imgDef.fallback && (
+                {(imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') ? (
+                    <div className="absolute top-2 left-2 bg-danger text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <Save size={8} /> Locked
+                    </div>
+                ) : currentValue && currentValue !== imgDef.fallback && (
                     <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                         Custom
                     </div>
@@ -156,13 +166,21 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                 </div>
                 <p className="text-[11px] text-muted dark:text-gray-400 mb-2 leading-tight">{imgDef.description}</p>
                 <button
-                    onClick={() => fileRef.current?.click()}
-                    disabled={uploading}
-                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5"
+                    onClick={() => {
+                        if (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') {
+                            toast.error("This core background image is locked and cannot be changed.");
+                            return;
+                        }
+                        fileRef.current?.click();
+                    }}
+                    disabled={uploading || imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg'}
+                    className={`btn ${imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg' ? 'btn-outline-danger' : 'btn-primary'} btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5`}
                     style={{ fontSize: '11px', fontWeight: 'bold' }}
                 >
                     {uploading ? (
                         <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
+                    ) : (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') ? (
+                        <><Save size={12} /> Image Locked</>
                     ) : (
                         <><Upload size={12} /> Replace Image</>
                     )}
