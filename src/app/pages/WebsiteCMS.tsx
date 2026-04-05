@@ -627,7 +627,7 @@ export function WebsiteCMS() {
                                     <RefreshCcw size={12} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
                                 </button>
                                 {/* Save & Publish (Images) / Publish (Text) */}
-                                {!isRecordPage && activeView === 'images' && (
+                                {activeView === 'images' && (
                                     <button
                                         onClick={saveAndPublishImages}
                                         disabled={isPublishingImages}
@@ -639,7 +639,7 @@ export function WebsiteCMS() {
                                         {isPublishingImages ? 'Publishing...' : 'Save & Publish'}
                                     </button>
                                 )}
-                                {!isRecordPage && activeView === 'text' && (
+                                {activeView === 'text' && (
                                     <button
                                         onClick={saveSettings}
                                         disabled={isSaving}
