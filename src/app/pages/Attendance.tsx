@@ -305,7 +305,7 @@ export function Attendance() {
     ];
 
     return (
-        <div className="container-fluid py-0 min-vh-100" style={{ background: 'transparent' }}>
+        <div className="container-fluid py-0" style={{ background: 'transparent', height: 'calc(100vh - 84px)', overflow: 'hidden' }}>
             <div className="row g-1 pt-1">
                 {/* Site Directory Sidebar */}
                 {!isEmployee && (
@@ -336,7 +336,7 @@ export function Attendance() {
                             </div>
                         </div>
 
-                        <div className="directory-scroll-container px-1" style={{ maxHeight: '72vh', overflowY: 'auto', overflowX: 'hidden' }}>
+                        <div className="directory-scroll-container px-1" style={{ height: 'calc(100vh - 220px)', overflowY: 'auto', overflowX: 'hidden' }}>
                             {isSitesLoading ? (
                                 <div className="text-center py-5 smaller text-muted">Loading sites...</div>
                             ) : filteredSites.length === 0 ? (
@@ -416,7 +416,7 @@ export function Attendance() {
                         </div>
                     </ScrollReveal>
 
-                    <div className="marking-content mt-1">
+                    <div className="marking-content mt-1" style={{ height: 'calc(100vh - 160px)', overflowY: 'auto', overflowX: 'hidden' }}>
                         {activeTab === 'daily_attendance' ? (
                             <ScrollReveal className="fade-in">
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
