@@ -170,7 +170,7 @@ export function RootLayout() {
             <h3 className="text-primary mb-0"><i className="fa fa-hashtag me-2"></i>BSNG</h3>
           </NavLink>
 
-          <div className="navbar-nav w-100 flex-column" style={{ gap: '3px', paddingLeft: '12px', paddingRight: '12px' }}>
+          <div className="navbar-nav w-100 flex-column" style={{ gap: '3px', paddingLeft: '5px', paddingRight: '12px' }}>
             {navigation.map((item, idx) => {
               const isNotifications = item.name === "Notifications";
               const subtitleMap: Record<string, string> = {
@@ -216,7 +216,7 @@ export function RootLayout() {
                   style={({ isActive }) => ({
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '8px 8px',
+                    padding: '8px 6px',
                     borderRadius: '12px',
                     border: '1px solid',
                     borderColor: isActive ? '#009CFF' : 'transparent',
@@ -230,7 +230,6 @@ export function RootLayout() {
                     <>
                       {/* Icon box — rigidly sized */}
                       <div style={{
-                        marginLeft: '5px',
                         width: '36px',
                         height: '36px',
                         minWidth: '36px',
@@ -251,9 +250,9 @@ export function RootLayout() {
                         />
                       </div>
 
-                      {/* Text block — pushed strictly 5px away */}
+                      {/* Text block */}
                       <div style={{
-                        marginLeft: '5px',
+                        marginLeft: '10px',
                         flexGrow: 1,
                         minWidth: 0,
                         overflow: 'hidden',
