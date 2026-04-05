@@ -27,21 +27,55 @@ interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
   setUser: (user: User | null) => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Wrapper that keeps localStorage in sync with React state
+  const setUser = (updatedUser: User | null) => {
+    setUserState(updatedUser);
+    if (updatedUser) {
+      localStorage.setItem('bsng_user', JSON.stringify(updatedUser));
+    } else {
+      localStorage.removeItem('bsng_user');
+    }
+  };
+
+  // Re-fetches the latest user data from the API and syncs everywhere
+  const refreshUser = async () => {
+    const storedUser = localStorage.getItem('bsng_user');
+    if (!storedUser) return;
+    const localUser: User = JSON.parse(storedUser);
+    if (!localUser?.id) return;
+    try {
+      const freshUser = await fetchApi<User>(`/users/${localUser.id}`);
+      if (freshUser) setUser(freshUser);
+    } catch {
+      // Silently fail — keep existing user
+    }
+  };
+
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
+    // Restore from localStorage, then immediately refresh from API
     const storedUser = localStorage.getItem('bsng_user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUserState(JSON.parse(storedUser));
     }
     setIsLoading(false);
+    // Refresh avatar/profile from backend in background
+    if (storedUser) {
+      const localUser: User = JSON.parse(storedUser);
+      if (localUser?.id) {
+        fetchApi<User>(`/users/${localUser.id}`)
+          .then((freshUser) => { if (freshUser) setUser(freshUser); })
+          .catch(() => {});
+      }
+    }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -64,8 +98,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    setUser(null);
+    setUserState(null);
     localStorage.removeItem('bsng_user');
+    localStorage.removeItem('bsng_token');
   };
 
   return (
@@ -75,7 +110,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login,
       logout,
       isLoading,
-      setUser
+      setUser,
+      refreshUser
     }}>
       {children}
     </AuthContext.Provider>

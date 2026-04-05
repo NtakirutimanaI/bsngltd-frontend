@@ -338,7 +338,7 @@ export function RootLayout() {
           </form>
 
           {/* Site Switcher */}
-          {!location.pathname.includes('/dashboard/content') && (
+          {!location.pathname.includes('/dashboard/content') && !location.pathname.includes('/dashboard/bookings') && !location.pathname.includes('/dashboard/attendance') && (
             <div className="ms-4 d-none d-lg-block">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

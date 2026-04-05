@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
-import { Users, MapPin, Shield, Eye, UserPlus, ShieldCheck, Briefcase, HeartHandshake, Building2, PlusCircle, UserCircle, Edit2, Trash2, MoreVertical, Globe, Calendar, Mail, Phone, UserCircle as UserIcon } from "lucide-react";
+import { Users, MapPin, Shield, UserPlus, ShieldCheck, Briefcase, HeartHandshake, Building2, Plus, UserCircle, Edit2, Trash2, Globe, Calendar, Mail, Phone } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from "../api/client";
 import { AddUserModal } from "../components/AddUserModal";
 import { toast } from "sonner";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu";
 import { Badge } from "@/app/components/ui/badge";
 import { Modal } from "@/app/components/Modal";
 
@@ -34,7 +28,6 @@ export function ManageUsers() {
     const [selectedCategory, setSelectedCategory] = useState<UserCategory>(categories[0]);
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const [userToEdit, setUserToEdit] = useState<any>(null);
     const [selectedUserForDetail, setSelectedUserForDetail] = useState<any>(null);
@@ -54,7 +47,7 @@ export function ManageUsers() {
     const loadUsers = async () => {
         setIsLoading(true);
         try {
-            const res = await fetchApi<any>(`/users?limit=1000&search=${searchTerm}`);
+            const res = await fetchApi<any>(`/users?limit=1000`);
             const allUsers = res.data || res;
             
             // Update category counts dynamically based on fetched data
@@ -91,7 +84,7 @@ export function ManageUsers() {
 
     useEffect(() => {
         loadUsers();
-    }, [selectedCategory, searchTerm]);
+    }, [selectedCategory]);
 
     const getStatusColor = (status: string) => {
         switch(status.toLowerCase()) {
@@ -103,8 +96,8 @@ export function ManageUsers() {
     };
 
     return (
-        <div className="container-fluid py-4 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-            <ScrollReveal className="row mb-3 px-lg-4">
+        <div className="container-fluid py-0 mt-1 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+            <ScrollReveal className="row mb-2 px-lg-4">
                 <div className="col-12">
                    <div className="d-flex align-items-center gap-3">
                         {/* Stat Card 1: Categories */}
@@ -132,10 +125,10 @@ export function ManageUsers() {
                 </div>
             </ScrollReveal>
 
-            <div className="row g-4 pt-2">
+            <div className="row g-1 pt-1">
                 {/* Sidebar: Categories (Precision Width Adjustment) */}
                 <div className="col-auto px-lg-3" style={{ width: 'calc(16.66% + 2px)', minWidth: '182px' }}>
-                    <div className="glass-card p-1.5 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                    <div className="glass-card p-1.5 rounded-xl mb-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
                         <div className="d-flex justify-content-between align-items-center mb-0 pb-1.5 border-bottom border-gray-100 px-1">
                             <div className="d-flex align-items-center gap-2 px-1">
                                 <div className="bg-blue-600 rounded-lg p-1.5 text-white shadow-sm">
@@ -147,10 +140,11 @@ export function ManageUsers() {
                             </div>
                              <button 
                                 onClick={() => { setUserToEdit(null); setIsUserModalOpen(true); }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
-                                style={{ fontSize: '9px' }}
+                                className="btn btn-sm d-flex align-items-center justify-content-center text-white"
+                                style={{ background: '#009CFF', borderRadius: '8px', width: '32px', height: '32px', padding: '0', flexShrink: 0 }}
+                                title="New Invite Account"
                             >
-                                <PlusCircle size={10} className="me-1" /> New Invite
+                                <Plus size={16} />
                             </button>
                         </div>
                     </div>
@@ -162,7 +156,7 @@ export function ManageUsers() {
                                 <div 
                                     key={cat.id} 
                                     onClick={() => setSelectedCategory(cat)}
-                                    className={`bg-white border-0 shadow-sm rounded-xl overflow-hidden site-row transition-all mb-2 border ${selectedCategory.id === cat.id ? 'border-primary' : 'border-gray-100'} hover:shadow-md cursor-pointer`}
+                                    className={`bg-white border-0 shadow-sm rounded-xl overflow-hidden site-row transition-all mb-1 border ${selectedCategory.id === cat.id ? 'border-primary' : 'border-gray-100'} hover:shadow-md cursor-pointer`}
                                 >
                                     <div className="p-2 px-3 d-flex align-items-center justify-content-between">
                                         <div className="d-flex align-items-center gap-2 overflow-hidden flex-grow-1">
@@ -190,7 +184,7 @@ export function ManageUsers() {
 
                 {/* Main Content: User List (Fitted) */}
                 <div className="col px-lg-4 border-start border-gray-100">
-                    <div className="rounded-xl mb-3 border border-white shadow-sm h-100" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', overflow: 'hidden' }}>
+                    <div className="rounded-xl mb-2 border border-white shadow-sm h-100" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', overflow: 'hidden' }}>
                         <div className="p-2 border-bottom border-gray-100 mb-0 d-flex justify-content-between align-items-center">
                             <div className="d-flex align-items-center gap-2">
                                 <div className="bg-orange-500 rounded-lg p-2 text-white shadow-sm">
@@ -203,10 +197,10 @@ export function ManageUsers() {
                             </div>
                              <button 
                                 onClick={() => { setUserToEdit(null); setIsUserModalOpen(true); }}
-                                className="bg-orange-500 hover:bg-orange-600 text-white px-2 py-1 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
-                                style={{ fontSize: '9px' }}
+                                className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                                style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
                             >
-                                <UserPlus size={10} className="me-1" /> Add {selectedCategory.name.slice(0, -1)}
+                                <Plus size={13} /> Add {selectedCategory.name.slice(0, -1)}
                             </button>
                         </div>
                     <div className="directory-scroll-container px-1" style={{ maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' }}>
@@ -263,26 +257,28 @@ export function ManageUsers() {
 
                                                 <div className="d-flex align-items-center gap-1 flex-shrink-0 ms-2 py-1">
                                                     <button 
-                                                        className="btn btn-light rounded-lg py-0.5 px-2 fw-bold border shadow-sm h-fit-content d-flex align-items-center"
-                                                        style={{ fontSize: '10px', height: '24px' }}
+                                                        className="btn btn-primary d-flex align-items-center justify-content-center"
                                                         onClick={() => setSelectedUserForDetail(user)}
+                                                        style={{ borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', height: '28px', border: 'none', padding: '0 8px' }}
                                                     >
-                                                        <Eye size={11} className="me-1 border-0" />
-                                                        View Profile
+                                                        Detail
                                                     </button>
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger className="btn btn-link text-muted p-0.5 hover:bg-gray-100 rounded-circle border-0">
-                                                            <MoreVertical size={13} />
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="shadow border-0 rounded-lg">
-                                                            <DropdownMenuItem onClick={() => { setUserToEdit(user); setIsUserModalOpen(true); }} className="text-xs">
-                                                                <Edit2 size={11} className="me-2 text-primary" /> Edit Permissions
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => handleDeleteUser(user)} className="text-danger text-xs">
-                                                                <Trash2 size={11} className="me-2" /> Delete User
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
+                                                    <button 
+                                                        className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                                                        onClick={() => { setUserToEdit(user); setIsUserModalOpen(true); }}
+                                                        style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #333', color: '#333', padding: '0' }}
+                                                        title="Edit Permissions"
+                                                    >
+                                                        <Edit2 size={12} />
+                                                    </button>
+                                                    <button 
+                                                        className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                                                        onClick={() => handleDeleteUser(user)}
+                                                        style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
+                                                        title="Delete User"
+                                                    >
+                                                        <Trash2 size={12} />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

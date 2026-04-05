@@ -156,7 +156,7 @@ export function Finance() {
         <div className="container-fluid py-0 min-vh-100" style={{ background: 'transparent' }}>
             <ExportReportModal isOpen={isExportModalOpen} onClose={() => setIsExportModalOpen(false)} onExport={(format) => { toast.success(`Downloading ${format.toUpperCase()} report...`); }} />
             
-            <div className="row g-4 pt-2">
+            <div className="row g-1 pt-1">
                 {/* Category sub-sidebar */}
                 <div className="col-lg-3 px-lg-4 border-end border-gray-100">
                     <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
@@ -203,7 +203,7 @@ export function Finance() {
                 {/* Main Content Area */}
                 <div className="col-lg-9 px-lg-4">
                     <ScrollReveal>
-                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3 py-2.5 px-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 py-1 px-3 bg-white rounded-xl border border-gray-100 shadow-sm">
                             <div className="py-1">
                                 <h1 className="h6 fw-bold text-dark mb-0 leading-tight">
                                     {categories.find(c => c.id === activeCategory)?.name || 'Finance Ledger'}
@@ -215,8 +215,8 @@ export function Finance() {
                                 {isAdminOrManager && activeCategory !== 'payroll' && (
                                     <button
                                         onClick={() => setIsAddModalOpen(true)}
-                                        className="btn btn-primary px-3 py-1 bg-primary text-white rounded-xl text-xs font-bold shadow-sm d-flex align-items-center gap-2 border-0 hover:scale-105 transition-all"
-                                        style={{ height: '38px' }}
+                                        className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+                                        style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
                                     >
                                         <PlusCircle size={14} /> New Record
                                     </button>
@@ -228,11 +228,11 @@ export function Finance() {
                         </div>
 
                         {/* Summary Cards Row */}
-                        <div className="row g-3 mb-4">
+                        <div className="row g-2 mb-2">
                             <div className="col-md-6 col-lg-4">
-                                <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-xs d-flex align-items-center gap-3 h-100">
-                                    <div className={`rounded-xl d-flex align-items-center justify-content-center ${activeCategory === 'incomes' ? 'bg-success/10 text-success' : activeCategory === 'expenses' ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'}`} style={{ width: '48px', height: '48px', minWidth: '48px' }}>
-                                        <DollarSign size={24} />
+                                <div className="bg-white rounded-xl p-2 px-3 border border-gray-100 shadow-xs d-flex align-items-center gap-2 h-100">
+                                    <div className={`rounded-xl d-flex align-items-center justify-content-center ${activeCategory === 'incomes' ? 'bg-success/10 text-success' : activeCategory === 'expenses' ? 'bg-danger/10 text-danger' : 'bg-primary/10 text-primary'}`} style={{ width: '36px', height: '36px', minWidth: '36px' }}>
+                                        <DollarSign size={18} />
                                     </div>
                                     <div className="overflow-hidden">
                                         <p className="smaller text-muted mb-0 uppercase fw-bold" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Total {activeCategory.replace('_', ' ')} Value</p>
@@ -247,7 +247,7 @@ export function Finance() {
                                 </div>
                             </div>
                             <div className="col-md-6 col-lg-4">
-                                <div className="bg-white rounded-xl p-3 border border-gray-100 shadow-xs h-100 d-flex flex-column justify-content-center">
+                                <div className="bg-white rounded-xl p-2 px-3 border border-gray-100 shadow-xs h-100 d-flex flex-column justify-content-center">
                                     <p className="smaller text-muted mb-0 uppercase fw-bold" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Registry Volume</p>
                                     <div className="d-flex align-items-baseline gap-1">
                                         <h4 className="fw-bold text-dark mb-0" style={{ fontSize: '1.25rem' }}>{totalItems}</h4>
@@ -259,10 +259,10 @@ export function Finance() {
                         </div>
                     </ScrollReveal>
 
-                    <div className="marking-content mt-2">
+                    <div className="marking-content mt-1">
                         <ScrollReveal className="fade-in">
                             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-3 border-b border-gray-100 d-flex align-items-center justify-content-between bg-light/50">
+                                <div className="p-2 px-3 border-b border-gray-100 d-flex align-items-center justify-content-between bg-light/50">
                                     <div className="d-flex align-items-center gap-3">
                                         <div className="position-relative">
                                             <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={14} />

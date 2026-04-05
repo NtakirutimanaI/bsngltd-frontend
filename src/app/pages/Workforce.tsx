@@ -141,7 +141,7 @@ export function Workforce() {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [attendanceRecords, setAttendanceRecords] = useState<Record<string, Partial<AttendanceRecord>>>({});
     const [personalAttendance, setPersonalAttendance] = useState<AttendanceRecord[]>([]);
-    const [isSavingAttendance, setIsSavingAttendance] = useState(false);
+
 
     // 3. Payroll State
     const [payrollData, setPayrollData] = useState<PayrollItem[]>([]);
@@ -224,22 +224,7 @@ export function Workforce() {
     };
 
     // Actions
-    const saveAttendance = async () => {
-        setIsSavingAttendance(true);
-        try {
-            const records = Object.values(attendanceRecords);
-            await fetchApi('/employees/attendance/batch', {
-                method: 'POST',
-                body: JSON.stringify({ records })
-            });
-            toast.success("All attendance records saved successfully!");
-            loadAttendanceData();
-        } catch (err) {
-            toast.error("Failed to save attendance");
-        } finally {
-            setIsSavingAttendance(false);
-        }
-    };
+
 
     const toggleEmployeeSelection = (empId: string) => {
         const newSet = new Set(selectedEmployees);
@@ -342,12 +327,12 @@ export function Workforce() {
                         {/* Action Buttons */}
                         <div className="ms-auto d-flex gap-2">
                              {activeTab === 'directory' && isAdminOrManager && (
-                                <button
+                                 <button
                                     onClick={() => { setEditingEmployee(null); setIsAddModalOpen(true); }}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
-                                    style={{ fontSize: '11px' }}
+                                    className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                                    style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
                                 >
-                                    <Plus size={14} className="me-1" /> Add Staff
+                                    <Plus size={13} /> Add Staff
                                 </button>
                             )}
                             <button

@@ -9,7 +9,6 @@ import {
   Search,
   Plus,
   MoreVertical,
-  Eye,
   Edit,
   Trash2,
   HardHat,
@@ -156,10 +155,10 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
   };
 
   return (
-    <div className="container-fluid bg-white min-vh-100 px-2 px-md-4 pt-4 pb-4">
+    <div className="container-fluid py-0 mt-1 min-vh-100 px-2 px-md-4 pb-4" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
       {/* Header */}
       {!hideHeader && (
-        <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2">
           <div>
             <h1 className="h4 fw-bold text-dark mb-1">{pageTitle}</h1>
             <p className="text-muted small mb-0">{pageSubtitle}</p>
@@ -167,19 +166,19 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
           {isAdminOrManager && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2.5 fw-bold shadow-sm"
-              style={{ borderRadius: '10px' }}
+              className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+              style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
             >
-              <Plus size={18} />
-              New Project
+              <Plus size={14} /> New Project
             </button>
           )}
         </ScrollReveal>
       )}
 
       {/* Filters */}
-      <ScrollReveal delay={0.1} className="bg-light rounded p-4 mb-4 shadow-sm">
-        <div className="card-body p-3">
+      <ScrollReveal delay={0.1}>
+        <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+        <div className="p-1 px-2">
           <div className="row g-3 align-items-center">
             <div className="col-lg-8 position-relative">
               <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={18} />
@@ -188,16 +187,16 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
                 placeholder="Search projects by name, code or location..."
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
-                style={{ height: '45px', borderRadius: '10px', fontSize: '14px' }}
+                className="form-control ps-5 bg-white border-0 shadow-sm transition-all"
+                style={{ height: '38px', borderRadius: '8px', fontSize: '13px' }}
               />
             </div>
             <div className="col-lg-4 d-flex gap-2">
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="form-select bg-light border-0 shadow-none fw-semibold"
-                style={{ height: '45px', borderRadius: '10px', fontSize: '13px' }}
+                className="form-select bg-white border-0 shadow-sm fw-semibold"
+                style={{ height: '38px', borderRadius: '8px', fontSize: '12px' }}
               >
                 <option value="all">All Status</option>
                 <option value="planning">Planning</option>
@@ -208,25 +207,23 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
             </div>
           </div>
         </div>
+        </div>
       </ScrollReveal>
 
       {/* Projects Grid */}
-      <div className="row g-4">
+      <div className="row g-2">
         {projects.map((project, index) => (
           <div key={project.id} className="col-lg-6">
-            <ScrollReveal
-              delay={index * 0.1}
-              className="bg-light rounded p-4 shadow-sm h-100 transition-all border-0 shadow-sm"
-            >
-              <div className="p-0">
-                <div className="d-flex align-items-start justify-content-between mb-3">
+            <ScrollReveal delay={index * 0.1}>
+              <div className="glass-card rounded-xl p-2 px-3 border border-white shadow-sm h-100 transition-all" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-start justify-content-between mb-2">
                   <div className="d-flex align-items-center gap-2">
-                    <div className="me-2 d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 rounded-3 shadow-sm border border-gray-100 dark:border-gray-700" style={{ width: '48px', height: '48px' }}>
-                      {getTypeIcon(project.type, 22)}
+                    <div className="me-2 d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700" style={{ width: '38px', height: '38px' }}>
+                      {getTypeIcon(project.type, 18)}
                     </div>
                     <div>
-                      <h5 className="card-title fw-bold text-dark mb-0">{project.name}</h5>
-                      <small className="text-muted">{project.code}</small>
+                      <h6 className="fw-bold text-dark mb-0">{project.name}</h6>
+                      <small className="text-muted" style={{ fontSize: '11px' }}>{project.code}</small>
                     </div>
                   </div>
                   <div className="d-flex align-items-center gap-2">
@@ -237,41 +234,41 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
                     >
                       {project.status.replace("_", " ").toUpperCase()}
                     </span>
-                    <button className="bg-transparent border-0 text-muted p-2 hover:text-blue-600 transition-colors">
-                      <MoreVertical className="w-5 h-5" />
+                    <button className="bg-transparent border-0 text-muted p-1 hover:text-blue-600 transition-colors">
+                      <MoreVertical size={16} />
                     </button>
                   </div>
                 </div>
 
-                <div className="d-flex flex-column gap-2 mb-3">
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <MapPin className="w-4 h-4" />
+                <div className="d-flex flex-column gap-1 mb-2">
+                  <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '13px' }}>
+                    <MapPin size={14} />
                     <span>{project.location}</span>
                   </div>
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <Calendar className="w-4 h-4" />
+                  <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '13px' }}>
+                    <Calendar size={14} />
                     <span>
                       {project.startDate} - {project.endDate}
                     </span>
                   </div>
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <DollarSign className="w-4 h-4" />
+                  <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '13px' }}>
+                    <DollarSign size={14} />
                     <span>
                       Budget: {project.budget} | Spent: {project.actualCost}
                     </span>
                   </div>
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <Users className="w-4 h-4" />
+                  <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '13px' }}>
+                    <Users size={14} />
                     <span>
                       {project.manager} | {project.client}
                     </span>
                   </div>
                 </div>
 
-                <div className="mb-3">
-                  <div className="d-flex align-items-center justify-content-between mb-1">
-                    <span className="small fw-medium text-muted">Progress</span>
-                    <span className="small fw-bold text-dark">{project.progress}%</span>
+                <div className="mb-2">
+                  <div className="d-flex align-items-center justify-content-between mb-1" style={{ fontSize: '11px' }}>
+                    <span className="fw-medium text-muted">Progress</span>
+                    <span className="fw-bold text-dark">{project.progress}%</span>
                   </div>
                   <div className="progress" style={{ height: '6px' }}>
                     <div
@@ -286,24 +283,23 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
                 </div>
 
                 <div className="d-flex gap-2">
-                 <div className="d-flex gap-2 mt-2">
+                 <div className="d-flex gap-2 mt-1 w-100">
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="btn btn-light flex-grow-1 border shadow-sm py-2 fw-bold text-primary d-flex align-items-center justify-content-center gap-2"
-                    style={{ borderRadius: '10px', fontSize: '13px' }}
+                    className="btn btn-primary flex-grow-1 d-flex align-items-center justify-content-center gap-2"
+                    style={{ borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', height: '32px', border: 'none' }}
                   >
-                    <Eye size={16} />
-                    View Details
+                    Detail
                   </button>
                   {isAdminOrManager && (
                     <>
                       <button
                         onClick={() => setEditingProject(project)}
-                        className="btn btn-primary shadow-sm p-2 d-flex align-items-center justify-content-center"
-                        style={{ borderRadius: '10px', width: '40px', height: '40px' }}
+                        className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                        style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #333', color: '#333', padding: '0' }}
                         title="Edit Project"
                       >
-                        <Edit size={18} />
+                        <Edit size={14} />
                       </button>
                       <button
                         onClick={async () => {
@@ -317,15 +313,15 @@ export function Projects({ hideHeader = false, refreshKey: externalRefreshKey = 
                             }
                           }
                         }}
-                        className="btn btn-light border border-danger-subtle text-danger shadow-sm p-2 d-flex align-items-center justify-content-center hover:bg-danger hover:text-white transition-all"
-                        style={{ borderRadius: '10px', width: '40px', height: '40px' }}
+                        className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                        style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
                         title="Delete Project"
                       >
-                        <Trash2 size={18} />
+                        <Trash2 size={14} />
                       </button>
                     </>
                   )}
-                </div>
+                 </div>
                 </div>
               </div>
             </ScrollReveal>

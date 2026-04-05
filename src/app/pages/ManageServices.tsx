@@ -195,8 +195,8 @@ export function ManageServices() {
                 </div>
                 <button
                     onClick={() => { setEditingService(null); setIsModalOpen(true); }}
-                    className="btn btn-primary btn-sm d-flex align-items-center gap-1.5 px-3 py-1.5 fw-bold shadow-sm"
-                    style={{ borderRadius: '8px', height: '32px', fontSize: '11px' }}
+                    className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+                    style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px' }}
                 >
                     <Plus size={14} />
                     Add New Service
@@ -284,18 +284,20 @@ export function ManageServices() {
                                             </div>
                                         </td>
                                         <td className="pe-3 py-2 text-end">
-                                            <div className="d-flex justify-content-end gap-1.5">
+                                            <div className="d-flex justify-content-end gap-1">
                                                 <button
                                                     onClick={() => { setEditingService(service); setIsModalOpen(true); }}
-                                                    className="btn btn-light btn-sm border shadow-sm p-1.5 text-primary hover:bg-primary hover:text-white transition-all"
-                                                    style={{ borderRadius: '6px' }}
+                                                    className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                                                    style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #333', color: '#333', padding: '0' }}
+                                                    title="Edit Service"
                                                 >
                                                     <Edit size={12} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(service.id)}
-                                                    className="btn btn-light btn-sm border shadow-sm p-1.5 text-danger hover:bg-danger hover:text-white transition-all"
-                                                    style={{ borderRadius: '6px' }}
+                                                    className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                                                    style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
+                                                    title="Delete Service"
                                                 >
                                                     <Trash2 size={12} />
                                                 </button>

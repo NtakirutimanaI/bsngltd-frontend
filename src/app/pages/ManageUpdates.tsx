@@ -437,8 +437,8 @@ export function ManageUpdates() {
           </button>
           <button
             onClick={() => { resetForm(); setIsAddModalOpen(true); }}
-            className="btn btn-primary btn-sm d-flex align-items-center gap-1.5 px-3 py-1.5 fw-bold shadow-sm"
-            style={{ borderRadius: '8px', height: '32px', fontSize: '11px' }}
+            className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+            style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px' }}
           >
             <Plus size={14} />
             Add Update

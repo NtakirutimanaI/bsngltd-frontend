@@ -104,7 +104,7 @@ export function Modal({ isOpen, onClose, title, children, size = "md", draggable
               {draggable && (
                 <GripVertical className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
               )}
-              <h3 className="text-xs font-semibold text-gray-800 dark:text-gray-100 truncate">{title}</h3>
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{title}</h3>
             </div>
             <button
               onClick={onClose}

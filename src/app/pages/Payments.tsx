@@ -174,7 +174,8 @@ export function Payments() {
         {isAdminOrManager && (
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all hover:scale-105 active:scale-95 d-flex align-items-center gap-2 border-0"
+            className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+            style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
           >
             <Plus className="w-5 h-5" />
             New Payment

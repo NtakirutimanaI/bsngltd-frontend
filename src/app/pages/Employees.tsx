@@ -505,22 +505,23 @@ export function Employees() {
                         </span>
                       </td>
                       <td className="pe-4 text-end text-nowrap">
-                        <div className="d-flex align-items-center justify-content-end gap-2">
+                        <div className="d-flex align-items-center justify-content-end gap-1">
                           <button
                             onClick={() => setSelectedEmployee(employee)}
-                            className="p-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-600 transition-all hover:scale-110 active:scale-95 bg-white dark:bg-gray-800"
-                            title="View Details"
+                            className="btn btn-primary d-flex align-items-center justify-content-center"
+                            style={{ borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', height: '32px', border: 'none', padding: '0 12px' }}
                           >
-                            <Eye size={16} />
+                            Detail
                           </button>
                           {isAdminOrManager && (
                             <>
                               <button
                                 onClick={() => setEditingEmployee(employee)}
-                                className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all hover:scale-110 active:scale-95 border-0 shadow-sm"
+                                className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                                style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #333', color: '#333', padding: '0' }}
                                 title="Edit Employee"
                               >
-                                <Edit size={16} />
+                                <Edit size={14} />
                               </button>
                               <button
                                 onClick={async () => {
@@ -534,10 +535,11 @@ export function Employees() {
                                     }
                                   }
                                 }}
-                                className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-all hover:scale-110 active:scale-95 border-0"
+                                className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                                style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
                                 title="Delete Employee"
                               >
-                                <Trash2 size={16} />
+                                <Trash2 size={14} />
                               </button>
                             </>
                           )}

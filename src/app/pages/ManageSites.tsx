@@ -17,7 +17,7 @@ import {
     Building2,
     RefreshCw,
     Edit,
-    PlusCircle,
+    Plus,
     Briefcase,
     Image as ImageIcon
 } from "lucide-react";
@@ -49,7 +49,7 @@ interface Site {
     createdAt: string;
 }
 
-export function ManageSites({ refreshKey = 0 }) {
+export function ManageSites({ hideHeader = false, refreshKey = 0 }: { hideHeader?: boolean, refreshKey?: number }) {
     const { setSelectedSite, selectedSite } = useSite();
     const [sites, setSites] = useState<Site[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -184,39 +184,41 @@ export function ManageSites({ refreshKey = 0 }) {
     }
 
     return (
-        <div className="container-fluid py-4 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-            <ScrollReveal className="row mb-3 px-lg-4">
-                <div className="col-12">
-                   <div className="d-flex align-items-center gap-3">
-                        {/* Stat Card 1: Sites */}
-                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
-                            <div className="bg-primary bg-gradient rounded-lg p-2 text-white shadow-sm">
-                                <MapPin size={18} />
+        <div className="container-fluid py-0 mt-1 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+            {!hideHeader && (
+                <ScrollReveal className="row mb-2 px-lg-4">
+                    <div className="col-12">
+                       <div className="d-flex align-items-center gap-3">
+                            {/* Stat Card 1: Sites */}
+                            <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                                <div className="bg-primary bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                    <MapPin size={18} />
+                                </div>
+                                <div>
+                                    <div className="fw-bold text-dark h5 mb-0">{sitesTotal}</div>
+                                    <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>TOTAL SITES</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="fw-bold text-dark h5 mb-0">{sitesTotal}</div>
-                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>TOTAL SITES</div>
-                            </div>
-                        </div>
 
-                        {/* Stat Card 2: Projects */}
-                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
-                            <div className="bg-orange-500 bg-gradient rounded-lg p-2 text-white shadow-sm">
-                                <Briefcase size={18} />
+                            {/* Stat Card 2: Projects */}
+                            <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minWidth: '180px' }}>
+                                <div className="bg-orange-500 bg-gradient rounded-lg p-2 text-white shadow-sm">
+                                    <Briefcase size={18} />
+                                </div>
+                                <div>
+                                    <div className="fw-bold text-dark h5 mb-0">{projectsTotal}</div>
+                                    <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>ACTIVE PROJECTS</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="fw-bold text-dark h5 mb-0">{projectsTotal}</div>
-                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>ACTIVE PROJECTS</div>
-                            </div>
-                        </div>
-                   </div>
-                </div>
-            </ScrollReveal>
+                       </div>
+                    </div>
+                </ScrollReveal>
+            )}
 
-            <div className="row g-4 pt-2">
+            <div className="row g-1 pt-1">
                 {/* Column 1: Sites (Narrower Segment) */}
                 <div className="col-lg-3 px-lg-4">
-                    <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                    <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
                         <div className="d-flex justify-content-between align-items-center mb-0 pb-2 border-bottom border-gray-100">
                             <div className="d-flex align-items-center gap-2">
                                 <div className="bg-blue-600 rounded-lg p-2 text-white shadow-sm">
@@ -229,21 +231,22 @@ export function ManageSites({ refreshKey = 0 }) {
                             </div>
                             <button 
                                 onClick={() => { setSiteToEdit(null); setIsEditModalOpen(true); }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
-                                style={{ fontSize: '11px' }}
+                                className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                                style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
                             >
-                                <PlusCircle size={12} className="me-1" /> New Site
+                                <Plus size={13} /> New Site
                             </button>
                         </div>
                     </div>
 
-                    <div className="d-flex flex-column gap-2 mb-4">
+                    <div className="d-flex flex-column gap-1 mb-2">
                         <div className="position-relative">
                             <Search className="position-absolute start-3 top-50 translate-middle-y text-muted opacity-50" size={14} style={{ left: '12px' }} />
                             <input 
                                 type="text"
-                                className="form-control form-control-sm ps-5 bg-white border-0 shadow-sm rounded-xl py-2 search-input"
+                                className="form-control form-control-sm ps-5 bg-white border-0 shadow-sm py-2 search-input"
                                 placeholder="Search working sites..." 
+                                style={{ borderRadius: '10px', height: '38px' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -328,7 +331,7 @@ export function ManageSites({ refreshKey = 0 }) {
 
                 {/* Column 2: Projects (Wider Repository) */}
                 <div className="col-lg-9 px-lg-4 border-start border-gray-100">
-                    <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                    <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
                         <div className="d-flex justify-content-between align-items-center mb-0 pb-2 border-bottom border-gray-100">
                             <div className="d-flex align-items-center gap-2">
                                 <div className="bg-orange-500 rounded-lg p-2 text-white shadow-sm">
@@ -341,21 +344,22 @@ export function ManageSites({ refreshKey = 0 }) {
                             </div>
                             <button 
                                 onClick={() => { setSiteForProject(null); setProjectToEdit(null); setIsProjectModalOpen(true); }}
-                                className="bg-orange-500 hover:bg-orange-600 text-white px-2.5 py-1.5 rounded-lg font-bold shadow-sm transition-all hover:scale-105 active:scale-95 border-0"
-                                style={{ fontSize: '11px' }}
+                                className="btn btn-sm d-flex align-items-center gap-2 text-white"
+                                style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
                             >
-                                <PlusCircle size={12} className="me-1" /> New Project
+                                <Plus size={13} /> New Project
                             </button>
                         </div>
                     </div>
 
-                    <div className="d-flex flex-column gap-2 mb-4">
+                    <div className="d-flex flex-column gap-1 mb-2">
                         <div className="position-relative">
                             <Search className="position-absolute start-3 top-50 translate-middle-y text-muted opacity-50" size={14} style={{ left: '12px' }} />
                             <input 
                                 type="text"
-                                className="form-control form-control-sm ps-5 bg-white border-0 shadow-sm rounded-xl py-2 search-input"
+                                className="form-control form-control-sm ps-5 bg-white border-0 shadow-sm py-2 search-input"
                                 placeholder="Search project repository..." 
+                                style={{ borderRadius: '10px', height: '38px' }}
                                 value={searchTermProjects}
                                 onChange={(e) => setSearchTermProjects(e.target.value)}
                             />
@@ -407,49 +411,47 @@ export function ManageSites({ refreshKey = 0 }) {
 
                                             <div className="d-flex align-items-center gap-1 flex-shrink-0 ms-2">
                                                 <button 
-                                                    className={`btn ${project.isPublished ? 'btn-primary' : 'btn-light'} rounded-lg py-1 px-2 fw-bold border shadow-sm`}
-                                                    onClick={() => handlePublishProject(project)}
-                                                    style={{ fontSize: '10px' }}
-                                                    title={project.isPublished ? "Unpublish from Landing" : "Publish to Landing"}
+                                                    className="btn btn-primary d-flex align-items-center justify-content-center"
+                                                    onClick={() => setSelectedProjectForDetail(project)}
+                                                    style={{ borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', height: '28px', border: 'none', padding: '0 10px' }}
                                                 >
-                                                    <Globe size={12} className={`me-1 ${project.isPublished ? 'text-white' : 'text-primary'}`} />
-                                                    {project.isPublished ? 'Live' : 'Publish'}
+                                                    Detail
                                                 </button>
                                                 <button 
-                                                    className="btn btn-light rounded-lg py-1 px-2 fw-bold border shadow-sm"
-                                                    onClick={() => setSelectedProjectForDetail(project)}
-                                                    style={{ fontSize: '10px' }}
+                                                    className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                                                    onClick={() => { setProjectToEdit(project); setIsProjectModalOpen(true); }}
+                                                    style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #333', color: '#333', padding: '0' }}
+                                                    title="Edit Project"
                                                 >
-                                                    <Eye size={12} className="me-1 border-0" />
-                                                    Preview
+                                                    <Edit2 size={12} />
                                                 </button>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger className="btn btn-link text-muted p-1 hover:bg-gray-100 rounded-circle">
-                                                        <MoreVertical size={14} />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="shadow border-0 rounded-lg">
-                                                        <DropdownMenuItem onClick={() => { setProjectToEdit(project); setIsProjectModalOpen(true); }} className="text-xs">
-                                                            <Edit2 size={12} className="me-2 text-primary" /> Edit Project
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => { setProjectForImages(project); setIsImageModalOpen(true); }} className="text-xs">
-                                                            <ImageIcon size={12} className="me-2 text-info" /> Add project images
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={async () => {
-                                                            if (confirm(`Delete project ${project.name}?`)) {
-                                                                try {
-                                                                    await fetchApi(`/projects/${project.id}`, { method: 'DELETE' });
-                                                                    localRefresh();
-                                                                    toast.success("Project deleted successfully");
-                                                                } catch (err) { 
-                                                                    const msg = err instanceof Error ? err.message : "Failed to delete";
-                                                                    toast.error(msg); 
-                                                                }
+                                                <button 
+                                                    className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                                                    onClick={async () => {
+                                                        if (confirm(`Delete project ${project.name}?`)) {
+                                                            try {
+                                                                await fetchApi(`/projects/${project.id}`, { method: 'DELETE' });
+                                                                localRefresh();
+                                                                toast.success("Project deleted successfully");
+                                                            } catch (err) { 
+                                                                const msg = err instanceof Error ? err.message : "Failed to delete";
+                                                                toast.error(msg); 
                                                             }
-                                                        }} className="text-danger text-xs">
-                                                            <Trash2 size={12} className="me-2" /> Delete Project
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                        }
+                                                    }}
+                                                    style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
+                                                    title="Delete Project"
+                                                >
+                                                    <Trash2 size={12} />
+                                                </button>
+                                                <button 
+                                                    className={`btn ${project.isPublished ? 'btn-success' : 'btn-outline-primary'} d-flex align-items-center justify-content-center bg-white ml-2`}
+                                                    onClick={() => handlePublishProject(project)}
+                                                    style={{ borderRadius: '6px', width: '28px', height: '28px', border: project.isPublished ? '1px solid #10b981' : '1px solid #009CFF', color: project.isPublished ? '#10b981' : '#009CFF', padding: '0' }}
+                                                    title={project.isPublished ? "Live" : "Publish"}
+                                                >
+                                                    <Globe size={12} />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

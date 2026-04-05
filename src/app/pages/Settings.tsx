@@ -5,8 +5,6 @@ import {
   Loader2,
   RefreshCw,
   Copy,
-  CheckCircle,
-  ExternalLink,
   ChevronRight,
   Settings as SettingsIcon,
   User,
@@ -26,7 +24,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { toast } from "sonner";
 
 export function Settings() {
-  const { user, setUser } = useAuth();
+  const { user, setUser, refreshUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "profile";
   const [activeTab, setActiveTabState] = useState(initialTab);
@@ -123,6 +121,8 @@ export function Settings() {
         })
       });
       setUser(updatedUser);
+      // Also call refreshUser to sync fresh data from backend everywhere
+      await refreshUser();
       toast.success("Profile updated successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to update profile");
@@ -311,51 +311,54 @@ export function Settings() {
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Full Name</label>
                         <div className="position-relative">
-                          <User size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <User size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                           <input
                             type="text"
+                            placeholder="Full Name"
                             value={profileData.fullName}
                             onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                            className="form-control form-control-sm border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
+                            className="form-control form-control-sm border-gray-200 settings-input-icon"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
                           />
                         </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Email Address</label>
                         <div className="position-relative">
-                          <Mail size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <Mail size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                           <input
                             type="email"
+                            placeholder="Email Address"
                             value={profileData.email}
                             onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                            className="form-control form-control-sm border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
+                            className="form-control form-control-sm border-gray-200 settings-input-icon"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
                           />
                         </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Phone Number</label>
                         <div className="position-relative">
-                          <Phone size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
+                          <Phone size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                           <input
                             type="tel"
+                            placeholder="Phone Number"
                             value={profileData.phone}
                             onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                            className="form-control form-control-sm border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
+                            className="form-control form-control-sm border-gray-200 settings-input-icon"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
                           />
                         </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Language</label>
                         <div className="position-relative">
-                          <Languages size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px', zIndex: 10 }} />
+                          <Languages size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, pointerEvents: 'none' }} />
                           <select
                             value={profileData.language}
                             onChange={(e) => setProfileData({ ...profileData, language: e.target.value })}
-                            className="form-select form-select-sm border-gray-200"
-                            style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }}
+                            className="form-select form-select-sm border-gray-200 settings-input-icon"
+                            style={{ borderRadius: '8px', fontSize: '12px' }}
                           >
                             <option value="en">English (US)</option>
                             <option value="fr">French (FR)</option>
@@ -458,17 +461,23 @@ export function Settings() {
                       <div className="col-12">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Current Password</label>
                         <div className="position-relative">
-                          <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '10px' }} />
-                          <input type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px', paddingLeft: '38px' }} />
+                          <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                          <input type="password" placeholder="Current Password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="form-control form-control-sm border-gray-200 settings-input-icon" style={{ borderRadius: '8px', fontSize: '12px' }} />
                         </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>New Password</label>
-                        <input type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                        <div className="position-relative">
+                          <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                          <input type="password" placeholder="New Password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} className="form-control form-control-sm border-gray-200 settings-input-icon" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                        </div>
                       </div>
                       <div className="col-md-6">
                         <label className="text-muted mb-1 font-medium d-block" style={{ fontSize: '10px', textTransform: 'uppercase' }}>Confirm Password</label>
-                        <input type="password" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })} className="form-control form-control-sm border-gray-200" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                        <div className="position-relative">
+                          <Lock size={14} className="position-absolute text-muted" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                          <input type="password" placeholder="Confirm New Password" value={passwordData.confirmPassword} onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })} className="form-control form-control-sm border-gray-200 settings-input-icon" style={{ borderRadius: '8px', fontSize: '12px' }} />
+                        </div>
                       </div>
                     </div>
                     <div className="d-flex align-items-center justify-content-between pt-3">
@@ -542,6 +551,7 @@ export function Settings() {
         .site-row:hover { border-color: #009CFF !important; background-color: #f8fbff !important; }
         .directory-scroll-container::-webkit-scrollbar { width: 4px; }
         .directory-scroll-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .settings-input-icon { padding-left: 36px !important; }
       `}</style>
     </div>
   );

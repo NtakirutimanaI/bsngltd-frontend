@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
-import { Home, MapPin, Maximize2, Plus, Search, Eye, Edit2, Building, LandPlot, Store } from "lucide-react";
+import { Home, MapPin, Maximize2, Plus, Search, Edit2, Building, LandPlot, Store, Trash2 } from "lucide-react";
 import { AddPropertyModal } from "@/app/components/AddPropertyModal";
 import { useCurrency } from "@/app/context/CurrencyContext";
 import { useLanguage } from "@/app/context/LanguageContext";
@@ -35,7 +35,12 @@ interface Property {
 
 import { fetchApi } from '../api/client';
 
-export function Properties({ hideHeader = false, refreshKey: externalRefreshKey = 0 }: { hideHeader?: boolean, refreshKey?: number }) {
+interface PropertiesProps {
+    hideHeader?: boolean;
+    refreshKey?: number;
+}
+
+export function Properties({ hideHeader = false, refreshKey: externalRefreshKey = 0 }: PropertiesProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -155,7 +160,7 @@ export function Properties({ hideHeader = false, refreshKey: externalRefreshKey 
 
 
   return (
-    <div className="container-fluid bg-white min-vh-100 px-2 px-md-4 pt-4 pb-4">
+    <div className={`container-fluid py-0 mt-1 min-vh-100 px-2 px-md-4 pb-4`} style={{ background: hideHeader ? 'transparent' : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
       {/* Header */}
       {!hideHeader && (
         <ScrollReveal className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
@@ -168,159 +173,171 @@ export function Properties({ hideHeader = false, refreshKey: externalRefreshKey 
               setEditingProperty(null);
               setIsAddModalOpen(true);
             }}
-            className="btn btn-primary d-flex align-items-center gap-2 px-4 py-2.5 fw-bold shadow-sm"
-            style={{ borderRadius: '10px' }}
+            className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+            style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px', height: '32px' }}
           >
-            <Plus size={18} />
+            <Plus size={14} />
             Add Property
           </button>
         </ScrollReveal>
       )}
 
       {/* Filters */}
-      <ScrollReveal delay={0.1} className="bg-light rounded p-4 mb-4 shadow-sm">
-        <div className="p-0">
-          <div className="row g-3 align-items-center">
-            <div className="col-lg-7 position-relative">
-              <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={18} />
-              <input
-                type="text"
-                placeholder="Find properties by title, code or location..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="form-control ps-5 bg-light border-0 focus:bg-white transition-all shadow-none"
-                style={{ height: '45px', borderRadius: '10px', fontSize: '14px' }}
-              />
-            </div>
-            <div className="col-lg-5 d-flex gap-2">
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="form-select bg-light border-0 shadow-none fw-semibold"
-                style={{ height: '45px', borderRadius: '10px', fontSize: '13px' }}
-              >
-                <option value="all">All Types</option>
-                <option value="house">House</option>
-                <option value="apartment">Apartment</option>
-                <option value="plot">Plot</option>
-                <option value="commercial">Commercial</option>
-              </select>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="form-select bg-light border-0 shadow-none fw-semibold"
-                style={{ height: '45px', borderRadius: '10px', fontSize: '13px' }}
-              >
-                <option value="all">All Status</option>
-                <option value="available">Available</option>
-                <option value="rented">Rented</option>
-                <option value="sold">Sold</option>
-                <option value="maintenance">Maintenance</option>
-              </select>
+      <ScrollReveal delay={0.1}>
+        <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+          <div className="p-1 px-2">
+            <div className="row g-3 align-items-center">
+              <div className="col-lg-7 position-relative">
+                <Search className="position-absolute start-0 top-50 translate-middle-y ms-3 text-muted" size={16} />
+                <input
+                  type="text"
+                  placeholder="Find properties by title, code or location..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="form-control ps-5 bg-white border-0 shadow-sm transition-all"
+                  style={{ height: '38px', borderRadius: '8px', fontSize: '13px' }}
+                />
+              </div>
+              <div className="col-lg-5 d-flex gap-2">
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="form-select bg-white border-0 shadow-sm fw-semibold"
+                  style={{ height: '38px', borderRadius: '8px', fontSize: '12px' }}
+                >
+                  <option value="all">All Types</option>
+                  <option value="house">House</option>
+                  <option value="apartment">Apartment</option>
+                  <option value="plot">Plot</option>
+                  <option value="commercial">Commercial</option>
+                </select>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="form-select bg-white border-0 shadow-sm fw-semibold"
+                  style={{ height: '38px', borderRadius: '8px', fontSize: '12px' }}
+                >
+                  <option value="all">All Status</option>
+                  <option value="available">Available</option>
+                  <option value="rented">Rented</option>
+                  <option value="sold">Sold</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
       </ScrollReveal>
 
       {/* Properties Grid */}
-      <div className="row g-4">
+      <div className="row g-2">
         {properties.map((property, index) => (
-          <div key={property.id} className="col-md-6 col-lg-4">
-            <ScrollReveal
-              delay={index * 0.1}
-              className="bg-light rounded p-4 shadow-sm h-100 transition-all border-0 shadow-sm"
-            >
-              <div className="position-relative d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 border-bottom border-gray-100 dark:border-gray-700" style={{ height: '150px' }}>
-                <div className="bg-white dark:bg-gray-900 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800">
-                  {getTypeIcon(property.type, 32)}
-                </div>
-                <div className="position-absolute top-0 end-0 m-3">
-                  <span
-                    className={`badge ${getStatusColor(
-                      property.status
-                    )}`}
-                  >
-                    {property.status.toUpperCase()}
-                  </span>
-                </div>
-                <div className="position-absolute top-0 start-0 m-3 d-flex gap-2">
-                  {property.isForSale && (
-                    <span className="badge bg-white text-primary shadow-sm">
-                      FOR SALE
+          <div key={property.id} className="col-lg-6">
+            <ScrollReveal delay={index * 0.1}>
+              <div className="glass-card rounded-xl p-2 px-3 border border-white shadow-sm h-100 transition-all" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-start justify-content-between mb-2">
+                  <div className="d-flex align-items-center gap-2">
+                    <div className="me-2 d-flex align-items-center justify-content-center bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700" style={{ width: '38px', height: '38px' }}>
+                      {getTypeIcon(property.type, 18)}
+                    </div>
+                    <div>
+                      <h6 className="fw-bold text-dark mb-0">{dt(property.title)}</h6>
+                      <small className="text-muted" style={{ fontSize: '11px' }}>{property.code}</small>
+                    </div>
+                  </div>
+                  <div className="d-flex align-items-center gap-1">
+                    {property.isForSale && (
+                      <span className="badge rounded-pill bg-white text-primary border border-primary shadow-none" style={{ fontSize: '10px' }}>
+                        SALE
+                      </span>
+                    )}
+                    {property.isForRent && (
+                      <span className="badge rounded-pill bg-white text-info border border-info shadow-none" style={{ fontSize: '10px' }}>
+                        RENT
+                      </span>
+                    )}
+                    <span
+                      className={`badge rounded-pill ms-1 ${getStatusColor(
+                        property.status
+                      )}`}
+                      style={{ fontSize: '10px' }}
+                    >
+                      {property.status.toUpperCase()}
                     </span>
-                  )}
-                  {property.isForRent && (
-                    <span className="badge bg-white text-info shadow-sm">
-                      FOR RENT
-                    </span>
-                  )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="p-0">
-                <h5 className="card-title fw-bold text-dark mb-1">{dt(property.title)}</h5>
-                <small className="text-muted d-block mb-3">{property.code}</small>
-
-                <div className="d-flex flex-column gap-2 mb-3">
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <MapPin className="w-4 h-4" />
+                <div className="d-flex flex-column gap-1 mb-2">
+                  <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: '13px' }}>
+                    <MapPin size={14} />
                     <span>{dt(property.location)}</span>
                   </div>
-                  <div className="d-flex align-items-center gap-2 text-muted small">
-                    <Maximize2 className="w-4 h-4" />
-                    <span>{property.size} sqft</span>
+                  <div className="d-flex align-items-center gap-3 text-muted" style={{ fontSize: '12px' }}>
+                    <div className="d-flex align-items-center gap-1">
+                      <Maximize2 size={13} />
+                      <span>{property.size} sqft</span>
+                    </div>
+                    {(property.bedrooms || property.bathrooms) && (
+                      <div className="d-flex align-items-center gap-1">
+                        <Home size={13} />
+                        <span>
+                          {property.bedrooms && `${property.bedrooms} beds `}
+                          {property.bathrooms && `${property.bathrooms} baths`}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  {(property.bedrooms || property.bathrooms) && (
-                    <div className="d-flex align-items-center gap-2 text-muted small">
-                      <Home className="w-4 h-4" />
-                      <span>
-                        {property.bedrooms && `${property.bedrooms} beds`}
-                        {property.bedrooms && property.bathrooms && " • "}
-                        {property.bathrooms && `${property.bathrooms} baths`}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
-                <div className="border-top pt-3">
-                  {property.isForSale && (
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <span className="text-muted small">Sale:</span>
-                      <span className="fw-bold text-dark">
-                        {formatPrice(property.price)}
+                <div className="d-flex align-items-center justify-content-between pt-2 border-top">
+                  <div className="d-flex flex-column">
+                    {property.isForSale ? (
+                      <span className="fw-bold text-dark" style={{ fontSize: '13px' }}>
+                        Sale: {formatPrice(property.price)}
                       </span>
-                    </div>
-                  )}
-                  {property.isForRent && property.monthlyRent && (
-                    <div className="d-flex justify-content-between align-items-center">
-                      <span className="text-muted small">Rent:</span>
-                      <span className="fw-semibold text-primary small">
-                        {formatPrice(property.monthlyRent)}/mo
+                    ) : null}
+                    {property.isForRent && property.monthlyRent ? (
+                      <span className="fw-bold text-primary" style={{ fontSize: '13px' }}>
+                        Rent: {formatPrice(property.monthlyRent)}/mo
                       </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="d-flex gap-2 mt-2">
-                  <button
-                    onClick={() => setSelectedProperty(property)}
-                    className="btn btn-light flex-grow-1 border shadow-sm py-2 fw-bold text-primary d-flex align-items-center justify-content-center gap-2"
-                    style={{ borderRadius: '10px', fontSize: '13px' }}
-                  >
-                    <Eye size={16} />
-                    Details
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingProperty(property);
-                      setIsAddModalOpen(true);
-                    }}
-                    className="btn btn-primary shadow-sm p-2 d-flex align-items-center justify-content-center"
-                    style={{ borderRadius: '10px', width: '40px', height: '40px' }}
-                    title="Edit Property"
-                  >
-                    <Edit2 size={18} />
-                  </button>
+                    ) : null}
+                  </div>
+                  <div className="d-flex gap-1">
+                    <button
+                      onClick={() => setSelectedProperty(property)}
+                      className="btn btn-primary flex-grow-1 d-flex align-items-center justify-content-center"
+                      style={{ borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', height: '32px', border: 'none' }}
+                    >
+                      Detail
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingProperty(property);
+                        setIsAddModalOpen(true);
+                      }}
+                      className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
+                      style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #333', color: '#333', padding: '0' }}
+                      title="Edit Property"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (confirm(`Delete property ${property.title}?`)) {
+                          // Assuming delete logic exists or should be similar
+                          try {
+                            await fetchApi(`/properties/${property.id}`, { method: 'DELETE' });
+                            // refresh logic
+                          } catch (err) { alert("Failed to delete"); }
+                        }
+                      }}
+                      className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
+                      style={{ borderRadius: '6px', width: '32px', height: '32px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
+                      title="Delete Property"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>

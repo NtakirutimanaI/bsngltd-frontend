@@ -3,7 +3,10 @@ import { useSearchParams } from "react-router";
 import { toast } from "sonner";
 import {
     Plus,
-    Download
+    Download,
+    Building2,
+    Home,
+    MapPin
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useAuth } from "@/app/context/AuthContext";
@@ -50,7 +53,8 @@ export function Portfolio() {
                 <div className="d-flex gap-2">
                     {canAdd && (
                         <button
-                            className="btn btn-primary px-4 py-2 rounded-xl text-xs font-bold shadow-lg d-flex align-items-center gap-2 border-0"
+                            className="btn btn-sm d-flex align-items-center gap-2 text-white shadow-none border-0"
+                            style={{ background: '#009CFF', borderRadius: '8px', fontSize: '11px', fontWeight: 600, padding: '8px 16px' }}
                             onClick={() => {
                                 if (activeTab === 'projects') setIsAddProjectModalOpen(true);
                                 else if (activeTab === 'properties') setIsAddPropertyModalOpen(true);
@@ -60,40 +64,43 @@ export function Portfolio() {
                         </button>
                     )}
                     <button
-                        className="btn btn-light p-2 border rounded-xl text-gray-500 transition-all hover:scale-110 active:scale-95 bg-white shadow-sm"
+                        className="btn btn-light d-flex align-items-center justify-content-center transition-all bg-white shadow-sm border"
+                        style={{ borderRadius: '10px', width: '38px', height: '38px', color: '#64748b' }}
                         onClick={() => setIsExportModalOpen(true)}
                     >
-                        <Download size={16} />
+                        <Download size={18} />
                     </button>
                 </div>
             </ScrollReveal>
 
             {/* Hub Tabs */}
-            <div className="bg-light rounded mb-4 shadow-sm mx-2 mx-md-4 p-2">
-                <div className="nav nav-pills p-1.5 gap-2 bg-white rounded-xl">
-                    <button
-                        onClick={() => setActiveTab('projects')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'projects' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px' }}
-                    >
-                        <i className="fa-solid fa-building-columns"></i> Active Projects
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('properties')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'properties' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px' }}
-                    >
-                        <i className="fa-solid fa-house-chimney-window"></i> Property Inventory
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('sites')}
-                        className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2.5 transition-all text-sm font-bold border-0 ${activeTab === 'sites' ? 'active' : 'text-gray-500 hover:text-primary'}`}
-                        style={{ borderRadius: '10px' }}
-                    >
-                        <i className="fa-solid fa-map-location-dot"></i> Working Sites
-                    </button>
+            <ScrollReveal delay={0.1} className="mx-2 mx-md-4 mb-3">
+                <div className="glass-card p-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', borderRadius: '10px' }}>
+                    <div className="nav nav-pills gap-2 d-flex flex-nowrap overflow-x-auto hide-scrollbar">
+                        <button
+                            onClick={() => setActiveTab('projects')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2 transition-all fw-bold border-0 ${activeTab === 'projects' ? 'bg-primary text-white shadow-sm' : 'bg-transparent text-muted hover-bg-light'}`}
+                            style={{ borderRadius: '10px', fontSize: '13px', whiteSpace: 'nowrap' }}
+                        >
+                            <Building2 size={16} /> Active Projects
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('properties')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2 transition-all fw-bold border-0 ${activeTab === 'properties' ? 'bg-primary text-white shadow-sm' : 'bg-transparent text-muted hover-bg-light'}`}
+                            style={{ borderRadius: '10px', fontSize: '13px', whiteSpace: 'nowrap' }}
+                        >
+                            <Home size={16} /> Property Inventory
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('sites')}
+                            className={`nav-link flex-fill d-flex align-items-center justify-content-center gap-2 py-2 transition-all fw-bold border-0 ${activeTab === 'sites' ? 'bg-primary text-white shadow-sm' : 'bg-transparent text-muted hover-bg-light'}`}
+                            style={{ borderRadius: '10px', fontSize: '13px', whiteSpace: 'nowrap' }}
+                        >
+                            <MapPin size={16} /> Working Sites
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </ScrollReveal>
 
             {/* Content Area */}
             <div className="portfolio-content-panel px-2 px-md-4">

@@ -1,9 +1,10 @@
 import {
-  X, Edit, Trash2, CalendarCheck, DollarSign, Eye, Clock, CheckCircle, AlertCircle
+  X, Edit, Trash2, CalendarCheck, DollarSign, Eye, Clock, CheckCircle, AlertCircle,
+  Briefcase, Users, Building2, Wallet, ClipboardList, CheckCircle2, Receipt, Headset, HardHat
 } from "lucide-react";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, Legend
+  Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell
 } from "recharts";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { useAuth } from "@/app/context/AuthContext";
@@ -14,7 +15,6 @@ import { useNavigate } from 'react-router';
 import { AddProjectModal } from '@/app/components/AddProjectModal';
 import { AddEmployeeModal } from '@/app/components/AddEmployeeModal';
 import "@/styles/dashboard-premium.css";
-
 
 // --------------- Interfaces ---------------
 interface DashboardStats {
@@ -179,31 +179,31 @@ export function Dashboard() {
 
   // ---- Stats ----
   const adminStats = [
-    { name: "Active Projects", value: statsData?.adminStats[0]?.value || "0", iconClass: "fa-solid fa-building-columns" },
-    { name: "Total Employees", value: statsData?.adminStats[1]?.value || "0", iconClass: "fa-solid fa-users-viewfinder" },
-    { name: "Properties", value: statsData?.adminStats[2]?.value || "0", iconClass: "fa-solid fa-house-chimney-window" },
-    { name: "Total Revenue", value: statsData?.adminStats[3]?.value || "RWF 0M", iconClass: "fa-solid fa-money-bill-trend-up" },
+    { name: "Active Projects", value: statsData?.adminStats[0]?.value || "0", icon: Briefcase },
+    { name: "Total Employees", value: statsData?.adminStats[1]?.value || "0", icon: Users },
+    { name: "Properties", value: statsData?.adminStats[2]?.value || "0", icon: Building2 },
+    { name: "Total Revenue", value: statsData?.adminStats[3]?.value || "RWF 0M", icon: DollarSign },
   ];
 
   const employeeStats = [
-    { name: "My Assignments", value: "4", iconClass: "fa-solid fa-list-check" },
-    { name: "Hours Worked", value: "38h", iconClass: "fa-solid fa-business-time" },
-    { name: "Pending Tasks", value: "7", iconClass: "fa-solid fa-hourglass-half" },
-    { name: "Next Payday", value: "Feb 28", iconClass: "fa-solid fa-wallet" },
+    { name: "My Assignments", value: "4", icon: ClipboardList },
+    { name: "Hours Worked", value: "38h", icon: Clock },
+    { name: "Pending Tasks", value: "7", icon: CheckCircle2 },
+    { name: "Next Payday", value: "Feb 28", icon: Wallet },
   ];
 
   const clientStats = [
-    { name: "My Properties", value: "1", iconClass: "fa-solid fa-house-user" },
-    { name: "Payment Status", value: "Paid", iconClass: "fa-solid fa-file-invoice-dollar" },
-    { name: "Next Rent Due", value: "Mar 01", iconClass: "fa-solid fa-calendar-day" },
-    { name: "Support Tickets", value: "0", iconClass: "fa-solid fa-headset" },
+    { name: "My Properties", value: "1", icon: Building2 },
+    { name: "Payment Status", value: "Paid", icon: CheckCircle2 },
+    { name: "Next Rent Due", value: "Mar 01", icon: CalendarCheck },
+    { name: "Support Tickets", value: "0", icon: Headset },
   ];
 
   const contractorStats = [
-    { name: "Active Contracts", value: "2", iconClass: "fa-solid fa-handshake-angle" },
-    { name: "Completed Work", value: "85%", iconClass: "fa-solid fa-circle-check" },
-    { name: "Pending Invoices", value: "1", iconClass: "fa-solid fa-receipt" },
-    { name: "Deadlines", value: "3", iconClass: "fa-solid fa-clock-rotate-left" },
+    { name: "Active Contracts", value: "2", icon: ClipboardList },
+    { name: "Completed Work", value: "85%", icon: CheckCircle2 },
+    { name: "Pending Invoices", value: "1", icon: Receipt },
+    { name: "Deadlines", value: "3", icon: Clock },
   ];
 
   const getRoleStats = () => {
@@ -246,6 +246,15 @@ export function Dashboard() {
         expenses: [99, 135, 170, 130, 190, 180, 270][i] / 10,
       }));
 
+  // Project Status => Pie Chart
+  const projectStatusCounts = [
+    { name: 'Active', value: statsData?.latestProjects?.filter(p => p.status === 'active').length || 15 },
+    { name: 'Completed', value: statsData?.latestProjects?.filter(p => p.status === 'completed').length || 5 },
+    { name: 'On Hold', value: statsData?.latestProjects?.filter(p => p.status === 'on_hold').length || 3 },
+    { name: 'Planning', value: statsData?.latestProjects?.filter(p => p.status === 'planning').length || 4 },
+  ];
+  const PIE_COLORS = ['rgba(0,156,255,0.8)', 'rgba(0,196,159,0.8)', 'rgba(255,187,40,0.8)', 'rgba(255,128,66,0.8)'];
+
   // Recent projects as "Recent Sales" table
   const recentProjects = statsData?.latestProjects?.map(p => ({
     id: p.id,
@@ -273,10 +282,10 @@ export function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="container-fluid py-0 mt-1 min-vh-100" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
       {/* ========= STAT CARDS (Sale & Revenue) ========= */}
-      <div className="container-fluid pt-4 px-4">
-        <div className="row g-4">
+      <div className="px-lg-4 mb-2">
+        <div className="row g-1">
           {loading
             ? [...Array(4)].map((_, i) => (
                 <div key={i} className="col-sm-6 col-xl-3">
@@ -299,20 +308,19 @@ export function Dashboard() {
                   'bg-purple-100 text-purple-600'
                 ];
                 const colorClass = colors[index % colors.length];
+                const Icon = stat.icon;
                 return (
-                  <div key={stat.name} className="col-sm-6 col-xl-3">
+                  <div key={stat.name} className="col-sm-6 col-md-3 px-1">
                     <ScrollReveal delay={index * 0.08}>
-                      <div className="bg-white rounded-2xl d-flex align-items-center p-4 shadow-sm border border-light" style={{ minHeight: '100px' }}>
-                        <div className="d-flex align-items-center justify-content-center" style={{ width: '60px', minWidth: '60px' }}>
-                          <div className={`d-flex align-items-center justify-content-center rounded-2xl ${colorClass}`} style={{ width: '56px', height: '56px' }}>
-                             <i className={`${stat.iconClass}`} style={{ fontSize: '24px' }}></i>
-                          </div>
+                        <div className="glass-card p-2 px-3 rounded-xl border border-white shadow-sm d-flex align-items-center gap-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)', minHeight: '60px' }}>
+                            <div className={`${colorClass} rounded-lg p-2 shadow-sm d-flex justify-content-center align-items-center`} style={{ width: '36px', height: '36px' }}>
+                                <Icon size={16} />
+                            </div>
+                            <div>
+                                <div className="fw-bold text-dark h5 mb-0">{stat.value}</div>
+                                <div className="smaller text-muted fw-bold" style={{ fontSize: '10px' }}>{stat.name.toUpperCase()}</div>
+                            </div>
                         </div>
-                        <div className="ms-3 d-flex flex-column justify-content-center">
-                          <p className="mb-0 text-muted small fw-bold text-uppercase opacity-75" style={{ fontSize: '10px', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>{stat.name}</p>
-                          <h4 className="mb-0 fw-bold text-dark mt-1" style={{ fontSize: '1.25rem' }}>{stat.value}</h4>
-                        </div>
-                      </div>
                     </ScrollReveal>
                   </div>
                 );
@@ -325,13 +333,13 @@ export function Dashboard() {
 
       {/* ========= SALES CHARTS ========= */}
       {(isAdminLike || isAuditor || isEditor) && (
-        <div className="container-fluid pt-4 px-4">
-          <div className="row g-4">
+        <div className="px-lg-4 mb-2">
+          <div className="row g-1">
             {/* Worldwide Sales - Bar Chart */}
-            <div className="col-sm-12 col-xl-6">
+            <div className="col-lg-4 px-1">
               <ScrollReveal delay={0.15}>
-                <div className="bg-light text-center rounded p-4">
-                  <div className="d-flex align-items-center justify-content-between mb-4">
+                <div className="glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                  <div className="d-flex align-items-center justify-content-between mb-2 px-2 pb-1 border-bottom border-gray-100">
                     <h6 className="mb-0">Worldwide Sales</h6>
                     <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/finance'); }}>Show All</a>
                   </div>
@@ -352,10 +360,10 @@ export function Dashboard() {
             </div>
 
             {/* Sales & Revenue - Line Chart */}
-            <div className="col-sm-12 col-xl-6">
+            <div className="col-lg-4 px-1">
               <ScrollReveal delay={0.2}>
-                <div className="bg-light text-center rounded p-4">
-                  <div className="d-flex align-items-center justify-content-between mb-4">
+                <div className="glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                  <div className="d-flex align-items-center justify-content-between mb-2 px-2 pb-1 border-bottom border-gray-100">
                     <h6 className="mb-0">Sales &amp; Revenue</h6>
                     <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/finance'); }}>Show All</a>
                   </div>
@@ -373,6 +381,37 @@ export function Dashboard() {
                 </div>
               </ScrollReveal>
             </div>
+
+            {/* Project Status - Pie Chart */}
+            <div className="col-lg-4 px-1">
+              <ScrollReveal delay={0.25}>
+                <div className="glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                  <div className="d-flex align-items-center justify-content-between mb-2 px-2 pb-1 border-bottom border-gray-100">
+                    <h6 className="mb-0">Project Funnel</h6>
+                    <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/projects'); }}>Show All</a>
+                  </div>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={projectStatusCounts}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {projectStatusCounts.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Legend wrapperStyle={{ fontSize: '11px' }} verticalAlign="bottom" height={36}/>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </ScrollReveal>
+            </div>
           </div>
         </div>
       )}
@@ -380,10 +419,10 @@ export function Dashboard() {
 
 
       {/* ========= RECENT SALES TABLE ========= */}
-      <div className="container-fluid pt-4 px-4">
+      <div className="px-lg-4 mb-2">
         <ScrollReveal delay={0.25}>
-          <div className="bg-light text-center rounded p-4">
-            <div className="d-flex align-items-center justify-content-between mb-4">
+          <div className="glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+            <div className="d-flex align-items-center justify-content-between mb-2 px-2 pb-1 border-bottom border-gray-100">
               <h6 className="mb-0">
                 {isEmployee || isContractor ? "My Assigned Projects" : isClient ? "My Active Projects" : "Recent Projects"}
               </h6>
@@ -391,15 +430,15 @@ export function Dashboard() {
             </div>
             <div className="table-responsive">
               <table className="table text-start align-middle table-bordered table-hover mb-0">
-                <thead>
-                  <tr className="text-dark">
-                    <th scope="col"><input className="form-check-input" type="checkbox" /></th>
-                    <th scope="col">Project</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Progress</th>
-                    {!isEmployee && <th scope="col">Budget</th>}
-                    <th scope="col">Action</th>
+                <thead className="bg-light/50">
+                  <tr className="text-muted text-uppercase fw-bold" style={{ fontSize: '10px' }}>
+                    <th scope="col" className="py-2"><input className="form-check-input" type="checkbox" /></th>
+                    <th scope="col" className="py-2">Project</th>
+                    <th scope="col" className="py-2">ID</th>
+                    <th scope="col" className="py-2">Status</th>
+                    <th scope="col" className="py-2">Progress</th>
+                    {!isEmployee && <th scope="col" className="py-2">Budget</th>}
+                    <th scope="col" className="py-2 text-end">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -448,17 +487,19 @@ export function Dashboard() {
                             <td>
                               <div className="d-flex gap-1">
                                 <button
-                                  className="btn btn-sm btn-primary"
+                                  className="btn btn-primary d-flex align-items-center justify-content-center"
                                   onClick={() => navigate(`/dashboard/projects?id=${project.id}`)}
+                                  style={{ borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', height: '28px', border: 'none', padding: '0 8px' }}
                                 >Detail</button>
                                 {isAdminLike && (
                                   <>
                                     <button
-                                      className="btn btn-sm btn-outline-secondary"
+                                      className="btn btn-outline-secondary d-flex align-items-center justify-content-center bg-white"
                                       onClick={() => { setEditingProject(project); }}
+                                      style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #333', color: '#333', padding: '0' }}
                                     ><Edit size={12} /></button>
                                     <button
-                                      className="btn btn-sm btn-outline-danger"
+                                      className="btn btn-outline-danger d-flex align-items-center justify-content-center bg-white"
                                       onClick={async () => {
                                         if (project.id && confirm(`Delete project "${project.name}"?`)) {
                                           try {
@@ -467,6 +508,7 @@ export function Dashboard() {
                                           } catch (err) { console.error('Delete failed', err); }
                                         }
                                       }}
+                                      style={{ borderRadius: '6px', width: '28px', height: '28px', border: '1px solid #dc3545', color: '#dc3545', padding: '0' }}
                                     ><Trash2 size={12} /></button>
                                   </>
                                 )}
@@ -485,14 +527,14 @@ export function Dashboard() {
 
 
       {/* ========= WIDGETS (Messages, Calendar, To-Do) ========= */}
-      <div className="container-fluid pt-4 px-4">
-        <div className="row g-4">
+      <div className="px-lg-4 mb-2">
+        <div className="row g-1">
 
           {/* Messages Widget */}
-          <div className="col-sm-12 col-md-6 col-xl-4">
+          <div className="col-lg-4 px-1">
             <ScrollReveal delay={0.3}>
-              <div className="h-100 bg-light rounded p-4">
-                <div className="d-flex align-items-center justify-content-between mb-2">
+              <div className="h-100 glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-center justify-content-between mb-2 px-1 pb-1 border-bottom border-gray-100">
                   <h6 className="mb-0">Messages</h6>
                   <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/communications'); }}>Show All</a>
                 </div>
@@ -547,10 +589,10 @@ export function Dashboard() {
           </div>
 
           {/* Calendar Widget */}
-          <div className="col-sm-12 col-md-6 col-xl-4">
+          <div className="col-lg-4 px-1">
             <ScrollReveal delay={0.35}>
-              <div className="h-100 bg-light rounded p-4">
-                <div className="d-flex align-items-center justify-content-between mb-4">
+              <div className="h-100 glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-center justify-content-between mb-2 px-1 pb-1 border-bottom border-gray-100">
                   <h6 className="mb-0">Calendar</h6>
                   <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/calendar'); }}>Show All</a>
                 </div>
@@ -560,10 +602,10 @@ export function Dashboard() {
           </div>
 
           {/* To-Do List Widget */}
-          <div className="col-sm-12 col-md-6 col-xl-4">
+          <div className="col-lg-4 px-1">
             <ScrollReveal delay={0.4}>
-              <div className="h-100 bg-light rounded p-4">
-                <div className="d-flex align-items-center justify-content-between mb-4">
+              <div className="h-100 glass-card p-2 rounded-xl border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                <div className="d-flex align-items-center justify-content-between mb-2 px-1 pb-1 border-bottom border-gray-100">
                   <h6 className="mb-0">To Do List</h6>
                   <a href="">Show All</a>
                 </div>
@@ -611,10 +653,10 @@ export function Dashboard() {
 
       {/* ========= ACTIVITY LOG (Admin only, collapsible) ========= */}
       {(isAdminLike || isAuditor) && activities.length > 0 && (
-        <div className="container-fluid pt-4 px-4">
+        <div className="px-lg-4 mb-2">
           <ScrollReveal delay={0.45}>
-            <div className="bg-light rounded p-4">
-              <div className="d-flex align-items-center justify-content-between mb-4">
+            <div className="glass-card p-2 rounded-xl border border-white shadow-sm mb-3" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+              <div className="d-flex align-items-center justify-content-between mb-2 px-2 pb-1 border-bottom border-gray-100">
                 <h6 className="mb-0 fw-bold">Activity Log</h6>
                 <a href="" onClick={e => { e.preventDefault(); navigate('/dashboard/admin'); }}>Show All</a>
               </div>

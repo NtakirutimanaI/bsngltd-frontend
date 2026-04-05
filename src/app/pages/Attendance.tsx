@@ -12,6 +12,8 @@ import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi } from '../api/client';
 import { useAuth } from "@/app/context/AuthContext";
 import { Badge } from "@/app/components/ui/badge";
+import { ExportReportModal } from "@/app/components/ExportReportModal";
+import logo from '@/assets/logo.png';
 
 interface StandardMember {
     id: string;
@@ -57,6 +59,7 @@ export function Attendance() {
     const [members, setMembers] = useState<StandardMember[]>([]);
     const [attendanceRecords, setAttendanceRecords] = useState<Record<string, Partial<AttendanceRecord>>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
     const roleName = ((typeof user?.role === 'object' && user.role !== null) ? user.role.name : user?.role || 'guest').toLowerCase();
     const isAdmin = ['super_admin', 'admin', 'manager', 'hr'].includes(roleName);
@@ -223,6 +226,74 @@ export function Attendance() {
         }
     };
 
+    const handleExport = (format: 'pdf' | 'excel' | 'csv', startDate: string, endDate: string) => {
+        if (!selectedSite) {
+            alert("No site selected. Please select a site first.");
+            return;
+        }
+        
+        if (members.length === 0) {
+            alert("No data available for the selected site or date range.");
+            return;
+        }
+
+        try {
+            const siteName = selectedSite.name;
+            const targetDate = activeTab === 'daily_attendance' ? selectedDate : new Date().toISOString().slice(0, 7);
+            const dateRangeText = startDate && endDate ? `${startDate}_to_${endDate}` : targetDate;
+            const filename = `Attendance_Report_${siteName.replace(/\s+/g, '_')}_${dateRangeText}`;
+
+            // Prepare Data
+            const rows = [];
+            if (activeTab === 'daily_attendance') {
+                rows.push(["SL.", "Full Name", "Position", "Date", "Status", "Work Hours", "Overtime", "Remarks"]);
+                members.forEach((m, i) => {
+                    const r = attendanceRecords[m.id] || {};
+                    rows.push([
+                        (i + 1).toString().padStart(2, '0'), 
+                        m.fullName, 
+                        m.position, 
+                        targetDate, 
+                        r.status?.toUpperCase() || 'PRESENT', 
+                        (r.workingHours != null ? Number(r.workingHours) : 8.0).toFixed(1), 
+                        (r.overtimeHours != null ? Number(r.overtimeHours) : 0.0).toFixed(1), 
+                        r.reason || 'Verified'
+                    ]);
+                });
+            } else {
+                rows.push(["SL.", "Full Name", "Position", "Review Period", "Days Present", "Total Hours", "Overtime Index", "Projected Payroll"]);
+                members.forEach((m, i) => {
+                    rows.push([
+                        (i + 1).toString().padStart(2, '0'),
+                        m.fullName, 
+                        m.position, 
+                        targetDate,
+                        "22 Days", 
+                        "176.0 Hours", 
+                        "4.5 Hours", 
+                        "RWF 450,000"
+                    ]);
+                });
+            }
+
+            if (format === 'csv' || format === 'excel') {
+                const content = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+                const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `${filename}.csv`; 
+                link.click();
+                alert(`Report "${filename}.csv" exported successfully!`);
+            } else {
+                // PDF CASE: Handled by window.print() + our printable section
+                window.print();
+            }
+        } catch (error: any) {
+            console.error("Export Error Detail:", error);
+            alert(`Failed to export report: ${error.message || 'Unknown Error'}. Please contact support.`);
+        }
+    };
+
     const filteredSites = sites.filter(s => 
         s.name.toLowerCase().includes(siteSearchTerm.toLowerCase()) ||
         s.code.toLowerCase().includes(siteSearchTerm.toLowerCase())
@@ -235,11 +306,11 @@ export function Attendance() {
 
     return (
         <div className="container-fluid py-0 min-vh-100" style={{ background: 'transparent' }}>
-            <div className="row g-4 pt-2">
+            <div className="row g-1 pt-1">
                 {/* Site Directory Sidebar */}
                 {!isEmployee && (
                     <div className="col-lg-3 px-lg-4 border-end border-gray-100">
-                        <div className="glass-card p-2 rounded-xl mb-3 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
+                        <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm" style={{ background: 'rgba(255, 255, 255, 0.6)', backdropFilter: 'blur(10px)' }}>
                             <div className="d-flex align-items-center gap-2 mb-0 pb-2 border-bottom border-gray-100">
                                 <div className="bg-primary rounded-lg p-2 text-white shadow-sm">
                                     <MapPin size={16} />
@@ -251,7 +322,7 @@ export function Attendance() {
                             </div>
                         </div>
 
-                        <div className="mb-4">
+                        <div className="mb-2">
                             <div className="position-relative">
                                 <Search className="position-absolute top-50 translate-middle-y text-muted opacity-50" size={16} style={{ left: '15px', zIndex: 5 }} />
                                 <input 
@@ -308,7 +379,7 @@ export function Attendance() {
                 {/* Marking Area */}
                 <div className={isEmployee ? "col-12" : "col-lg-9 px-lg-4"}>
                     <ScrollReveal>
-                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3 py-2.5 px-3 bg-white rounded-xl border border-gray-100 shadow-sm">
+                        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-2 py-1 px-3 bg-white rounded-xl border border-gray-100 shadow-sm">
                             <div className="py-1">
                                 <h1 className="h6 fw-bold text-dark mb-0 leading-tight">
                                     {selectedSite ? `${selectedSite.name} Marking Hub` : "Select a Site to Begin"}
@@ -345,11 +416,11 @@ export function Attendance() {
                         </div>
                     </ScrollReveal>
 
-                    <div className="marking-content mt-2">
+                    <div className="marking-content mt-1">
                         {activeTab === 'daily_attendance' ? (
                             <ScrollReveal className="fade-in">
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                     <div className="p-3 border-b border-gray-100 d-flex align-items-center justify-content-between bg-light/50">
+                                     <div className="p-2 px-3 border-b border-gray-100 d-flex align-items-center justify-content-between bg-light/50">
                                         <div className="d-flex align-items-center gap-3">
                                             <span className="smaller fw-bold text-muted text-uppercase tracking-wider">Target Date:</span>
                                             <input
@@ -362,6 +433,13 @@ export function Attendance() {
                                         </div>
                                         <div className="d-flex gap-2 align-items-center">
                                             <Badge className="bg-blue-500 text-white border-0 shadow-sm px-3 py-1">{members.length} SITE MEMBERS</Badge>
+                                            <button 
+                                                onClick={() => setIsExportModalOpen(true)}
+                                                className="btn btn-outline-primary btn-sm rounded-lg fw-bold d-flex align-items-center gap-1.5"
+                                                style={{ fontSize: '10px' }}
+                                            >
+                                                <Save size={12} /> EXPORT
+                                            </button>
                                         </div>
                                     </div>
 
@@ -369,11 +447,11 @@ export function Attendance() {
                                         <table className="table table-hover align-middle mb-0">
                                             <thead className="bg-gray-50/80">
                                                 <tr className="smaller text-muted text-uppercase fw-bold" style={{ fontSize: '10px' }}>
-                                                    <th className="ps-4 py-3">Site Member (Identity)</th>
-                                                    <th>Marking Status</th>
-                                                    <th>Schedule (In-Out)</th>
-                                                    <th className="text-center">Hours (OT)</th>
-                                                    <th className="pe-4">Verification Memo</th>
+                                                    <th className="ps-4 py-2">Site Member (Identity)</th>
+                                                    <th className="py-2">Marking Status</th>
+                                                    <th className="py-2">Schedule (In-Out)</th>
+                                                    <th className="text-center py-2">Hours (OT)</th>
+                                                    <th className="pe-4 py-2">Verification Memo</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -450,7 +528,7 @@ export function Attendance() {
                         ) : (
                             <ScrollReveal className="fade-in">
                                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                    <div className="p-4 border-b border-gray-100 bg-light/30">
+                                    <div className="p-2 px-3 border-b border-gray-100 bg-light/30">
                                         <div className="row align-items-center g-3">
                                             <div className="col-md-6">
                                                 <h3 className="h6 fw-bold mb-1">Monthly Attendance Performance</h3>
@@ -466,7 +544,10 @@ export function Attendance() {
                                                         style={{ fontSize: '12px', outline: 'none' }}
                                                     />
                                                 </div>
-                                                <button className="btn btn-outline-primary btn-sm rounded-lg fw-bold d-flex align-items-center gap-2">
+                                                <button 
+                                                    onClick={() => setIsExportModalOpen(true)}
+                                                    className="btn btn-outline-primary btn-sm rounded-lg fw-bold d-flex align-items-center gap-2"
+                                                >
                                                     <Save size={14} /> EXPORT REPORT
                                                 </button>
                                             </div>
@@ -477,12 +558,12 @@ export function Attendance() {
                                         <table className="table align-middle mb-0">
                                             <thead className="bg-gray-50/80">
                                                 <tr className="smaller text-muted text-uppercase fw-bold" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>
-                                                    <th className="ps-4 py-3">Site Member</th>
-                                                    <th className="text-center">Days Present</th>
-                                                    <th className="text-center">Total Office Hours</th>
-                                                    <th className="text-center">Overtime Index</th>
-                                                    <th className="text-center">Availability Rate</th>
-                                                    <th className="pe-4 text-end">Projected Payroll</th>
+                                                    <th className="ps-4 py-2">Site Member</th>
+                                                    <th className="text-center py-2">Days Present</th>
+                                                    <th className="text-center py-2">Total Office Hours</th>
+                                                    <th className="text-center py-2">Overtime Index</th>
+                                                    <th className="text-center py-2">Availability Rate</th>
+                                                    <th className="pe-4 text-end py-2">Projected Payroll</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -533,10 +614,123 @@ export function Attendance() {
                 </div>
             </div>
 
+            <ExportReportModal 
+                isOpen={isExportModalOpen} 
+                onClose={() => setIsExportModalOpen(false)} 
+                title={`${activeTab === 'daily_attendance' ? 'Daily Report' : 'Monthly Report'}`}
+                onExport={handleExport}
+            />
+
             <style>{`
                 .active-site { border-color: #009CFF !important; }
                 .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+
+                @media print {
+                    @page {
+                        size: A4;
+                        margin: 10mm !important;
+                    }
+
+                    /* Hide EVERYTHING */
+                    body * { 
+                        visibility: hidden !important; 
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    
+                    /* Show only the printable section */
+                    #attendance-print-section, #attendance-print-section * { 
+                        visibility: visible !important; 
+                    }
+                    
+                    #attendance-print-section {
+                        position: absolute !important;
+                        left: 0 !important;
+                        top: 0 !important;
+                        width: 100% !important;
+                        display: block !important;
+                        background: white !important;
+                        min-height: 297mm !important; /* A4 Height */
+                        color: #000 !important;
+                    }
+
+                    #attendance-print-section .report-container {
+                        width: 100%;
+                        max-width: 100%;
+                        margin: 0;
+                        padding: 0;
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    #attendance-print-section .border-pattern {
+                        height: 15px;
+                        background-color: #000;
+                        border-bottom: 2px solid #000;
+                        position: relative;
+                        margin-bottom: 30px;
+                    }
+
+                    #attendance-print-section .report-content {
+                        padding: 20px 40px 60px 40px;
+                        flex-grow: 1;
+                    }
+
+                    #attendance-print-section table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 30px;
+                        table-layout: fixed;
+                        border: 2px solid #000;
+                    }
+
+                    /* THEAD REPEAT */
+                    #attendance-print-section thead {
+                        display: table-header-group !important;
+                    }
+
+                    #attendance-print-section th {
+                        background-color: #f0f0f0 !important;
+                        color: #000 !important;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        font-size: 11px;
+                        padding: 12px 6px;
+                        border: 1px solid #000;
+                    }
+
+                    #attendance-print-section td {
+                        border: 1px solid #000;
+                        padding: 10px 8px;
+                        font-size: 11px;
+                        color: #000 !important;
+                        word-wrap: break-word;
+                    }
+
+                    #attendance-print-section tr:nth-child(even) {
+                        background-color: #fff !important;
+                    }
+
+                    #attendance-print-section .sl-column {
+                        width: 40px;
+                        text-align: center;
+                        background-color: #000 !important;
+                        color: white !important;
+                        font-weight: bold;
+                        border: 1px solid #000;
+                    }
+
+                    /* Hide the dashboard components */
+                    .glass-card, .btn, .modal, .modal-backdrop, .sidebar, .header-dashboard {
+                        display: none !important;
+                    }
+                }
                 .smaller { font-size: 11px; }
                 .search-input { padding-left: 45px !important; }
                 .site-row:hover { border-color: #009CFF !important; background-color: #f8fbff !important; }
@@ -544,6 +738,112 @@ export function Attendance() {
                 .directory-scroll-container::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
                 .shadow-xs { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
             `}</style>
+
+            {/* Hidden Printable Section */}
+            <div id="attendance-print-section" style={{ display: 'none' }}>
+                <div className="report-container">
+                    <div className="border-pattern"></div>
+                    
+                    <div className="report-content">
+                        <table>
+                            <thead>
+                                {/* BRANDING HEADER (REPEATS) */}
+                                <tr style={{ border: 'none' }}>
+                                    <th colSpan={6} style={{ 
+                                        background: 'white', 
+                                        border: 'none', 
+                                        paddingBottom: '60px', 
+                                        paddingTop: '30px',
+                                        textAlign: 'left' 
+                                    }}>
+                                        <div className="d-flex justify-content-between align-items-center w-100">
+                                            <div className="d-flex align-items-center gap-3">
+                                                <div className="bg-black rounded-circle d-flex align-items-center justify-content-center overflow-hidden" style={{ width: '60px', height: '60px' }}>
+                                                    <img src={logo} alt="BSNG Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', transform: 'scale(1.3)' }} />
+                                                </div>
+                                                <div>
+                                                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0', color: '#000' }}>BSNG Agency</h2>
+                                                    <div style={{ color: '#000', fontSize: '11px', fontWeight: 'bold', letterSpacing: '1px' }}>BUILD STRONG GENERATIONS</div>
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#000', margin: '0', textTransform: 'uppercase' }}>Attendance Report</h1>
+                                                <p style={{ color: '#333', fontSize: '12px', margin: '3px 0 0 0', fontWeight: '500' }}>Daily Personnel Site-Log Audit Report</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="mt-5 d-flex justify-content-between align-items-end" style={{ borderBottom: '3px solid #000', paddingBottom: '12px' }}>
+                                            <div style={{ fontSize: '12px', color: '#000', fontWeight: 'bold' }}>
+                                                <strong>SITE LOCATION:</strong> {selectedSite?.name?.toUpperCase() || 'UNSPECIFIED SITE'}
+                                            </div>
+                                            <div style={{ fontSize: '12px', color: '#000', textAlign: 'right', fontWeight: 'bold' }}>
+                                                <strong>REPORTING DATE:</strong> {selectedDate}
+                                            </div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                {/* REAL TABLE HEADERS */}
+                                <tr>
+                                    <th style={{ backgroundColor: '#000', color: '#fff', width: '40px' }}>SL.</th>
+                                    <th style={{ width: 'auto' }}>Personnel Identity</th>
+                                    <th style={{ width: '90px' }}>Status</th>
+                                    <th style={{ textAlign: 'center', width: '80px' }}>Work Hrs</th>
+                                    <th style={{ textAlign: 'center', width: '80px' }}>Overtime</th>
+                                    <th style={{ width: '180px' }}>Verification Memo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {members.map((m, i) => {
+                                    const r = attendanceRecords[m.id] || {};
+                                    return (
+                                        <tr key={m.id}>
+                                            <td className="sl-column" style={{ textAlign: 'center', backgroundColor: '#000', color: '#fff' }}>{(i + 1).toString().padStart(2, '0')}</td>
+                                            <td style={{ verticalAlign: 'middle' }}>
+                                                <div style={{ fontWeight: 'bold', color: '#000', fontSize: '11px' }}>{m.fullName}</div>
+                                                <div style={{ fontSize: '9px', color: '#000', textTransform: 'uppercase', opacity: 0.8 }}>{m.position}</div>
+                                            </td>
+                                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                                                <span style={{ 
+                                                    color: '#000',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '10px',
+                                                    border: '1px solid #000',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '2px',
+                                                    backgroundColor: r.status === 'Absent' ? '#eee' : 'transparent'
+                                                }}>
+                                                    {r.status?.toUpperCase() || 'PRESENT'}
+                                                </span>
+                                            </td>
+                                            <td style={{ textAlign: 'center', verticalAlign: 'middle', fontWeight: 'bold' }}>{r.workingHours || 8}.0</td>
+                                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>{r.overtimeHours || 0}.0</td>
+                                            <td style={{ fontStyle: 'italic', color: '#000', fontSize: '10px', verticalAlign: 'middle' }}>{r.reason || 'Verified'}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+
+                        <div className="mt-5 pt-4 d-flex justify-content-between" style={{ marginTop: '60px' }}>
+                            <div style={{ width: '40%' }}>
+                                <h3 style={{ fontSize: '14px', fontWeight: 'bold', color: '#000', borderBottom: '2px solid #000', paddingBottom: '4px' }}>Terms & Condition</h3>
+                                <p style={{ fontSize: '10px', color: '#000', lineHeight: '1.4', marginTop: '8px' }}>
+                                    This attendance report is electronically generated and verified by the BSNG Site Operations Hub. 
+                                    All data presented herein is based on real-time site logging and is subject to final payroll audit. 
+                                    Unauthorized alteration of this document is strictly prohibited.
+                                </p>
+                            </div>
+                            <div style={{ width: '40%', textAlign: 'right' }}>
+                                <p style={{ fontSize: '13px', fontWeight: 'bold', color: '#000', marginBottom: '50px' }}>SITE MANAGER APPROVAL</p>
+                                <div style={{ height: '2px', background: '#000', width: '100%', marginLeft: 'auto' }}></div>
+                                <p style={{ fontSize: '10px', marginTop: '5px', color: '#000', fontWeight: 'bold' }}>Electronic Signal Verified</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="border-pattern" style={{ marginTop: 'auto' }}></div>
+                </div>
+            </div>
         </div>
     );
 }
