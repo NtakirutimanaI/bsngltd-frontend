@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi, getImageUrl } from "@/app/api/client";
+import { toast } from "sonner";
 import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Switch } from "@/app/components/ui/switch";
@@ -46,8 +47,9 @@ const PAGE_IMAGES: Record<string, { key: string; label: string; fallback: string
         { key: 'home_carousel_1', label: 'Hero Carousel 1', fallback: '/img/hero-slider-1.jpg', description: 'First hero slider image' },
         { key: 'home_carousel_2', label: 'Hero Carousel 2', fallback: '/img/hero-slider-2.jpg', description: 'Second hero slider image' },
         { key: 'home_carousel_3', label: 'Hero Carousel 3', fallback: '/img/hero-slider-3.jpg', description: 'Third hero slider image' },
-        { key: 'about_image_1', label: 'About Image 1', fallback: '/img/about-1.jpg', description: 'About section - left image' },
-        { key: 'about_image_2', label: 'About Image 2', fallback: '/img/about-2.jpg', description: 'About section - right image' },
+        { key: 'home_about_img_1', label: 'About Main (Left)', fallback: '/img/about-1.jpg', description: 'Large vertical image in about section' },
+        { key: 'home_about_img_2', label: 'About Secondary (Right)', fallback: '/img/about-2.jpg', description: 'Top right image in about section' },
+        { key: 'home_experience_bg', label: 'Experience Box BG', fallback: '/img/about-2.jpg', description: 'Blue box background (Building Excellence Since 2010)' },
         { key: 'service_image_1', label: 'Service Image 1', fallback: '/img/service-1.jpg', description: 'Residential construction image' },
         { key: 'service_image_2', label: 'Service Image 2', fallback: '/img/service-2.jpg', description: 'Commercial construction image' },
         { key: 'home_project_card_1', label: 'Project Card 1', fallback: '/img/project-1.jpg', description: 'Project category card 1' },
@@ -732,8 +734,8 @@ export function WebsiteCMS() {
                                                                 <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
                                                                     {(() => { try { if (record.title?.startsWith('{')) { const o = JSON.parse(record.title); return o.en || o.rw || Object.values(o)[0]; } } catch { } return record.title; })() || 'Untitled'}
                                                                 </span>
-                                                                {record.code && <span className="text-[10px] text-gray-400">({record.code})</span>}
-                                                                <span className="text-[10px] text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full font-bold">3 images</span>
+                                                                {record.code && <span className="text-[10px] text-gray-400 dark:text-gray-500">({record.code})</span>}
+                                                                <span className="text-[10px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full font-bold">3 images</span>
                                                             </div>
                                                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                                                                 <RecordImageCard
@@ -882,7 +884,7 @@ export function WebsiteCMS() {
                                                                             return { ...r, title: JSON.stringify(obj) };
                                                                         }));
                                                                     }}
-                                                                    className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                    className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                     placeholder="Enter title..."
                                                                 />
                                                             </div>
@@ -902,7 +904,7 @@ export function WebsiteCMS() {
                                                                                 return { ...r, location: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="Enter location..."
                                                                     />
                                                                 </div>
@@ -921,7 +923,7 @@ export function WebsiteCMS() {
                                                                                 return { ...r, excerpt: JSON.stringify(obj) };
                                                                             }));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="Brief summary..."
                                                                     />
                                                                 </div>
@@ -939,7 +941,7 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, price: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="e.g. 85000000"
                                                                     />
                                                                 </div>
@@ -952,7 +954,7 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, size: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="e.g. 120"
                                                                     />
                                                                 </div>
@@ -965,7 +967,7 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bedrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="3"
                                                                     />
                                                                 </div>
@@ -978,7 +980,7 @@ export function WebsiteCMS() {
                                                                             const newVal = e.target.value;
                                                                             setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bathrooms: newVal } : r));
                                                                         }}
-                                                                        className="bg-light border-0 focus:bg-white text-sm h-8"
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
                                                                         placeholder="2"
                                                                     />
                                                                 </div>
@@ -1003,7 +1005,7 @@ export function WebsiteCMS() {
                                                                         return { ...r, [field]: JSON.stringify(obj) };
                                                                     }));
                                                                 }}
-                                                                className="bg-light border-0 focus:bg-white text-sm min-h-[90px]"
+                                                                className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm min-h-[90px] text-dark dark:text-white"
                                                                 placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
                                                             />
                                                         </div>
@@ -1059,7 +1061,7 @@ export function WebsiteCMS() {
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
                                                         rows={2}
-                                                        className="w-full bg-light border-0 focus:bg-white rounded px-2 py-1"
+                                                        className="w-full bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 rounded px-2 py-1 text-dark dark:text-white placeholder:text-muted dark:placeholder:text-gray-500"
                                                         style={{ fontSize: '12px' }}
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
@@ -1067,7 +1069,7 @@ export function WebsiteCMS() {
                                                     <Input
                                                         value={getLocalizedValue(setting.value, activeLang)}
                                                         onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
-                                                        className="w-full bg-light border-0 focus:bg-white rounded h-8 px-2"
+                                                        className="w-full bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 rounded h-8 px-2 text-dark dark:text-white placeholder:text-muted dark:placeholder:text-gray-500"
                                                         style={{ fontSize: '12px' }}
                                                         placeholder={`${setting.description} (${activeLang})`}
                                                     />
@@ -1078,12 +1080,35 @@ export function WebsiteCMS() {
 
                                     {/* Empty state for non-record pages */}
                                     {!isRecordPage && textSettings.length === 0 && !isLoading && (
-                                        <div className="text-center py-12">
-                                            <div className="w-16 h-16 bg-white rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border">
-                                                <Layout className="text-muted" size={32} />
+                                        <div className="text-center py-12 px-4">
+                                            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border dark:border-blue-800">
+                                                <Layout className="text-primary" size={32} />
                                             </div>
-                                            <p className="text-muted fw-bold">No manageable text content found for this page.</p>
-                                            <p className="text-sm text-muted mt-1">Visit Global Settings or other pages to see editable fields.</p>
+                                            <p className="text-dark dark:text-white fw-bold mb-1">No text settings found in the database group "{activePage}".</p>
+                                            <p className="text-sm text-muted dark:text-gray-400 mb-4 mx-auto max-w-sm">We can automatically initialize common home page text fields if they are missing from your database.</p>
+                                            <button 
+                                                onClick={async () => {
+                                                    const keys = [
+                                                        { k: 'home_about_title', d: 'About Section Title', v: 'BUILDING Strong Generations' },
+                                                        { k: 'home_about_desc1', d: 'Primary Description', v: 'Founded in 2005, BSNG Ltd has grown from a small construction firm...' },
+                                                        { k: 'home_about_desc2', d: 'Secondary Description', v: 'With over 20 years of experience, we\'ve completed more than 250 projects...' },
+                                                        { k: 'home_experience_title', d: 'Experience Tagline', v: 'Building Excellence Since 2010' }
+                                                    ];
+                                                    for (const key of keys) {
+                                                        try {
+                                                            await fetchApi('/settings', {
+                                                                method: 'POST',
+                                                                body: JSON.stringify({ key: key.k, value: key.v, group: 'home', description: key.d, isPublic: true })
+                                                            });
+                                                        } catch(e) {}
+                                                    }
+                                                    loadSettings();
+                                                    toast.success("Home page text fields initialized!");
+                                                }}
+                                                className="btn btn-primary px-4 fw-bold"
+                                            >
+                                                Initialize Home Text Fields
+                                            </button>
                                         </div>
                                     )}
                                 </div>
