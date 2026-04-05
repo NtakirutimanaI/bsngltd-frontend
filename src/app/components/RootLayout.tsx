@@ -166,7 +166,7 @@ export function RootLayout() {
       {/* Sidebar Start */}
       <div className={`sidebar pe-4 pb-3 ${sidebarOpen ? "open" : ""}`}>
         <nav className="navbar bg-light navbar-light">
-          <NavLink to="/dashboard" className="navbar-brand mx-4 mt-4 mb-3 pb-0 text-decoration-none">
+          <NavLink to="/dashboard" className="navbar-brand mx-4 mt-4 mb-0 pb-0 text-decoration-none" style={{ marginBottom: '-38px' }}>
             <h3 className="text-primary mb-0"><i className="fa fa-hashtag me-2"></i>BSNG</h3>
           </NavLink>
 
@@ -339,27 +339,32 @@ export function RootLayout() {
           </form>
 
           {/* Site Switcher */}
-          {!location.pathname.includes('/dashboard/content') && !location.pathname.includes('/dashboard/bookings') && !location.pathname.includes('/dashboard/attendance') && (
+          {!location.pathname.includes('/dashboard/content') && 
+           !location.pathname.includes('/dashboard/bookings') && 
+           !location.pathname.includes('/dashboard/attendance') && 
+           !location.pathname.includes('/dashboard/communications') && 
+           !location.pathname.includes('/dashboard/calendar') && 
+           !location.pathname.includes('/dashboard/settings') && (
             <div className="ms-4 d-none d-lg-block">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="d-flex align-items-center gap-2 border-0 bg-white shadow-sm rounded-xl px-4 py-2 hover:bg-gray-50 transition-all border border-gray-100">
-                    <div className="h-8 w-8 bg-blue-100 text-blue-600 rounded-lg d-flex align-items-center justify-content-center">
-                      <Building2 size={16} />
+                  <Button variant="outline" className="d-flex align-items-center gap-2 border-0 bg-white dark:bg-gray-800 shadow-sm rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all border border-gray-100 dark:border-gray-700" style={{ height: '36px' }}>
+                    <div className="h-6 w-6 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded d-flex align-items-center justify-content-center flex-shrink-0">
+                      <Building2 size={12} />
                     </div>
                     <div className="text-start">
-                      <div className="text-xs text-muted fw-bold uppercase px-1" style={{ fontSize: '9px', letterSpacing: '0.5px' }}>Current Site</div>
-                      <div className="fw-bold text-dark px-1 truncate" style={{ maxWidth: '140px', fontSize: '13px' }}>
+                      <div className="text-xs text-muted dark:text-gray-400 fw-bold uppercase px-0" style={{ fontSize: '8px', letterSpacing: '0.4px', lineHeight: '1' }}>Current Site</div>
+                      <div className="fw-bold text-dark dark:text-white px-0 truncate" style={{ maxWidth: '100px', fontSize: '11px', lineHeight: '1.2' }}>
                         {selectedSite ? selectedSite.name : "Select a Site"}
                       </div>
                     </div>
-                    <ChevronDown size={14} className="text-muted ms-1" />
+                    <ChevronDown size={11} className="text-muted ms-0" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 border-0 shadow-lg rounded-xl p-2 bg-white">
-                  <DropdownMenuLabel className="small fw-bold text-muted px-3 py-2 uppercase tracking-wider">Switch Working Site</DropdownMenuLabel>
+                <DropdownMenuContent align="start" className="w-56 border-0 shadow-lg rounded-xl p-1.5 bg-white dark:bg-gray-800 dark:border dark:border-gray-700">
+                  <DropdownMenuLabel className="small fw-bold text-muted dark:text-gray-400 px-3 py-1.5 uppercase tracking-wider" style={{ fontSize: '10px' }}>Switch Working Site</DropdownMenuLabel>
                   <DropdownMenuSeparator className="my-1" />
-                  <div className="max-h-60 overflow-auto py-1">
+                  <div className="max-h-60 overflow-auto py-0">
                     {sites.length === 0 ? (
                       <div className="p-4 text-center">
                          <p className="small text-muted mb-2">No sites available</p>
@@ -370,21 +375,21 @@ export function RootLayout() {
                         <DropdownMenuItem 
                           key={site.id} 
                           onClick={() => setSelectedSite(site)}
-                          className={`d-flex align-items-center gap-3 p-3 rounded-lg mb-1 cursor-pointer transition-all ${selectedSite?.id === site.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-50'}`}
+                          className={`d-flex align-items-center gap-2 p-2 rounded-lg mb-0.5 cursor-pointer transition-all ${selectedSite?.id === site.id ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}`}
                         >
-                          <MapPin size={16} className={selectedSite?.id === site.id ? 'text-blue-600' : 'text-gray-400'} />
+                          <MapPin size={13} className={selectedSite?.id === site.id ? 'text-blue-600' : 'text-gray-400'} />
                           <div className="flex-grow-1 overflow-hidden">
-                            <div className="fw-bold small truncate">{site.name}</div>
-                            <div className="smaller text-muted truncate">{site.location}</div>
+                            <div className="fw-bold truncate" style={{ fontSize: '11px' }}>{site.name}</div>
+                            <div className="text-muted truncate" style={{ fontSize: '9px' }}>{site.location}</div>
                           </div>
-                          {selectedSite?.id === site.id && <div className="h-2 w-2 bg-blue-600 rounded-circle shadow-sm" />}
+                          {selectedSite?.id === site.id && <div className="h-1.5 w-1.5 bg-blue-600 rounded-circle shadow-sm" />}
                         </DropdownMenuItem>
                       ))
                     )}
                   </div>
                   <DropdownMenuSeparator className="my-1" />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard/sites')} className="d-flex align-items-center gap-2 p-3 text-primary fw-bold cursor-pointer hover:bg-blue-50 rounded-lg">
-                    <PlusCircle size={16} /> Manage All Sites
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/sites')} className="d-flex align-items-center gap-2 p-2 text-primary fw-bold cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg" style={{ fontSize: '11px' }}>
+                    <PlusCircle size={14} /> Manage All Sites
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
