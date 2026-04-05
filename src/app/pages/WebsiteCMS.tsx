@@ -24,6 +24,7 @@ import {
     Newspaper,
     Upload,
     Camera,
+    Trash2,
 } from "lucide-react";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 import { fetchApi, getImageUrl } from "@/app/api/client";
@@ -83,10 +84,11 @@ const PAGE_IMAGES: Record<string, { key: string; label: string; fallback: string
     ],
 };
 
-function ImageUploadCard({ imgDef, settings, onUploaded }: {
+function ImageUploadCard({ imgDef, settings, onUploaded, onDeleted }: {
     imgDef: { key: string; label: string; fallback: string; description: string };
     settings: Record<string, string>;
     onUploaded: (key: string, url: string) => void;
+    onDeleted: (key: string) => void;
 }) {
     const fileRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
@@ -133,7 +135,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                     }}
                 />
                 {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center gap-2">
                     <button
                         onClick={() => {
                             if (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') {
@@ -147,6 +149,15 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
                     >
                         {uploading ? <RefreshCcw className="animate-spin" size={20} /> : (imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg' ? <ImageIcon size={20} /> : <Camera size={20} />)}
                     </button>
+                    {currentValue && currentValue !== imgDef.fallback && (
+                        <button
+                            onClick={() => onDeleted(imgDef.key)}
+                            className="btn btn-danger rounded-circle p-3 shadow-lg"
+                            title="Delete custom image and revert to fallback"
+                        >
+                            <Trash2 size={20} />
+                        </button>
+                    )}
                 </div>
                 {/* Status badge */}
                 {(imgDef.key === 'home_hero_bg' || imgDef.key === 'global_newsletter_bg') ? (
@@ -204,12 +215,13 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
 }
 
 // Component for uploading images for database records (properties, updates)
-function RecordImageCard({ record, type, field, label, onUploaded }: {
+function RecordImageCard({ record, type, field, label, onUploaded, onDeleted }: {
     record: { id: string; title: string; image: string; image2?: string; image3?: string; code?: string };
     type: 'properties' | 'updates';
     field: 'image' | 'image2' | 'image3';
     label: string;
     onUploaded: (id: string, url: string, field: string) => void;
+    onDeleted: (id: string, field: string) => void;
 }) {
     const fileRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
@@ -264,7 +276,7 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
                         (e.target as HTMLImageElement).src = '/img/project-1.jpg';
                     }}
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center">
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center gap-2">
                     <button
                         onClick={() => fileRef.current?.click()}
                         className="btn btn-light rounded-circle p-3 shadow-lg"
@@ -272,6 +284,15 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
                     >
                         {uploading ? <RefreshCcw className="animate-spin" size={20} /> : <Camera size={20} />}
                     </button>
+                    {currentImage && currentImage.includes('/uploads/') && (
+                        <button
+                            onClick={() => onDeleted(record.id, field)}
+                            className="btn btn-danger rounded-circle p-3 shadow-lg"
+                            title="Delete image"
+                        >
+                            <Trash2 size={20} />
+                        </button>
+                    )}
                 </div>
                 {currentImage && currentImage.includes('/uploads/') && (
                     <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -443,10 +464,38 @@ export function WebsiteCMS() {
         setTimeout(() => setMessage(null), 4000);
     };
 
+    const handleImageDeleted = async (key: string) => {
+        const imgDef = PAGE_IMAGES[activePage]?.find(i => i.key === key);
+        const fallback = imgDef?.fallback || "";
+        handleUpdateSetting(key, fallback);
+        try {
+            await fetchApi(`/settings/${key}`, {
+                method: 'PUT',
+                body: JSON.stringify({ value: fallback, isPublic: true })
+            });
+            await fetchApi('/settings/sync-github', { method: 'POST' });
+            setMessage({ type: 'success', text: `Image reset to default.` });
+        } catch (err) {}
+        setTimeout(() => setMessage(null), 4000);
+    };
+
     const handleRecordImageUploaded = async (id: string, url: string, field: string) => {
         setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: url } : r));
         try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
         setMessage({ type: 'success', text: 'Image uploaded & saved successfully!' });
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const handleRecordImageDeleted = async (id: string, field: string) => {
+        setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: "" } : r));
+        try {
+            await fetchApi(`/${activePage}/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ [field]: "" })
+            });
+            await fetchApi('/settings/sync-github', { method: 'POST' });
+            setMessage({ type: 'success', text: 'Image deleted.' });
+        } catch (err) {}
         setTimeout(() => setMessage(null), 4000);
     };
 
@@ -736,6 +785,7 @@ export function WebsiteCMS() {
                                                     imgDef={imgDef}
                                                     settings={settingsMap}
                                                     onUploaded={handleImageUploaded}
+                                                    onDeleted={handleImageDeleted}
                                                 />
                                             ))}
                                         </div>
@@ -765,6 +815,7 @@ export function WebsiteCMS() {
                                                                     field="image"
                                                                     label="Main Image"
                                                                     onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
                                                                 />
                                                                 <RecordImageCard
                                                                     record={record}
@@ -772,6 +823,7 @@ export function WebsiteCMS() {
                                                                     field="image2"
                                                                     label="Gallery Image 2"
                                                                     onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
                                                                 />
                                                                 <RecordImageCard
                                                                     record={record}
@@ -779,6 +831,7 @@ export function WebsiteCMS() {
                                                                     field="image3"
                                                                     label="Gallery Image 3"
                                                                     onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
                                                                 />
                                                             </div>
                                                         </div>
@@ -793,6 +846,7 @@ export function WebsiteCMS() {
                                                                 field="image"
                                                                 label="Post Image"
                                                                 onUploaded={handleRecordImageUploaded}
+                                                                onDeleted={handleRecordImageDeleted}
                                                             />
                                                         ))}
                                                     </div>
