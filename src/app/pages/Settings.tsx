@@ -513,23 +513,46 @@ export function Settings() {
                     </div>
                   </div>
 
-                  <div className="max-h-60 overflow-auto pr-1">
+                  <div className="max-h-[500px] overflow-auto pr-1 pe-2">
                     {[
+                      { method: 'POST', endpoint: '/auth/login', desc: 'System authentication' },
+                      { method: 'GET', endpoint: '/users/profile', desc: 'Current user data' },
+                      { method: 'GET', endpoint: '/sites', desc: 'List all operational sites' },
+                      { method: 'POST', endpoint: '/sites', desc: 'Create new site entry' },
+                      { method: 'GET', endpoint: '/projects', desc: 'Full project portfolio' },
+                      { method: 'POST', endpoint: '/projects', desc: 'Initialize new project' },
+                      { method: 'PATCH', endpoint: '/projects/:id', desc: 'Update project details' },
+                      { method: 'GET', endpoint: '/employees', desc: 'Workforce registry' },
                       { method: 'POST', endpoint: '/employees/attendance', desc: 'Secure site entry log' },
+                      { method: 'GET', endpoint: '/employees/attendance/:siteId', desc: 'Site-specific logs' },
                       { method: 'GET', endpoint: '/finance/stats', desc: 'Financial health metrics' },
-                      { method: 'PATCH', endpoint: '/projects/:id/media', desc: 'Bulk asset management' }
+                      { method: 'GET', endpoint: '/finance/transactions', desc: 'Full ledger access' },
+                      { method: 'POST', endpoint: '/finance/disbursement', desc: 'Process new payment' },
+                      { method: 'GET', endpoint: '/communications/messages', desc: 'Internal chat hub' },
+                      { method: 'POST', endpoint: '/communications/send', desc: 'Dispatch notification' },
+                      { method: 'GET', endpoint: '/settings', desc: 'Global configuration' },
+                      { method: 'PUT', endpoint: '/settings/:key', desc: 'Update system constant' },
+                      { method: 'POST', endpoint: '/content/upload-image', desc: 'Direct asset storage' },
+                      { method: 'GET', endpoint: '/analytics/performance', desc: 'System-wide insights' }
                     ].map((api, i) => (
-                      <div key={i} className="d-flex align-items-center justify-content-between p-2 mb-2 rounded-lg border border-gray-100 hover:bg-light/30">
-                        <div>
-                          <div className="d-flex align-items-center gap-2">
-                             <span className="badge p-1 px-1.5" style={{ background: api.method === 'GET' ? '#eff6ff' : '#ecfdf5', color: api.method === 'GET' ? '#2563eb' : '#059669', fontSize: '9px' }}>{api.method}</span>
-                             <code className="text-dark font-mono" style={{ fontSize: '10px' }}>{api.endpoint}</code>
+                      <div key={i} className="d-flex align-items-center justify-content-between p-2 mb-2 rounded-lg border border-gray-100 hover:bg-light/30 transition-all shadow-sm bg-white">
+                        <div className="flex-grow-1">
+                          <div className="d-flex align-items-center gap-2 mb-0.5">
+                             <span className="badge p-1 px-2 rounded" style={{ 
+                               background: api.method === 'GET' ? '#eff6ff' : api.method === 'POST' ? '#ecfdf5' : api.method === 'PATCH' ? '#fff7ed' : '#fef2f2', 
+                               color: api.method === 'GET' ? '#2563eb' : api.method === 'POST' ? '#059669' : api.method === 'PATCH' ? '#d97706' : '#dc2626', 
+                               fontSize: '8px',
+                               fontWeight: 800
+                             }}>{api.method}</span>
+                             <code className="text-dark font-mono font-bold" style={{ fontSize: '10px' }}>{api.endpoint}</code>
                           </div>
-                          <div className="text-muted mt-0.5" style={{ fontSize: '9px' }}>{api.desc}</div>
+                          <div className="text-muted" style={{ fontSize: '9px', paddingLeft: '4px' }}>{api.desc}</div>
                         </div>
-                        <button className="btn btn-sm p-1 text-muted hover:text-blue-500" onClick={() => toast.success("Endpoint copied")}>
-                          <Copy size={12} />
-                        </button>
+                        <div className="d-flex gap-1">
+                          <button className="btn btn-sm p-1.5 text-muted hover:text-blue-500 bg-light rounded" title="Copy Endpoint" onClick={() => { navigator.clipboard.writeText(api.endpoint); toast.success("Endpoint copied"); }}>
+                            <Copy size={11} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
