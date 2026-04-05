@@ -212,7 +212,7 @@ export function RootLayout() {
                   key={item.name}
                   to={item.path}
                   end={item.path === "/dashboard"}
-                  className="nav-link text-decoration-none"
+                  className="text-decoration-none"
                   style={({ isActive }) => ({
                     display: 'flex',
                     alignItems: 'center',
