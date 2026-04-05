@@ -116,7 +116,7 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
     };
 
     return (
-        <div className="bg-light rounded overflow-hidden border shadow-sm h-100">
+        <div className="bg-light dark:bg-gray-800 rounded overflow-hidden border dark:border-gray-700 shadow-sm h-100">
             {/* Image preview */}
             <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
                 <img
@@ -147,9 +147,9 @@ function ImageUploadCard({ imgDef, settings, onUploaded }: {
             {/* Info */}
             <div className="p-3">
                 <div className="flex items-center justify-between mb-1">
-                    <h6 className="font-bold text-sm mb-0">{imgDef.label}</h6>
+                    <h6 className="font-bold text-sm mb-0 text-dark dark:text-gray-100">{imgDef.label}</h6>
                 </div>
-                <p className="text-[11px] text-muted mb-2 leading-tight">{imgDef.description}</p>
+                <p className="text-[11px] text-muted dark:text-gray-400 mb-2 leading-tight">{imgDef.description}</p>
                 <button
                     onClick={() => fileRef.current?.click()}
                     disabled={uploading}
@@ -231,7 +231,7 @@ function RecordImageCard({ record, type, field, label, onUploaded }: {
     };
 
     return (
-        <div className="bg-light rounded overflow-hidden border shadow-sm h-100">
+        <div className="bg-light dark:bg-gray-800 rounded overflow-hidden border dark:border-gray-700 shadow-sm h-100">
             <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
                 <img
                     src={displaySrc}
@@ -561,7 +561,7 @@ export function WebsiteCMS() {
                                 <div
                                     key={page.id}
                                     onClick={() => setActivePage(page.id)}
-                                    className={`site-row p-1 mb-1 rounded-xl transition-all border cursor-pointer ${isActive ? 'active-site shadow-md' : 'bg-white text-dark border-gray-100 hover:bg-light'}`}
+                                    className={`site-row p-1 mb-1 rounded-xl transition-all border cursor-pointer ${isActive ? 'active-site shadow-md' : 'bg-white dark:bg-gray-800 text-dark dark:text-gray-100 border-gray-100 dark:border-gray-700 hover:bg-light dark:hover:bg-gray-700'}`}
                                     style={isActive ? { background: '#009CFF', borderColor: '#009CFF', color: 'white' } : {}}
                                 >
                                     <div className="px-2 py-1.5 d-flex align-items-center justify-content-between">
@@ -570,8 +570,8 @@ export function WebsiteCMS() {
                                                 <page.icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
                                             </div>
                                             <div className="overflow-hidden text-start">
-                                                <h6 className="fw-bold mb-0 text-truncate" style={{ fontSize: '11px' }}>{page.name}</h6>
-                                                <div className={`smaller ${isActive ? 'text-white/80' : 'text-muted'}`} style={{ fontSize: '9px' }}>
+                                                <h6 className="fw-bold mb-0 text-truncate dark:text-gray-100" style={{ fontSize: '11px' }}>{page.name}</h6>
+                                                <div className={`smaller ${isActive ? 'text-white/80' : 'text-muted dark:text-gray-400'}`} style={{ fontSize: '9px' }}>
                                                     {isRecordPageItem ? 'Database entries' : `${PAGE_IMAGES[page.id]?.length || 0} images`}
                                                 </div>
                                             </div>
@@ -593,12 +593,12 @@ export function WebsiteCMS() {
 
                     {/* Content Header Bar — Finance style */}
                     <ScrollReveal>
-                        <div className="d-flex align-items-center justify-content-between gap-2 mb-2 py-2 px-3 bg-white rounded-xl border border-gray-100 shadow-sm mx-2">
+                        <div className="d-flex align-items-center justify-content-between gap-2 mb-2 py-2 px-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm mx-2">
                             <div>
-                                <h1 className="h6 fw-bold text-dark mb-0 leading-tight capitalize">
+                                <h1 className="h6 fw-bold text-dark dark:text-white mb-0 leading-tight capitalize">
                                     {pages.find(p => p.id === activePage)?.name || 'Page Editor'}
                                 </h1>
-                                <p className="text-muted mb-0" style={{ fontSize: '10px' }}>
+                                <p className="text-muted dark:text-gray-400 mb-0" style={{ fontSize: '10px' }}>
                                     {isRecordPage ? 'Database record editor' : 'Media & text content manager'}
                                 </p>
                             </div>
@@ -620,7 +620,7 @@ export function WebsiteCMS() {
                                 {/* Refresh */}
                                 <button
                                     onClick={() => { if (isRecordPage) loadRecords(); else loadSettings(); }}
-                                    className="btn btn-light btn-sm border d-flex align-items-center gap-1 px-2"
+                                    className="btn btn-light dark:bg-gray-800 dark:text-white dark:border-gray-700 btn-sm border d-flex align-items-center gap-1 px-2"
                                     style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
                                     title="Refresh"
                                 >
@@ -657,7 +657,7 @@ export function WebsiteCMS() {
 
                     {/* View Toggle — Images vs Text */}
                     <ScrollReveal delay={0.1}>
-                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-1 d-flex gap-1 mb-2 mx-2">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-1 d-flex gap-1 mb-2 mx-2">
                             <button
                                 onClick={() => setActiveView('images')}
                                 className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'images' ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-light'}`}
@@ -671,7 +671,7 @@ export function WebsiteCMS() {
                             </button>
                             <button
                                 onClick={() => setActiveView('text')}
-                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'text' ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-light'}`}
+                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'text' ? 'bg-primary text-white shadow-sm' : 'text-muted dark:text-gray-400 bg-transparent hover:bg-light dark:hover:bg-gray-800'}`}
                                 style={{ fontSize: '11px' }}
                             >
                                 <Type size={12} />
@@ -686,17 +686,17 @@ export function WebsiteCMS() {
                     {/* IMAGE VIEW */}
                     {activeView === 'images' && (
                         <ScrollReveal delay={0.2} className="mx-2">
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="bg-light/50 px-3 py-2 border-b d-flex align-items-center justify-content-between gap-2">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                                <div className="bg-light/50 dark:bg-gray-800/50 px-3 py-2 border-b dark:border-gray-700 d-flex align-items-center justify-content-between gap-2">
                                     <div className="d-flex align-items-center gap-2">
                                         <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
                                             <ImageIcon className="text-primary" size={12} />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm fw-bold text-dark mb-0 capitalize">
+                                            <h3 className="text-sm fw-bold text-dark dark:text-white mb-0 capitalize">
                                                 {activePage.replace('_', ' ')} — Images
                                             </h3>
-                                            <p className="text-muted mb-0" style={{ fontSize: '10px' }}>Hover an image and click the camera icon to replace it</p>
+                                            <p className="text-muted dark:text-gray-400 mb-0" style={{ fontSize: '10px' }}>Hover an image and click the camera icon to replace it</p>
                                         </div>
                                     </div>
                                     <span className="fw-bold px-2 py-0.5 bg-primary/10 text-primary rounded-pill" style={{ fontSize: '9px' }}>
@@ -796,16 +796,16 @@ export function WebsiteCMS() {
                     {/* TEXT VIEW */}
                     {activeView === 'text' && (
                         <ScrollReveal delay={0.2} className="mx-2">
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="bg-light/50 px-3 py-2 border-b d-flex justify-content-between align-items-center">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                                <div className="bg-light/50 dark:bg-gray-800/50 px-3 py-2 border-b dark:border-gray-700 d-flex justify-content-between align-items-center">
                                     <div className="d-flex align-items-center gap-2">
                                         <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
                                             <Type size={12} className="text-primary" />
                                         </div>
-                                        <h3 className="text-sm fw-bold text-dark mb-0 capitalize">
+                                        <h3 className="text-sm fw-bold text-dark dark:text-white mb-0 capitalize">
                                             {activePage.replace('_', ' ')} Content
                                         </h3>
-                                        <div className="d-flex align-items-center gap-1 px-2 py-0.5 bg-white text-primary rounded-pill border" style={{ fontSize: '10px' }}>
+                                        <div className="d-flex align-items-center gap-1 px-2 py-0.5 bg-white dark:bg-gray-800 text-primary rounded-pill border dark:border-gray-700" style={{ fontSize: '10px' }}>
                                             <Globe size={10} />
                                             <span className="fw-bold uppercase">{languages.find(l => l.id === activeLang)?.name}</span>
                                         </div>
@@ -821,17 +821,17 @@ export function WebsiteCMS() {
                                             {recordsLoading ? (
                                                 <div className="text-center py-12">
                                                     <RefreshCcw className="animate-spin mx-auto text-primary mb-3" size={28} />
-                                                    <p className="text-muted">Loading {activePage}...</p>
+                                                    <p className="text-muted dark:text-gray-400">Loading {activePage}...</p>
                                                 </div>
                                             ) : records.length > 0 ? (
                                                 records.map((record: any) => (
-                                                    <div key={record.id} className="p-3 border rounded bg-white shadow-sm space-y-3">
-                                                        <div className="d-flex align-items-center justify-content-between border-bottom pb-2">
+                                                    <div key={record.id} className="p-3 border dark:border-gray-700 rounded bg-white dark:bg-gray-800 shadow-sm space-y-3">
+                                                        <div className="d-flex align-items-center justify-content-between border-bottom dark:border-gray-700 pb-2">
                                                             <div className="d-flex align-items-center gap-2">
-                                                                <div className="w-8 h-8 rounded bg-light d-flex align-items-center justify-center">
+                                                                <div className="w-8 h-8 rounded bg-light dark:bg-gray-700 d-flex align-items-center justify-center">
                                                                     {activePage === 'properties' ? <Building2 size={14} className="text-primary" /> : <Newspaper size={14} className="text-primary" />}
                                                                 </div>
-                                                                <span className="fw-bold text-sm text-dark">
+                                                                <span className="fw-bold text-sm text-dark dark:text-gray-100">
                                                                     {record.code ? `[${record.code}]` : ''} Editing Entry
                                                                 </span>
                                                             </div>
@@ -869,7 +869,7 @@ export function WebsiteCMS() {
 
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                             <div className="space-y-1">
-                                                                <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
+                                                                <label className="text-[10px] font-bold text-muted dark:text-gray-400 uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
                                                                 <Input
                                                                     value={getLocalizedValue(record.title || '', activeLang)}
                                                                     onChange={(e) => {
@@ -1019,7 +1019,7 @@ export function WebsiteCMS() {
 
                                     {/* Handle Settings (General) */}
                                     {!isRecordPage && textSettings.map((setting) => (
-                                        <div key={setting.key} className="px-3 py-2 border rounded-lg bg-white shadow-sm mb-2">
+                                        <div key={setting.key} className="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm mb-2">
                                             <div className="d-flex align-items-center justify-content-between mb-1">
                                                 <div className="d-flex align-items-center gap-1.5">
                                                     {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={12} className="text-primary" /> :
@@ -1031,8 +1031,8 @@ export function WebsiteCMS() {
                                                                             setting.key.includes('instagram') ? <InstagramIcon size={12} className="text-primary" /> :
                                                                                 setting.key.includes('linkedin') ? <LinkedinIcon size={12} className="text-primary" /> :
                                                                                     setting.key.includes('youtube') ? <YoutubeIcon size={12} className="text-danger" /> :
-                                                                                        <Layout size={12} className="text-muted" />}
-                                                    <label className="fw-bold text-dark uppercase mb-0" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                                                                                        <Layout size={12} className="text-muted dark:text-gray-400" />}
+                                                    <label className="fw-bold text-dark dark:text-gray-200 uppercase mb-0" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
                                                         {setting.key.split('_').slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                                     </label>
                                                 </div>
@@ -1093,13 +1093,13 @@ export function WebsiteCMS() {
 
 
                     <ScrollReveal delay={0.3} className="mx-2">
-                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 d-flex gap-3 align-items-start">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-3 d-flex gap-3 align-items-start">
                             <div className="bg-primary/10 rounded-lg p-2 d-flex align-items-center justify-content-center flex-shrink-0">
                                 <SettingsIcon className="text-primary" size={16} />
                             </div>
                             <div>
-                                <h4 className="fw-bold text-dark mb-1" style={{ fontSize: '12px' }}>How Website CMS Works</h4>
-                                <p className="text-muted mb-0 leading-relaxed" style={{ fontSize: '11px' }}>
+                                <h4 className="fw-bold text-dark dark:text-white mb-1" style={{ fontSize: '12px' }}>How Website CMS Works</h4>
+                                <p className="text-muted dark:text-gray-400 mb-0 leading-relaxed" style={{ fontSize: '11px' }}>
                                     Use <strong>"Image Management"</strong> to browse and replace visuals on specific pages — images update instantly across the site when uploaded.
                                     Use <strong>"Text Content"</strong> to localise headlines and descriptions in all supported languages. Click <strong>"Publish"</strong> to push text updates live.
                                 </p>
