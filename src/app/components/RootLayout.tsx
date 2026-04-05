@@ -317,7 +317,7 @@ export function RootLayout() {
       {/* Content Start */}
       <div className={`content ${sidebarOpen ? "open" : ""}`}>
         {/* Navbar Start */}
-        <nav className="navbar navbar-expand bg-light navbar-light px-4 py-0 shadow-sm" style={{ height: '64px', position: 'fixed', top: 0, right: 0, left: isDesktop ? (sidebarOpen ? '0px' : '250px') : '0px', zIndex: 1020, transition: 'left 0.5s' }}>
+        <nav className="navbar navbar-expand px-4 py-0 shadow-sm bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800" style={{ height: '64px', position: 'fixed', top: 0, right: 0, left: isDesktop ? (sidebarOpen ? '0px' : '250px') : '0px', zIndex: 1020, transition: 'left 0.5s' }}>
           <NavLink to="/" className="navbar-brand d-flex d-lg-none me-4">
             <h2 className="text-primary mb-0"><i className="fa fa-hashtag"></i></h2>
           </NavLink>
@@ -331,7 +331,7 @@ export function RootLayout() {
             <Input
               type="search"
               placeholder="Search..."
-              className="form-control border-0 bg-transparent"
+              className="form-control border-0 bg-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleSearch}
@@ -392,17 +392,17 @@ export function RootLayout() {
             </div>
           )}
           <div className="navbar-nav align-items-center ms-auto gap-3">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-circle">
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-circle hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              {theme === "dark" ? <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" /> : <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />}
             </Button>
 
             {isAdminOrManager && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="nav-link position-relative rounded-circle border-0 bg-transparent">
-                    <MessageSquare className="h-5 w-5" />
+                  <Button variant="ghost" size="icon" className="nav-link position-relative rounded-circle border-0 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <MessageSquare className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                     {unreadCount > 0 && (
-                      <span className="position-absolute top-1 end-1 p-1 bg-danger border border-white rounded-circle"></span>
+                      <span className="position-absolute top-1 end-1 p-1 bg-danger border border-white dark:border-gray-900 rounded-circle"></span>
                     )}
                   </Button>
                 </DropdownMenuTrigger>
