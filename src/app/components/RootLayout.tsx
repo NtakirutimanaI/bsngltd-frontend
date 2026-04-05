@@ -216,21 +216,21 @@ export function RootLayout() {
                   style={({ isActive }) => ({
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '7px 8px',         /* identical on every row — active or not */
+                    padding: '8px 8px',
                     borderRadius: '12px',
-                    border: '1px solid',        /* always 1px border — color changes, size never does */
+                    border: '1px solid',
                     borderColor: isActive ? '#009CFF' : 'transparent',
                     background: isActive ? '#009CFF' : '#ffffff',
                     transition: 'background 0.2s, border-color 0.2s',
-                    minHeight: '50px',
+                    minHeight: '52px',
                     boxSizing: 'border-box',
                   })}
                 >
                   {({ isActive }) => (
                     <>
-                      {/* Icon box — forced to 6px from left edge on every row */}
+                      {/* Icon box — rigidly sized */}
                       <div style={{
-                        marginLeft: '6px',
+                        marginLeft: '5px',
                         width: '36px',
                         height: '36px',
                         minWidth: '36px',
@@ -243,39 +243,41 @@ export function RootLayout() {
                         flexShrink: 0,
                       }}>
                         <i
-                          className={item.iconClass}
+                          className={`fa-fw ${item.iconClass}`}
                           style={{
-                            fontSize: '14px',
-                            width: '14px',
-                            textAlign: 'center',
+                            fontSize: '15px',
                             color: isActive ? '#ffffff' : palette.color,
                           }}
                         />
                       </div>
 
-                      {/* Text block — always starts 10px after icon box */}
+                      {/* Text block — pushed strictly 5px away */}
                       <div style={{
-                        marginLeft: '10px',
+                        marginLeft: '5px',
                         flexGrow: 1,
                         minWidth: 0,
                         overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
                       }}>
                         <div style={{
-                          fontSize: '12px',
+                          fontSize: '13px',
                           fontWeight: 700,
-                          lineHeight: '1.3',
+                          lineHeight: '1.2',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           color: isActive ? '#ffffff' : '#111827',
+                          marginBottom: '2px',
                         }}>
                           {item.name}
                         </div>
                         <div style={{
                           fontSize: '10px',
                           fontWeight: 600,
-                          lineHeight: '1.2',
-                          color: isActive ? 'rgba(255,255,255,0.70)' : '#9CA3AF',
+                          lineHeight: '1',
+                          color: isActive ? 'rgba(255,255,255,0.75)' : '#9CA3AF',
                           whiteSpace: 'nowrap',
                         }}>
                           {subtitle}
