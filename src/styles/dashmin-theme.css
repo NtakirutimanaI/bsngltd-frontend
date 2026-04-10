@@ -1,0 +1,541 @@
+/* ================================================================
+   DASHMIN GLOBAL THEME — Applied to ALL dashboard pages
+   Brand Primary: #009CFF | Light BG: #F3F6F9 | Dark: #191C24
+   ================================================================ */
+
+/* ---------- CSS Variables (Dashmin palette) ---------- */
+:root {
+  --dashmin-primary: #009CFF;
+  --dashmin-light:   #F3F6F9;
+  --dashmin-dark:    #191C24;
+  --dashmin-success: #198754;
+  --dashmin-warning: #ffc107;
+  --dashmin-danger:  #dc3545;
+  --dashmin-info:    #0dcaf0;
+  --dashmin-radius:  0.375rem;  /* Bootstrap default */
+  --dashmin-shadow:  0 1px 6px rgba(0,0,0,.08);
+  --dashmin-transition: 0.3s ease;
+}
+
+/* ================================================================
+   TYPOGRAPHY — Heebo font, like Dashmin template
+   ================================================================ */
+.content,
+.content * {
+  font-family: 'Heebo', 'Open Sans', sans-serif;
+}
+
+/* ---------- Page section headings ---------- */
+.page-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dashmin-dark);
+  margin-bottom: 0;
+}
+
+.page-subheading {
+  font-size: 0.78rem;
+  color: #6c757d;
+  margin-top: 2px;
+}
+
+/* ================================================================
+   DASHMIN CARD — replaces .card border-0 shadow-sm
+   All cards across all pages get this look
+   ================================================================ */
+.card {
+  background-color: var(--dashmin-light) !important;
+  border: none !important;
+  border-radius: var(--dashmin-radius) !important;
+  box-shadow: var(--dashmin-shadow) !important;
+}
+
+.card-body {
+  padding: 1.25rem !important;
+}
+
+.card-title {
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  color: var(--dashmin-dark) !important;
+  margin-bottom: 0 !important;
+}
+
+/* ================================================================
+   STAT CARDS — The 4-card row on every page (Dashmin style)
+   ================================================================ */
+.dashmin-stat-card {
+  background-color: var(--dashmin-light);
+  border-radius: var(--dashmin-radius);
+  box-shadow: var(--dashmin-shadow);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform var(--dashmin-transition), box-shadow var(--dashmin-transition);
+}
+
+.dashmin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 156, 255, 0.12);
+}
+
+.dashmin-stat-card i {
+  font-size: 2.5rem;
+  color: var(--dashmin-primary);
+}
+
+.dashmin-stat-card p {
+  margin-bottom: 0.4rem;
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.dashmin-stat-card h6 {
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--dashmin-dark);
+}
+
+/* ================================================================
+   SECTION CONTAINERS — bg-light rounded p-4 (Dashmin panels)
+   ================================================================ */
+.dashmin-panel {
+  background-color: var(--dashmin-light);
+  border-radius: var(--dashmin-radius);
+  box-shadow: var(--dashmin-shadow);
+  padding: 1.25rem;
+}
+
+.dashmin-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.dashmin-panel-header h6 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--dashmin-dark);
+  margin-bottom: 0;
+}
+
+.dashmin-panel-header a,
+.dashmin-panel-header .show-all {
+  font-size: 0.8rem;
+  color: var(--dashmin-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.dashmin-panel-header a:hover {
+  text-decoration: underline;
+}
+
+/* ================================================================
+   TABLES — Dashmin: table-bordered table-hover, bg-light wrapper
+   ================================================================ */
+.table {
+  font-size: 0.82rem;
+}
+
+.table thead th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #444;
+  background-color: transparent;
+  border-color: #dee2e6;
+  padding: 0.65rem 0.75rem;
+}
+
+.table tbody tr td {
+  padding: 0.55rem 0.75rem;
+  vertical-align: middle;
+  border-color: #dee2e6;
+  font-size: 0.82rem;
+}
+
+.table-hover tbody tr:hover > * {
+  background-color: rgba(0, 156, 255, 0.04) !important;
+}
+
+/* table inside .dashmin-panel gets bordered style */
+.dashmin-panel .table {
+  border: 1px solid #dee2e6;
+}
+
+.dashmin-panel .table thead {
+  background-color: #fff;
+}
+
+/* ================================================================
+   BUTTONS — Dashmin style (btn-primary = #009CFF)
+   ================================================================ */
+.btn-primary {
+  background-color: var(--dashmin-primary) !important;
+  border-color: var(--dashmin-primary) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  transition: var(--dashmin-transition) !important;
+}
+
+.btn-primary:hover {
+  background-color: #007acc !important;
+  border-color: #007acc !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,156,255,0.3) !important;
+}
+
+.btn-primary:active {
+  transform: translateY(0) !important;
+}
+
+.btn-outline-primary {
+  color: var(--dashmin-primary) !important;
+  border-color: var(--dashmin-primary) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--dashmin-primary) !important;
+  color: #fff !important;
+}
+
+/* Small action buttons in tables */
+.btn-sm {
+  font-size: 0.75rem !important;
+  padding: 0.3rem 0.65rem !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+}
+
+/* Blue action button (formerly Tailwind bg-blue-600) */
+.btn-action-blue {
+  background-color: #009CFF;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: var(--dashmin-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-action-blue:hover {
+  background-color: #007acc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,156,255,0.3);
+  color: #fff;
+}
+
+/* ================================================================
+   NAV TABS / PILLS — Dashmin hub tabs
+   ================================================================ */
+.nav-pills .nav-link {
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  padding: 0.5rem 1rem !important;
+  color: #6c757d !important;
+  transition: var(--dashmin-transition) !important;
+  border: none !important;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: rgba(0,156,255,0.07) !important;
+  color: var(--dashmin-primary) !important;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--dashmin-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,156,255,0.3) !important;
+}
+
+/* Tab wrapper */
+.dashmin-tabs-wrapper {
+  background-color: var(--dashmin-light);
+  border-radius: var(--dashmin-radius);
+  box-shadow: var(--dashmin-shadow);
+  padding: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.dashmin-tabs-wrapper .nav-pills {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 0.25rem;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* ================================================================
+   FORM CONTROLS — Dashmin clean inputs
+   ================================================================ */
+.form-control,
+.form-select {
+  font-size: 0.82rem !important;
+  border-radius: 5px !important;
+  border-color: #dee2e6 !important;
+  background-color: #fff;
+  transition: border-color var(--dashmin-transition), box-shadow var(--dashmin-transition);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--dashmin-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0,156,255,0.15) !important;
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+/* Filter bar */
+.dashmin-filter-bar {
+  background-color: var(--dashmin-light);
+  border-radius: var(--dashmin-radius);
+  box-shadow: var(--dashmin-shadow);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ================================================================
+   BADGES — Dashmin style
+   ================================================================ */
+.badge {
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  padding: 0.3em 0.65em !important;
+  border-radius: 4px !important;
+}
+
+.badge.bg-success-subtle { background-color: rgba(25,135,84,0.12) !important; color: #198754 !important; }
+.badge.bg-danger-subtle  { background-color: rgba(220,53,69,0.12) !important;  color: #dc3545 !important; }
+.badge.bg-warning-subtle { background-color: rgba(255,193,7,0.15) !important;  color: #856404 !important; }
+.badge.bg-primary-subtle { background-color: rgba(0,156,255,0.12) !important;  color: #009CFF !important; }
+.badge.bg-info-subtle    { background-color: rgba(13,202,240,0.12) !important; color: #0dcaf0 !important; }
+
+/* ================================================================
+   PAGE HEADERS — consistent top of every page
+   ================================================================ */
+.dashmin-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.dashmin-page-header h1,
+.dashmin-page-header .h1,
+.dashmin-page-header h2,
+.dashmin-page-header .h2,
+.dashmin-page-header h5,
+.dashmin-page-header .h5 {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--dashmin-dark) !important;
+  margin-bottom: 0 !important;
+}
+
+.dashmin-page-header p,
+.dashmin-page-header .text-muted {
+  font-size: 0.75rem !important;
+  margin-bottom: 0 !important;
+}
+
+/* ================================================================
+   PROGRESS BARS — Dashmin primary color
+   ================================================================ */
+.progress {
+  height: 6px !important;
+  border-radius: 10px !important;
+  background-color: #e9ecef !important;
+}
+
+.progress-bar {
+  background-color: var(--dashmin-primary) !important;
+  border-radius: 10px !important;
+  transition: width 0.6s ease !important;
+}
+
+/* ================================================================
+   AVATARS / INITIALS — used in tables & message lists
+   ================================================================ */
+.dashmin-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--dashmin-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+/* ================================================================
+   MODALS — Dashmin style
+   ================================================================ */
+.modal-header {
+  background-color: var(--dashmin-light) !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.modal-title {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+.modal-footer {
+  background-color: var(--dashmin-light) !important;
+  border-top: 1px solid #dee2e6 !important;
+}
+
+/* ================================================================
+   SIDEBAR — already handled by RootLayout inline styles
+   ================================================================ */
+.sidebar .navbar-nav .nav-link {
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+}
+
+/* Ensure every sidebar row is a strict flex row with no inherited offsets */
+.sidebar .navbar-nav > a {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* ================================================================
+   DARK MODE overrides for Dashmin panels
+   ================================================================ */
+.dark .dashmin-stat-card,
+.dark .dashmin-panel,
+.dark .dashmin-filter-bar,
+.dark .dashmin-tabs-wrapper,
+.dark .card {
+  background-color: #232936 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .dashmin-stat-card h6,
+.dark .dashmin-panel-header h6,
+.dark .card-title {
+  color: #e5e7eb !important;
+}
+
+.dark .table thead th {
+  color: #9ca3af;
+}
+
+.dark .table tbody tr td {
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+.dark .table-hover tbody tr:hover > * {
+  background-color: rgba(0,156,255,0.06) !important;
+}
+
+.dark .dashmin-tabs-wrapper .nav-pills {
+  background-color: #1a1f2e;
+}
+
+.dark .form-control,
+.dark .form-select {
+  background-color: #1a1f2e !important;
+  border-color: #374151 !important;
+  color: #e5e7eb !important;
+}
+
+/* ================================================================
+   UTILITY — spacing, text, misc global helpers
+   ================================================================ */
+.text-primary { color: var(--dashmin-primary) !important; }
+.bg-primary   { background-color: var(--dashmin-primary) !important; }
+.border-primary { border-color: var(--dashmin-primary) !important; }
+
+/* Fade-in animation (used by tab panels) */
+.fade-in {
+  animation: dashminFadeIn 0.25s ease-in-out;
+}
+
+@keyframes dashminFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Page section spacing */
+.dashmin-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .dashmin-stat-card {
+    padding: 1rem;
+  }
+
+  .dashmin-stat-card i {
+    font-size: 1.8rem;
+  }
+
+  .dashmin-panel {
+    padding: 0.85rem;
+  }
+
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .btn-sm {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  .nav-pills .nav-link {
+    font-size: 0.72rem !important;
+    padding: 0.4rem 0.65rem !important;
+  }
+}
+
+/* ================================================================
+   CONTENT AREA — consistent top padding
+   ================================================================ */
+.content > .container-fluid {
+  padding-top: 1.25rem;
+}
+
+/* === Page-level wrappers for Dashmin-style layout === */
+.dashmin-page {
+  padding: 0 1rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dashmin-page {
+    padding: 0 1.5rem 2rem;
+  }
+}
+
+/* Header row with flex align */
+.dashmin-header-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .dashmin-header-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
