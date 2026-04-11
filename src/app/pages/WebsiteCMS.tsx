@@ -1,0 +1,1505 @@
+import { useState, useEffect, useRef } from "react";
+import {
+    Save,
+    Layout,
+    Info,
+    Settings as SettingsIcon,
+    Eye,
+    EyeOff,
+    Image as ImageIcon,
+    Type,
+    Phone,
+    Mail,
+    MapPin,
+    RefreshCcw,
+    CheckCircle2,
+    Globe,
+    Share2,
+    Facebook as FacebookIcon,
+    Twitter as TwitterIcon,
+    Instagram as InstagramIcon,
+    Linkedin as LinkedinIcon,
+    Youtube as YoutubeIcon,
+    Building2,
+    Newspaper,
+    Upload,
+    Camera,
+    Trash2,
+} from "lucide-react";
+import { ScrollReveal } from "@/app/components/ScrollReveal";
+import { fetchApi, getImageUrl } from "@/app/api/client";
+import { toast } from "sonner";
+import { Input } from "@/app/components/ui/input";
+import { Textarea } from "@/app/components/ui/textarea";
+import { Switch } from "@/app/components/ui/switch";
+
+interface Setting {
+    key: string;
+    value: string;
+    group: string;
+    description: string;
+    isPublic: boolean;
+}
+
+// Define every image on the public website mapped to its settings key
+const PAGE_IMAGES: Record<string, { key: string; label: string; fallback: string; description: string }[]> = {
+    home: [
+        { key: 'home_hero_bg', label: 'Hero Background', fallback: '/img/new/hero_wave.jpg', description: 'Main hero section background image' },
+        { key: 'home_carousel_1', label: 'Hero Carousel 1', fallback: '/img/new/hero1.png', description: 'First hero slider image' },
+        { key: 'home_carousel_2', label: 'Hero Carousel 2', fallback: '/img/new/about1.png', description: 'Second hero slider image' },
+        { key: 'home_carousel_3', label: 'Hero Carousel 3', fallback: '/img/new/safety.png', description: 'Third hero slider image' },
+        { key: 'home_about_image', label: 'About Section Image', fallback: '/img/new/about1.png', description: 'Main vertical image in about section on Home' },
+        { key: 'home_project_card_1', label: 'Project Card 1', fallback: '/img/new/hero1.png', description: 'Project category card 1' },
+        { key: 'home_project_card_2', label: 'Project Card 2', fallback: '/img/new/about1.png', description: 'Project category card 2' },
+        { key: 'home_project_card_3', label: 'Project Card 3', fallback: '/img/new/safety.png', description: 'Project category card 3' },
+        { key: 'home_project_card_4', label: 'Project Card 4', fallback: '/img/new/about1.png', description: 'Project category card 4' },
+        { key: 'home_project_card_5', label: 'Project Card 5', fallback: '/img/new/safety.png', description: 'Project category card 5' },
+        { key: 'home_project_card_6', label: 'Project Card 6', fallback: '/img/new/hero1.png', description: 'Project category card 6' },
+        { key: 'service_image_1', label: 'Service Image 1', fallback: '/img/new/about1.png', description: 'Residential construction image' },
+        { key: 'service_image_2', label: 'Service Image 2', fallback: '/img/new/hero1.png', description: 'Commercial construction image' },
+        { key: 'service_image_3', label: 'Service Image 3', fallback: '/img/new/safety.png', description: 'Professional Consultancy image' },
+        { key: 'service_image_4', label: 'Service Image 4', fallback: '/img/new/about1.png', description: 'Modern Interior image' },
+        { key: 'global_newsletter_bg', label: 'Newsletter Background', fallback: '/img/new/hero1.png', description: 'Newsletter CTA section background' },
+    ],
+    about: [
+        { key: 'about_image_1', label: 'About Story (Left)', fallback: '/img/about-1.jpg', description: 'Small image on the left in the about page story section' },
+        { key: 'about_image_2', label: 'About Story (Right)', fallback: '/img/about-2.jpg', description: 'Main horizontal image in the about page story section' },
+        { key: 'about_team_1', label: 'Team Member 1', fallback: '/img/team-1.jpg', description: 'Managing Director photo' },
+        { key: 'about_team_2', label: 'Team Member 2', fallback: '/img/team-2.jpg', description: 'Senior Architect photo' },
+        { key: 'about_team_3', label: 'Team Member 3', fallback: '/img/team-3.jpg', description: 'Project Manager photo' },
+        { key: 'about_team_4', label: 'Team Member 4', fallback: '/img/team-4.jpg', description: 'Site Engineer photo' },
+    ],
+    services: [
+        { key: 'service_hero_bg', label: 'Services Hero BG', fallback: '/img/hero-bg.jpg', description: 'Background for services page' },
+        { key: 'service_image_1', label: 'Residential Icon', fallback: '/img/service-1.jpg', description: 'Residential construction service visual' },
+        { key: 'service_image_2', label: 'Commercial Icon', fallback: '/img/service-2.jpg', description: 'Commercial construction service visual' },
+        { key: 'service_image_3', label: 'Development Icon', fallback: '/img/service-3.jpg', description: 'Property development service visual' },
+        { key: 'service_image_4', label: 'Renovation Icon', fallback: '/img/service-4.jpg', description: 'Renovation & remodeling service visual' },
+    ],
+    global: [
+        { key: 'header_logo', label: 'Company Logo', fallback: '/img/logo.png', description: 'Main website logo in the navigation bar' },
+        { key: 'favicon', label: 'Favicon', fallback: '/favicon.ico', description: 'Browser tab icon' },
+        { key: 'global_newsletter_bg', label: 'Newsletter Background', fallback: '/img/newsletter.jpg', description: 'Shared newsletter section background' },
+        { key: 'footer_bg', label: 'Footer Background', fallback: '/img/footer-bg.jpg', description: 'Global footer section background' },
+    ],
+};
+
+function ImageUploadCard({ imgDef, settings, onUploaded, onDeleted, onPublish, isPublishing }: {
+    imgDef: { key: string; label: string; fallback: string; description: string };
+    settings: Record<string, string>;
+    onUploaded: (key: string, url: string) => void;
+    onDeleted: (key: string) => void;
+    onPublish: () => void;
+    isPublishing: boolean;
+}) {
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState<string | null>('');
+
+    const currentValue = settings[imgDef.key];
+    const displaySrc = currentValue
+        ? getImageUrl(currentValue)
+        : imgDef.fallback;
+
+    const compressImage = (file: File, maxWidth = 1600, quality = 0.8): Promise<Blob> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob) resolve(blob);
+                            else reject(new Error('Canvas to Blob failed'));
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const handleUpload = async (file: File) => {
+        setError(null);
+        setUploading(true);
+        try {
+            // Compress image to ensure fast upload and avoid Vercel timeouts
+            const compressedBlob = await compressImage(file).catch(err => {
+                console.warn('Compression failed, uploading original', err);
+                return file;
+            });
+
+            const formData = new FormData();
+            formData.append('image', compressedBlob, file.name);
+            formData.append('key', imgDef.key);
+            // @ts-ignore
+            const res = await fetchApi<{ success?: boolean; url?: string; key?: string; message?: string }>('/settings/upload-image', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (res && res.success !== false && res.url) {
+                onUploaded(imgDef.key, res.url);
+                setError(null);
+            } else {
+                setError(res.message || 'Upload failed');
+            }
+        } catch (err: any) {
+            console.error('Upload failed', err);
+            const msg = err.message || 'Upload failed';
+            setError(msg);
+            toast.error(msg);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    return (
+        <div className="bg-light dark:bg-gray-800 rounded overflow-hidden border dark:border-gray-700 shadow-sm h-100">
+            {/* Image preview */}
+            <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
+                <img
+                    src={displaySrc}
+                    alt={imgDef.label}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).src = imgDef.fallback;
+                    }}
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center gap-2">
+                    <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPublish(); }}
+                        className="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 shadow-lg"
+                        disabled={uploading || isPublishing}
+                        style={{ fontSize: '12px', borderRadius: '8px' }}
+                    >
+                        {isPublishing ? <RefreshCcw className="animate-spin" size={16} /> : <Globe size={16} />}
+                        {isPublishing ? 'Publishing...' : 'Save and Publish'}
+                    </button>
+                    {currentValue && currentValue !== imgDef.fallback && (
+                        <button
+                            onClick={() => onDeleted(imgDef.key)}
+                            className="btn btn-danger p-2 shadow-lg"
+                            title="Delete custom image and revert to fallback"
+                            style={{ borderRadius: '8px' }}
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    )}
+                </div>
+                {/* Status badge */}
+                {currentValue && currentValue !== imgDef.fallback && (
+                    <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Custom
+                    </div>
+                )}
+            </div>
+            {/* Info */}
+            <div className="p-3">
+                <div className="flex items-center justify-between mb-1">
+                    <h6 className="font-bold text-sm mb-0 text-dark dark:text-gray-100">{imgDef.label}</h6>
+                </div>
+                <p className="text-[11px] text-muted dark:text-gray-400 mb-2 leading-tight">{imgDef.description}</p>
+                <button
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5"
+                    style={{ fontSize: '11px', fontWeight: 'bold' }}
+                >
+                    {uploading ? (
+                        <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
+                    ) : (
+                        <><Upload size={12} /> Replace Image</>
+                    )}
+                </button>
+                {error && <p className="text-danger small mt-1 mb-0" style={{ fontSize: '10px' }}>{error}</p>}
+            </div>
+            {/* Hidden file input */}
+            <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                    if (e.target.files?.[0]) handleUpload(e.target.files[0]);
+                    e.target.value = '';
+                }}
+            />
+        </div>
+    );
+}
+
+// Component for uploading images for database records (properties, updates)
+function RecordImageCard({ record, type, field, label, onUploaded, onDeleted, onPublish, isPublishing }: {
+    record: { id: string; title: string; image: string; image2?: string; image3?: string; code?: string };
+    type: 'properties' | 'updates';
+    field: 'image' | 'image2' | 'image3';
+    label: string;
+    onUploaded: (id: string, url: string, field: string) => void;
+    onDeleted: (id: string, field: string) => void;
+    onPublish: () => void;
+    isPublishing: boolean;
+}) {
+    const fileRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState<string | null>('');
+
+    const displayTitle = (() => {
+        try {
+            if (record.title?.startsWith('{')) {
+                const obj = JSON.parse(record.title);
+                return obj.en || obj.rw || obj.fr || Object.values(obj)[0] || 'Untitled';
+            }
+        } catch { }
+        return record.title || 'Untitled';
+    })();
+
+    const currentImage = field === 'image2' ? record.image2 : field === 'image3' ? record.image3 : record.image;
+    const displaySrc = currentImage
+        ? getImageUrl(currentImage)
+        : '/img/project-1.jpg';
+
+    const compressImage = (file: File, maxWidth = 1600, quality = 0.8): Promise<Blob> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob) resolve(blob);
+                            else reject(new Error('Canvas to Blob failed'));
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
+    const handleUpload = async (file: File) => {
+        setError(null);
+        setUploading(true);
+        try {
+            const compressedBlob = await compressImage(file).catch(err => {
+                console.warn('Compression failed, uploading original', err);
+                return file;
+            });
+
+            const formData = new FormData();
+            formData.append('image', compressedBlob, file.name);
+            formData.append('field', field);
+            // @ts-ignore
+            const res = await fetchApi<{ success?: boolean; url?: string; id?: string; field?: string; message?: string }>(`/${type}/${record.id}/upload-image`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (res && res.success !== false && res.url) {
+                onUploaded(record.id, res.url, field);
+                setError(null);
+            } else {
+                setError(res.message || 'Upload failed');
+            }
+        } catch (err: any) {
+            console.error('Upload failed', err);
+            const msg = err.message || 'Upload failed';
+            setError(msg);
+            toast.error(msg);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    return (
+        <div className="bg-light dark:bg-gray-800 rounded overflow-hidden border dark:border-gray-700 shadow-sm h-100">
+            <div className="relative w-full h-32 sm:h-40 bg-white overflow-hidden group">
+                <img
+                    src={displaySrc}
+                    alt={displayTitle}
+                    className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                    onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/img/project-1.jpg';
+                    }}
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-content-center gap-2">
+                    <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onPublish(); }}
+                        className="btn btn-primary d-flex align-items-center gap-2 px-3 py-2 shadow-lg"
+                        disabled={uploading || isPublishing}
+                        style={{ fontSize: '12px', borderRadius: '8px' }}
+                    >
+                        {isPublishing ? <RefreshCcw className="animate-spin" size={16} /> : <Globe size={16} />}
+                        {isPublishing ? 'Publishing...' : 'Save and Publish'}
+                    </button>
+                    {currentImage && (
+                        <button
+                            onClick={() => onDeleted(record.id, field)}
+                            className="btn btn-danger p-2 shadow-lg"
+                            title="Delete image"
+                            style={{ borderRadius: '8px' }}
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    )}
+                </div>
+                {currentImage && currentImage.includes('/uploads/') && (
+                    <div className="absolute top-2 right-2 bg-primary text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Custom
+                    </div>
+                )}
+                {/* Field badge */}
+                <div className="absolute top-2 left-2 bg-dark/70 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    {label}
+                </div>
+            </div>
+            <div className="p-3">
+                <h6 className="font-bold text-sm mb-0 truncate">{displayTitle}</h6>
+                {record.code && <p className="text-[10px] text-muted mb-1">{record.code}</p>}
+                <p className="text-[11px] text-muted mb-2 leading-tight">
+                    {label} — {type === 'properties' ? 'Property gallery' : 'Post image'}
+                </p>
+                <button
+                    onClick={() => fileRef.current?.click()}
+                    disabled={uploading}
+                    className="btn btn-primary btn-sm w-100 d-flex align-items-center justify-center gap-1.5 py-1.5"
+                    style={{ fontSize: '11px', fontWeight: 'bold' }}
+                >
+                    {uploading ? (
+                        <><RefreshCcw className="animate-spin" size={12} /> Uploading...</>
+                    ) : (
+                        <><Upload size={12} /> Replace Image</>
+                    )}
+                </button>
+                {error && <p className="text-danger small mt-1 mb-0" style={{ fontSize: '10px' }}>{error}</p>}
+            </div>
+            <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                    if (e.target.files?.[0]) handleUpload(e.target.files[0]);
+                    e.target.value = '';
+                }}
+            />
+        </div>
+    );
+}
+
+export function WebsiteCMS() {
+    // const { } = useLanguage();
+    const [settings, setSettings] = useState<Setting[]>([]);
+    const [settingsMap, setSettingsMap] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isPublishingImages, setIsPublishingImages] = useState(false);
+    const [activePage, setActivePage] = useState("home");
+    const [activeLang, setActiveLang] = useState<string>("en");
+    const [activeView, setActiveView] = useState<'images' | 'text'>('images');
+    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+    const [records, setRecords] = useState<any[]>([]);
+    const [recordsLoading, setRecordsLoading] = useState(false);
+    const [isCreateMode, setIsCreateMode] = useState(false);
+    const [creationLoading, setCreationLoading] = useState(false);
+    const [newRecord, setNewRecord] = useState<any>({});
+
+    const languages = [
+        { id: "en", name: "English" },
+        { id: "rw", name: "Kinyarwanda" },
+        { id: "fr", name: "French" },
+        { id: "sw", name: "Swahili" }
+    ];
+
+    useEffect(() => {
+        loadSettings();
+    }, []);
+
+    const loadSettings = async () => {
+        try {
+            setIsLoading(true);
+            const data = await fetchApi<Setting[]>("/settings");
+            setSettings(data);
+            const map: Record<string, string> = {};
+            data.forEach(s => { map[s.key] = s.value; });
+            setSettingsMap(map);
+        } catch (error) {
+            console.error("Failed to load settings:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Load records for properties/updates/services when those pages are selected
+    const isRecordPage = activePage === 'properties' || activePage === 'updates' || activePage === 'services';
+
+    const loadRecords = async () => {
+        if (!isRecordPage) return;
+
+        setRecordsLoading(true);
+        setRecords([]); // Clear old records
+        try {
+            console.log(`CMS: Fetching records for ${activePage}...`);
+            const res: any = await fetchApi(`/${activePage}?limit=100`);
+            console.log(`CMS: Received response for ${activePage}:`, res);
+
+            // Handle various paginated/array structures
+            let data = [];
+            if (Array.isArray(res)) {
+                data = res;
+            } else if (res.data) {
+                data = Array.isArray(res.data) ? res.data : (res.data.data && Array.isArray(res.data.data) ? res.data.data : []);
+            } else if (res.items) {
+                data = Array.isArray(res.items) ? res.items : [];
+            }
+
+            setRecords(data);
+        } catch (err) {
+            console.error('CMS: Failed to load records', err);
+            setRecords([]);
+        } finally {
+            setRecordsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadRecords();
+        setIsCreateMode(false); // Reset create mode when switching tabs
+    }, [activePage]);
+
+    const getLocalizedValue = (val: string, lang: string) => {
+        try {
+            if (val && val.startsWith('{')) {
+                const obj = JSON.parse(val);
+                return obj[lang] || "";
+            }
+        } catch (e) { }
+        return lang === 'en' ? val : "";
+    };
+
+    const tryJson = (val: any, lang: string) => {
+        if (!val) return "";
+        if (typeof val !== 'string') return "";
+        try {
+            if (val.startsWith('{')) {
+                const o = JSON.parse(val);
+                return o[lang] || o.en || "";
+            }
+        } catch(e){}
+        return val;
+    };
+
+    const handleUpdateSetting = (key: string, newValue: string | boolean, lang?: string) => {
+        setSettings(prev => prev.map(s => {
+            if (s.key !== key) return s;
+
+            if (typeof newValue === 'boolean') {
+                return { ...s, value: newValue.toString() };
+            }
+
+            // If it's a localized field
+            if (lang) {
+                let currentObj: any = {};
+                try {
+                    if (s.value.startsWith('{')) {
+                        currentObj = JSON.parse(s.value);
+                    } else {
+                        currentObj = { en: s.value };
+                    }
+                } catch (e) {
+                    currentObj = { en: s.value };
+                }
+                currentObj[lang] = newValue;
+                return { ...s, value: JSON.stringify(currentObj) };
+            }
+
+            return { ...s, value: newValue };
+        }));
+
+        // Also update the map
+        setSettingsMap(prev => ({ ...prev, [key]: typeof newValue === 'boolean' ? newValue.toString() : newValue }));
+    };
+
+    const handleImageUploaded = async (key: string, url: string) => {
+        // Update both settings array and map immediately
+        handleUpdateSetting(key, url);
+        
+        // NO automatic sync anymore as per user request to separate upload from publish
+        setMessage({ type: 'success', text: `Image uploaded successfully! Click "Save and Publish" to make it live.` });
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const handleImageDeleted = async (key: string) => {
+        const imgDef = PAGE_IMAGES[activePage]?.find(i => i.key === key);
+        const fallback = imgDef?.fallback || "";
+        handleUpdateSetting(key, fallback);
+        try {
+            await fetchApi(`/settings/${key}`, {
+                method: 'PUT',
+                body: JSON.stringify({ value: fallback, isPublic: true })
+            });
+            await fetchApi('/settings/sync-github', { method: 'POST' });
+            setMessage({ type: 'success', text: `Image reset to default.` });
+        } catch (err) {}
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const handleRecordImageUploaded = async (id: string, url: string, field: string) => {
+        setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: url } : r));
+        setMessage({ type: 'success', text: 'Image uploaded successfully! Click "Save and Publish" to make it live.' });
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const handleRecordImageDeleted = async (id: string, field: string) => {
+        setRecords(prev => prev.map(r => r.id === id ? { ...r, [field]: "" } : r));
+        try {
+            await fetchApi(`/${activePage}/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ [field]: "" })
+            });
+            await fetchApi('/settings/sync-github', { method: 'POST' });
+            setMessage({ type: 'success', text: 'Image deleted.' });
+        } catch (err) {}
+        setTimeout(() => setMessage(null), 4000);
+    };
+
+    const saveAndPublishImages = async (specificKey?: string) => {
+        try {
+            setIsPublishingImages(true);
+            
+            // If a specific key is provided, we only save that one to avoid loop bottlenecks and timeouts
+            if (specificKey) {
+                const setting = settings.find(s => s.key === specificKey);
+                if (setting) {
+                    await fetchApi(`/settings/${setting.key}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ value: setting.value, isPublic: setting.isPublic })
+                    });
+                }
+            } else {
+                // Otherwise, save all images for the current page (fallback)
+                const pageImageKeys = (PAGE_IMAGES[activePage] || []).map(img => img.key);
+                const imageSettings = settings.filter(s => pageImageKeys.includes(s.key));
+
+                for (const setting of imageSettings) {
+                    await fetchApi(`/settings/${setting.key}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ value: setting.value, isPublic: setting.isPublic })
+                    });
+                }
+            }
+
+            // Push to GitHub so images survive deployments / server restarts
+            try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch (err) { }
+
+            // Force cache clear so frontend fetches new settings immediately
+            localStorage.removeItem('bsng_home_settings_v1');
+            localStorage.removeItem('bsng_settings_cache');
+
+            setMessage({ type: 'success', text: `Success! ${specificKey ? 'Image' : 'Images'} published to live website.` });
+            setTimeout(() => setMessage(null), 4000);
+        } catch (error) {
+            console.error('Failed to save images:', error);
+            setMessage({ type: 'error', text: 'Failed to publish. Please try again.' });
+        } finally {
+            setIsPublishingImages(false);
+        }
+    };
+
+    const saveSettings = async () => {
+        try {
+            setIsSaving(true);
+            const pageSettings = settings.filter(s => s.group === activePage);
+            
+            // Crucial: Only save TEXT settings! Exclude all media to prevent stale local image state 
+            // from mistakenly overwriting a newly uploaded image URL on "Publish".
+            const textSettingsOnly = pageSettings.filter(s =>
+                !s.key.includes('image') && !s.key.includes('bg') && !s.key.includes('img') &&
+                !s.key.includes('logo') && !s.key.includes('favicon') && !s.key.includes('carousel') &&
+                !s.key.includes('project_card') && !s.key.includes('team_')
+            );
+
+            for (const setting of textSettingsOnly) {
+                await fetchApi(`/settings/${setting.key}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        value: setting.value,
+                        isPublic: setting.isPublic
+                    })
+                });
+            }
+
+            // Sync all changes above to Github to fulfill the user requirement
+            try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
+
+            setMessage({ type: 'success', text: 'Texts saved & published to public website successfully!' });
+            setTimeout(() => setMessage(null), 3000);
+        } catch (error) {
+            console.error("Failed to save settings:", error);
+            setMessage({ type: 'error', text: 'Failed to save some settings.' });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const pages = [
+        { id: "home", name: "Home Page", icon: Layout },
+        { id: "about", name: "About Page", icon: Info },
+        { id: "services", name: "Services Page", icon: SettingsIcon },
+        { id: "properties", name: "Properties Page", icon: Building2 },
+        { id: "updates", name: "Updates Page", icon: Newspaper },
+        { id: "contact", name: "Contact Page", icon: Mail },
+        { id: "global", name: "Global Settings", icon: Share2 },
+    ];
+
+    const currentPageSettings = settings.filter(s => s.group === activePage);
+    const currentPageImages = PAGE_IMAGES[activePage] || [];
+    // Text settings are non-image settings
+    const textSettings = currentPageSettings.filter(s =>
+        !s.key.includes('image') && !s.key.includes('bg') && !s.key.includes('img') &&
+        !s.key.includes('logo') && !s.key.includes('favicon') && !s.key.includes('carousel') &&
+        !s.key.includes('project_card') && !s.key.includes('team_')
+    );
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <RefreshCcw className="animate-spin text-blue-600" size={32} />
+            </div>
+        );
+    }
+
+    return (
+        <div className="container-fluid py-0" style={{ background: 'transparent' }}>
+
+            {/* Message toast */}
+            {message && (
+                <div className={`d-flex align-items-center gap-2 px-3 py-2 mb-2 rounded-xl border ${message.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`} style={{ fontSize: '12px' }}>
+                    <CheckCircle2 size={14} />
+                    <span className="fw-bold">{message.text}</span>
+                </div>
+            )}
+
+            <div className="row g-0" style={{ minHeight: '70vh' }}>
+                {/* ===== LEFT SIDEBAR — Finance Center style ===== */}
+                <div className="col-lg-3 border-end border-gray-100 pe-0">
+
+                    {/* Sidebar Header Card */}
+                    <div className="glass-card p-2 rounded-xl mb-2 border border-white shadow-sm mx-2" style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(10px)' }}>
+                        <div className="d-flex align-items-center gap-2 pb-2 border-bottom border-gray-100">
+                            <div className="bg-primary rounded-lg p-2 text-white shadow-sm">
+                                <Globe size={14} />
+                            </div>
+                            <div className="overflow-hidden">
+                                <h2 className="fw-bold mb-0 text-truncate" style={{ fontSize: '13px' }}>Website CMS</h2>
+                                <p className="smaller text-muted mb-0" style={{ fontSize: '10px' }}>Website content editor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Page Navigation Items */}
+                    <div className="directory-scroll-container px-2">
+                        {pages.map((page) => {
+                            const isRecordPageItem = page.id === 'properties' || page.id === 'updates';
+                            let countStr = "";
+                            if (isRecordPageItem) {
+                                if (activePage === page.id) countStr = `${records.length}`;
+                            } else if (PAGE_IMAGES[page.id]) {
+                                countStr = `${PAGE_IMAGES[page.id].length}`;
+                            }
+                            const isActive = activePage === page.id;
+
+                            return (
+                                <div
+                                    key={page.id}
+                                    onClick={() => setActivePage(page.id)}
+                                    className={`site-row p-1 mb-1 rounded-xl transition-all border cursor-pointer ${isActive ? 'active-site shadow-md' : 'bg-white dark:bg-gray-800 text-dark dark:text-gray-100 border-gray-100 dark:border-gray-700 hover:bg-light dark:hover:bg-gray-700'}`}
+                                    style={isActive ? { background: '#009CFF', borderColor: '#009CFF', color: 'white' } : {}}
+                                >
+                                    <div className="px-2 py-1.5 d-flex align-items-center justify-content-between">
+                                        <div className="d-flex align-items-center gap-2 overflow-hidden flex-grow-1">
+                                            <div className={`rounded-lg p-1.5 d-flex align-items-center justify-content-center ${isActive ? 'bg-white/20' : 'bg-blue-50'}`} style={{ width: '30px', height: '30px', minWidth: '30px' }}>
+                                                <page.icon size={14} className={isActive ? 'text-white' : 'text-primary'} />
+                                            </div>
+                                            <div className="overflow-hidden text-start">
+                                                <h6 className="fw-bold mb-0 text-truncate dark:text-gray-100" style={{ fontSize: '11px' }}>{page.name}</h6>
+                                                <div className={`smaller ${isActive ? 'text-white/80' : 'text-muted dark:text-gray-400'}`} style={{ fontSize: '9px' }}>
+                                                    {isRecordPageItem ? 'Database entries' : `${PAGE_IMAGES[page.id]?.length || 0} images`}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {countStr && (
+                                            <span className={`text-[9px] fw-bold px-1.5 py-0.5 rounded-pill ${isActive ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`}>
+                                                {countStr}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* ===== MAIN CONTENT AREA ===== */}
+                <div className="col-lg-9 ps-0">
+
+                    {/* Content Header Bar — Finance style */}
+                    <ScrollReveal>
+                        <div className="d-flex align-items-center justify-content-between gap-2 mb-2 py-2 px-3 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm mx-2">
+                            <div>
+                                <h1 className="h6 fw-bold text-dark dark:text-white mb-0 leading-tight capitalize">
+                                    {pages.find(p => p.id === activePage)?.name || 'Page Editor'}
+                                </h1>
+                                <p className="text-muted dark:text-gray-400 mb-0" style={{ fontSize: '10px' }}>
+                                    {isRecordPage ? 'Database record editor' : 'Media & text content manager'}
+                                </p>
+                            </div>
+                            <div className="d-flex align-items-center gap-2">
+                                {/* Language switcher — only when text view */}
+                                {activeView === 'text' && (
+                                    <div className="bg-light p-1 rounded-lg border d-flex gap-1">
+                                        {languages.map(lang => (
+                                            <button
+                                                key={lang.id}
+                                                onClick={() => setActiveLang(lang.id)}
+                                                className={`px-2 py-0.5 rounded text-[10px] fw-bold border-0 transition-all ${activeLang === lang.id ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-white'}`}
+                                            >
+                                                {lang.id.toUpperCase()}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                                {/* Refresh */}
+                                <button
+                                    onClick={() => { if (isRecordPage) loadRecords(); else loadSettings(); }}
+                                    className="btn btn-light dark:bg-gray-800 dark:text-white dark:border-gray-700 btn-sm border d-flex align-items-center gap-1 px-2"
+                                    style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                    title="Refresh"
+                                >
+                                    <RefreshCcw size={12} className={isLoading || recordsLoading ? 'animate-spin' : ''} />
+                                </button>
+                                {/* Save & Publish (Images handled automatically, Text handled manually) */}
+                                {isRecordPage && (
+                                    <button
+                                        onClick={() => {
+                                            const template: any = { title: '', description: '', isActive: true };
+                                            if (activePage === 'properties') {
+                                                template.price = 0;
+                                                template.location = '';
+                                                template.isForSale = true;
+                                                template.bedrooms = 3;
+                                            } else if (activePage === 'updates') {
+                                                template.category = 'General';
+                                                template.content = '';
+                                                template.date = new Date().toISOString().split('T')[0];
+                                            } else if (activePage === 'services') {
+                                                template.name = '';
+                                                template.icon = 'building';
+                                            }
+                                            setNewRecord(template);
+                                            setIsCreateMode(true);
+                                        }}
+                                        className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
+                                        style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                    >
+                                        <Save size={12} className="rotate-45" />
+                                        Add New {activePage.slice(0, -1)}
+                                    </button>
+                                )}
+                                {activeView === 'text' && (
+                                    <button
+                                        onClick={saveSettings}
+                                        disabled={isSaving}
+                                        className="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3 fw-bold shadow-sm"
+                                        style={{ height: '30px', fontSize: '11px', borderRadius: '8px' }}
+                                        title="Permanently save all texts to database and publish to public website"
+                                    >
+                                        {isSaving ? <RefreshCcw className="animate-spin" size={12} /> : <Save size={12} />}
+                                        {isSaving ? 'Publishing...' : 'Save & Publish'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* View Toggle — Images vs Text */}
+                    <ScrollReveal delay={0.1}>
+                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-1 d-flex gap-1 mb-2 mx-2">
+                            <button
+                                onClick={() => setActiveView('images')}
+                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'images' ? 'bg-primary text-white shadow-sm' : 'text-muted bg-transparent hover:bg-light'}`}
+                                style={{ fontSize: '11px' }}
+                            >
+                                <ImageIcon size={12} />
+                                Image Management
+                                <span className={`px-1.5 py-0 rounded-pill ${activeView === 'images' ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`} style={{ fontSize: '9px', fontWeight: 800 }}>
+                                    {isRecordPage ? records.length : currentPageImages.length}
+                                </span>
+                            </button>
+                            <button
+                                onClick={() => setActiveView('text')}
+                                className={`flex-1 d-flex align-items-center justify-content-center gap-1.5 py-1.5 rounded-lg fw-bold border-0 transition-all ${activeView === 'text' ? 'bg-primary text-white shadow-sm' : 'text-muted dark:text-gray-400 bg-transparent hover:bg-light dark:hover:bg-gray-800'}`}
+                                style={{ fontSize: '11px' }}
+                            >
+                                <Type size={12} />
+                                Text Content
+                                <span className={`px-1.5 py-0 rounded-pill ${activeView === 'text' ? 'bg-white/25 text-white' : 'bg-primary/10 text-primary'}`} style={{ fontSize: '9px', fontWeight: 800 }}>
+                                    {isRecordPage ? records.length : textSettings.length}
+                                </span>
+                            </button>
+                        </div>
+                    </ScrollReveal>
+
+                    {/* IMAGE VIEW */}
+                    {activeView === 'images' && (
+                        <ScrollReveal delay={0.2} className="mx-2">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                                <div className="bg-light/50 dark:bg-gray-800/50 px-3 py-2 border-b dark:border-gray-700 d-flex align-items-center justify-content-between gap-2">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
+                                            <ImageIcon className="text-primary" size={12} />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm fw-bold text-dark dark:text-white mb-0 capitalize">
+                                                {activePage.replace('_', ' ')} — Images
+                                            </h3>
+                                            <p className="text-muted dark:text-gray-400 mb-0" style={{ fontSize: '10px' }}>Hover an image and click "Save and Publish" to push live, or use the "Replace Image" button below to upload a new one</p>
+                                        </div>
+                                    </div>
+                                    <span className="fw-bold px-2 py-0.5 bg-primary/10 text-primary rounded-pill" style={{ fontSize: '9px' }}>
+                                        {isRecordPage ? records.length : currentPageImages.length} images
+                                    </span>
+                                </div>
+
+                                <div className="p-3">
+                                    {currentPageImages.length > 0 && !isRecordPage ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                                            {currentPageImages.map((imgDef) => (
+                                                <ImageUploadCard
+                                                    key={imgDef.key + activePage}
+                                                    imgDef={imgDef}
+                                                    settings={settingsMap}
+                                                    onUploaded={handleImageUploaded}
+                                                    onDeleted={handleImageDeleted}
+                                                    onPublish={() => saveAndPublishImages(imgDef.key)}
+                                                    isPublishing={isPublishingImages}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : isRecordPage ? (
+                                        recordsLoading ? (
+                                            <div className="text-center py-12">
+                                                <RefreshCcw className="animate-spin modal-center text-primary mx-auto mb-3" size={32} />
+                                                <p className="text-muted">Loading {activePage}...</p>
+                                            </div>
+                                        ) : isCreateMode ? (
+                                            <div className="bg-light/30 dark:bg-gray-800 p-4 rounded-xl border-2 border-primary/20 shadow-md mb-4">
+                                                <div className="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom dark:border-gray-700">
+                                                    <h3 className="h6 fw-bold mb-0 text-primary text-uppercase tracking-wider">Create New {activePage.slice(0, -1)}</h3>
+                                                    <button onClick={() => setIsCreateMode(false)} className="btn btn-light dark:bg-gray-700 dark:text-white btn-sm rounded-circle p-1">
+                                                        <EyeOff size={16} />
+                                                    </button>
+                                                </div>
+                                                <div className="row g-3">
+                                                    <div className="col-md-6">
+                                                        <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Name/Title ({activeLang.toUpperCase()})</label>
+                                                        <Input 
+                                                           value={activePage === 'services' ? (tryJson(newRecord.name, activeLang)) : (tryJson(newRecord.title, activeLang))} 
+                                                           onChange={e => {
+                                                              const val = e.target.value;
+                                                              const field = activePage === 'services' ? 'name' : 'title';
+                                                              let obj: any = {};
+                                                              try { 
+                                                                  const existing = activePage === 'services' ? newRecord.name : newRecord.title;
+                                                                  if (existing?.startsWith('{')) obj = JSON.parse(existing); 
+                                                              } catch(e){}
+                                                              obj[activeLang] = val;
+                                                              setNewRecord(prev => ({ ...prev, [field]: JSON.stringify(obj) }));
+                                                           }}
+                                                           className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white"
+                                                           placeholder={`Enter ${activePage.slice(0, -1)} name...`} 
+                                                        />
+                                                    </div>
+                                                    {activePage === 'properties' && (
+                                                        <div className="col-md-6">
+                                                            <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Location</label>
+                                                            <Input value={newRecord.location || ''} onChange={e => setNewRecord({ ...newRecord, location: e.target.value })} className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white" placeholder="Kigali, Rebero..." />
+                                                        </div>
+                                                    )}
+                                                    {activePage === 'updates' && (
+                                                        <div className="col-md-6">
+                                                            <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Category</label>
+                                                            <Input value={newRecord.category || ''} onChange={e => setNewRecord({ ...newRecord, category: e.target.value })} className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white" placeholder="Company / News / Project..." />
+                                                        </div>
+                                                    )}
+                                                    <div className="col-12">
+                                                        <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Detailed Content ({activeLang.toUpperCase()})</label>
+                                                        <Textarea 
+                                                           value={activePage === 'updates' ? (tryJson(newRecord.content, activeLang)) : (tryJson(newRecord.description, activeLang))} 
+                                                           onChange={e => {
+                                                              const val = e.target.value;
+                                                              const field = activePage === 'updates' ? 'content' : 'description';
+                                                              let obj: any = {};
+                                                              try { 
+                                                                  const existing = field === 'content' ? newRecord.content : newRecord.description;
+                                                                  if (existing?.startsWith('{')) obj = JSON.parse(existing); 
+                                                              } catch(e){}
+                                                              obj[activeLang] = val;
+                                                              setNewRecord(prev => ({ ...prev, [field]: JSON.stringify(obj) }));
+                                                           }}
+                                                           rows={4} 
+                                                           className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white"
+                                                           placeholder="Write details here..." 
+                                                        />
+                                                    </div>
+                                                    {activePage === 'properties' && (
+                                                        <>
+                                                            <div className="col-md-3">
+                                                                <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Price (RWF)</label>
+                                                                <Input type="number" value={newRecord.price || ''} onChange={e => setNewRecord({ ...newRecord, price: Number(e.target.value) })} className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white" />
+                                                            </div>
+                                                            <div className="col-md-3">
+                                                                <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block tracking-widest uppercase">Size (SQM)</label>
+                                                                <Input type="number" value={newRecord.size || ''} onChange={e => setNewRecord({ ...newRecord, size: Number(e.target.value) })} className="dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-dark dark:text-white" />
+                                                            </div>
+                                                            <div className="col-md-3">
+                                                                <label className="smaller fw-bold text-muted dark:text-gray-400 mb-1 d-block text-[10px] tracking-wider uppercase">Listing Status</label>
+                                                                <select className="form-select text-sm h-10 rounded-lg dark:bg-gray-900 dark:text-white border-gray-200 dark:border-gray-700" value={newRecord.isForSale ? 'sale' : 'rent'} onChange={e => setNewRecord({...newRecord, isForSale: e.target.value === 'sale', isForRent: e.target.value === 'rent'})}>
+                                                                    <option value="sale">For Sale</option>
+                                                                    <option value="rent">For Rent</option>
+                                                                </select>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                                <div className="mt-4 pt-3 border-top dark:border-gray-700 d-flex gap-2">
+                                                    <button 
+                                                        disabled={creationLoading}
+                                                        onClick={async () => {
+                                                            setCreationLoading(true);
+                                                            try {
+                                                                await fetchApi(`/${activePage}`, { method: 'POST', body: JSON.stringify(newRecord) });
+                                                                await fetchApi('/settings/sync-github', { method: 'POST' });
+                                                                setIsCreateMode(false);
+                                                                loadRecords();
+                                                                setMessage({ type: 'success', text: `Success! New ${activePage.slice(0, -1)} published.` });
+                                                                setTimeout(() => setMessage(null), 4000);
+                                                            } catch (err) {
+                                                                setMessage({ type: 'error', text: 'Error creating record. Check your connection.' });
+                                                            } finally {
+                                                                setCreationLoading(false);
+                                                            }
+                                                        }}
+                                                        className="btn btn-primary px-4 fw-bold shadow-sm"
+                                                    >
+                                                        {creationLoading ? <RefreshCcw className="animate-spin" size={16} /> : <CheckCircle2 size={16} className="mr-2" />}
+                                                        Create & Publish
+                                                    </button>
+                                                    <button onClick={() => setIsCreateMode(false)} className="btn btn-light dark:bg-gray-700 dark:text-white px-4">Cancel</button>
+                                                </div>
+                                            </div>
+                                        ) : records.length > 0 ? (
+                                            <div>
+                                                {activePage === 'properties' ? (
+                                                    records.map((record) => (
+                                                        <div key={record.id} className="mb-4">
+                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+                                                                <Building2 className="text-blue-600" size={14} />
+                                                                <span className="font-bold text-sm text-gray-800 dark:text-gray-200">
+                                                                    {(() => { try { if (record.title?.startsWith('{')) { const o = JSON.parse(record.title); return o.en || o.rw || Object.values(o)[0]; } } catch { } return record.title; })() || 'Untitled'}
+                                                                </span>
+                                                                <span className="text-[10px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full font-bold">Property Photos</span>
+                                                            </div>
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                                                                <RecordImageCard
+                                                                    record={record}
+                                                                    type={activePage === 'properties' ? 'properties' : 'updates'}
+                                                                    field="image"
+                                                                    label={activePage === 'properties' ? "Hero Image" : "News Photo"}
+                                                                    onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
+                                                                    onPublish={saveAndPublishImages}
+                                                                    isPublishing={isPublishingImages}
+                                                                />
+                                                                <RecordImageCard
+                                                                    record={record}
+                                                                    type="properties"
+                                                                    field="image2"
+                                                                    label="Gallery 2"
+                                                                    onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
+                                                                    onPublish={saveAndPublishImages}
+                                                                    isPublishing={isPublishingImages}
+                                                                />
+                                                                <RecordImageCard
+                                                                    record={record}
+                                                                    type="properties"
+                                                                    field="image3"
+                                                                    label="Gallery 3"
+                                                                    onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
+                                                                    onPublish={saveAndPublishImages}
+                                                                    isPublishing={isPublishingImages}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : activePage === 'services' ? (
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                                                        {records.map((record) => (
+                                                            <div key={record.id} className="bg-light dark:bg-gray-800 p-2 rounded-lg border dark:border-gray-700">
+                                                                <p className="text-[10px] fw-bold text-primary text-uppercase mb-2 px-1">Service Illustration</p>
+                                                                <RecordImageCard
+                                                                    record={record}
+                                                                    type="updates" 
+                                                                    field="image"
+                                                                    label={record.name || 'Service'}
+                                                                    onUploaded={handleRecordImageUploaded}
+                                                                    onDeleted={handleRecordImageDeleted}
+                                                                    onPublish={saveAndPublishImages}
+                                                                    isPublishing={isPublishingImages}
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                                                        {records.map((record) => (
+                                                            <RecordImageCard
+                                                                key={record.id}
+                                                                record={record}
+                                                                type="updates"
+                                                                field="image"
+                                                                label="News Photo"
+                                                                onUploaded={handleRecordImageUploaded}
+                                                                onDeleted={handleRecordImageDeleted}
+                                                                onPublish={saveAndPublishImages}
+                                                                isPublishing={isPublishingImages}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-12">
+                                                <ImageIcon className="mx-auto text-gray-300 mb-4" size={48} />
+                                                <p className="text-gray-500">No {activePage} records found.</p>
+                                                <p className="text-gray-400 text-sm">Add some {activePage} using the "Add New" button above.</p>
+                                            </div>
+                                        )
+                                    ) : (
+                                        <div className="text-center py-12">
+                                            <ImageIcon className="mx-auto text-gray-300 mb-4" size={48} />
+                                            <p className="text-gray-500">No manageable images for this page.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </ScrollReveal>
+                    )}
+
+                    {/* TEXT VIEW */}
+                    {activeView === 'text' && (
+                        <ScrollReveal delay={0.2} className="mx-2">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                                <div className="bg-light/50 dark:bg-gray-800/50 px-3 py-2 border-b dark:border-gray-700 d-flex justify-content-between align-items-center">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="bg-primary/10 rounded p-1.5 d-flex align-items-center justify-content-center">
+                                            <Type size={12} className="text-primary" />
+                                        </div>
+                                        <h3 className="text-sm fw-bold text-dark dark:text-white mb-0 capitalize">
+                                            {activePage.replace('_', ' ')} Content
+                                        </h3>
+                                        <div className="d-flex align-items-center gap-1 px-2 py-0.5 bg-white dark:bg-gray-800 text-primary rounded-pill border dark:border-gray-700" style={{ fontSize: '10px' }}>
+                                            <Globe size={10} />
+                                            <span className="fw-bold uppercase">{languages.find(l => l.id === activeLang)?.name}</span>
+                                        </div>
+                                    </div>
+                                    <span className="fw-bold px-2 py-0.5 bg-primary text-white rounded-pill" style={{ fontSize: '9px' }}>
+                                        {isRecordPage ? records.length : textSettings.length} Items
+                                    </span>
+                                </div>
+
+                                <div className="p-3">
+                                    {isRecordPage && (
+                                        <div className="space-y-4">
+                                            {recordsLoading ? (
+                                                <div className="text-center py-12">
+                                                    <RefreshCcw className="animate-spin mx-auto text-primary mb-3" size={28} />
+                                                    <p className="text-muted dark:text-gray-400">Loading {activePage}...</p>
+                                                </div>
+                                            ) : records.length > 0 ? (
+                                                records.map((record: any) => (
+                                                    <div key={record.id} className="p-3 border dark:border-gray-700 rounded bg-white dark:bg-gray-800 shadow-sm space-y-3">
+                                                        <div className="d-flex align-items-center justify-content-between border-bottom dark:border-gray-700 pb-2">
+                                                            <div className="d-flex align-items-center gap-2">
+                                                                <div className="w-8 h-8 rounded bg-light dark:bg-gray-700 d-flex align-items-center justify-center">
+                                                                    {activePage === 'properties' ? <Building2 size={14} className="text-primary" /> : <Newspaper size={14} className="text-primary" />}
+                                                                </div>
+                                                                <span className="fw-bold text-sm text-dark dark:text-gray-100">
+                                                                    {record.code ? `[${record.code}]` : ''} Editing Entry
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                className="btn btn-primary btn-sm px-2 py-1 fw-bold"
+                                                                style={{ fontSize: '10px' }}
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        const upRecord = records.find(r => r.id === record.id);
+                                                                        const payload = { ...upRecord };
+
+                                                                        // Ensure numeric fields are numbers for properties
+                                                                        if (activePage === 'properties') {
+                                                                            if (payload.price) payload.price = Number(payload.price);
+                                                                            if (payload.size) payload.size = Number(payload.size);
+                                                                            if (payload.bedrooms) payload.bedrooms = Number(payload.bedrooms);
+                                                                            if (payload.bathrooms) payload.bathrooms = Number(payload.bathrooms);
+                                                                        }
+
+                                                                        await fetchApi(`/${activePage}/${record.id}`, {
+                                                                            method: 'PATCH',
+                                                                            body: JSON.stringify(payload)
+                                                                        });
+                                                                        try { await fetchApi('/settings/sync-github', { method: 'POST' }); } catch(err){}
+                                                                        setMessage({ type: 'success', text: 'Entry saved successfully!' });
+                                                                        setTimeout(() => setMessage(null), 3000);
+                                                                    } catch (e) {
+                                                                        setMessage({ type: 'error', text: 'Failed to save entry' });
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Save This Entry
+                                                            </button>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                            <div className="space-y-1">
+                                                                <label className="text-[10px] font-bold text-muted dark:text-gray-400 uppercase tracking-widest pl-1">Title ({activeLang.toUpperCase()})</label>
+                                                                <Input
+                                                                    value={getLocalizedValue(record.title || '', activeLang)}
+                                                                    onChange={(e) => {
+                                                                        const newVal = e.target.value;
+                                                                        setRecords(prev => prev.map(r => {
+                                                                            if (r.id !== record.id) return r;
+                                                                            let obj: any = {};
+                                                                            try { if (r.title?.startsWith('{')) obj = JSON.parse(r.title); else obj = { en: r.title }; } catch { obj = { en: r.title }; }
+                                                                            obj[activeLang] = newVal;
+                                                                            return { ...r, title: JSON.stringify(obj) };
+                                                                        }));
+                                                                    }}
+                                                                    className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                    placeholder="Enter title..."
+                                                                />
+                                                            </div>
+
+                                                            {activePage === 'properties' ? (
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Location ({activeLang.toUpperCase()})</label>
+                                                                    <Input
+                                                                        value={getLocalizedValue(record.location || '', activeLang)}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => {
+                                                                                if (r.id !== record.id) return r;
+                                                                                let obj: any = {};
+                                                                                try { if (r.location?.startsWith('{')) obj = JSON.parse(r.location); else obj = { en: r.location }; } catch { obj = { en: r.location }; }
+                                                                                obj[activeLang] = newVal;
+                                                                                return { ...r, location: JSON.stringify(obj) };
+                                                                            }));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="Enter location..."
+                                                                    />
+                                                                </div>
+                                                            ) : (
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Excerpt ({activeLang.toUpperCase()})</label>
+                                                                    <Input
+                                                                        value={getLocalizedValue(record.excerpt || '', activeLang)}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => {
+                                                                                if (r.id !== record.id) return r;
+                                                                                let obj: any = {};
+                                                                                try { if (r.excerpt?.startsWith('{')) obj = JSON.parse(r.excerpt); else obj = { en: r.excerpt }; } catch { obj = { en: r.excerpt }; }
+                                                                                obj[activeLang] = newVal;
+                                                                                return { ...r, excerpt: JSON.stringify(obj) };
+                                                                            }));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="Brief summary..."
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+                                                        {activePage === 'properties' && (
+                                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Price (RWF)</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.price || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, price: newVal } : r));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="e.g. 85000000"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Size (sqft)</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.size || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, size: newVal } : r));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="e.g. 120"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Beds</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.bedrooms || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bedrooms: newVal } : r));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="3"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-1">
+                                                                    <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">Baths</label>
+                                                                    <Input
+                                                                        type="number"
+                                                                        value={record.bathrooms || ''}
+                                                                        onChange={(e) => {
+                                                                            const newVal = e.target.value;
+                                                                            setRecords(prev => prev.map(r => r.id === record.id ? { ...r, bathrooms: newVal } : r));
+                                                                        }}
+                                                                        className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm h-8 text-dark dark:text-white"
+                                                                        placeholder="2"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        <div className="space-y-1 pt-2">
+                                                            <label className="text-[10px] font-bold text-muted uppercase tracking-widest pl-1">
+                                                                {activePage === 'properties' ? 'Description' : 'Content'} ({activeLang.toUpperCase()})
+                                                            </label>
+                                                            <Textarea
+                                                                value={getLocalizedValue(activePage === 'properties' ? record.description || "" : record.content || "", activeLang)}
+                                                                onChange={(e) => {
+                                                                    const newVal = e.target.value;
+                                                                    const field = activePage === 'properties' ? 'description' : 'content';
+                                                                    setRecords(prev => prev.map(r => {
+                                                                        if (r.id !== record.id) return r;
+                                                                        let obj: any = {};
+                                                                        const currentVal = r[field];
+                                                                        try { if (currentVal?.startsWith('{')) obj = JSON.parse(currentVal); else obj = { en: currentVal }; } catch { obj = { en: currentVal }; }
+                                                                        obj[activeLang] = newVal;
+                                                                        return { ...r, [field]: JSON.stringify(obj) };
+                                                                    }));
+                                                                }}
+                                                                className="bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 text-sm min-h-[90px] text-dark dark:text-white"
+                                                                placeholder={activePage === 'properties' ? "Detailed property description..." : "Full content body..."}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center py-12">
+                                                    <p className="text-muted">No {activePage} found to edit text content.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {/* Handle Settings (General) */}
+                                    {!isRecordPage && textSettings.map((setting) => (
+                                        <div key={setting.key} className="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm mb-2">
+                                            <div className="d-flex align-items-center justify-content-between mb-1">
+                                                <div className="d-flex align-items-center gap-1.5">
+                                                    {setting.key.includes('title') || setting.key.includes('subtitle') ? <Type size={12} className="text-primary" /> :
+                                                        setting.key.includes('phone') ? <Phone size={12} className="text-dark" /> :
+                                                            setting.key.includes('email') ? <Mail size={12} className="text-dark" /> :
+                                                                setting.key.includes('address') ? <MapPin size={12} className="text-dark" /> :
+                                                                    setting.key.includes('facebook') ? <FacebookIcon size={12} className="text-primary" /> :
+                                                                        setting.key.includes('twitter') ? <TwitterIcon size={12} className="text-primary" /> :
+                                                                            setting.key.includes('instagram') ? <InstagramIcon size={12} className="text-primary" /> :
+                                                                                setting.key.includes('linkedin') ? <LinkedinIcon size={12} className="text-primary" /> :
+                                                                                    setting.key.includes('youtube') ? <YoutubeIcon size={12} className="text-danger" /> :
+                                                                                        <Layout size={12} className="text-muted dark:text-gray-400" />}
+                                                    <label className="fw-bold text-dark dark:text-gray-200 uppercase mb-0" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                                                        {setting.key.split('_').slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                                    </label>
+                                                </div>
+
+                                                {setting.key.includes('visible') ? (
+                                                    <div className="d-flex align-items-center gap-1.5 bg-light px-2 py-0.5 rounded-pill border">
+                                                        <span className="fw-bold text-muted uppercase" style={{ fontSize: '9px' }}>Visibility</span>
+                                                        <Switch
+                                                            checked={setting.value === 'true'}
+                                                            onCheckedChange={(checked) => handleUpdateSetting(setting.key, checked)}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        {setting.isPublic ? <Eye size={11} className="text-success" /> : <EyeOff size={11} className="text-muted" />}
+                                                        <span className="fw-bold uppercase text-muted" style={{ fontSize: '9px' }}>Publicly Visible</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {!setting.key.includes('visible') && (
+                                                setting.value.length > 100 || setting.key.includes('history') || setting.key.includes('desc') || setting.key.includes('vision') ? (
+                                                    <Textarea
+                                                        value={getLocalizedValue(setting.value, activeLang)}
+                                                        onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
+                                                        rows={2}
+                                                        className="w-full bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 rounded px-2 py-1 text-dark dark:text-white placeholder:text-muted dark:placeholder:text-gray-500"
+                                                        style={{ fontSize: '12px' }}
+                                                        placeholder={`${setting.description} (${activeLang})`}
+                                                    />
+                                                ) : (
+                                                    <Input
+                                                        value={getLocalizedValue(setting.value, activeLang)}
+                                                        onChange={(e) => handleUpdateSetting(setting.key, e.target.value, activeLang)}
+                                                        className="w-full bg-light dark:bg-gray-700 border-0 focus:bg-white dark:focus:bg-gray-600 rounded h-8 px-2 text-dark dark:text-white placeholder:text-muted dark:placeholder:text-gray-500"
+                                                        style={{ fontSize: '12px' }}
+                                                        placeholder={`${setting.description} (${activeLang})`}
+                                                    />
+                                                )
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {/* Empty state for non-record pages */}
+                                    {!isRecordPage && textSettings.length === 0 && !isLoading && (
+                                        <div className="text-center py-12 px-4">
+                                            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-circle d-flex align-items-center justify-center mx-auto mb-4 border dark:border-blue-800">
+                                                <Layout className="text-primary" size={32} />
+                                            </div>
+                                            <p className="text-dark dark:text-white fw-bold mb-1">No text settings found in the database group "{activePage}".</p>
+                                            <p className="text-sm text-muted dark:text-gray-400 mb-4 mx-auto max-w-sm">We can automatically initialize common home page text fields if they are missing from your database.</p>
+                                            <button 
+                                                onClick={async () => {
+                                                    const keysConfig: Record<string, {k: string, d: string, v: string}[]> = {
+                                                        home: [
+                                                            { k: 'home_about_title', d: 'About Section Title', v: 'BUILDING Strong Generations' },
+                                                            { k: 'home_about_desc1', d: 'Primary Description', v: 'Founded in 2005, BSNG Ltd has grown from a small construction firm...' },
+                                                            { k: 'home_about_desc2', d: 'Secondary Description', v: 'With over 20 years of experience, we\'ve completed more than 250 projects...' },
+                                                            { k: 'home_experience_title', d: 'Experience Tagline', v: 'Building Excellence Since 2010' },
+                                                            { k: 'home_hero_title', d: 'Hero Title', v: 'Building Your Future With Excellence' },
+                                                            { k: 'home_hero_subtitle', d: 'Hero Subtitle', v: 'Build Strong For The Next Generations' }
+                                                        ],
+                                                        about: [
+                                                            { k: 'about_title', d: 'About Page Title', v: 'About Our Company' },
+                                                            { k: 'about_company_history', d: 'Company History', v: 'Founded in 2005, BSNG Ltd began as a local construction company...' },
+                                                            { k: 'about_vision', d: 'Company Vision', v: 'To lead the construction industry with sustainable and innovative urban solutions.' },
+                                                            { k: 'about_team_visible', d: 'Show Team Section', v: 'true' }
+                                                        ],
+                                                        services: [
+                                                            { k: 'services_title', d: 'Services Section Title', v: 'Our Professional Expertise' },
+                                                            { k: 'services_desc', d: 'Services Subtitle', v: 'Comprehensive construction solutions tailored to your unique vision.' }
+                                                        ],
+                                                        global: [
+                                                            { k: 'footer_company_name', d: 'Company Name', v: 'BSNG Ltd' },
+                                                            { k: 'footer_about_text', d: 'Footer Short About', v: 'Leading construction and property development firm in Rwanda.' },
+                                                            { k: 'contact_email', d: 'Support Email', v: 'info@bsng.rw' },
+                                                            { k: 'contact_phone', d: 'Contact Phone', v: '+250 737 213 060' },
+                                                            { k: 'contact_address', d: 'HQ Address', v: 'Kigali, Rwanda' }
+                                                        ]
+                                                    };
+                                                    const groupKeys = keysConfig[activePage] || [];
+                                                    for (const key of groupKeys) {
+                                                        try {
+                                                            await fetchApi('/settings', {
+                                                                method: 'POST',
+                                                                body: JSON.stringify({ key: key.k, value: key.v, group: activePage, description: key.d, isPublic: true })
+                                                            });
+                                                        } catch(e) {}
+                                                    }
+                                                    loadSettings();
+                                                    toast.success(`${activePage.toUpperCase()} text fields initialized!`);
+                                                }}
+                                                className="btn btn-primary px-4 fw-bold"
+                                            >
+                                                Initialize {activePage} Text Fields
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </ScrollReveal>
+                    )}
+
+
+                    <ScrollReveal delay={0.3} className="mx-2">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-3 d-flex gap-3 align-items-start">
+                            <div className="bg-primary/10 rounded-lg p-2 d-flex align-items-center justify-content-center flex-shrink-0">
+                                <SettingsIcon className="text-primary" size={16} />
+                            </div>
+                            <div>
+                                <h4 className="fw-bold text-dark dark:text-white mb-1" style={{ fontSize: '12px' }}>How Website CMS Works</h4>
+                                <p className="text-muted dark:text-gray-400 mb-0 leading-relaxed" style={{ fontSize: '11px' }}>
+                                    Use <strong>"Image Management"</strong> to browse and replace visuals on specific pages — images update instantly across the site when uploaded.
+                                    Use <strong>"Text Content"</strong> to localise headlines and descriptions in all supported languages. Click <strong>"Publish"</strong> to push text updates live.
+                                </p>
+                            </div>
+                        </div>
+                    </ScrollReveal>
+                </div>
+            </div>
+        </div>
+    );
+}
