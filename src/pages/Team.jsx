@@ -8,10 +8,11 @@ const initialTeam = [
 ];
 
 export default function Team() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
   const [teamMembers, setTeamMembers] = useState(initialTeam);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/teams')
+    fetch(`${apiUrl}/teams`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

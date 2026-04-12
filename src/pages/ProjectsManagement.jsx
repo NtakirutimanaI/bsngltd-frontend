@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AdminLayout from '../components/AdminLayout';
 
 export default function ProjectsManagement() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
   const [projects, setProjects] = useState([]);
   const [sites, setSites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,8 +25,8 @@ export default function ProjectsManagement() {
   const fetchProjects = async () => {
     try {
       const [projectsRes, sitesRes] = await Promise.all([
-        fetch('http://localhost:4000/api/projects'),
-        fetch('http://localhost:4000/api/sites')
+        fetch(`${apiUrl}/projects`),
+        fetch(`${apiUrl}/sites`)
       ]);
       const projectsData = await projectsRes.json();
       const sitesData = await sitesRes.json();
@@ -41,8 +42,8 @@ export default function ProjectsManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingProject 
-      ? `http://localhost:4000/api/projects/${editingProject.id}` 
-      : 'http://localhost:4000/api/projects';
+      ? `${apiUrl}/projects/${editingProject.id}` 
+      : `${apiUrl}/projects`;
     
     const method = editingProject ? 'PATCH' : 'POST';
 
@@ -75,7 +76,7 @@ export default function ProjectsManagement() {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
     
     try {
-      const response = await fetch(`http://localhost:4000/api/projects/${id}`, { 
+      const response = await fetch(`${apiUrl}/projects/${id}`, { 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });

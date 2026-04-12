@@ -7,10 +7,11 @@ const initialTestimonials = [
 ];
 
 export default function Testimonial() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
   const [testimonials, setTestimonials] = useState(initialTestimonials);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/testimonials')
+    fetch(`${apiUrl}/testimonials`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

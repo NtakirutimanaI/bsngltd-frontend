@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AdminLayout from '../components/AdminLayout';
 
 export default function AttendanceManagement() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [users, setUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
@@ -13,11 +14,11 @@ export default function AttendanceManagement() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const usersResp = await fetch('http://localhost:4000/api/users');
+      const usersResp = await fetch(`${apiUrl}/users`);
       const usersData = await usersResp.json();
       setUsers(Array.isArray(usersData) ? usersData : []);
 
-      const attResp = await fetch(`http://localhost:4000/api/attendance?date=${selectedDate}`);
+      const attResp = await fetch(`${apiUrl}/attendance?date=${selectedDate}`);
       const attData = await attResp.json();
       setAttendance(Array.isArray(attData) ? attData : []);
     } catch (error) {
@@ -61,8 +62,8 @@ export default function AttendanceManagement() {
 
     const method = editingRecord.attendanceId ? 'PATCH' : 'POST';
     const url = editingRecord.attendanceId
-      ? `http://localhost:4000/api/attendance/${editingRecord.attendanceId}`
-      : 'http://localhost:4000/api/attendance';
+      ? `${apiUrl}/attendance/${editingRecord.attendanceId}`
+      : `${apiUrl}/attendance`;
 
     try {
       const response = await fetch(url, {
@@ -106,7 +107,7 @@ export default function AttendanceManagement() {
           checkOutTime: '05:00 PM', // Default Checkout
           notes: ''
         };
-        const response = await fetch('http://localhost:4000/api/attendance', {
+        const response = await fetch(`${apiUrl}/attendance`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

@@ -34,7 +34,7 @@ export default function Project() {
       setHomeCms(data); try { localStorage.setItem('bsng_cms_home', JSON.stringify(data)); } catch {}
     }).catch(console.error);
 
-    fetch('http://localhost:4000/api/projects')
+    fetch(`${apiUrl}/projects`)
       .then(r => r.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -49,7 +49,7 @@ export default function Project() {
       })
       .catch(console.error);
 
-    fetch('http://localhost:4000/api/testimonials')
+    fetch(`${apiUrl}/testimonials`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {

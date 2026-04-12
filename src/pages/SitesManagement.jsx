@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AdminLayout from '../components/AdminLayout';
 
 export default function SitesManagement() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
   const [sites, setSites] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +22,7 @@ export default function SitesManagement() {
   const fetchSites = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/sites');
+      const response = await fetch(`${apiUrl}/sites`);
       const data = await response.json();
       setSites(data);
     } catch (error) {
@@ -60,8 +61,8 @@ export default function SitesManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const url = editingSite 
-      ? `http://localhost:4000/api/sites/${editingSite.id}` 
-      : 'http://localhost:4000/api/sites';
+      ? `${apiUrl}/sites/${editingSite.id}` 
+      : `${apiUrl}/sites`;
     const method = editingSite ? 'PATCH' : 'POST';
 
     try {
@@ -90,7 +91,7 @@ export default function SitesManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this site?')) return;
     try {
-      const response = await fetch(`http://localhost:4000/api/sites/${id}`, { 
+      const response = await fetch(`${apiUrl}/sites/${id}`, { 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
