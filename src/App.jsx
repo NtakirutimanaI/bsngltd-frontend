@@ -23,6 +23,11 @@ import MessagesManagement from './pages/MessagesManagement';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import SitesManagement from './pages/SitesManagement';
 import HomeManagement from './pages/HomeManagement';
+import AboutManagement from './pages/AboutManagement';
+import ServicesManagement from './pages/ServicesManagement';
+import ProjectsCMSManagement from './pages/ProjectsCMSManagement';
+import UpdatesCMSManagement from './pages/UpdatesCMSManagement';
+import ContactManagement from './pages/ContactManagement';
 import AuthSuccess from './pages/AuthSuccess';
 
 function RouteController() {
@@ -63,11 +68,11 @@ export default function App() {
         <Route path="/admin/financial" element={<AnalyticsDashboard />} />
         <Route path="/admin/permissions" element={<AnalyticsDashboard />} />
         <Route path="/admin/cms/home" element={<HomeManagement />} />
-        <Route path="/admin/cms/about" element={<AnalyticsDashboard />} />
-        <Route path="/admin/cms/services" element={<AnalyticsDashboard />} />
-        <Route path="/admin/cms/projects" element={<AnalyticsDashboard />} />
-        <Route path="/admin/cms/updates" element={<AnalyticsDashboard />} />
-        <Route path="/admin/cms/contact" element={<AnalyticsDashboard />} />
+        <Route path="/admin/cms/about" element={<AboutManagement />} />
+        <Route path="/admin/cms/services" element={<ServicesManagement />} />
+        <Route path="/admin/cms/projects" element={<ProjectsCMSManagement />} />
+        <Route path="/admin/cms/updates" element={<UpdatesCMSManagement />} />
+        <Route path="/admin/cms/contact" element={<ContactManagement />} />
         <Route path="/admin/settings" element={<AnalyticsDashboard />} />
       </Routes>
     </BrowserRouter>

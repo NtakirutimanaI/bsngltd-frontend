@@ -1,6 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function About() {
+  const [cmsData, setCmsData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_about')) || {}; } catch { return {}; }
+  });
+  const [homeCms, setHomeCms] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_home')) || {}; } catch { return {}; }
+  });
+
+  useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    fetch(`${apiUrl}/cms/about`).then(r => r.json()).then(data => {
+      setCmsData(data); try { localStorage.setItem('bsng_cms_about', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+    fetch(`${apiUrl}/cms/home`).then(r => r.json()).then(data => {
+      setHomeCms(data); try { localStorage.setItem('bsng_cms_home', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+  }, []);
+
   return (
     <>
 
@@ -57,10 +74,10 @@ export default function About() {
                 <div className="col-lg-6">
                     <div className="row">
                         <div className="col-6 fadeIn" data-wow-delay="0.1s">
-                            <img className="img-fluid" src="img/about-1.jpg" alt="BSNG Construction Site" />
+                            <img className="img-fluid" src={cmsData.who_we_are?.image_1 || "img/about-1.jpg"} alt="BSNG Construction Site" />
                         </div>
                         <div className="col-6 fadeIn" data-wow-delay="0.3s">
-                            <img className="img-fluid h-75" src="img/about-2.jpg" alt="BSNG Building" />
+                            <img className="img-fluid h-75" src={cmsData.who_we_are?.image_2 || "img/about-2.jpg"} alt="BSNG Building" />
                             <div className="h-25 d-flex align-items-center text-center bg-primary px-4">
                                 <h4 className="text-white lh-base mb-0">Build Strong For Next Generations</h4>
                             </div>
@@ -68,17 +85,17 @@ export default function About() {
                     </div>
                 </div>
                 <div className="col-lg-6 fadeIn" data-wow-delay="0.5s">
-                    <h1 className="mb-5"><span className="text-uppercase text-primary bg-light px-2">Who We</span> Are</h1>
-                    <p className="mb-4">Build Strong For Next Generations (BSNG) is a Kigali-based construction and real estate company dedicated to delivering excellence across all aspects of construction, property sales, and management. We are located in Kibagabaga, Kigali, Rwanda, and serve clients across the entire country.</p>
-                    <p className="mb-5">Our company was established with a bold mission: to provide construction services that are not only structurally superior, but also built with integrity and long-term value in mind. Every project we take on carries our promise — to build strong, build right, and build for the generations that follow.</p>
+                    <h1 className="mb-5">{cmsData.who_we_are?.title ? cmsData.who_we_are.title.split(' ')[0] : <span className="text-uppercase text-primary bg-light px-2">Who We</span>} <span className="text-uppercase text-primary bg-light px-2">{cmsData.who_we_are?.title ? cmsData.who_we_are.title.substring(cmsData.who_we_are.title.indexOf(' ')+1) : 'Are'}</span></h1>
+                    <p className="mb-4">{cmsData.who_we_are?.desc1 || "Build Strong For Next Generations (BSNG) is a Kigali-based construction and real estate company dedicated to delivering excellence across all aspects of construction, property sales, and management. We are located in Kibagabaga, Kigali, Rwanda, and serve clients across the entire country."}</p>
+                    <p className="mb-5">{cmsData.who_we_are?.desc2 || "Our company was established with a bold mission: to provide construction services that are not only structurally superior, but also built with integrity and long-term value in mind. Every project we take on carries our promise — to build strong, build right, and build for the generations that follow."}</p>
                     <div className="row g-3">
                         <div className="col-sm-6">
-                            <h6 className="mb-3"><i className="fa fa-check text-primary me-2"></i>Quality Craftsmanship</h6>
-                            <h6 className="mb-0"><i className="fa fa-check text-primary me-2"></i>Expert Professional Team</h6>
+                            <h6 className="mb-3"><i className="fa fa-check text-primary me-2"></i>{cmsData.who_we_are?.feature_1 || "Quality Craftsmanship"}</h6>
+                            <h6 className="mb-0"><i className="fa fa-check text-primary me-2"></i>{cmsData.who_we_are?.feature_2 || "Expert Professional Team"}</h6>
                         </div>
                         <div className="col-sm-6">
-                            <h6 className="mb-3"><i className="fa fa-check text-primary me-2"></i>24/7 Client Support</h6>
-                            <h6 className="mb-0"><i className="fa fa-check text-primary me-2"></i>Competitive Pricing</h6>
+                            <h6 className="mb-3"><i className="fa fa-check text-primary me-2"></i>{cmsData.who_we_are?.feature_3 || "24/7 Client Support"}</h6>
+                            <h6 className="mb-0"><i className="fa fa-check text-primary me-2"></i>{cmsData.who_we_are?.feature_4 || "Competitive Pricing"}</h6>
                         </div>
                     </div>
                     <div className="d-flex align-items-center mt-5">
@@ -97,7 +114,7 @@ export default function About() {
     <div className="container-fluid py-5 bg-light">
         <div className="container py-5">
             <div className="text-center fadeIn" data-wow-delay="0.1s">
-                <h1 className="mb-5">Our <span className="text-uppercase text-primary bg-light px-2">Mission & Vision</span></h1>
+                <h1 className="mb-5">{cmsData.mission_vision?.title || <>Our <span className="text-uppercase text-primary bg-light px-2">Mission & Vision</span></>}</h1>
             </div>
             <div className="row g-5">
                 <div className="col-md-6 fadeIn" data-wow-delay="0.1s">
@@ -105,7 +122,7 @@ export default function About() {
                         <i className="fa fa-bullseye fa-3x text-primary me-4 mt-1"></i>
                         <div>
                             <h4>Our Mission</h4>
-                            <p className="mb-0">To provide reliable, high-quality construction and real estate services to our clients in Rwanda, helping individuals, families, and businesses achieve their property goals through transparent, professional, and client-focused service delivery.</p>
+                            <p className="mb-0">{cmsData.mission_vision?.mission || "To provide reliable, high-quality construction and real estate services to our clients in Rwanda, helping individuals, families, and businesses achieve their property goals through transparent, professional, and client-focused service delivery."}</p>
                         </div>
                     </div>
                 </div>
@@ -114,7 +131,7 @@ export default function About() {
                         <i className="fa fa-eye fa-3x text-primary me-4 mt-1"></i>
                         <div>
                             <h4>Our Vision</h4>
-                            <p className="mb-0">To become Rwanda's leading construction and property management company, known for building durable, innovative, and affordable structures that stand as a legacy for future generations.</p>
+                            <p className="mb-0">{cmsData.mission_vision?.vision || "To become Rwanda's leading construction and property management company, known for building durable, innovative, and affordable structures that stand as a legacy for future generations."}</p>
                         </div>
                     </div>
                 </div>
@@ -123,7 +140,7 @@ export default function About() {
                         <i className="fa fa-handshake fa-3x text-primary me-4 mt-1"></i>
                         <div>
                             <h4>Our Values</h4>
-                            <p className="mb-0">Integrity, quality, and excellence guide every project we undertake. We believe in honest communication, skilled workmanship, and sustainable building practices that benefit our clients and Rwanda's development.</p>
+                            <p className="mb-0">{cmsData.mission_vision?.values || "Integrity, quality, and excellence guide every project we undertake. We believe in honest communication, skilled workmanship, and sustainable building practices that benefit our clients and Rwanda's development."}</p>
                         </div>
                     </div>
                 </div>
@@ -132,7 +149,7 @@ export default function About() {
                         <i className="fa fa-award fa-3x text-primary me-4 mt-1"></i>
                         <div>
                             <h4>Our Commitment</h4>
-                            <p className="mb-0">We are committed to delivering every project on time, within budget, and beyond expectation. Your satisfaction is our success, and we back every project with our full professional commitment and after-service support.</p>
+                            <p className="mb-0">{cmsData.mission_vision?.commitment || "We are committed to delivering every project on time, within budget, and beyond expectation. Your satisfaction is our success, and we back every project with our full professional commitment and after-service support."}</p>
                         </div>
                     </div>
                 </div>
@@ -288,18 +305,18 @@ export default function About() {
         <div className="container p-0">
             <div className="row g-0 align-items-center">
                 <div className="col-md-5 ps-lg-0 text-start fadeIn" data-wow-delay="0.2s">
-                    <img className="img-fluid w-100" src="img/newsletter.jpg" alt="BSNG Newsletter" />
+                    <img className="img-fluid w-100" src={homeCms.newsletter?.bg_image || "img/newsletter.jpg"} alt="BSNG Newsletter" />
                 </div>
                 <div className="col-md-7 py-5 newsletter-text fadeIn" data-wow-delay="0.5s">
                     <div className="p-5">
-                        <h1 className="mb-5">Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></h1>
+                        <h1 className="mb-5">{homeCms.newsletter?.title || <>Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></>}</h1>
                         <div className="position-relative w-100 mb-2">
                             <input className="form-control border-0 w-100 ps-4 pe-5" type="email"
                                 placeholder="Enter Your Email Address" style={{ height: '60px' }} />
                             <button type="button" className="btn shadow-none position-absolute top-0 end-0 mt-2 me-2"><i
                                     className="fa fa-paper-plane text-primary fs-4"></i></button>
                         </div>
-                        <p className="mb-0">Stay updated with our latest projects, property listings, and construction tips.</p>
+                        <p className="mb-0">{homeCms.newsletter?.desc || "Stay updated with our latest projects, property listings, and construction tips."}</p>
                     </div>
                 </div>
             </div>
@@ -314,14 +331,14 @@ export default function About() {
                     <a href="/" className="d-inline-block mb-3">
                         <h1 className="text-white d-flex align-items-center m-0"><img src="/img/logo.png" alt="BSNG Logo" style={{ height: '45px', marginRight: '10px' }} />BSNG</h1>
                     </a>
-                    <p className="mb-4">Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda.</p>
+                    <p className="mb-4">{homeCms.footer?.tagline || "Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda."}</p>
                     <a className="btn btn-primary border-2 px-4" href="/contact">Contact Us</a>
                 </div>
                 <div className="col-md-6 col-lg-4 fadeIn" data-wow-delay="0.3s">
                     <h5 className="text-white mb-4">Get In Touch</h5>
-                    <p><i className="fa fa-map-marker-alt me-3"></i>Kibagabaga, Kigali, Rwanda</p>
-                    <p><i className="fa fa-phone-alt me-3"></i>+250 737 213 060</p>
-                    <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>info.buildstronggenerations@gmail.com</span></p>
+                    <p><i className="fa fa-map-marker-alt me-3"></i>{homeCms.footer?.address || "Kibagabaga, Kigali, Rwanda"}</p>
+                    <p><i className="fa fa-phone-alt me-3"></i>{homeCms.footer?.phone || "+250 737 213 060"}</p>
+                    <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>{homeCms.footer?.email || "info.buildstronggenerations@gmail.com"}</span></p>
                     <div className="d-flex pt-2">
                         <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-twitter"></i></a>
                         <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-facebook-f"></i></a>

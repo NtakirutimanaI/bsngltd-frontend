@@ -18,8 +18,22 @@ const initialTestimonials = [
 export default function Service() {
   const [serviceAreas, setServiceAreas] = useState(initialServiceAreas);
   const [testimonials, setTestimonials] = useState(initialTestimonials);
+  const [cmsData, setCmsData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_services')) || {}; } catch { return {}; }
+  });
+  const [homeCms, setHomeCms] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_home')) || {}; } catch { return {}; }
+  });
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    fetch(`${apiUrl}/cms/services`).then(r => r.json()).then(data => {
+      setCmsData(data); try { localStorage.setItem('bsng_cms_services', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+    fetch(`${apiUrl}/cms/home`).then(r => r.json()).then(data => {
+      setHomeCms(data); try { localStorage.setItem('bsng_cms_home', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+
     fetch('http://localhost:4000/api/services')
       .then(r => r.json())
       .then(data => {
@@ -103,16 +117,15 @@ export default function Service() {
         <div className="container py-5">
             <div className="row g-5 align-items-center">
                 <div className="col-lg-5 fadeIn" data-wow-delay="0.1s">
-                    <h1 className="mb-5">Our Complete <span
-                            className="text-uppercase text-primary bg-light px-2">Construction</span> Services</h1>
-                    <p>At BSNG Construction, we offer a full spectrum of construction and real estate services tailored to meet the needs of individuals, businesses, and investors across Rwanda. Our services are built on a foundation of quality, reliability, and genuine care for our clients.</p>
-                    <p className="mb-5">Whether you're looking to build your dream home, renovate an existing property, purchase a plot of land, or find tenants for your property, BSNG has the expertise and dedication to deliver exceptional results from start to finish.</p>
+                    <h1 className="mb-5">{cmsData.services_header?.title || <>Our Complete <span className="text-uppercase text-primary bg-light px-2">Construction</span> Services</>}</h1>
+                    <p>{cmsData.services_header?.desc1 || "At BSNG Construction, we offer a full spectrum of construction and real estate services tailored to meet the needs of individuals, businesses, and investors across Rwanda. Our services are built on a foundation of quality, reliability, and genuine care for our clients."}</p>
+                    <p className="mb-5">{cmsData.services_header?.desc2 || "Whether you're looking to build your dream home, renovate an existing property, purchase a plot of land, or find tenants for your property, BSNG has the expertise and dedication to deliver exceptional results from start to finish."}</p>
                     <div className="d-flex align-items-center bg-light">
                         <div className="btn-square flex-shrink-0 bg-primary" style={{ width: '100px', height: '100px' }}>
                             <i className="fa fa-phone fa-2x text-white"></i>
                         </div>
                         <div className="px-3">
-                            <h3>+250 737 213 060</h3>
+                            <h3>{cmsData.services_header?.phone || "+250 737 213 060"}</h3>
                             <span>Call us directly for a free consultation — 24/7</span>
                         </div>
                     </div>
@@ -219,18 +232,18 @@ export default function Service() {
         <div className="container p-0">
             <div className="row g-0 align-items-center">
                 <div className="col-md-5 ps-lg-0 text-start fadeIn" data-wow-delay="0.2s">
-                    <img className="img-fluid w-100" src="img/newsletter.jpg" alt="BSNG Newsletter" />
+                    <img className="img-fluid w-100" src={homeCms.newsletter?.bg_image || "img/newsletter.jpg"} alt="BSNG Newsletter" />
                 </div>
                 <div className="col-md-7 py-5 newsletter-text fadeIn" data-wow-delay="0.5s">
                     <div className="p-5">
-                        <h1 className="mb-5">Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></h1>
+                        <h1 className="mb-5">{homeCms.newsletter?.title || <>Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></>}</h1>
                         <div className="position-relative w-100 mb-2">
                             <input className="form-control border-0 w-100 ps-4 pe-5" type="email"
                                 placeholder="Enter Your Email Address" style={{ height: '60px' }} />
                             <button type="button" className="btn shadow-none position-absolute top-0 end-0 mt-2 me-2"><i
                                     className="fa fa-paper-plane text-primary fs-4"></i></button>
                         </div>
-                        <p className="mb-0">Stay updated with our latest projects, property listings, and construction tips.</p>
+                        <p className="mb-0">{homeCms.newsletter?.desc || "Stay updated with our latest projects, property listings, and construction tips."}</p>
                     </div>
                 </div>
             </div>
@@ -245,14 +258,14 @@ export default function Service() {
                     <a href="/" className="d-inline-block mb-3">
                         <h1 className="text-white d-flex align-items-center m-0"><img src="/img/logo.png" alt="BSNG Logo" style={{ height: '45px', marginRight: '10px' }} />BSNG</h1>
                     </a>
-                    <p className="mb-4">Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda.</p>
+                    <p className="mb-4">{homeCms.footer?.tagline || "Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda."}</p>
                     <a className="btn btn-primary border-2 px-4" href="/contact">Contact Us</a>
                 </div>
                 <div className="col-md-6 col-lg-4 fadeIn" data-wow-delay="0.3s">
                     <h5 className="text-white mb-4">Get In Touch</h5>
-                    <p><i className="fa fa-map-marker-alt me-3"></i>Kibagabaga, Kigali, Rwanda</p>
-                    <p><i className="fa fa-phone-alt me-3"></i>+250 737 213 060</p>
-                    <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>info.buildstronggenerations@gmail.com</span></p>
+                    <p><i className="fa fa-map-marker-alt me-3"></i>{homeCms.footer?.address || "Kibagabaga, Kigali, Rwanda"}</p>
+                    <p><i className="fa fa-phone-alt me-3"></i>{homeCms.footer?.phone || "+250 737 213 060"}</p>
+                    <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>{homeCms.footer?.email || "info.buildstronggenerations@gmail.com"}</span></p>
                     <div className="d-flex pt-2">
                         <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-twitter"></i></a>
                         <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-facebook-f"></i></a>

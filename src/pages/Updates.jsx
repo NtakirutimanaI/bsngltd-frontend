@@ -102,9 +102,22 @@ const SharedNav = () => (
 export default function Updates() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [updatesData, setUpdatesData] = useState(updates);
+  const [cmsData, setCmsData] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_updates')) || {}; } catch { return {}; }
+  });
+  const [homeCms, setHomeCms] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('bsng_cms_home')) || {}; } catch { return {}; }
+  });
 
   React.useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    fetch(`${apiUrl}/cms/updates`).then(r => r.json()).then(data => {
+      setCmsData(data); try { localStorage.setItem('bsng_cms_updates', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+    fetch(`${apiUrl}/cms/home`).then(r => r.json()).then(data => {
+      setHomeCms(data); try { localStorage.setItem('bsng_cms_home', JSON.stringify(data)); } catch {}
+    }).catch(console.error);
+
     fetch(`${apiUrl}/updates`)
       .then(r => r.json())
       .then(data => {
@@ -160,10 +173,10 @@ export default function Updates() {
           {/* Section Header */}
           <div className="text-center mb-5 fadeIn">
             <h1 className="mb-3">
-              Latest <span className="text-uppercase text-primary bg-light px-2">News &amp; Updates</span>
+              {cmsData.updates_header?.title || <>Latest <span className="text-uppercase text-primary bg-light px-2">News &amp; Updates</span></>}
             </h1>
             <p className="text-muted" style={{ maxWidth: '600px', margin: '0 auto' }}>
-              Stay informed about our latest projects, new property listings, company milestones, and construction insights from the BSNG team.
+              {cmsData.updates_header?.desc || "Stay informed about our latest projects, new property listings, company milestones, and construction insights from the BSNG team."}
             </p>
           </div>
 
@@ -258,8 +271,8 @@ export default function Updates() {
           <div className="row mt-5">
             <div className="col-12">
               <div className="p-5 rounded-3 text-white text-center" style={{ background: 'linear-gradient(135deg, #f77f00 0%, #d62828 100%)' }}>
-                <h3 className="fw-bold mb-2">Have a Project or Inquiry?</h3>
-                <p className="mb-4 opacity-75">Our team is ready to help you build, renovate, or find the perfect property in Rwanda.</p>
+                <h3 className="fw-bold mb-2">{cmsData.updates_header?.cta_title || "Have a Project or Inquiry?"}</h3>
+                <p className="mb-4 opacity-75">{cmsData.updates_header?.cta_desc || "Our team is ready to help you build, renovate, or find the perfect property in Rwanda."}</p>
                 <div className="d-flex justify-content-center gap-3 flex-wrap">
                   <a href="/contact" className="btn btn-light text-primary fw-semibold px-4 py-2 rounded-pill">
                     <i className="fa fa-envelope me-2"></i>Contact Us
@@ -280,11 +293,11 @@ export default function Updates() {
         <div className="container p-0">
           <div className="row g-0 align-items-center">
             <div className="col-md-5 ps-lg-0 text-start fadeIn" data-wow-delay="0.2s">
-              <img className="img-fluid w-100" src="img/newsletter.jpg" alt="BSNG Newsletter" />
+              <img className="img-fluid w-100" src={homeCms.newsletter?.bg_image || "img/newsletter.jpg"} alt="BSNG Newsletter" />
             </div>
             <div className="col-md-7 py-5 newsletter-text fadeIn" data-wow-delay="0.5s">
               <div className="p-5">
-                <h1 className="mb-5">Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></h1>
+                <h1 className="mb-5">{homeCms.newsletter?.title || <>Subscribe to Our <span className="text-uppercase text-primary bg-white px-2">Newsletter</span></>}</h1>
                 <div className="position-relative w-100 mb-2">
                   <input className="form-control border-0 w-100 ps-4 pe-5" type="email"
                     placeholder="Enter Your Email Address" style={{ height: '60px' }} />
@@ -292,7 +305,7 @@ export default function Updates() {
                     <i className="fa fa-paper-plane text-primary fs-4"></i>
                   </button>
                 </div>
-                <p className="mb-0">Stay updated with our latest projects, property listings, and construction tips.</p>
+                <p className="mb-0">{homeCms.newsletter?.desc || "Stay updated with our latest projects, property listings, and construction tips."}</p>
               </div>
             </div>
           </div>
@@ -307,14 +320,14 @@ export default function Updates() {
               <a href="/" className="d-inline-block mb-3">
                 <h1 className="text-white d-flex align-items-center m-0"><img src="/img/logo.png" alt="BSNG Logo" style={{ height: '45px', marginRight: '10px' }} />BSNG</h1>
               </a>
-              <p className="mb-4">Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda.</p>
+              <p className="mb-4">{homeCms.footer?.tagline || "Build Strong For Next Generations (BSNG) — Your trusted partner in construction, real estate, and property management in Rwanda."}</p>
               <a className="btn btn-primary border-2 px-4" href="/contact">Contact Us</a>
             </div>
             <div className="col-md-6 col-lg-4 fadeIn" data-wow-delay="0.3s">
               <h5 className="text-white mb-4">Get In Touch</h5>
-              <p><i className="fa fa-map-marker-alt me-3"></i>Kibagabaga, Kigali, Rwanda</p>
-              <p><i className="fa fa-phone-alt me-3"></i>+250 737 213 060</p>
-              <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>info.buildstronggenerations@gmail.com</span></p>
+              <p><i className="fa fa-map-marker-alt me-3"></i>{homeCms.footer?.address || "Kibagabaga, Kigali, Rwanda"}</p>
+              <p><i className="fa fa-phone-alt me-3"></i>{homeCms.footer?.phone || "+250 737 213 060"}</p>
+              <p className="d-flex align-items-center"><i className="fa fa-envelope me-2 flex-shrink-0"></i><span>{homeCms.footer?.email || "info.buildstronggenerations@gmail.com"}</span></p>
               <div className="d-flex pt-2">
                 <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-twitter"></i></a>
                 <a className="btn btn-outline-primary btn-square border-2 me-2" href="#"><i className="fab fa-facebook-f"></i></a>
