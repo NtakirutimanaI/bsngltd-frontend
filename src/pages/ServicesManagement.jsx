@@ -21,7 +21,7 @@ export default function ServicesManagement() {
         services_header: {
           title: 'Our Complete Construction Services',
           desc1: 'At BSNG Construction, we offer a full spectrum of construction and real estate services tailored to meet the needs of individuals, businesses, and investors across Rwanda. Our services are built on a foundation of quality, reliability, and genuine care for our clients.',
-          desc2: 'Whether you\\'re looking to build your dream home, renovate an existing property, purchase a plot of land, or find tenants for your property, BSNG has the expertise and dedication to deliver exceptional results from start to finish.',
+          desc2: "Whether you're looking to build your dream home, renovate an existing property, purchase a plot of land, or find tenants for your property, BSNG has the expertise and dedication to deliver exceptional results from start to finish.",
           phone: '+250 737 213 060',
           ...(json.services_header || {}),
         }
