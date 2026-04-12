@@ -18,8 +18,9 @@ export default function UsersManagement() {
   }, []);
 
   const fetchUsers = async () => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
     try {
-      const response = await fetch('http://localhost:4000/api/users', {
+      const response = await fetch(`${apiUrl}/users`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!response.ok) throw new Error('Failed to fetch users');
@@ -34,9 +35,10 @@ export default function UsersManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
     const url = editingUser 
-      ? `http://localhost:4000/api/users/${editingUser.id}` 
-      : 'http://localhost:4000/api/users';
+      ? `${apiUrl}/users/${editingUser.id}` 
+      : `${apiUrl}/users`;
     
     const method = editingUser ? 'PATCH' : 'POST';
 
@@ -67,9 +69,10 @@ export default function UsersManagement() {
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
     
     try {
-      const response = await fetch(`http://localhost:4000/api/users/${id}`, { 
+      const response = await fetch(`${apiUrl}/users/${id}`, { 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });

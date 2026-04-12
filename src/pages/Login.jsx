@@ -19,7 +19,8 @@ export default function Login() {
     }
     
     setIsSubmitting(true);
-    const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    const endpoint = isRegister ? '/auth/register' : '/auth/login';
     
     const createPayload = () => {
       if (isRegister) {
@@ -32,7 +33,7 @@ export default function Login() {
     const payload = createPayload();
     
     try {
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
+      const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -202,10 +203,25 @@ export default function Login() {
                                     </div>
                                 )}
                                 <div className="col-12">
-                                    <button className="btn btn-primary w-100 py-2" type="submit" disabled={isSubmitting} style={{ fontSize: '0.85rem' }}>
+                                    <button className="btn btn-primary w-100 py-2 mb-3" type="submit" disabled={isSubmitting} style={{ fontSize: '0.85rem' }}>
                                         {isSubmitting ? 'Processing...' : (isRegister ? 'Create Account' : 'Sign In')} &nbsp;
                                         <i className={`fa ${isRegister ? 'fa-user-plus' : 'fa-arrow-right'}`}></i>
                                     </button>
+
+                                    <div className="d-flex align-items-center mb-3">
+                                        <hr className="flex-grow-1" />
+                                        <span className="mx-2 text-muted" style={{ fontSize: '0.75rem' }}>OR</span>
+                                        <hr className="flex-grow-1" />
+                                    </div>
+
+                                    <a 
+                                        href={`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/auth/google`} 
+                                        className="btn btn-outline-dark w-100 py-2 d-flex align-items-center justify-content-center"
+                                        style={{ fontSize: '0.85rem' }}
+                                    >
+                                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', marginRight: '10px' }} />
+                                        Continue with Google
+                                    </a>
                                 </div>
                             </div>
                         </form>

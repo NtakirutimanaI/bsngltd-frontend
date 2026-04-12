@@ -16,12 +16,14 @@ import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import UsersManagement from './pages/UsersManagement';
 import ProjectsManagement from './pages/ProjectsManagement';
+import Register from './pages/Register';
 
 import AttendanceManagement from './pages/AttendanceManagement';
 import MessagesManagement from './pages/MessagesManagement';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import SitesManagement from './pages/SitesManagement';
 import HomeManagement from './pages/HomeManagement';
+import AuthSuccess from './pages/AuthSuccess';
 
 function RouteController() {
   const location = useLocation();
@@ -49,6 +51,8 @@ export default function App() {
         <Route path="/testimonial" element={<Testimonial />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/auth/success" element={<AuthSuccess />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UsersManagement />} />
         <Route path="/admin/sites" element={<SitesManagement />} />

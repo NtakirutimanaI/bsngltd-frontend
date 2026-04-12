@@ -25,7 +25,7 @@ export default function AdminLayout({ children, title }) {
     if (!token) return;
     const decoded = parseJwt(token);
     if (decoded && decoded.sub) {
-      fetch(`http://localhost:4000/api/users/${decoded.sub}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/users/${decoded.sub}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).then(res => res.json()).then(data => {
         if (!data.error) {
@@ -66,7 +66,7 @@ export default function AdminLayout({ children, title }) {
     e.preventDefault();
     if (!user) return;
     try {
-      const response = await fetch(`http://localhost:4000/api/users/${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
         method: 'PATCH',
         headers: { 
           'Content-Type': 'application/json',

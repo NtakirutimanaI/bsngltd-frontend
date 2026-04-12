@@ -89,6 +89,9 @@ const SharedNav = () => (
             <a href="/project" className="nav-item nav-link">Projects</a>
             <a href="/updates" className="nav-item nav-link active">Updates</a>
             <a href="/contact" className="nav-item nav-link">Contact</a>
+            <a href="/login" className="nav-item nav-link btn-login-nav">
+              <i className="fa fa-user me-1"></i>Login
+            </a>
           </div>
         </div>
       </nav>
@@ -101,7 +104,8 @@ export default function Updates() {
   const [updatesData, setUpdatesData] = useState(updates);
 
   React.useEffect(() => {
-    fetch('http://localhost:4000/api/updates')
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+    fetch(`${apiUrl}/updates`)
       .then(r => r.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -184,8 +188,8 @@ export default function Updates() {
           {/* Update Cards */}
           <div className="row g-4">
             {filtered.map((item, idx) => (
-              <div className="col-md-6 col-lg-4 fadeIn" key={item.id} data-wow-delay={`${0.1 * (idx + 1)}s`}>
-                <div className="card h-100 border-0 shadow-sm" style={{ borderRadius: '12px', overflow: 'hidden', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+              <div className="col-md-6 col-lg-3 fadeIn" key={item.id} data-wow-delay={`${0.1 * (idx + 1)}s`}>
+                <div className="card h-100 border-0 shadow-sm" style={{ borderRadius: '0px', overflow: 'hidden', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
                   onMouseEnter={e => {
                     e.currentTarget.style.transform = 'translateY(-6px)';
                     e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.12)';
@@ -196,7 +200,7 @@ export default function Updates() {
                   }}
                 >
                   {/* Card Image */}
-                  <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', height: '140px', overflow: 'hidden' }}>
                     <img
                       src={item.image}
                       alt={item.title}
@@ -204,29 +208,36 @@ export default function Updates() {
                       style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
                     />
                     {/* Category Badge */}
-                    <span className={`badge ${item.badge} position-absolute`} style={{ top: '12px', left: '12px', fontSize: '0.75rem', padding: '6px 12px', borderRadius: '20px' }}>
+                    <span className={`badge ${item.badge} position-absolute`} style={{ top: '12px', left: '12px', fontSize: '0.7rem', padding: '4px 10px', borderRadius: '0px' }}>
                       <i className={`fa ${item.icon} me-1`}></i> {item.category}
                     </span>
                   </div>
 
                   {/* Card Body */}
-                  <div className="card-body p-4">
-                    <div className="d-flex align-items-center mb-3">
-                      <i className="fa fa-calendar-alt text-primary me-2" style={{ fontSize: '0.85rem' }}></i>
-                      <small className="text-muted">{item.date}</small>
+                  <div className="card-body p-3">
+                    <div className="d-flex align-items-center mb-1">
+                      <i className="fa fa-calendar-alt text-primary me-2" style={{ fontSize: '0.75rem' }}></i>
+                      <small className="text-muted" style={{ fontSize: '0.7rem' }}>{item.date}</small>
                     </div>
-                    <h5 className="card-title fw-bold mb-3" style={{ lineHeight: '1.4', color: '#1a1a2e' }}>
+                    <h6 className="card-title fw-bold mb-1 text-truncate" style={{ lineHeight: '1.2', color: '#1a1a2e', fontSize: '0.9rem' }} title={item.title}>
                       {item.title}
-                    </h5>
-                    <p className="card-text text-muted mb-0" style={{ fontSize: '0.93rem', lineHeight: '1.65' }}>
+                    </h6>
+                    <p className="card-text text-muted mb-0" style={{ 
+                      fontSize: '0.8rem', 
+                      lineHeight: '1.4',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '2',
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
                       {item.summary}
                     </p>
                   </div>
 
                   {/* Card Footer */}
-                  <div className="card-footer bg-transparent border-0 px-4 pb-4">
-                    <a href="/contact" className="btn btn-outline-primary btn-sm rounded-pill px-4">
-                      Learn More <i className="fa fa-arrow-right ms-1"></i>
+                  <div className="card-footer bg-transparent border-0 px-3 pb-3 pt-0">
+                    <a href="/contact" className="text-primary fw-semibold text-decoration-none" style={{ fontSize: '0.75rem' }}>
+                      Read More <i className="fa fa-chevron-right ms-1" style={{ fontSize: '0.65rem' }}></i>
                     </a>
                   </div>
                 </div>

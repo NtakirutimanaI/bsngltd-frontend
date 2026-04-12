@@ -45,7 +45,21 @@ const Register = () => {
                                         </div>
                                     </div>
                                     <div className="col-12">
-                                        <button className="btn btn-primary w-100 py-3" type="submit">Create Account</button>
+                                        <button className="btn btn-primary w-100 py-3 mb-3" type="submit">Create Account</button>
+
+                                        <div className="d-flex align-items-center mb-3">
+                                            <hr className="flex-grow-1" />
+                                            <span className="mx-2 text-muted" style={{ fontSize: '0.75rem' }}>OR</span>
+                                            <hr className="flex-grow-1" />
+                                        </div>
+
+                                        <a 
+                                            href={`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api'}/auth/google`} 
+                                            className="btn btn-outline-dark w-100 py-3 d-flex align-items-center justify-content-center"
+                                        >
+                                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px', marginRight: '10px' }} />
+                                            Continue with Google
+                                        </a>
                                     </div>
                                     <div className="col-12 text-center">
                                         <p className="mb-0">Already have an account? <Link to="/login" className="text-primary fw-bold">Login here</Link></p>

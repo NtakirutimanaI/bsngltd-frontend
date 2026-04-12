@@ -21,13 +21,14 @@ export default function Home() {
   const [cmsData, setCmsData] = useState({});
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
     // Fetch CMS content
-    fetch('http://localhost:4000/api/cms/home')
+    fetch(`${apiUrl}/cms/home`)
       .then(r => r.json())
       .then(data => setCmsData(data))
       .catch(console.error);
 
-    fetch('http://localhost:4000/api/projects')
+    fetch(`${apiUrl}/projects`)
       .then(r => r.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -42,7 +43,7 @@ export default function Home() {
       })
       .catch(console.error);
 
-    fetch('http://localhost:4000/api/testimonials')
+    fetch(`${apiUrl}/testimonials`)
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
