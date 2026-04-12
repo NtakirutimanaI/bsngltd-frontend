@@ -131,45 +131,38 @@ export default function HomeManagement() {
     return data[section]?.[key] || defaultSrc;
   };
 
-  // ── Save & Publish: upload pending images then bulk-update ──────────────────
+  // ── Save & Publish: convert images to base64 then bulk-update ──────────────
   const handleSaveAndPublish = async () => {
     setIsSaving(true);
     const token = localStorage.getItem('token');
     let finalData = { ...data };
 
     try {
-      // 1. Upload any locally picked images to Cloudinary
+      // 1. Convert any locally selected images to base64 data URLs (no Cloudinary needed)
       for (const [slotKey, { file }] of Object.entries(localImages)) {
-        const [section, ...keyParts] = slotKey.split('-');
-        const key = keyParts.join('-');
         setUploadingSlot(slotKey);
 
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('section', section);
-        formData.append('key', key);
-
-        const res = await fetch(`${API_URL}/cms/home/upload`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
+        const base64Url = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+          reader.readAsDataURL(file);
         });
 
-        if (res.ok) {
-          const result = await res.json();
-          // Merge Cloudinary URL into finalData
-          finalData = {
-            ...finalData,
-            [section]: { ...finalData[section], [key]: result.value },
-          };
-        } else {
-          toast.error(`Failed to upload image: ${key}`);
-        }
+        // Parse section and key back from slotKey (section may not contain dashes, key might)
+        const dashIdx = slotKey.indexOf('-');
+        const section = slotKey.slice(0, dashIdx);
+        const key = slotKey.slice(dashIdx + 1);
+
+        finalData = {
+          ...finalData,
+          [section]: { ...finalData[section], [key]: base64Url },
+        };
       }
 
       setUploadingSlot(null);
 
-      // 2. Bulk-update all content (texts + image URLs) at once
+      // 2. Bulk-update all content (texts + base64 image data) at once
       const bulkRes = await fetch(`${API_URL}/cms/home/bulk-update`, {
         method: 'POST',
         headers: {
@@ -180,15 +173,16 @@ export default function HomeManagement() {
       });
 
       if (bulkRes.ok) {
-        // Update local state with Cloudinary URLs and clear local image cache
         setData(finalData);
         setLocalImages({});
         toast.success('✅ Successfully Saved and Published to Website!');
       } else {
-        toast.error('Failed to publish changes');
+        const err = await bulkRes.json().catch(() => ({}));
+        toast.error(err.message || 'Failed to publish changes');
       }
     } catch (err) {
-      toast.error('Network error while publishing');
+      console.error(err);
+      toast.error(err.message || 'Error while publishing');
     } finally {
       setIsSaving(false);
       setUploadingSlot(null);
