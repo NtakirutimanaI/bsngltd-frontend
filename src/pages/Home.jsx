@@ -18,14 +18,28 @@ const initialTestimonials = [
 export default function Home() {
   const [homeProjects, setHomeProjects] = useState(initialHomeProjects);
   const [testimonials, setTestimonials] = useState(initialTestimonials);
-  const [cmsData, setCmsData] = useState({});
+
+  // ── Load CMS data: use localStorage cache first so there is ZERO flash of
+  //    default images on page reload. The API fetch runs in the background and
+  //    silently updates both state and the cache for next time.
+  const [cmsData, setCmsData] = useState(() => {
+    try {
+      const cached = localStorage.getItem('bsng_cms_home');
+      return cached ? JSON.parse(cached) : {};
+    } catch {
+      return {};
+    }
+  });
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
-    // Fetch CMS content
+    // Fetch CMS content — update state AND cache so next load is instant
     fetch(`${apiUrl}/cms/home`)
       .then(r => r.json())
-      .then(data => setCmsData(data))
+      .then(data => {
+        setCmsData(data);
+        try { localStorage.setItem('bsng_cms_home', JSON.stringify(data)); } catch {}
+      })
       .catch(console.error);
 
     fetch(`${apiUrl}/projects`)

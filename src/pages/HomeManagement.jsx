@@ -175,6 +175,8 @@ export default function HomeManagement() {
       if (bulkRes.ok) {
         setData(finalData);
         setLocalImages({});
+        // ── Persist to localStorage so Home page shows new images instantly ──
+        try { localStorage.setItem('bsng_cms_home', JSON.stringify(finalData)); } catch {}
         toast.success('✅ Successfully Saved and Published to Website!');
       } else {
         const err = await bulkRes.json().catch(() => ({}));
