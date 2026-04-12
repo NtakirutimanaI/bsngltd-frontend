@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: ''
   });
@@ -178,16 +180,36 @@ export default function Login() {
                                     </div>
                                 </div>
                                 <div className="col-12">
-                                    <div className="form-floating form-floating-sm">
-                                        <input type="password" className="form-control" id="password" value={formData.password} onChange={handleChange} placeholder="Password" style={{ height: '42px', fontSize: '0.82rem' }} required minLength={6} />
+                                    <div className="form-floating form-floating-sm position-relative">
+                                        <input type={showPassword ? 'text' : 'password'} className="form-control" id="password" value={formData.password} onChange={handleChange} placeholder="Password" style={{ height: '42px', fontSize: '0.82rem', paddingRight: '2.5rem' }} required minLength={6} />
                                         <label htmlFor="password" style={{ fontSize: '0.78rem' }}>Password</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="btn btn-sm p-0 position-absolute"
+                                            style={{ top: '50%', right: '10px', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#6c757d', zIndex: 10 }}
+                                            tabIndex={-1}
+                                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        >
+                                            <i className={`fa ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} style={{ fontSize: '0.9rem' }}></i>
+                                        </button>
                                     </div>
                                 </div>
                                 {isRegister && (
                                     <div className="col-12">
-                                        <div className="form-floating form-floating-sm">
-                                            <input type="password" className="form-control" id="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm Password" style={{ height: '42px', fontSize: '0.82rem' }} required={isRegister} />
+                                        <div className="form-floating form-floating-sm position-relative">
+                                            <input type={showConfirmPassword ? 'text' : 'password'} className="form-control" id="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm Password" style={{ height: '42px', fontSize: '0.82rem', paddingRight: '2.5rem' }} required={isRegister} />
                                             <label htmlFor="confirmPassword" style={{ fontSize: '0.78rem' }}>Confirm Password</label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                className="btn btn-sm p-0 position-absolute"
+                                                style={{ top: '50%', right: '10px', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#6c757d', zIndex: 10 }}
+                                                tabIndex={-1}
+                                                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                                            >
+                                                <i className={`fa ${showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'}`} style={{ fontSize: '0.9rem' }}></i>
+                                            </button>
                                         </div>
                                     </div>
                                 )}
